@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
+import * as AOS from 'aos'
 @Component({
   imports: [RouterModule],
   selector: 'app-root',
@@ -12,7 +12,11 @@ export class AppComponent {
 
   public themeColor:string='dark';
   ngOnInit(){
-    this.initializeTheme()
+    this.initializeTheme();
+    AOS.init({
+      startEvent:'scroll'
+    });
+    AOS.refresh()
   }
   initializeTheme(): void {
     // Check if a theme is set in localStorage
