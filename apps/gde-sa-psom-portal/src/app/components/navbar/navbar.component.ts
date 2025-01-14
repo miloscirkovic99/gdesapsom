@@ -1,16 +1,23 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { FooterComponent } from "./components/footer/footer.component";
-@Component({
-  imports: [RouterModule, NavbarComponent, FooterComponent],
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-})
-export class AppComponent {
-  title = 'gde-sa-psom-portal';
+import { CommonModule } from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
+@Component({
+  selector: 'app-navbar',
+  imports: [CommonModule,MatIconModule],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss',
+  animations: [
+    trigger('openClose', [
+      state('true', style({ height: '*' })),
+      state('false', style({ height: '0px' })),
+      transition('false <=> true', [ animate(500) ])
+    ])
+  ]
+})
+export class NavbarComponent {
+  menuOpen = false;
   public themeColor:string='dark';
   ngOnInit(){
     this.initializeTheme()
@@ -35,5 +42,8 @@ export class AppComponent {
   private applyTheme(): void {
     document.body.classList.toggle('dark-theme', this.themeColor === 'dark');
     document.body.classList.toggle('light-theme', this.themeColor === 'light');
+  }
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 }

@@ -22,7 +22,7 @@
             "input": "apps/gde-sa-psom-portal/public"
           }
         ],
-        "styles": ["apps/gde-sa-psom-portal/src/styles.scss"],
+        "styles": ["apps/gde-sa-psom-portal/src/styles.scss","node_modules/aos/dist/aos.css"],
         "scripts": []
       },
       "configurations": {

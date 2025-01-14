@@ -1,0 +1,71 @@
+.navbar {
+    @apply flex justify-between items-center px-4 bg-white shadow-md;
+  
+    .navbar-left .logo {
+      @apply w-10 h-10;
+    }
+  
+    .navbar-center {
+      @apply flex-1 flex justify-center  md:flex;
+       a{
+        @apply cursor-pointer;
+       }
+      .nav-links {
+        @apply list-none flex gap-6;
+  
+        li a {
+          @apply  font-medium cursor-pointer;
+          
+
+        }
+      }
+    }
+  
+    .navbar-right {
+      @apply flex items-center gap-4;
+  
+      .settings-btn {
+        @apply bg-none border-none cursor-pointer flex items-center;
+  
+      }
+  
+      .hamburger-btn {
+        @apply bg-none border-none cursor-pointer hidden md:flex;
+  
+     
+      }
+    }
+  
+    .mobile-menu {
+      @apply hidden absolute top-full left-0 right-0 bg-white shadow-md p-4  justify-center items-center;
+  
+      ul {
+        @apply list-none p-0 m-0 flex flex-col gap-4;
+  
+        li a {
+          @apply text-gray-800 font-medium;
+  
+          &:hover {
+            @apply text-blue-600;
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-center {
+      @apply hidden;
+    }
+  
+    .navbar-right .hamburger-btn {
+      @apply flex;
+    }
+  
+    .mobile-menu {
+      @apply flex justify-center items-center;
+    }
+  }
+  a{
+    @apply text-sm font-normal cursor-pointer relative block text-white hover:text-0-secondary font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-0-secondary after:transition-all after:duration-300 hover:after:w-full;
+  }
