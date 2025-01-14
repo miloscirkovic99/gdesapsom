@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import * as AOS from 'aos'
+import { LanguageService } from './shared/services/language.service';
 @Component({
-  imports: [RouterModule],
+  imports: [RouterModule,TranslocoModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
-
+  private languageService=inject(LanguageService);
   public themeColor:string='dark';
   ngOnInit(){
     this.initializeTheme();
@@ -28,7 +30,9 @@ export class AppComponent {
     }
     this.applyTheme();
   }
-
+  switchLanguage(language: string) {
+    this.languageService.switchLanguage(language);
+  }
   toggleTheme(): void {
     this.themeColor = this.themeColor === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', this.themeColor);

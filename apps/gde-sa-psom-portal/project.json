@@ -20,11 +20,19 @@
           {
             "glob": "**/*",
             "input": "apps/gde-sa-psom-portal/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/gde-sa-psom-portal/src/assets/i18n/",
+            "output": "/assets/i18n/"
           }
+        
         ],
-        "styles": ["apps/gde-sa-psom-portal/src/styles.scss","node_modules/aos/dist/aos.css"],
-        "scripts": [              "node_modules/aos/dist/aos.js",
-      ]
+        "styles": [
+          "apps/gde-sa-psom-portal/src/styles.scss",
+          "node_modules/aos/dist/aos.css"
+        ],
+        "scripts": ["node_modules/aos/dist/aos.js"]
       },
       "configurations": {
         "production": {
