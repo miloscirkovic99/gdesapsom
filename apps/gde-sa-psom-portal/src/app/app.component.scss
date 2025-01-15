@@ -1,16 +1,33 @@
-.wrapper{
-    @apply grid;
-}
-.box { 
-    width: 400px;
-    height: 200px; 
-    background: #202746;
-    color: #979db4; border:5px solid #fff;
-    box-shadow:0px 0px 3px #202746;
-    margin:10vh 2vh;
-    text-transform: uppercase;
-    display: inline-flex;
+.spots-container {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    
-    }
+    gap: 10px;
+    width: fit-content;
+  }
+  
+  .spot-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background: #f9f9f9;
+  }
+  
+  .load-more {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border: none;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .load-more:hover {
+    background: #0056b3;
+  }
+  .wrapper{
+    display: flex;
+    justify-content: center;
+  }

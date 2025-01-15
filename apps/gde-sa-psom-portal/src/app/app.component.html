@@ -2,10 +2,31 @@
 <app-navbar></app-navbar>
 
 <router-outlet></router-outlet>
-<app-footer></app-footer>
 
-<div class="box" data-aos="fade-in"  ></div>
-<div data-aos="fade-up" data-aos-once="true">
-  the content
+<div class="wrapper">
+<div class="spots-container">
+  @for (spot of spotsList; track $index) {
+  <div  class="spot-card" data-aos="fade-right" data-aos-duration="1000">
+    <h3>Name: {{ spot.iuo_ime }}</h3>
+    <p><strong>Address:</strong> {{ spot.iuo_adressa }}</p>
+    <p><strong>City:</strong> {{ spot.grd_ime }}</p>
+    <p><strong>Outdoor Seating:</strong> {{ spot.bas_naziv }}</p>
+  </div>
+}
 </div>
 
+
+
+@if (isLoading) {
+  <p >Loading...</p>
+}
+</div>
+<!-- Load More Button -->
+@if (!isLoading) {
+  <button 
+    (click)="loadMore()" 
+    class="load-more">
+    Load More
+  </button>
+  }
+<app-footer></app-footer>

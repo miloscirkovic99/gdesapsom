@@ -8,7 +8,7 @@
     .navbar-center {
       @apply flex-1 flex justify-center  md:flex;
        a{
-        @apply cursor-pointer;
+        @apply cursor-pointer text-base;
        }
       .nav-links {
         @apply list-none flex gap-6;
@@ -59,7 +59,7 @@
     }
   
     .navbar-right .hamburger-btn {
-      @apply flex;
+      @apply flex text-base;
     }
   
     .mobile-menu {
@@ -67,5 +67,8 @@
     }
   }
   a{
-    @apply text-sm font-normal cursor-pointer relative block text-white hover:text-0-secondary font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-0-secondary after:transition-all after:duration-300 hover:after:w-full;
+    @apply text-sm  cursor-pointer relative block  hover:text-0-secondary font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-0-secondary after:transition-all after:duration-300 hover:after:w-full;
+  }
+  .dropdown-content a {
+    @apply flex items-center;
   }

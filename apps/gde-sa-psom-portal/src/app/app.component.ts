@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { FooterComponent } from "./components/footer/footer.component";
+import { FooterComponent } from './components/footer/footer.component';
 import { LanguageService } from './shared/services/language.service';
-import AOS from 'aos'
+import AOS from 'aos';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../env/env.dev';
 @Component({
   imports: [RouterModule, NavbarComponent, FooterComponent],
   selector: 'app-root',
@@ -12,36 +14,40 @@ import AOS from 'aos'
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
-  private languageService=inject(LanguageService);
-  public themeColor:string='dark';
-  ngOnInit(){
-    this.initializeTheme();
+  private languageService = inject(LanguageService);
+  public themeColor: string = 'dark';
+
+  spotsList: any[] = []; // Store all loaded results
+  totalResults: number = 0; // Total number of results from DB
+  limit: number = 10; // Results per page
+  offset: number = 0; // Starting offset
+  isLoading: boolean = false; // Loading state
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
     // AOS.init({
     //   startEvent:'scroll'
     // });
     // AOS.refresh()
+    this.loadMore();
   }
-  initializeTheme(): void {
-    // Check if a theme is set in localStorage
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      this.themeColor = storedTheme;
-    } else {
-      localStorage.setItem('theme', this.themeColor); // Set default if not set
-    }
-    this.applyTheme();
+  loadMore() {
+    this.isLoading = true;
+    const body = {
+      limit: this.limit,
+      offset: this.offset,
+    };
+    this.http
+      .post<any>(`https://gdesapsom.com/api/v2/pet-friendly-spots/all`,body)
+      .subscribe((response) => {
+        this.spotsList = [...this.spotsList, ...response.spotsList]; // Append new results
+        this.totalResults = response.totalResults; // Update total count
+        this.offset = this.spotsList.length; // Update offset for next load
+        this.isLoading = false;
+      });
   }
   switchLanguage(language: string) {
     this.languageService.switchLanguage(language);
-  }
-  toggleTheme(): void {
-    this.themeColor = this.themeColor === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', this.themeColor);
-    this.applyTheme();
-  }
-
-  private applyTheme(): void {
-    document.body.classList.toggle('dark-theme', this.themeColor === 'dark');
-    document.body.classList.toggle('light-theme', this.themeColor === 'light');
   }
 }
