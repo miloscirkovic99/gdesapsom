@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@angular-architects/ngrx-toolkit": "^19.0.2",
     "@angular/animations": "~19.0.0",
     "@angular/cdk": "^19.0.4",
     "@angular/common": "~19.0.0",

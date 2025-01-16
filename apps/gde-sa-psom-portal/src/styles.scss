@@ -6,3 +6,6 @@
   margin: 0;
   font-family: 'Dosis', serif;
 }
+.btn_primary{
+  @apply  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium px-4 py-2 border rounded-md;
+}

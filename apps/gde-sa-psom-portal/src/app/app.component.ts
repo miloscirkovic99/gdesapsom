@@ -6,11 +6,13 @@ import { LanguageService } from './shared/services/language.service';
 import AOS from 'aos';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../env/env.dev';
+import { SpotsStore } from './shared/store/spots.store';
 @Component({
   imports: [RouterModule, NavbarComponent, FooterComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  providers:[SpotsStore]
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
@@ -22,6 +24,7 @@ export class AppComponent {
   limit: number = 10; // Results per page
   offset: number = 0; // Starting offset
   isLoading: boolean = false; // Loading state
+  spots = inject(SpotsStore);
 
   constructor(private http: HttpClient) {}
 
