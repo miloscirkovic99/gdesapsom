@@ -1,40 +1,54 @@
 .landing-page-wrapper {
-    @apply grid grid-cols-2 w-full p-12 relative;
+    @apply flex items-start w-full p-12 relative;
     
     .hero-container {
-      @apply grid gap-3;
+      @apply grid gap-12;
       
       .hero__title {
         @apply w-full;
         
         h1 {
-          @apply text-5xl font-bold flex items-center ;
+          @apply text-5xl font-bold flex items-center gap-4;
         }
       }
       
       .hero__description {
-        @apply text-xl w-1/2;
+        @apply text-xl ;
       }
     }
   
     .image-wrapper {
-      @apply w-full items-end   gap-8 relative;
+      @apply grid w-1/2  gap-8 ;
       .shape {
-        @apply w-72 h-72 bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%];
+        @apply w-72 h-72  bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%];
     
         img {
-          @apply absolute top-0 left-0 w-full h-full object-contain;
+          @apply relative top-0 left-0 w-full h-full object-contain;
         }
       }
     
       .shape-reverse {
-        @apply mt-4 w-72 h-72 bg-primary_green absolute -left-24 rounded-tl-[15%] rounded-bl-[12%] rounded-tr-[15%] rounded-br-[100%];
+        @apply w-72 h-72 bg-primary_green relative -left-24 rounded-tl-[15%] rounded-bl-[12%] rounded-tr-[15%] rounded-br-[100%];
     
         img {
-          @apply absolute top-0 left-0 w-full h-full object-cover;
+          @apply relative top-0 left-0 w-full h-full object-cover;
         }
       }
     }
-  
+    .btn_primary{
+        @apply  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium px-4 py-2 border rounded-md;
+    }
+    .hero__statistics{
+        @apply flex gap-16;
+        .hero__statistics_wrapper{
+            @apply grid;
+            p{
+                @apply text-3xl font-bold;
+            }
+            span{
+                @apply text-xl;
+            }
+        }
+    }
   }
   
