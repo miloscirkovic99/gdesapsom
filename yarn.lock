@@ -2539,6 +2539,13 @@
     replace-in-file "^7.0.1"
     tslib "^2.2.0"
 
+"@ngrx/signals@^19.0.0":
+  version "19.0.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/signals/-/signals-19.0.0.tgz#10bc494eae6d96ff6e2d4514fb0bc0e5824102f2"
+  integrity sha512-Ktgq+wwIVH9HdobLOhrYF6VArIJYZa5lkgajUpSB9QuudpOLja9f7W2RAHQsMUBpQuREgFkTgIEr1vKIzDrGMA==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngtools/webpack@19.0.7":
   version "19.0.7"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-19.0.7.tgz#9b7c21e190bb3646a7edeea6d51408b8c1883418"
