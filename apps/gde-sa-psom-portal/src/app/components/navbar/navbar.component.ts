@@ -8,13 +8,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   imports: [CommonModule,MatIconModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  animations: [
-    trigger('openClose', [
-      state('true', style({ height: '*' })),
-      state('false', style({ height: '0px' })),
-      transition('false <=> true', [ animate(500) ])
-    ])
-  ]
+
 })
 export class NavbarComponent {
   menuOpen = false;
