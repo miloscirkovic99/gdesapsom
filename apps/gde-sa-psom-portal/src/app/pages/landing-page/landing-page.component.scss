@@ -1,23 +1,41 @@
-.shape {
-    width: 300px;  // Adjust as needed
-    height: 300px;
-    background-color: #44cd88;  // Match the image color
-    border-top-left-radius: 15%;
-    border-bottom-left-radius: 100%;
-    border-top-right-radius: 15%;
-    border-bottom-right-radius:  12%;
-  
-    img{
-        position: relative;  /* Position image inside the container */
-  top: 10px;  /* Adjust the position */
-  left: 10px;  /* Adjust the position */
-  width: 100%;  /* Make the image fill the div */
-  height: 100%;  /* Make the image fill the div */
-  object-fit: cover;  /* Ensures the image fills the div without distortion */
-  z-index: 1;  /* Bring the image to the front */  
-  width: 200px;
-  height: 200px;
+
+.landing-page-wrapper{
+    @apply grid  grid-cols-2 w-full p-12;
+    .hero-container{
+       @apply grid gap-3 ;
+        .hero__title{
+            @apply  w-full flex items-center ;
+            h1{
+                @apply flex text-6xl font-bold ;
+            }
+        }
+        .hero__description{
+            @apply text-xl  ;
+        }
     }
+
+    .image-wrapper{
+        @apply w-3/5  grid place-content-center gap-8;
+    }
+    .shape {
+      @apply w-72 h-72 bg-primary_green;
+      border-top-left-radius: 15%;
+      border-bottom-left-radius: 100%;
+      border-top-right-radius: 15%;
+      border-bottom-right-radius: 12%;
     
-  }
-  
+      img {
+        @apply relative top-0 left-0 w-full h-full object-contain;  }
+    }
+    .shape-reverse {
+        @apply w-72 h-72 bg-primary_green relative right-28;
+        border-top-left-radius: 15%;
+        border-bottom-left-radius: 12%;
+        border-top-right-radius: 15%;
+        border-bottom-right-radius: 100%;
+      
+        img {
+          @apply relative top-0 left-0 w-full h-full object-cover;  }
+      }
+      
+}

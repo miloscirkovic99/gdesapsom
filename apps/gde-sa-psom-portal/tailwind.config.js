@@ -1,5 +1,6 @@
 // Import the required types
 import { Config } from 'tailwindcss';
+
 const twColors = require("tailwindcss/colors");
 const customColors = {
   primary: "#2d314d",
@@ -25,6 +26,8 @@ const customColors = {
   "warning-content": "#FFFFFF",
   error: "#E5667E",
   "error-content": "#FFFFFF",
+  primary_green:"#44cd88",
+  primary_gray:"#404040"
 };
 // Import DaisyUI
 import daisyui from 'daisyui';
@@ -41,7 +44,7 @@ export default Config={
   plugins: [daisyui],
   theme: {
     extend: {
-      colors:[customColors]
+      colors: { ...customColors }, // Correct way to extend colors
     },
   },
   // DaisyUI config
