@@ -1,52 +1,72 @@
 .landing-page-wrapper {
-    @apply flex items-start w-full p-12 relative;
-    
-    .hero-container {
-      @apply grid gap-12;
-      
-      .hero__title {
-        @apply w-full;
-        
-        h1 {
-          @apply text-5xl font-bold flex items-center gap-4;
-        }
-      }
-      
-      .hero__description {
-        @apply text-xl ;
+  @apply flex items-start w-full p-12 relative;
+
+  .hero-container {
+    @apply grid gap-12;
+
+    .hero__title {
+      @apply w-full;
+
+      h1 {
+        @apply text-5xl font-bold flex items-center gap-4;
       }
     }
-  
-    .image-wrapper {
-      @apply grid w-1/2  gap-8 ;
-      .shape {
-        @apply w-72 h-72  bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%];
-    
-        img {
-          @apply relative top-0 left-0 w-full h-full object-contain;
-        }
-      }
-    
-      .shape-reverse {
-        @apply w-72 h-72 bg-primary_green relative -left-24 rounded-tl-[15%] rounded-bl-[12%] rounded-tr-[15%] rounded-br-[100%];
-    
-        img {
-          @apply relative top-0 left-0 w-full h-full object-cover;
-        }
-      }
-    }
- 
-    .hero__statistics{
-        @apply flex gap-16;
-        .hero__statistics_wrapper{
-            @apply grid;
-            p{
-                @apply text-3xl font-bold;
-            }
-            span{
-                @apply text-xl;
-            }
-        }
+
+    .hero__description {
+      @apply flex gap-6 text-xl;
     }
   }
-  
+
+  .image-wrapper {
+    @apply grid w-1/2  gap-8;
+    .shape {
+      @apply w-72 h-72  bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%];
+
+      img {
+        @apply relative top-0 left-0 w-full h-full object-contain;
+      }
+    }
+
+    .shape-reverse {
+      @apply w-72 h-72 bg-primary_green relative -left-24 rounded-tl-[15%] rounded-bl-[12%] rounded-tr-[15%] rounded-br-[100%];
+
+      img {
+        @apply relative top-0 left-0 w-full h-full object-cover;
+      }
+    }
+  }
+
+  .hero__statistics {
+    @apply flex gap-16;
+    .hero__statistics_wrapper {
+      @apply grid;
+      p {
+        @apply text-3xl font-bold;
+      }
+      span {
+        @apply text-xl;
+      }
+    }
+  }
+  .text-button-wrapper {
+    @apply grid w-1/2 gap-4;
+  }
+}
+@media only screen and (max-width: 640px) {
+  // Your styles for screens 640px and larger
+  .hero__title {
+    @apply w-full;
+
+    h1 {
+      @apply text-2xl #{!important};
+      ;
+    }
+  }
+  .shape {
+    @apply hidden;
+  }
+  .text-button-wrapper {
+    @apply w-auto #{!important};
+    ;
+  }
+}

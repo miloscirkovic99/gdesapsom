@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-pet-accommodation-facilities',
   imports: [CommonModule],
-  templateUrl: './pet-accommodation-facilities.component.html',
-  styleUrl: './pet-accommodation-facilities.component.scss',
+  templateUrl: './pet-spots-facilities.component.html',
+  styleUrl: './pet-spots-facilities.component.scss',
 })
 export class PetAccommodationFacilitiesComponent {}
