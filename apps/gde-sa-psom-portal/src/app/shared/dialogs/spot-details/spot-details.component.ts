@@ -59,6 +59,8 @@ constructor(){
 
   // Initialize Leaflet map
   private initializeMap(): void {
+   
+
     this.map = L.map('map', {
       center: [51.505, -0.09], // Initial center (can be anything, will update later)
       zoom: 13,
@@ -82,8 +84,24 @@ constructor(){
           
           if (this.map) {
             this.map.setView([lat, lon], 80);  // Center the map on the address
-            L.marker([lat, lon]).addTo(this.map)  // Add a marker
-              .bindPopup(`<b>Address:</b> ${address} <br> <b>Velicina:</b> ${this.data.sta_ime}`,)
+
+           // Create custom icon class
+           const LeafIcon = new L.Icon({
+            iconUrl: 'assets/small.png', // Path to the shadow image
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [55, 85],                   // Size of the icon
+              shadowSize: [50, 64],                 // Size of the shadow
+              iconAnchor: [22, 94],                 // Position of the icon anchor (where the marker points to)
+              shadowAnchor: [4, 62],                // Position of the shadow anchor
+              popupAnchor: [-3, -76]                // Popup position relative to the icon
+            
+          });
+
+          // Create an instance of the custom icon with the provided iconUrl
+
+
+            L.marker([lat, lon],{ icon: LeafIcon }).addTo(this.map)  // Add a marker
+              .bindPopup(`<b>Address:</b> ${address} <br> <b>Velicina:</b> ${this.data.sta_ime} <br> <b>Velicina:</b> ${this.data.bas_naziv} `,)
               .openPopup();
           }
         } else {

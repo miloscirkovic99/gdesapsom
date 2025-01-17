@@ -2,6 +2,9 @@
   .mat-mdc-dialog-title{
     @apply text-2xl font-bold;
   }
+  .mat-mdc-dialog-surface {
+    @apply shadow-xl bg-slate-400  #{!important};;
+  }
 }
 .carousel-image{
     @apply w-full h-60 rounded-lg;

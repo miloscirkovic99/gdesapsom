@@ -22,10 +22,11 @@ export class DialogService {
       disableClose: true,
       enterAnimationDuration: 350,
       exitAnimationDuration: 300,
-      minWidth: '45rem',
-      maxWidth:'65rem',
+      minWidth: '40rem',
+      maxWidth:'55rem',
       backdropClass: 'dialogBackdropBackground',
       data: data,
+
     };
 
     this.dialogRef = this.dialog.open(component, {
