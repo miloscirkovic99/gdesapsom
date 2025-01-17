@@ -1,10 +1,11 @@
 import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideTransloco } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
+import { ApiPrefixInterceptor } from './shared/interceptors/api.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,5 +23,12 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader
-    })]
+    }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiPrefixInterceptor,
+      multi: true,
+    },
+  
+  ]
 };

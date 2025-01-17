@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { withStorageSync } from '@angular-architects/ngrx-toolkit';
+import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
 
 // Define the initial state type
 type SpotsState = {
@@ -47,7 +48,7 @@ export const SpotsStore = signalStore(
         const limit=store.limit()
         const offset=store.offset()
         http
-          .post<any>('https://gdesapsom.com/api/v2/pet-friendly-spots/all', { limit, offset })
+          .post<any>(`pet-friendly-spots/paginated`, { limit, offset })
           .subscribe((response) => {
             patchState(store, (state) => ({
               
