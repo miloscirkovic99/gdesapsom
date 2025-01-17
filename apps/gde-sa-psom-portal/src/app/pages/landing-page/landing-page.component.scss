@@ -1,5 +1,5 @@
 .landing-page-wrapper {
-  @apply flex items-start w-full p-12 relative;
+  @apply w-full p-12;
 
   .hero-container {
     @apply grid gap-12;
@@ -50,6 +50,14 @@
   }
   .text-button-wrapper {
     @apply grid w-1/2 gap-4;
+  }
+  .main-section{
+    .main-header{
+      @apply flex items-center justify-between;
+    }
+  }
+  .how-works-container{
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
   }
 }
 @media only screen and (max-width: 640px) {

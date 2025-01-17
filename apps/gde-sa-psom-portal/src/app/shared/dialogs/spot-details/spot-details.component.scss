@@ -1,0 +1,8 @@
+:host ::ng-deep{
+  .mat-mdc-dialog-title{
+    @apply text-2xl font-bold;
+  }
+}
+.carousel-image{
+    @apply w-full h-60 rounded-lg;
+}

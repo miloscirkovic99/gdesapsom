@@ -21,6 +21,8 @@ type SpotsState = {
   limit: number;
   offset: number;
   isLoading: boolean;
+  random:any;
+  petParks:any;
 };
 
 // Create the signal state
@@ -30,6 +32,8 @@ const initialSpotsState = signalState<SpotsState>({
   limit: 10,
   offset: 0,
   isLoading: false,
+  random:[],
+  petParks:[]
 });
 
 // Create the SignalStore with `withStorageSync`
@@ -61,11 +65,20 @@ export const SpotsStore = signalStore(
             
           });
       },
+      randomSpots(){
+        http.get<any>('pet-friendly-spots/random').subscribe((response)=>{
+          patchState(store, (state) => ({
+            isLoading: false,
+            random:[...state.random,...response.randomSpots]
+          }));
+        })
+      }
     };
   }),
   withHooks({
     onInit(store) {
-    store.loadMore()
+    store.loadMore();
+    store.randomSpots()
     },
     onDestroy(store) {
       console.log('SpotsStore destroyed', store.spotsList());

@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideTransloco } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
 import { ApiPrefixInterceptor } from './shared/interceptors/api.interceptor';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideClientHydration(),
     provideHttpClient(),
+    importProvidersFrom(BrowserAnimationsModule),
     provideTransloco({
       config: {
         availableLangs: ['en', 'rs'],

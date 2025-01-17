@@ -33,23 +33,8 @@ export class AppComponent {
     //   startEvent:'scroll'
     // });
     // AOS.refresh()
-    this.loadMore();
   }
-  loadMore() {
-    this.isLoading = true;
-    const body = {
-      limit: this.limit,
-      offset: this.offset,
-    };
-    this.http
-      .post<any>(`https://gdesapsom.com/api/v2/pet-friendly-spots/all`,body)
-      .subscribe((response) => {
-        this.spotsList = [...this.spotsList, ...response.spotsList]; // Append new results
-        this.totalResults = response.totalResults; // Update total count
-        this.offset = this.spotsList.length; // Update offset for next load
-        this.isLoading = false;
-      });
-  }
+
   switchLanguage(language: string) {
     this.languageService.switchLanguage(language);
   }

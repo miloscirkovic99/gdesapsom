@@ -5,56 +5,61 @@
 >
   <div
     class="hero-container"
-    data-aos="fade-right"
-    data-aos-offset="300"
-    data-aos-easing="ease-in-sine"
-    data-aos-duration="1700"
-
+ 
   >
     <div class="hero__title">
       <h1 class="flex items-center">
-        <span class="text-primary_green ">Gde sa psom? - </span>
-         Mesto gde su vaši ljubimci dobrodošli!
+        <span class="text-primary_green">Gde sa psom? - </span>
+        Mesto gde su vaši ljubimci dobrodošli!
       </h1>
     </div>
     <div class="hero__description">
       <div class="text-button-wrapper">
-      <p>
-        Da li ste se ikada zapitali gde možete otići sa svojim psom bez brige?
-        Mi smo tu da vam olakšamo! Gde sa psom je platforma nastala iz ljubavi
-        prema ljubimcima i želje da svako uživa u njihovom društvu - bilo u
-        restoranu, kafiću ili hotelu.
-      </p>
-      <button
-      class="btn btn_primary"
-    >
-      Explore pet-friendly spots with ease
-    </button>
-  </div>
-      <div  class="image-wrapper ">
+        <p>
+          Da li ste se ikada zapitali gde možete otići sa svojim psom bez brige?
+          Mi smo tu da vam olakšamo! Gde sa psom je platforma nastala iz ljubavi
+          prema ljubimcima i želje da svako uživa u njihovom društvu - bilo u
+          restoranu, kafiću ili hotelu.
+        </p>
+        <button class="btn btn_primary">
+          Explore pet-friendly spots with ease
+        </button>
+      </div>
+      <div class="image-wrapper">
         <div class="shape">
-          <img data-aos="fade-down"    data-aos-duration="1700" src="assets/dog.png" alt="Dog illustration" />
+          <img
+            data-aos="fade-down"
+            data-aos-duration="1700"
+            src="assets/dog.png"
+            alt="Dog illustration"
+          />
         </div>
         <!-- <div class="shape-reverse">
           <img src="assets/cat.png" alt="Cat illustration" />
         </div> -->
       </div>
     </div>
-    
+
     <div class="hero__statistics">
       <div class="hero__statistics_wrapper">
-      <p>299K+</p>
-      <span>Spots</span>
-    </div>
+        <p>299K+</p>
+        <span>Spots</span>
+      </div>
 
-    <div class="hero__statistics_wrapper">
-      <p>20K+</p>
-      <span>Parks</span>
-    </div>
-
-   
+      <div class="hero__statistics_wrapper">
+        <p>20K+</p>
+        <span>Parks</span>
+      </div>
     </div>
   </div>
+  <div class="how-works-container">
 
+  </div>
+  <main class="main-section">
+    <div class="main-header">
+      <p class="text-2xl">Spots</p>
+      <button class="btn btn_primary">See all</button>
+    </div>
+    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
+  </main>
 </div>
-<app-card></app-card>
