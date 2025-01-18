@@ -89,7 +89,7 @@ constructor(){
            const LeafIcon = new L.Icon({
             iconUrl: 'assets/small.png', // Path to the shadow image
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-              iconSize: [55, 85],                   // Size of the icon
+              iconSize: [40,60],                   // Size of the icon
               shadowSize: [50, 64],                 // Size of the shadow
               iconAnchor: [22, 94],                 // Position of the icon anchor (where the marker points to)
               shadowAnchor: [4, 62],                // Position of the shadow anchor
