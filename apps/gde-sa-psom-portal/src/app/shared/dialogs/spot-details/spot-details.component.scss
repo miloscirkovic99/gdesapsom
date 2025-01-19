@@ -1,11 +1,22 @@
-:host ::ng-deep{
-  .mat-mdc-dialog-title{
+:host ::ng-deep {
+  .mat-mdc-dialog-title {
     @apply text-2xl font-bold;
   }
-  .mat-mdc-dialog-surface {
-    @apply shadow-xl bg-slate-400  #{!important};;
+
+  .mdc-dialog--open .mat-mdc-dialog-inner-container {
+    
+    @apply m-3;
   }
-}
-.carousel-image{
+  .mat-mdc-dialog-content{
+    @apply grid gap-4;
+  }
+  .carousel-image {
     @apply w-full h-60 rounded-lg;
+  }
+  .spot-details-containe{
+    @apply grid gap-2;
+    p{
+      @apply text-2xl font-medium;
+    }
+  }
 }

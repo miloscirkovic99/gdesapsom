@@ -1,5 +1,8 @@
-<h1 mat-dialog-title>{{data?.iuo_ime}} - {{data?.grd_ime}}</h1>
-<mat-dialog-content class="mat-typography">
+<h1 mat-dialog-title>Ime: {{data?.iuo_ime}} - {{data?.grd_ime}}</h1>
+<mat-dialog-content>
+  <div class="spot-details-container">
+    <p >Images:</p>
+
     <div class="carousel w-full">
         <div id="slide1" class="carousel-item relative w-full" [ngClass]="{'active': currentSlide === 1}">
           <img [src]="data?.iuo_slika_base64" class="carousel-image" />
@@ -17,12 +20,14 @@
           </div>
         </div>
       </div>
-      
+  </div>
 
-
-      <div id="map" style="height: 300px"></div>
+      <div class="spot-details-container grid gap-2">
+        <p >Location:</p>
+        <div id="map" style="height: 300px"></div>
+      </div>
 
 </mat-dialog-content>
 <mat-dialog-actions >
-  <button mat-button mat-dialog-close>Close</button>
+  <button class="btn btn_primary" (click)="onNoClick()">Close</button>
 </mat-dialog-actions>

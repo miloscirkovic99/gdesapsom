@@ -25,7 +25,6 @@ import 'leaflet-control-geocoder'; // Import geocoder control if using
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     MatButtonModule
   ],
   templateUrl: './spot-details.component.html',
@@ -101,7 +100,7 @@ constructor(){
 
 
             L.marker([lat, lon],{ icon: LeafIcon }).addTo(this.map)  // Add a marker
-              .bindPopup(`<b>Address:</b> ${address} <br> <b>Velicina:</b> ${this.data.sta_ime} <br> <b>Velicina:</b> ${this.data.bas_naziv} `,)
+              .bindPopup(`<b>Adresa:</b> ${address} <br> <b>Velicina:</b> ${this.data.sta_ime} <br> <b>Basta:</b> ${this.data.bas_naziv} `,)
               .openPopup();
           }
         } else {

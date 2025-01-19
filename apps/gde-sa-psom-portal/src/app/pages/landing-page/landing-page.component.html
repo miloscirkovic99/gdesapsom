@@ -1,21 +1,42 @@
 <div
   class="landing-page-wrapper"
   data-aos="fade-right"
+  data-aos-easing="linear"
   data-aos-duration="2000"
 >
-  <div
-    class="hero-container"
- 
-  >
-    <div class="hero__title">
-      <h1 class="flex items-center">
-        <span class="text-primary_green">Gde sa psom? - </span>
-        Mesto gde su vaši ljubimci dobrodošli!
-      </h1>
-    </div>
-    <div class="hero__description">
-      <div class="text-button-wrapper">
-        <p>
+
+<!-- Hero section  -->
+
+
+  <div class="hero min-h-[50vh]">
+    <div
+      class="hero-content max-w-full flex-col lg:flex-row-reverse justify-evenly"
+    >
+      <div class="image-wrapper">
+        <div class="shape">
+          <img
+            data-aos="fade-down"
+            data-aos-duration="1700"
+            src="assets/dog.png"
+            alt="Dog illustration"
+            class="max-w-sm rounded-lg"
+          />
+        </div>
+        <div class="shape-reverse">
+          <img
+            data-aos="fade-down"
+            data-aos-duration="1700"
+            src="assets/cat.png"
+            alt="Cat illustration"
+            class="max-w-sm rounded-lg"
+          />
+        </div>
+      </div>
+      <div>
+        <h1 class="text-5xl max-sm:text-3xl font-bold">
+          Gde sa psom? - Mesto gde su vaši ljubimci dobrodošli!
+        </h1>
+        <p class="py-6 w-1/2 text-xl font-semibold max-sm:w-full">
           Da li ste se ikada zapitali gde možete otići sa svojim psom bez brige?
           Mi smo tu da vam olakšamo! Gde sa psom je platforma nastala iz ljubavi
           prema ljubimcima i želje da svako uživa u njihovom društvu - bilo u
@@ -25,41 +46,58 @@
           Explore pet-friendly spots with ease
         </button>
       </div>
-      <div class="image-wrapper">
-        <div class="shape">
-          <img
-            data-aos="fade-down"
-            data-aos-duration="1700"
-            src="assets/dog.png"
-            alt="Dog illustration"
-          />
-        </div>
-        <!-- <div class="shape-reverse">
-          <img src="assets/cat.png" alt="Cat illustration" />
-        </div> -->
-      </div>
-    </div>
-
-    <div class="hero__statistics">
-      <div class="hero__statistics_wrapper">
-        <p>299K+</p>
-        <span>Spots</span>
-      </div>
-
-      <div class="hero__statistics_wrapper">
-        <p>20K+</p>
-        <span>Parks</span>
-      </div>
     </div>
   </div>
+
+
+  <!-- How Works -->
   <div class="how-works-container">
+    <h2 class="text-5xl font-bold text-center max-sm:text-3xl">
+      Kako funkcioniše?
+    </h2>
+    <div class="how-works-wrapper">
+      @for (item of howItWorks; track $index) {
 
+      <!-- Item 1 -->
+      <div
+        class="how-works-item"
+        data-aos="fade-down"
+        [attr.data-aos-duration]="item.duration"
+        data-aos-easing="linear"
+      >
+        <div class="how-works-item_number">{{ item.id }}</div>
+        <h3 class="how-works-item_title">
+          {{ item.title }}
+        </h3>
+      </div>
+      }
+    </div>
   </div>
+
+  <!-- Main section -->
+
+
   <main class="main-section">
     <div class="main-header">
-      <p class="text-2xl">Spots</p>
-      <button class="btn btn_primary">See all</button>
+      <button class="btn btn_primary">See all pet spots</button>
     </div>
-    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
+    <div class="main-description">
+      <h2 class="text-5xl font-bold max-sm:text-3xl">
+        Sa lakoćom pronađite mesta pogodna za kućne ljubimce!
+      </h2>
+      <p>
+        Gde sa psom platforma je vaš krajnji resurs otkrivanje destinacija za
+        kućne ljubimce. Bilo da tražite savršeni park ili mesta pogodna za kućne
+        ljubimce, povezujemo Vas sa mestima koja obuhvataju vaše krznene
+        prijatelje. Naša platforma nudi detaljne preglede, interaktivne mape i
+        živopisne centar zajednice gde ljubitelji kućnih ljubimaca mogu
+        razmeniti savete i dirljive priče. Planirajte svoju sledeću avanturu sa
+        poverenjem, znajući da ste Vi i vaš ljubimac uvek dobrodošli!
+      </p>
+    </div>
+    <app-card
+      [data]="spotsStore.random()"
+      [isLoading]="spotsStore.isLoading()"
+    ></app-card>
   </main>
 </div>

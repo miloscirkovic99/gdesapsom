@@ -12,7 +12,25 @@ import { SpotsStore } from '../../shared/store/spots.store';
 })
 export class LandingPageComponent {
     spotsStore = inject(SpotsStore);
-  
+    howItWorks=[
+      {
+        id:1,
+        title:'Besplatno pretražujete pet-friendly lokacije',
+        duration:1000
+      },
+      {
+        id:2,
+        title:'Besplatno dodajete nove objekte i pomažete zajednici',
+        duration:2000
+
+      },
+      {
+        id:3,
+        title:"Uvek znate gde je vaš ljubimac zaista dobrodošao!",
+        duration:2500
+
+      }
+    ]
   ngOnInit(){
     AOS.init();
     AOS.refresh()

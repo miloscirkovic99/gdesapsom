@@ -1,36 +1,23 @@
 .card-container{
-@apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-12 pt-12 ;
-    .card-item{
-    @apply border-solid border-gray-300 border-[1px] rounded-xl p-8 ;
-    .card-item-wrapper{
-        @apply grid ;
-        .spot-image{
-            border-bottom-left-radius: 25%;
-            border-top-right-radius: 25%;
+@apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-12 ;
+  
+.card{
+@apply bg-base-100  w-full h-72 shadow-xl;
 
-            @apply h-36 w-36 ;
-        }
-        .data{
-            @apply grid gap-2;
-            p{
-                @apply text-2xl font-semibold;
-            }
-            span{
-                @apply flex items-center gap-2;
-            }
-            .dog-allowed{
-                @apply bg-base-200 p-1 rounded-xl;
-            }
-        }
-        .details{
-            @apply flex gap-8;
-        }
-        .show-more{
-            @apply w-full flex justify-end cursor-pointer;
-            :hover{
-                @apply scale-110;
-            }
+    .card-title{
+        @apply text-2xl font-semibold;
+    } 
+    .card-body{
+        
+        span{
+            @apply text-xl flex items-center gap-2; 
         }
     }
+}
+.show-more{
+    @apply w-full flex justify-end cursor-pointer;
+    :hover{
+        @apply scale-110;
     }
+}
 }
