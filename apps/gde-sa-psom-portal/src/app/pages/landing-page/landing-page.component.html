@@ -4,11 +4,9 @@
   data-aos-easing="linear"
   data-aos-duration="2000"
 >
+  <!-- Hero section  -->
 
-<!-- Hero section  -->
-
-
-  <div class="hero min-h-[50vh]">
+  <div class="hero min-h-[45vh]">
     <div
       class="hero-content max-w-full flex-col lg:flex-row-reverse justify-evenly"
     >
@@ -42,13 +40,15 @@
           prema ljubimcima i želje da svako uživa u njihovom društvu - bilo u
           restoranu, kafiću ili hotelu.
         </p>
-        <button class="btn btn_primary">
+        <button
+          (click)="navigateTo(routeConstants.allSpots)"
+          class="btn btn_primary"
+        >
           Explore pet-friendly spots with ease
         </button>
       </div>
     </div>
   </div>
-
 
   <!-- How Works -->
   <div class="how-works-container">
@@ -76,10 +76,14 @@
 
   <!-- Main section -->
 
-
   <main class="main-section">
     <div class="main-header">
-      <button class="btn btn_primary">See all pet spots</button>
+      <button
+        (click)="navigateTo(routeConstants.allSpots)"
+        class="btn btn_primary"
+      >
+        See all pet spots
+      </button>
     </div>
     <div class="main-description">
       <h2 class="text-5xl font-bold max-sm:text-3xl">
@@ -100,4 +104,43 @@
       [isLoading]="spotsStore.isLoading()"
     ></app-card>
   </main>
+
+  <!-- Contact section -->
+  <section class="contact">
+    <h2>Contant Us</h2>
+  </section>
+
+  <div class="bg-white rounded-xl py-14 sm:py-14">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <h2 class="text-center text-3xl font-semibold">Our partners</h2>
+      <div
+        class="mx-auto mt-10 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-1 sm:gap-x-10 lg:max-w-none lg:grid-cols-3 lg:mx-0"
+      >
+        <a href="https://eberza.rs/sr" target="_blank" rel="noopener noreferrer"
+          ><img
+            class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+            src="assets/eberza.png"
+            alt="Transistor"
+            width="158"
+            height="62"
+        /></a>
+        <a href="https://matice.rs/" target="_blank" rel="noopener noreferrer"
+          ><img
+            class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+            src="assets/matice.png"
+            alt="Reform"
+            width="158"
+            height="62"
+        /></a>
+        <a href="https://beeqos.net/" target="_blank" rel="noopener noreferrer">
+          <img
+            class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+            src="assets/beeqos.png"
+            alt="Tuple"
+            width="158"
+            height="62"
+        /></a>
+      </div>
+    </div>
+  </div>
 </div>

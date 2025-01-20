@@ -1,1 +1,32 @@
-<p>pet-accommodation-facilities works!</p>
+<div class="pet-spots-container">
+    <div class="filter-wrapper">
+        <label class="input input-bordered flex items-center gap-2">
+            <input type="text" class="grow" placeholder="Search by name" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              class="h-4 w-4 opacity-70">
+              <path
+                fill-rule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clip-rule="evenodd" />
+            </svg>
+          </label>
+          Or select filter
+
+          <mat-form-field>
+            <mat-label>Favorite animal</mat-label>
+            <mat-select [formControl]="animalControl" required multiple >
+              <mat-option>--</mat-option>
+              @for (animal of animals; track animal) {
+                <mat-option class="bg-red-300" [value]="animal">{{animal.name}}</mat-option>
+              }
+            </mat-select>
+            @if (animalControl.hasError('required')) {
+              <mat-error>Please choose an animal</mat-error>
+            }
+            <mat-hint>{{animalControl.value?.sound}}</mat-hint>
+          </mat-form-field>
+    </div>
+</div>

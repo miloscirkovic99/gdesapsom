@@ -23,7 +23,7 @@ export class DialogService {
       enterAnimationDuration: 350,
       exitAnimationDuration: 300,
       // minWidth: '40rem',
-      maxWidth:'50rem',
+      maxWidth:'45rem',
       backdropClass: 'dialogBackdropBackground',
       data: data,
 

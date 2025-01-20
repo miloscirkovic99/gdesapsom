@@ -13,10 +13,19 @@
   .carousel-image {
     @apply w-full h-60 rounded-lg;
   }
-  .spot-details-containe{
-    @apply grid gap-2;
+  .spot-details-container{
+    @apply grid gap-2 bg-slate-200 p-4 rounded-lg;
     p{
-      @apply text-2xl font-medium;
+      @apply text-xl font-medium;
+    }
+    .aditional-wrapper{
+      @apply grid gap-3 mb-4 ;
+      p{
+        @apply text-lg font-medium;
+        a{
+          @apply text-blue-600 link-hover link;
+        }
+      }
     }
   }
 }

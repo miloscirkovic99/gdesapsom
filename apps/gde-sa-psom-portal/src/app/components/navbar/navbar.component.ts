@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { RouteConstants } from '../../shared/constants/route.constant';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,MatIconModule],
+  imports: [CommonModule,MatIconModule,RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 
@@ -12,6 +14,7 @@ import {MatIconModule} from '@angular/material/icon';
 export class NavbarComponent {
   menuOpen = false;
   public themeColor:string='dark';
+  routeConstants=RouteConstants
   ngOnInit(){
     this.initializeTheme()
   }

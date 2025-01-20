@@ -1,8 +1,8 @@
 .card-container{
-@apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-12 ;
+@apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-12 ;
   
 .card{
-@apply bg-base-100  w-full h-72 shadow-xl;
+@apply bg-base-100 h-72 w-full  shadow-xl max-sm:h-full;
 
     .card-title{
         @apply text-2xl font-semibold;

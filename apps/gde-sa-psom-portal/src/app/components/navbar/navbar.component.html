@@ -5,18 +5,16 @@
 
   <!-- Center Navigation Links -->
   <div class="navbar-center hidden md:flex space-x-6">
-    <a routerLink="/"> Home </a>
-    <a routerLink="/about"> About us </a>
-    <a routerLink="/contact"> Find pet-friendly spots </a>
+    <a routerLink=""> Home </a>
+    <a [routerLink]="routeConstants.about"> About us </a>
+    <a [routerLink]="routeConstants.allSpots"> Find pet-friendly spots </a>
 
-    <a routerLink="/contact"> Find pet-friendly parks </a>
+    <a [routerLink]="routeConstants.petParks"> Find pet-friendly parks </a>
   </div>
 
   <!-- Right Buttons -->
   <div class="navbar-right flex items-center space-x-4">
-    <button
-      class="btn  hidden md:block btn_primary"
-    >
+    <button class="btn hidden md:block btn_primary">
       Add pet-friendly places
     </button>
     <button
@@ -86,7 +84,7 @@
           </a>
         </li>
         <li>
-          <a>
+          <a (click)="toggleTheme()">
             <label class="swap swap-rotate">
               <input
                 type="checkbox"
@@ -134,14 +132,14 @@
         <a routerLink="/"> Home </a>
       </li>
       <li>
-        <a routerLink="/about"> About us </a>
+        <a [routerLink]="routeConstants.about"> About us </a>
       </li>
       <li>
-        <a routerLink="/contact"> Find pet-friendly spots </a>
+        <a [routerLink]="routeConstants.allSpots"> Find pet-friendly spots </a>
       </li>
 
       <li>
-        <a routerLink="/contact"> Find pet-friendly parks </a>
+        <a [routerLink]="routeConstants.petParks"> Find pet-friendly parks </a>
       </li>
       <!-- Add Buttons to Mobile Menu -->
 

@@ -1,9 +1,9 @@
 .landing-page-wrapper {
-  @apply w-full p-12 grid gap-40;
+  @apply w-full p-12 grid gap-40 max-sm:gap-24;
   .image-wrapper {
     @apply grid w-1/2  gap-8 max-lg:flex max-lg:w-full max-lg:gap-8;
     .shape {
-      @apply w-72 h-72  bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%] max-sm:hidden;
+      @apply w-72 h-72  bg-primary_green relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%] max-sm:w-52 max-sm:h-52;
 
       img {
         @apply relative top-0 left-0 w-full h-full object-contain;
