@@ -20,17 +20,17 @@ export class LandingPageComponent {
     {
       id: 1,
       title: 'Besplatno pretražujete pet-friendly lokacije',
-      duration: 1000,
+      duration: 800,
     },
     {
       id: 2,
       title: 'Besplatno dodajete nove objekte i pomažete zajednici',
-      duration: 2000,
+      duration: 1000,
     },
     {
       id: 3,
       title: 'Uvek znate gde je vaš ljubimac zaista dobrodošao!',
-      duration: 2500,
+      duration: 1200,
     },
   ];
   

@@ -18,7 +18,7 @@ export class DialogService {
       this.dialogRef.close();
     }
     const config = {
-      autoFocus: true,
+      autoFocus: false,
       disableClose: true,
       enterAnimationDuration: 350,
       exitAnimationDuration: 300,

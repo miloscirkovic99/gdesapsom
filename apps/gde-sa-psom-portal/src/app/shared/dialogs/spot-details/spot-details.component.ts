@@ -22,7 +22,6 @@ import 'leaflet-control-geocoder'; // Import geocoder control if using
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     MatButtonModule
