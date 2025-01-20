@@ -1,7 +1,6 @@
 <div
   class="landing-page-wrapper"
   data-aos="fade-right"
-  data-aos-easing="linear"
   data-aos-duration="2000"
 >
   <!-- Hero section  -->
@@ -46,8 +45,26 @@
         >
           Explore pet-friendly spots with ease
         </button>
+        <div class="py-24 sm:py-32">
+          <div class="max-w-7xl">
+            <dl class="grid grid-cols-1 gap-x-8 gap-y-16 text-center lg:grid-cols-3">
+              <div class=" flex max-w-xs flex-col gap-y-4 text-start">
+                <dt class="text-lg">Pet friendly spots</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">90+</dd>
+              </div>
+              <div class=" flex max-w-xs flex-col gap-y-4 text-start">
+                <dt class="text-lg ">Pet friendly parks</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">15+</dd>
+              </div>
+           
+            </dl>
+          </div>
+        </div>
+        
       </div>
+      
     </div>
+    
   </div>
 
   <!-- How Works -->
@@ -63,7 +80,6 @@
         class="how-works-item"
         data-aos="fade-down"
         [attr.data-aos-duration]="item.duration"
-        data-aos-easing="linear"
       >
         <div class="how-works-item_number">{{ item.id }}</div>
         <h3 class="how-works-item_title">
@@ -106,14 +122,18 @@
   </main>
 
   <!-- Contact section -->
-  <section class="contact">
+  <!-- <section class="contact">
     <h2>Contant Us</h2>
-  </section>
+  </section> -->
 
   <div class="bg-white rounded-xl py-14 sm:py-14">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <h2 class="text-center text-3xl font-semibold">Our partners</h2>
+      <h2 class="text-center text-4xl max-sm:text-2xl font-semibold">
+        Our partners
+      </h2>
       <div
+        data-aos="fade-right"
+        data-aos-duration="1200"
         class="mx-auto mt-10 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-1 sm:gap-x-10 lg:max-w-none lg:grid-cols-3 lg:mx-0"
       >
         <a href="https://eberza.rs/sr" target="_blank" rel="noopener noreferrer"

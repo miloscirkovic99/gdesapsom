@@ -22,10 +22,8 @@ export class CardComponent {
       
     })
   }
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    AOS.refreshHard()
+  ngAfterViewChecked() {
+    AOS.refresh(); // Trigger AOS refresh after DOM updates
   }
   openDialog(data:any){
     this.dialogService.openDialog(SpotDetailsComponent, data);

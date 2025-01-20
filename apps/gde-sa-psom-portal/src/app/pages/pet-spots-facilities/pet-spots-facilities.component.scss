@@ -1,5 +1,10 @@
-:host ::ng-deep{
-    .mat-mdc-select-panel{
-        @apply bg-white;
+
+.pet-spots-container{
+@apply p-12;
+    .filter-wrapper{
+        @apply grid gap-10 place-content-center place-items-center;
+        .select-wrapper{
+            @apply flex items-start gap-8 max-md:flex-col max-md:items-center;
+        }
     }
 }

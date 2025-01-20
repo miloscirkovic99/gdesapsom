@@ -31,7 +31,9 @@
         "styles": [
            "node_modules/leaflet/dist/leaflet.css",
           "apps/gde-sa-psom-portal/src/styles.scss",
-          "node_modules/aos/dist/aos.css"
+          "node_modules/aos/dist/aos.css",
+          "@angular/material/prebuilt-themes/azure-blue.css"
+
         ],
         "scripts": ["node_modules/aos/dist/aos.js"]
       },

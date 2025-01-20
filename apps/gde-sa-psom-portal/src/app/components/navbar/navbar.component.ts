@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -14,7 +14,10 @@ import { RouteConstants } from '../../shared/constants/route.constant';
 export class NavbarComponent {
   menuOpen = false;
   public themeColor:string='dark';
-  routeConstants=RouteConstants
+  routeConstants=RouteConstants;
+  @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
+  @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
+
   ngOnInit(){
     this.initializeTheme()
   }
@@ -39,6 +42,20 @@ export class NavbarComponent {
     document.body.classList.toggle('dark-theme', this.themeColor === 'dark');
     document.body.classList.toggle('light-theme', this.themeColor === 'light');
   }
+    // Listen for document click events to detect outside clicks
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+      if (this.menuOpen) {
+        const clickedInsideMenu = this.mobileMenu?.nativeElement.contains(event.target);
+        const clickedInsideButton = this.hamburgerBtn?.nativeElement.contains(event.target);
+  
+        // Close the menu if clicked outside both the menu and the hamburger button
+        if (!clickedInsideMenu && !clickedInsideButton) {
+          this.menuOpen = false;
+        }
+      }
+    }
+  
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }

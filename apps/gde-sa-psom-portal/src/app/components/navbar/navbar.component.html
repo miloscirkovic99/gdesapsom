@@ -18,6 +18,7 @@
       Add pet-friendly places
     </button>
     <button
+    #hamburgerBtn
       class="hamburger-btn md:hidden text-gray-700 hover:bg-primary_green"
       (click)="toggleMenu()"
     >
@@ -124,6 +125,7 @@
 
   <!-- Mobile Menu -->
   <div
+  #mobileMenu
     *ngIf="menuOpen"
     class="mobile-menu absolute inset-x-0 shadow-xl z-9999 p-4 md:hidden top-16 mx-1 rounded-md bg-0-neutral-content"
   >

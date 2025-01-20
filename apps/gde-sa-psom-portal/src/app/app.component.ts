@@ -30,7 +30,9 @@ export class AppComponent {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    AOS.init();
+    AOS.init({
+      easing: 'linear', // Customize easing
+    });
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
