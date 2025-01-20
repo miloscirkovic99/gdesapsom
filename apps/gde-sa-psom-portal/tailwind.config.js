@@ -57,7 +57,7 @@ export default Config={
     prefix: "",
     logs: true,
     themeRoot: ":root",
-    darkMode: ['selector', '[data-theme="dark"]']
+    darkMode: "class"
 
   
   },
