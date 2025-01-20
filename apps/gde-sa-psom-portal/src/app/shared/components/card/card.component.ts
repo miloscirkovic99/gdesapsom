@@ -16,12 +16,7 @@ export class CardComponent {
   isLoading=input();
   dialogService = inject(DialogService);
 
-  constructor(){
-    effect(()=>{
-      console.log(this.data(),this.isLoading());
-      
-    })
-  }
+
   ngAfterViewChecked() {
     AOS.refresh(); // Trigger AOS refresh after DOM updates
   }

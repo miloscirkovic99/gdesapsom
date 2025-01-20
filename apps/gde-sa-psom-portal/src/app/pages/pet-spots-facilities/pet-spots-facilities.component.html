@@ -1,7 +1,7 @@
 <div class="pet-spots-container">
   <div class="filter-wrapper">
     <label class="input input-bordered flex items-center gap-2 w-[300px]">
-      <input type="text" class="grow" placeholder="Search by name" />
+      <input type="text" [formControl]="search" class="grow" placeholder="Search by name" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
@@ -22,18 +22,16 @@
         <mat-form-field>
           <mat-label>Opstina</mat-label>
           <mat-select formControlName="ops_id" multiple>
-            <mat-option [value]="null">--</mat-option>
-            <mat-option
-              *ngFor="let opstina of opstine; "
-              [value]="opstina"
-            >
-              {{ opstina.name }}
+            <mat-option [value]="[]">--</mat-option>
+            @for (item of opstine(); track $index) {
+            <mat-option [value]="item?.id">
+              {{ item.ime }}
             </mat-option>
+            }
           </mat-select>
           <mat-error *ngIf="form.get('ops_id')?.hasError('required')">
-            Please choose at least one opstina
+            Please choose at least one township
           </mat-error>
-          <mat-hint>{{ form.get('ops_id')?.value?.sound }}</mat-hint>
         </mat-form-field>
 
         <!-- Starost (Single Select) -->
@@ -49,9 +47,8 @@
             }
           </mat-select>
           <mat-error *ngIf="form.get('sta_id')?.hasError('required')">
-            Please choose a starost
+            Please choose a allowed type
           </mat-error>
-          <mat-hint>{{ form.get('sta_id')?.value?.sound }}</mat-hint>
         </mat-form-field>
 
         <!-- Tip objekta (Single Select) -->
@@ -59,16 +56,12 @@
           <mat-label>Tip objekta</mat-label>
           <mat-select formControlName="ugo_id">
             <mat-option [value]="null">--</mat-option>
-            @for (item of spotsStore.spotTypes(); track $index) {
+            @for (item of tipObjekta(); track $index) {
             <mat-option [value]="item.id">
               {{ item.ime }}
             </mat-option>
             }
           </mat-select>
-          <mat-error *ngIf="form.get('ugo_id')?.hasError('required')">
-            Please choose a tip objekta
-          </mat-error>
-          <mat-hint>{{ form.get('ugo_id')?.value?.sound }}</mat-hint>
         </mat-form-field>
       </form>
       <button class="btn btn_primary" (click)="onSubmit()">
@@ -88,6 +81,32 @@
           />
         </svg>
       </button>
+
+      <button
+        class="btn btn_primary"
+        [disabled]="
+          !form.get('sta_id')?.value &&
+          !form.get('ugo_id')?.value &&
+          !form.get('ops_id')?.value
+        "
+        (click)="clearFilters()"
+      >
+        Clear filters
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18 18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
     </div>
   </div>
   <div class="spots-container grid gap-8">
@@ -100,7 +119,7 @@
       [data]="spotsStore.spots()"
       [isLoading]="spotsStore.isLoading()"
     ></app-card>
-    @if(spotsStore.spotsList().length!=spotsStore.totalResult()){
+    @if(spotsStore.spots().length!=spotsStore.totalResult()){
     <button
       [disabled]="spotsStore.isLoading()"
       (click)="spotsStore.loadMore()"

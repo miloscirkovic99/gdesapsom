@@ -1,8 +1,11 @@
-:host ::ng-deep {
+:host  {
   .mat-mdc-dialog-title {
     @apply text-2xl font-bold;
   }
-
+  .mat-mdc-dialog-surface{
+    border-radius: 2px !important;
+    @apply rounded-md;
+  }
   .mdc-dialog--open .mat-mdc-dialog-inner-container {
     
     @apply m-3 bg-red-50;
@@ -14,7 +17,7 @@
     @apply w-full h-96 rounded-lg;
   }
   .spot-details-container{
-    @apply grid gap-2 bg-slate-200 p-4 rounded-lg;
+    @apply grid gap-2  p-4 rounded-lg;
     p{
       @apply text-xl font-medium;
     }
