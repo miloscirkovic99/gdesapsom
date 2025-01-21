@@ -1,6 +1,6 @@
 <div class="pet-spots-container">
   <div class="filter-wrapper">
-    <label class="input input-bordered flex items-center gap-2 w-[300px]">
+    <!-- <label class="input input-bordered flex items-center gap-2 w-[300px]">
       <input type="text" [formControl]="search" class="grow" placeholder="Search by name" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -15,14 +15,13 @@
         />
       </svg>
     </label>
-    Or select filter
+    Or select filter -->
     <div class="select-wrapper">
       <form [formGroup]="form" class="flex gap-8">
         <!-- Opstina (Multiple Select) -->
         <mat-form-field>
           <mat-label>Opstina</mat-label>
           <mat-select formControlName="ops_id" multiple>
-            <mat-option [value]="[]">--</mat-option>
             @for (item of opstine(); track $index) {
             <mat-option [value]="item?.id">
               {{ item.ime }}
@@ -122,7 +121,7 @@
     @if(spotsStore.spots().length!=spotsStore.totalResult()){
     <button
       [disabled]="spotsStore.isLoading()"
-      (click)="spotsStore.loadMore()"
+      (click)="onSubmit()"
       class="btn_primary w-full"
     >
       Load more

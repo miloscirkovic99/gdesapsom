@@ -5,6 +5,9 @@
         @apply grid gap-10 place-content-center place-items-center;
         .select-wrapper{
             @apply flex items-start gap-8 max-md:flex-col max-md:items-center;
+            form{
+                @apply max-md:flex-col;
+            }
         }
     }
 }

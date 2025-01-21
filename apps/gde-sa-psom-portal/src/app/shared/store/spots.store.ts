@@ -10,7 +10,7 @@ import {
   withComputed,
 } from '@ngrx/signals';
 import AOS from 'aos';
-import { debounceTime, switchMap, take } from 'rxjs';
+import { catchError, debounceTime, finalize, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 
 // Define the initial state type
 type SpotsState = {
@@ -19,17 +19,17 @@ type SpotsState = {
   limit: number;
   offset: number;
   isLoading: boolean;
-  random: any;
-  allowed: any;
-  spotTypes: any;
-  spotsSearchResult: any;
+  random: any[];
+  allowed: any[];
+  spotTypes: any[];
+  spotsSearchResult: any[];
 };
 
 // Create the signal state
 const initialSpotsState = signalState<SpotsState>({
   spotsList: [],
   totalResult: 0,
-  limit: 10,
+  limit: 5,
   offset: 0,
   isLoading: false,
   random: [],
@@ -37,26 +37,53 @@ const initialSpotsState = signalState<SpotsState>({
   spotTypes: [],
   spotsSearchResult: [],
 });
-
+const destroyed$ = new Subject<void>();
 // Create the SignalStore with `withStorageSync`
 export const SpotsStore = signalStore(
   { providedIn: 'root' },
-
   withState(initialSpotsState),
   withComputed((store) => ({
     spots: computed(() => store.spotsList()),
   })),
   withMethods((store) => {
+  
     const http = inject(HttpClient);
 
-    return {
-      loadMore() {
-        patchState(store, { isLoading: true });
+    const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
+    const handleError = (error: any) => {
+      console.error('Error loading data:', error);
+      patchState(store, { isLoading: false });
+    };
+
+    const updateStateOnSuccess = (response: any, customUpdate?: (state: SpotsState) => Partial<SpotsState>) => {
+      patchState(store, (state) => ({
+        ...customUpdate ? customUpdate(state) : { ...state, isLoading: false },
+        spotsList: response.spotsList,
+        totalResult: response.totalResults,
+      }));
+      refreshAOS();
+    };
+
+    return {
+      resetState(store: any) {
+        patchState(store, { offset: 0, spotsList: [] });
+      },
+
+       updateSpotsList(store: any, response: any): void {
+        patchState(store, (state:any) => ({
+          spotsList: [...state.spotsList, ...response.spotsList],
+          totalResult: response?.totalResults,
+          offset: state.spotsList.length + response.spotsList.length,
+        }));
+      },
+      loadMore(resetOffset:boolean) {
+        patchState(store, { isLoading: true });
         const limit = store.limit();
-        const offset = store.offset();
-        http
-          .post<any>(`pet-friendly-spots/paginated`, { limit, offset })
+        const offset = resetOffset ? 0 : store.offset(); // Set offset to 0 on the first load, else use current offset
+          http
+          .post<any>('pet-friendly-spots/paginated', { limit, offset })
+          .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
               patchState(store, (state) => ({
@@ -65,70 +92,114 @@ export const SpotsStore = signalStore(
                 offset: state.spotsList.length + response.spotsList.length,
                 isLoading: false,
               }));
-              setTimeout(() => {
-                AOS.refresh(); // Refresh AOS for new elements
-              }, 500);
+              refreshAOS();
             },
-            error: (error) => {
-              console.error('Error loading data:', error);
-              patchState(store, { isLoading: false }); // Stop loading indicator
-            },
+            error: handleError,
           });
       },
-      searchByFilters(ops_id: any, ugo_id: any, sta_id: any) {
-        patchState(store, { isLoading: true });
-     
 
-         http
-           .post<any>(`pet-friendly-spots/search-query`, {
-             ops_id,
-             ugo_id,
-             sta_id,
-           })
-           .subscribe((response) => { 
-             patchState(store, (state) => ({
-               spotsList: response.spotsList,
-               totalResult: response.totalResults,
-               isLoading: false,
-             }));
-             setTimeout(() => {
-               AOS.refresh(); // Refresh AOS for new elements
-             }, 500);
-           });
-      },
-      searchByName(name:string){
+      searchByFilters(ops_id: any, ugo_id: any, sta_id: any,firstLoad:boolean) {
+        const limit = store.limit();
+        if (ops_id || ugo_id || sta_id ) {
+          this.resetState(store);
+        }
+        const offset = store.offset(); // Set offset to 0 on the first load, else use current offset
         patchState(store, { isLoading: true });
-        // .pipe(
-        //   debounceTime(300), // Add a debounce of 300ms
-        //   switchMap((name) =>
-        // http.put<any>('pet-friendly-spots/search-query',{name}).pipe(debounceTime(300),switchMap((name)=>))
+        http
+          .post<any>('pet-friendly-spots/search-query', { ops_id, ugo_id, sta_id,limit,offset })
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => updateStateOnSuccess(response),
+            error: handleError,
+          });
       },
+      searchByFiltersTest(ops_id?: any, ugo_id?: any, sta_id?: any, resetOffset: boolean = false) {
+        const limit = store.limit();
+      
+        if (resetOffset) {
+          patchState(store, { offset: 0, spotsList: [] });
+        }
+      
+        const offset = store.offset();
+        patchState(store, { isLoading: true });
+      
+        http
+          .post<any>('pet-friendly-spots/test', { ops_id, ugo_id, sta_id, offset, limit })
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => {
+              patchState(store, (state) => ({
+                spotsList: [...state.spotsList, ...response.spotsList],
+                totalResult: response?.totalResults,
+                offset: state.spotsList.length + response.spotsList.length,
+                isLoading: false,
+              }));
+              refreshAOS();
+            },
+            error: handleError,
+          });
+      },
+
+      searchByName(word: string) {
+        http
+          .put<any>('pet-friendly-spots/search-query', { word })
+          .pipe(
+            debounceTime(500),
+            switchMap((response) => of(response)),
+            catchError((error) => {
+              console.error('Error during HTTP request', error);
+              return of(null); // Prevents the observable from terminating
+            }),
+            takeUntil(destroyed$)
+          )
+          .subscribe({
+            next: (response) => {
+              if (response) {
+                updateStateOnSuccess(response);
+              }
+            },
+            error: handleError,
+          });
+      },
+
       randomSpots() {
-        http.get<any>('pet-friendly-spots/random').subscribe((response) => {
-          patchState(store, (state) => ({
-            isLoading: false,
-            random: [...state.random, ...response.randomSpots],
-          }));
-        });
+        http
+          .get<any>('pet-friendly-spots/random')
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => {
+              patchState(store, (state) => ({
+                random: [...state.random, ...response.randomSpots],
+              }));
+            },
+            error: handleError,
+          });
       },
-      allowedPetTypes() {
-        http.get<any>('allowed-pet-types').subscribe((response) => {
 
-          patchState(store, (state) => ({
-            isLoading: false,
-            allowed: response.allowed,
-          }));
-        });
+      allowedPetTypes() {
+        http
+          .get<any>('allowed-pet-types')
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => {
+              patchState(store, (state) => ({
+                allowed: response.allowed,
+              }));
+            },
+            error: handleError,
+          });
       },
     };
   }),
   withHooks({
     onInit(store) {
-      store.loadMore();
+      store.searchByFiltersTest();
       store.randomSpots();
       store.allowedPetTypes();
     },
     onDestroy(store) {
+      destroyed$.next(); // Ensures cleanup of ongoing HTTP requests
+      destroyed$.complete();
       console.log('SpotsStore destroyed', store.spotsList());
     },
   })
