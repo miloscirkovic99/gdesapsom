@@ -1,70 +1,77 @@
 <div class="pet-spots-container">
   <div class="filter-wrapper">
-    <!-- <label class="input input-bordered flex items-center gap-2 w-[300px]">
-      <input type="text" [formControl]="search" class="grow" placeholder="Search by name" />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        class="h-4 w-4 opacity-70"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </label>
-    Or select filter -->
     <div class="select-wrapper">
       <form [formGroup]="form" class="flex gap-8">
-        <!-- Opstina (Multiple Select) -->
         <mat-form-field>
-          <mat-label>Opstina</mat-label>
-          <mat-select formControlName="ops_id" multiple>
-            @for (item of opstine(); track $index) {
-            <mat-option [value]="item?.id">
-              {{ item.ime }}
+          <mat-select
+            formControlName="ops_id"
+            [placeholder]="'select_city' | transloco"
+            [multiple]="true"
+            #multiSelect
+          >
+            <mat-option>
+              <ngx-mat-select-search
+                [placeholderLabel]="'search' | transloco"
+                [formControl]="townshipMultiFilterCtrl"
+              >
+                <svg
+                  ngxMatSelectSearchClear
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                  />
+                </svg>
+                <span ngxMatSelectNoEntriesFound>
+                  {{ 'no_entries' | transloco }}
+                </span>
+              </ngx-mat-select-search>
+            </mat-option>
+            @for (township of filteredtownshipsMulti | async; track $index) {
+
+            <mat-option [value]="township?.id">
+              {{ township.ime }}
             </mat-option>
             }
           </mat-select>
-          <mat-error *ngIf="form.get('ops_id')?.hasError('required')">
-            Please choose at least one township
-          </mat-error>
         </mat-form-field>
-
         <!-- Starost (Single Select) -->
         <mat-form-field>
-          <mat-label>Starost</mat-label>
+          <mat-label>{{ 'dog_size' | transloco }}</mat-label>
           <mat-select formControlName="sta_id">
             <mat-option [value]="null">--</mat-option>
             @for (item of spotsStore.allowed(); track $index) {
 
             <mat-option [value]="item.id">
-              {{ item.ime }}
+              {{ descriptionToKeyMap[item.ime] | transloco }}
             </mat-option>
             }
           </mat-select>
-          <mat-error *ngIf="form.get('sta_id')?.hasError('required')">
-            Please choose a allowed type
-          </mat-error>
         </mat-form-field>
 
         <!-- Tip objekta (Single Select) -->
         <mat-form-field>
-          <mat-label>Tip objekta</mat-label>
+          <mat-label>{{ 'choose_place' | transloco }}</mat-label>
           <mat-select formControlName="ugo_id">
             <mat-option [value]="null">--</mat-option>
             @for (item of tipObjekta(); track $index) {
             <mat-option [value]="item.id">
-              {{ item.ime }}
+              {{ descriptionToKeyMapSpot[item.ime] | transloco }}
+
             </mat-option>
             }
           </mat-select>
         </mat-form-field>
       </form>
-      <button class="btn btn_primary" (click)="onSubmit()">
-        Search
+      <button class="btn btn_primary" (click)="onSubmit(true)">
+        {{ 'search' | transloco }}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -90,7 +97,7 @@
         "
         (click)="clearFilters()"
       >
-        Clear filters
+        {{ 'clear_filters' | transloco }}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -124,7 +131,7 @@
       (click)="onSubmit()"
       class="btn_primary w-full"
     >
-      Load more
+      {{"see_more" | transloco}}
     </button>
     } }
   </div>

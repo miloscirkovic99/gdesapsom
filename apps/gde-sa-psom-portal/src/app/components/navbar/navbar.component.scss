@@ -63,12 +63,14 @@
   }
 
   .mobile-menu {
-    @apply absolute w-[90%] md:hidden top-20 mx-1 flex justify-center items-center bg-white/30 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-md z-50;
-   
+    @apply absolute w-full md:hidden top-20 mx-1 flex justify-center items-center bg-gray-950 backdrop-blur-lg border border-white/30 rounded-2xl p-8 shadow-xl z-50;
+   a{
+    @apply text-white  text-sm after:bg-transparent;
+   }
   }
 }
 a{
-  @apply text-lg   cursor-pointer relative block  hover:text-primary_green font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary_green after:transition-all after:duration-300 hover:after:w-full;
+  @apply text-base   cursor-pointer relative block  hover:text-primary_green font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary_green after:transition-all after:duration-300 hover:after:w-full;
 }
 .dropdown-content a {
   @apply flex items-center;

@@ -1,0 +1,15 @@
+.pet-parks-container{
+    @apply  p-12;
+    h1{
+        @apply text-5xl font-bold text-center max-sm:text-3xl;
+    }
+    .rules-wrapper{
+        @apply grid gap-4 mt-8;
+        h3{
+            @apply text-5xl font-semibold max-sm:text-3xl;
+        }
+        p{
+            @apply text-xl font-medium max-sm:text-lg;
+        }
+    }
+}

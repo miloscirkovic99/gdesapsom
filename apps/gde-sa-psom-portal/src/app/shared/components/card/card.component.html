@@ -1,19 +1,20 @@
 @if(data()?.length && !isLoading()){
 <div class="card-container">
   @for (item of data(); track $index) {
- 
 
-  <div
-    class="card image-full"
-    data-aos="fade-down"
-    data-aos-duration="1200"
-  >
+  <div class="card image-full" data-aos="fade-down" data-aos-duration="1200">
     <figure>
-      <img [src]="item?.iuo_slika_base64 ? item?.iuo_slika_base64 : 'assets/no-photo.png'" [alt]="item.iuo_ime"/>
+      <img
+        [src]="
+          item?.iuo_slika_base64
+            ? item?.iuo_slika_base64
+            : 'assets/no-photo.png'
+        "
+        [alt]="item.iuo_ime ?? item?.par_ime"
+      />
     </figure>
     <div class="card-body">
-   
-      <h2 class="card-title">{{ item.iuo_ime }}</h2>
+      <h2 class="card-title">{{ item?.iuo_ime??item?.par_ime }}</h2>
       <span
         ><svg
           xmlns="http://www.w3.org/2000/svg"
@@ -34,8 +35,10 @@
             d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
           />
         </svg>
-        {{ item?.iuo_adressa }}, {{ item?.ops_ime }}, {{ item?.grd_ime }}</span
+        {{ item?.iuo_adressa ?? item?.par_lokacija }}, {{ item?.ops_ime }},
+        {{ item?.grd_ime }}</span
       >
+      @if(!hiddeDetailsButton()){
 
       <span
         ><svg
@@ -72,9 +75,14 @@
         </svg>
         {{ item?.bas_naziv }}
       </span>
+      } @if(!hiddeDetailsButton()){
+
       <div class="card-actions justify-end">
-        <button class="btn btn_primary" (click)="openDialog(item)">See details</button>
+        <button class="btn btn_primary" (click)="openDialog(item)">
+         {{"see_details"|transloco}}
+        </button>
       </div>
+      }
     </div>
   </div>
   }

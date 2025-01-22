@@ -39,7 +39,7 @@
     .main-description {
       @apply grid items-center justify-center mt-10 place-items-center;
       p {
-        @apply mt-4 text-xl font-semibold text-center w-2/3 max-sm:w-full;
+        @apply mt-4 text-xl font-semibold text-center w-2/3 max-sm:w-full max-sm:text-lg;
       }
     }
   }

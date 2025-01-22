@@ -1,1 +1,24 @@
-<p>pet-parks works!</p>
+<div class="pet-parks-container">
+    <h1>{{'dog_parks'| transloco}}</h1>
+    <app-card
+    [data]="parkStore.parks()"
+    [hiddeDetailsButton]="true"
+  ></app-card>
+  <div class="rules-wrapper">
+    <h3>{{"park_rules" | transloco}}:</h3>
+    <p>{{"rule_1" | transloco}}</p>
+    <p>{{"rule_2" | transloco}}</p>
+    <p>{{"rule_3" | transloco}}</p>
+    <p>{{"rule_4" | transloco}}</p>
+    <p>{{"rule_5" | transloco}}</p>
+    <p>{{"rule_6" | transloco}}</p>
+    <p>{{"rule_7" | transloco}}</p>
+    <p>{{"rule_8" | transloco}}</p>
+    <p>{{"rule_9" | transloco}}</p>
+    <p>{{"rule_10" | transloco}}</p>
+    <p>{{"rule_11" | transloco}}</p>
+    <p>{{"rule_12" | transloco}}</p>
+    <p>{{"rule_13" | transloco}}</p>
+
+  </div>
+</div>

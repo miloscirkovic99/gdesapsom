@@ -17,7 +17,6 @@ import { filter } from 'rxjs';
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
-  private languageService = inject(LanguageService);
   public themeColor: string = 'dark';
 
   spotsList: any[] = []; // Store all loaded results
@@ -42,7 +41,5 @@ export class AppComponent {
     });
   }
 
-  switchLanguage(language: string) {
-    this.languageService.switchLanguage(language);
-  }
+
 }

@@ -8775,6 +8775,13 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+ngx-mat-select-search@^7.0.9:
+  version "7.0.9"
+  resolved "https://registry.yarnpkg.com/ngx-mat-select-search/-/ngx-mat-select-search-7.0.9.tgz#eadd46b428b698e0ba8f87cbf067d9788c321d81"
+  integrity sha512-3SeLneHVsde0xO6YRSgh6DmLkxiII3AjbnFCoqt8n/2pEeavYUREVBBqPdufIfOFXKo5H1CAYkZ7ROgnDXQIsw==
+  dependencies:
+    tslib "^2.4.0"
+
 node-abort-controller@^3.0.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/node-abort-controller/-/node-abort-controller-3.1.1.tgz#a94377e964a9a37ac3976d848cb5c765833b8548"

@@ -1,12 +1,14 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { RouteConstants } from '../../shared/constants/route.constant';
+import { TranslocoModule } from '@ngneat/transloco';
+import { LanguageService } from '../../shared/services/language.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,MatIconModule,RouterModule],
+  imports: [CommonModule,MatIconModule,RouterModule,TranslocoModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 
@@ -17,9 +19,14 @@ export class NavbarComponent {
   routeConstants=RouteConstants;
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
+  private languageService = inject(LanguageService);
 
   ngOnInit(){
-    this.initializeTheme()
+    this.initializeTheme();
+    if(localStorage.getItem('language')){
+
+      this.languageService.switchLanguage(localStorage.getItem('language') as string);
+    }
   }
   initializeTheme(): void {
     // Check if a theme is set in localStorage
@@ -37,7 +44,12 @@ export class NavbarComponent {
     localStorage.setItem('theme', this.themeColor);
     this.applyTheme();
   }
-
+  switchLanguage(language: string) {
+    localStorage.setItem('language',language);
+    
+      this.languageService.switchLanguage(language)
+    
+  }
   private applyTheme(): void {
     document.body.classList.toggle('dark-theme', this.themeColor === 'dark');
     document.body.classList.toggle('light-theme', this.themeColor === 'light');

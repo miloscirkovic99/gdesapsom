@@ -31,30 +31,27 @@
       </div>
       <div>
         <h1 class="text-5xl max-sm:text-3xl font-bold">
-          Gde sa psom? - Mesto gde su vaši ljubimci dobrodošli!
+          {{"hero_title" | transloco}}
         </h1>
         <p class="py-6 w-1/2 text-xl font-semibold max-sm:w-full">
-          Da li ste se ikada zapitali gde možete otići sa svojim psom bez brige?
-          Mi smo tu da vam olakšamo! Gde sa psom je platforma nastala iz ljubavi
-          prema ljubimcima i želje da svako uživa u njihovom društvu - bilo u
-          restoranu, kafiću ili hotelu.
+          {{"hero_description"| transloco}}
         </p>
         <button
           (click)="navigateTo(routeConstants.allSpots)"
           class="btn btn_primary"
         >
-          Explore pet-friendly spots with ease
+          {{"explore_pet_spots"| transloco}}
         </button>
         <div class="py-24 sm:py-32">
           <div class="max-w-7xl">
             <dl class="grid grid-cols-1 gap-x-8 gap-y-16 text-center lg:grid-cols-3">
               <div class=" flex max-w-xs flex-col gap-y-4 text-start">
-                <dt class="text-lg">Pet friendly spots</dt>
-                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">90+</dd>
+                <dt class="text-lg">{{"pet_spots" | transloco}}</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">{{spotsStore.totalResult()}}+</dd>
               </div>
               <div class=" flex max-w-xs flex-col gap-y-4 text-start">
-                <dt class="text-lg ">Pet friendly parks</dt>
-                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">15+</dd>
+                <dt class="text-lg ">{{"pet_parks" | transloco}}</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">{{parksStore.parks().length}}+</dd>
               </div>
            
             </dl>
@@ -70,7 +67,7 @@
   <!-- How Works -->
   <div class="how-works-container">
     <h2 class="text-5xl font-bold text-center max-sm:text-3xl">
-      Kako funkcioniše?
+      {{"how_it_works"|transloco}}
     </h2>
     <div class="how-works-wrapper">
       @for (item of howItWorks; track $index) {
@@ -83,7 +80,7 @@
       >
         <div class="how-works-item_number">{{ item.id }}</div>
         <h3 class="how-works-item_title">
-          {{ item.title }}
+          {{ item.title | transloco }}
         </h3>
       </div>
       }
@@ -98,21 +95,15 @@
         (click)="navigateTo(routeConstants.allSpots)"
         class="btn btn_primary"
       >
-        See all pet spots
+        {{"pet_places" | transloco}}
       </button>
     </div>
     <div class="main-description">
       <h2 class="text-5xl font-bold max-sm:text-3xl">
-        Sa lakoćom pronađite mesta pogodna za kućne ljubimce!
+        {{"random_spot_title" | transloco}}
       </h2>
       <p>
-        Gde sa psom platforma je vaš krajnji resurs otkrivanje destinacija za
-        kućne ljubimce. Bilo da tražite savršeni park ili mesta pogodna za kućne
-        ljubimce, povezujemo Vas sa mestima koja obuhvataju vaše krznene
-        prijatelje. Naša platforma nudi detaljne preglede, interaktivne mape i
-        živopisne centar zajednice gde ljubitelji kućnih ljubimaca mogu
-        razmeniti savete i dirljive priče. Planirajte svoju sledeću avanturu sa
-        poverenjem, znajući da ste Vi i vaš ljubimac uvek dobrodošli!
+        {{"random_spot_description" | transloco}}
       </p>
     </div>
     <app-card
@@ -129,7 +120,7 @@
   <div class="bg-white  rounded-xl py-14 sm:py-14">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <h2 class="text-center text-4xl max-sm:text-2xl font-semibold">
-        Our partners
+        {{"friends" | transloco}}
       </h2>
       <div
         data-aos="fade-right"
