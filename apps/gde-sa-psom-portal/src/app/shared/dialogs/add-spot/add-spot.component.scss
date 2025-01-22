@@ -1,8 +1,8 @@
 ::ng-deep{
     .mat-mdc-dialog-actions{
-        @apply flex justify-between;
+        @apply flex justify-between gap-2;
         button{
-            width: 140px !important;
+            @apply w-40;
         }
     }
 }
