@@ -1,0 +1,42 @@
+<h1 class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between">
+  Add pet friendly spot
+  <svg
+    (click)="onNoClick()"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke="currentColor"
+    class="size-6 cursor-pointer"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M6 18 18 6M6 6l12 12"
+    />
+  </svg>
+</h1>
+<mat-dialog-content>
+    <div class="input-wrapper grid gap-4 pb-4">
+     <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">Name</span>
+         <input type="text" placeholder="Name" class="input bg-slate-300 input-bordered w-full max-w-md " />
+     </div>
+    <input type="text" placeholder="Address" class="input bg-slate-300 input-bordered w-full max-w-md" />
+    <input type="text" placeholder="Social Link" class="input bg-slate-300 input-bordered w-full max-w-md" />
+    <input type="file" placeholder="Slika spolja" class="file-input bg-slate-300 file-input-bordered w-full max-w-xs" />
+    <input type="file" placeholder="Slika unutra" class="file-input bg-slate-300 file-input-bordered w-full max-w-xs" />
+    <textarea class="textarea textarea-bordered bg-slate-300" placeholder="Opis"></textarea>
+    <label class="input input-bordered bg-slate-300 flex items-center gap-2">
+        Name:
+        <input type="text" class="grow " />
+      </label>
+</div>
+
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="btn btn_error w-24" (click)="onNoClick()">Close</button>
+  <button class="btn btn_primary w-32" >Save</button>
+
+</mat-dialog-actions>

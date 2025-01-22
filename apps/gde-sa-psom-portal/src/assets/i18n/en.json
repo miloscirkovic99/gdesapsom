@@ -88,6 +88,8 @@
     "find_pet_spots":"Find pet-friendly spots",
     "find_pet_parks":"Find pet-friendly parks",
     "no_entries":" No entries found",
-    "see_more":"See more"
+    "see_more":"See more",
+     "language":"Language",
+    "theme":"Theme"
 
 }

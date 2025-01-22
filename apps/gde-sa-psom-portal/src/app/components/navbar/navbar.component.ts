@@ -1,3 +1,4 @@
+import { MatMenuModule } from '@angular/material/menu';
 import { Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
@@ -5,10 +6,13 @@ import { RouterModule } from '@angular/router';
 import { RouteConstants } from '../../shared/constants/route.constant';
 import { TranslocoModule } from '@ngneat/transloco';
 import { LanguageService } from '../../shared/services/language.service';
+import { MatButtonModule } from '@angular/material/button';
+import { DialogService } from '../../shared/services/dialog.service';
+import { AddSpotComponent } from '../../shared/dialogs/add-spot/add-spot.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,MatIconModule,RouterModule,TranslocoModule],
+  imports: [CommonModule,MatIconModule,RouterModule,TranslocoModule,MatMenuModule,MatButtonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 
@@ -20,7 +24,7 @@ export class NavbarComponent {
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
-
+ private dialogService=inject(DialogService)
   ngOnInit(){
     this.initializeTheme();
     if(localStorage.getItem('language')){
@@ -40,6 +44,7 @@ export class NavbarComponent {
   }
 
   toggleTheme(): void {
+
     this.themeColor = this.themeColor === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', this.themeColor);
     this.applyTheme();
@@ -71,4 +76,9 @@ export class NavbarComponent {
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
+
+    openDialog(){
+      this.dialogService.openDialog(AddSpotComponent, {});
+  
+    }
 }

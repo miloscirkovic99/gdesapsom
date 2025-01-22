@@ -75,3 +75,6 @@ a{
 .dropdown-content a {
   @apply flex items-center;
 }
+.theme-wrapper{
+  @apply flex items-center gap-2;
+}

@@ -88,5 +88,7 @@
     "find_pet_spots":"Pronađite mesta za kućne ljubimce",
     "find_pet_parks":"Pronađite parkove za kućne ljubimce",
     "no_entries":"Nema pronađenih unosa",
-    "see_more":"Vidi više"
+    "see_more":"Vidi više",
+    "language":"Jezik",
+    "theme":"Tema"
 }
