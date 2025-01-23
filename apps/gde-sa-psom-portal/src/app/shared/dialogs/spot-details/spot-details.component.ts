@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet'; // Import Leaflet
 import 'leaflet-control-geocoder'; // Import geocoder control if using
+import { TranslocoModule } from '@ngneat/transloco';
 @Component({
   selector: 'app-spot-details',
   imports: [
@@ -24,7 +25,8 @@ import 'leaflet-control-geocoder'; // Import geocoder control if using
     FormsModule,
     MatDialogContent,
     MatDialogActions,
-    MatButtonModule
+    MatButtonModule,
+    TranslocoModule
   ],
   templateUrl: './spot-details.component.html',
   styleUrl: './spot-details.component.scss',

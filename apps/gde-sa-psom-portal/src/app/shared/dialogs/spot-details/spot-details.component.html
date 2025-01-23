@@ -1,4 +1,4 @@
-<h1 class="text-2xl font-bold px-8 py-4">Ime: {{ data?.iuo_ime }} - {{ data?.grd_ime }}</h1>
+<h1 class="text-2xl font-bold px-8 py-4">{{"spot_name" | transloco}}: {{ data?.iuo_ime }} - {{ data?.grd_ime }}</h1>
 <mat-dialog-content>
   <div class="spot-details-container">
     <p>Images:</p>
@@ -50,15 +50,15 @@
     <p>Ostale informacije:</p>
     <div class="aditional-wrapper">
       <p>Velicina psa: {{data?.sta_ime}}</p>
-      <p>Adresa: {{data?.iuo_adressa}}</p>
+      <p>{{"address" | transloco}}: {{data?.iuo_adressa}}</p>
       <p>Opstina: {{data?.ops_ime}}</p>
       <p>Tip objekta: {{data?.ugo_ime}}</p>
       <p>Basta: {{data?.bas_naziv}}</p>
-      <p>Link: <a [href]="data?.iuo_link_web" target="_blank">{{data?.iuo_link_web}}</a></p>
+      <p>{{"site_network" | transloco}}: <a [href]="data?.iuo_link_web" target="_blank">{{data?.iuo_link_web}}</a></p>
     </div>
     
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button class="btn btn_primary" (click)="onNoClick()">Close</button>
+  <button class="btn btn_primary" (click)="onNoClick()">{{"close" | transloco}}</button>
 </mat-dialog-actions>

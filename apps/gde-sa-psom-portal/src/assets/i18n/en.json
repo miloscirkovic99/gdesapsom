@@ -93,7 +93,9 @@
     "see_more":"See more",
      "language":"Language",
     "theme":"Theme",
-    "add_pet_spot_title":"Add pet friendly spot"
+    "add_pet_spot_title":"Add pet friendly spot",
+    "close":"Close",
+    "save":"Save"
 
 
 }

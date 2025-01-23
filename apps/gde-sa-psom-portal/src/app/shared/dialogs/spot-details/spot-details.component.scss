@@ -1,9 +1,7 @@
-:host  {
-  .mat-mdc-dialog-title {
-    @apply text-2xl font-bold;
-  }
+::ng-deep {
+
   .mat-mdc-dialog-surface{
-    border-radius: 2px !important;
+    
     @apply rounded-md;
   }
   .mdc-dialog--open .mat-mdc-dialog-inner-container {

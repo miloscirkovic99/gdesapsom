@@ -9,6 +9,8 @@ export const appRoutes: Route[] = [
         (m) => m.LandingPageComponent
       );
     },
+    title:'Gde sa psom'
+
   },
   {
     path:RouteConstants.allSpots,
@@ -17,6 +19,8 @@ export const appRoutes: Route[] = [
         (m) => m.PetSpotsFacilitiesComponent
       );
     },
+    title:'Gde sa psom - Pet Spots'
+
   },
   {
     path:RouteConstants.petParks,
@@ -25,6 +29,7 @@ export const appRoutes: Route[] = [
         (m) => m.PetParksComponent
       );
     },
+    title:'Gde sa psom - Pet Parks'
   },
   {
     path:RouteConstants.about,
@@ -33,6 +38,8 @@ export const appRoutes: Route[] = [
         (m) => m.AboutUsComponent
       );
     },
+    title:'Gde sa psom - About Us'
+
   },
   {
     path:'**',
