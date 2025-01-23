@@ -1,6 +1,6 @@
 
 export const environment = {
-    baseUrl: 'https://gdesapsom.com/',
+    baseUrl: 'http://318j122.mars1.mars-hosting.com',
     apiUrl:'https://gdesapsom.com/',
 
     production: true

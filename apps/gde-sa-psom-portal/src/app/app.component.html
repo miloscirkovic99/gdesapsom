@@ -3,28 +3,4 @@
 
 <router-outlet></router-outlet>
 
-<!-- <div class="wrapper">
-<div class="spots-container">
-  @for (spot of spots.spotsList(); track $index) {
-  <div  class="spot-card" data-aos="fade-down" data-aos-duration="1000">
-    <h3>Name: {{ spot.iuo_ime }}</h3>
-    <p><strong>Address:</strong> {{ spot.iuo_adressa }}</p>
-    <p><strong>City:</strong> {{ spot.grd_ime }}</p>
-    <p><strong>Outdoor Seating:</strong> {{ spot.bas_naziv }}</p>
-  </div>
-}
-</div>
-
-
-
-
-</div>
-@if (!spots.isLoading()) {
-  <button 
-    (click)="spots.loadMore()" 
-    [disabled]="spots.isLoading()"
-    class="load-more">
-    {{ spots.isLoading() ? 'Loading...' : 'Load More' }}
-  </button>
-  } -->
 <app-footer></app-footer>

@@ -51,6 +51,12 @@
               "maximumError": "8kb"
             }
           ],
+          "fileReplacements": [
+            {
+              "replace": "apps/gde-sa-psom-portal/src/env/env.dev.ts",
+              "with": "apps/gde-sa-psom-portal/src/env/env.prod.ts"
+            }
+          ],
           "outputHashing": "all"
         },
         "development": {
