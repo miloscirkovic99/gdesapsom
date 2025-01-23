@@ -26,6 +26,7 @@
     "search": "Pretraži",
     "all_dogs": "Svi psi",
     "small_dog": "Mali psi",
+     "spots_error404":"Nažalost u našoj bazi ne postoji pet friendly objekat koji ste pretražili",
     "small_puppies": "Mali pas i štenci većih rasa do 5 meseci starosti",
     "with_garden": "Sa baštom",
     "without_garden": "Bez bašte",
@@ -33,10 +34,11 @@
     "spot_name": "Ime objekta",
     "address": "Adresa",
     "site_network": "Link ka sajtu/mreži",
-    "image_outside": "Slika spolja",
-    "image_inside": "Slika unutra",
+    "image_outside": "Slika objekta spolja",
+    "image_inside": "Slika objekta unutra",
     "required": "Obavezno polje",
     "garden_option": "Sa ili bez bašte",
+    "short_description":"Kratki opis objekta",
     "cafe": "Kafić",
     "restaurant": "Restoran",
     "float": "Splav",
@@ -90,5 +92,6 @@
     "no_entries":"Nema pronađenih unosa",
     "see_more":"Vidi više",
     "language":"Jezik",
-    "theme":"Tema"
+    "theme":"Tema",
+    "add_pet_spot_title":"Dodajte mesto za kućne ljubimce"
 }

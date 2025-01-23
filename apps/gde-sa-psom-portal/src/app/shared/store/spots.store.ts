@@ -21,6 +21,8 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { SnackbarService } from '../services/snackbar.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 // Define the initial state type
 type SpotsState = {
@@ -57,7 +59,8 @@ export const SpotsStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
-
+    const snackbarService = inject(SnackbarService);
+    const translocoService = inject(TranslocoService);
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
@@ -68,14 +71,6 @@ export const SpotsStore = signalStore(
     return {
       resetState(store: any) {
         patchState(store, { offset: 0, spotsList: [] });
-      },
-
-      updateSpotsList(store: any, response: any): void {
-        patchState(store, (state: any) => ({
-          spotsList: [...state.spotsList, ...response.spotsList],
-          totalResult: response?.totalResults,
-          offset: state.spotsList.length + response.spotsList.length,
-        }));
       },
 
       loadData(
@@ -103,14 +98,21 @@ export const SpotsStore = signalStore(
           .subscribe({
             next: (response) => {
               patchState(store, (state) => ({
-                spotsList: [...state.spotsList, ...response.spotsList],
+                spotsList: [...state?.spotsList, ...response?.spotsList],
                 totalResult: response?.totalResults,
                 offset: state.spotsList.length + response.spotsList.length,
                 isLoading: false,
               }));
               refreshAOS();
             },
-            error: handleError,
+            error: (error) => {
+              const translatedMessage =
+                translocoService.translate('spots_error404');
+
+              snackbarService.openSnackbar(translatedMessage, 'Close');
+
+              patchState(store, { isLoading: false });
+            },
           });
       },
       randomSpots() {

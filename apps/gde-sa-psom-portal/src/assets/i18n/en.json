@@ -36,6 +36,8 @@
     "image_outside": "Outside Image",
     "image_inside": "Inside Image",
     "required": "Required Field",
+    "short_description":"Short description of the spot",
+    "spots_error404": "Unfortunately, there is no pet-friendly establishment in our database that matches your search.",
     "garden_option": "With or Without Garden",
     "cafe": "Café",
     "restaurant": "Restaurant",
@@ -90,6 +92,8 @@
     "no_entries":" No entries found",
     "see_more":"See more",
      "language":"Language",
-    "theme":"Theme"
+    "theme":"Theme",
+    "add_pet_spot_title":"Add pet friendly spot"
+
 
 }

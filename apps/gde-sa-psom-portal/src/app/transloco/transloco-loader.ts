@@ -10,4 +10,5 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   getTranslation(lang: string) {
     return this.http.get<Translation>(`${environment.baseUrl}/assets/i18n/${lang}.json`);
   }
+  
 }

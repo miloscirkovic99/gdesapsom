@@ -1,5 +1,5 @@
-<h1 class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between">
-  Add pet friendly spot
+<h1 class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between gap-10">
+  {{"add_pet_spot_title" | transloco}}
   <svg
     (click)="onNoClick()"
     xmlns="http://www.w3.org/2000/svg"
@@ -18,26 +18,40 @@
   
 </h1>
 <mat-dialog-content>
+  <form [formGroup]="spotForm">
     <div class="input-wrapper grid gap-4 pb-4">
      <div class="label-input flex items-start gap-2 flex-col">
-        <span class="text-md font-medium">Name</span>
-         <input type="text" placeholder="Name" class="input bg-slate-300 input-bordered w-full max-w-md " />
+        <span class="text-md font-medium">{{"spot_name" | transloco}}</span>
+         <input id="iuo_ime" formControlName="iuo_ime" type="text" [placeholder]=" 'spot_name' | transloco" class="input bg-slate-300 input-bordered w-full  " />
      </div>
-    <input type="text" placeholder="Address" class="input bg-slate-300 input-bordered w-full max-w-md" />
-    <input type="text" placeholder="Social Link" class="input bg-slate-300 input-bordered w-full max-w-md" />
-    <input type="file" placeholder="Slika spolja" class="file-input bg-slate-300 file-input-bordered w-full max-w-xs" />
-    <input type="file" placeholder="Slika unutra" class="file-input bg-slate-300 file-input-bordered w-full max-w-xs" />
-    <textarea class="textarea textarea-bordered bg-slate-300" placeholder="Opis"></textarea>
-    <label class="input input-bordered bg-slate-300 flex items-center gap-2">
-        Name:
-        <input type="text" class="grow " />
-      </label>
+
+     <div class="label-input flex items-start gap-2 flex-col">
+      <span class="text-md font-medium">{{"address" | transloco}}</span>
+      <input id="iuo_adressa" formControlName="iuo_adressa" type="text" [placeholder]="'address' | transloco" class="input bg-slate-300 input-bordered w-full " />
+    </div>
+    <div class="label-input flex items-start gap-2 flex-col">
+      <span class="text-md font-medium">{{"site_network" | transloco}}</span>
+      <input id="iuo_link_web" formControlName="iuo_link_web" type="text" [placeholder]="'site_network' | transloco" class="input bg-slate-300 input-bordered w-full" />
+    </div>
+    <div class="label-input flex items-start gap-2 flex-col">
+      <span class="text-md font-medium">{{"image_outside" | transloco}}</span>
+      <input id="iuo_slika"  formControlName="iuo_slika" type="file"  class=" bg-slate-300 file-input file-input-bordered w-full" (change)="onFileChangeOutside($event)" />
+    </div>
+    <div class="label-input flex items-start gap-2 flex-col">
+      <span class="text-md font-medium">{{"image_inside" | transloco}}</span>
+      <input  id="iuo_slika_unutra"  formControlName="iuo_slika_unutra" type="file"  class=" bg-slate-300 file-input file-input-bordered w-full " (change)="onFileChangeInside($event)"  />
+    </div>
+    <div class="label-input flex items-start gap-2 flex-col">
+      <span class="text-md font-medium">{{"short_description" | transloco}}</span>
+      <textarea id="iuo_opis" formControlName="iuo_opis" [placeholder]="'short_description' | transloco" class="textarea textarea-bordered w-full bg-slate-300"></textarea>
+    </div>
+ 
 </div>
 
-
+</form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="btn btn_error " (click)="onNoClick()">Close</button>
-  <button class="btn btn_primary " >Save</button>
+  <button class="btn btn_primary " (click)="onSaveClick()">Save</button>
 
 </mat-dialog-actions>

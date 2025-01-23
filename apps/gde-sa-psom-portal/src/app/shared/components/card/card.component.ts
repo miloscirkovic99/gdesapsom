@@ -17,7 +17,15 @@ export class CardComponent {
   isLoading=input();
   dialogService = inject(DialogService);
   hiddeDetailsButton=input<boolean>(false)
-
+  descriptionToKeyMap: { [key: string]: string } = {
+    'Svi psi': 'all_dogs',
+    'Mali pas': 'small_dog',
+    'Mali pas i štenci većih rasa do 5 meseci starosti': 'small_puppies',
+  };
+  descriptionToKeyMapGarden: { [key: string]: string } = {
+    'bez bašte': 'with_garden',
+    'sa baštom': 'without_garden',
+  };
   ngAfterViewChecked() {
     AOS.refresh(); // Trigger AOS refresh after DOM updates
   }

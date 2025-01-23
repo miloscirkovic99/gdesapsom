@@ -1,6 +1,6 @@
 
 .pet-spots-container{
-@apply p-12;
+@apply p-12 min-h-screen;
     .filter-wrapper{
         @apply grid gap-10 place-content-center place-items-center;
         .select-wrapper{

@@ -1,6 +1,8 @@
+@use '@angular/material' as mat;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 * {
   padding: 0;
   margin: 0;
@@ -16,4 +18,13 @@
 
 .dialogBackdropBackground {
   backdrop-filter: blur(2px);
+}
+:root {
+  @include mat.snack-bar-overrides((
+    container-color: red,
+    supporting-text-color: white,
+    button-color:white,
+    supporting-text-size:14px
+
+  ));
 }

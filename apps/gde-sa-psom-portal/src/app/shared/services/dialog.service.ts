@@ -22,8 +22,8 @@ export class DialogService {
       disableClose: true,
       enterAnimationDuration: 350,
       exitAnimationDuration: 300,
-      // minWidth: '40rem',
-      maxWidth:'45rem',
+      minWidth: data.minWidth,
+      maxWidth:'50rem',
       backdropClass: 'dialogBackdropBackground',
       data: data,
 
