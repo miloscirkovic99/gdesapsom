@@ -67,7 +67,7 @@ constructor(){
   }
 
   // Geocode the address and place a marker
-  private geocodeAddress(address: string): void {
+   geocodeAddress(address: string): void {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${address}`;
     
     fetch(url)
@@ -82,9 +82,9 @@ constructor(){
 
            // Create custom icon class
            const LeafIcon = new L.Icon({
-            iconUrl: 'assets/small.png', // Path to the shadow image
+            iconUrl: 'assets/logo-normal.png', // Path to the shadow image
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-              iconSize: [40,45],                   // Size of the icon
+              iconSize: [100,100],                   // Size of the icon
               shadowSize: [50, 64],                 // Size of the shadow
               iconAnchor: [22, 94],                 // Position of the icon anchor (where the marker points to)
               shadowAnchor: [4, 62],                // Position of the shadow anchor
@@ -100,7 +100,7 @@ constructor(){
               .openPopup();
           }
         } else {
-          alert('Address not found');
+          console.error('Address not found');
         }
       })
       .catch((error) => console.error('Geocoding error:', error));

@@ -1,7 +1,7 @@
 <h1
   class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between gap-10"
 >
-  {{ 'add_pet_spot_title' | transloco }}
+  {{ 'suggest_spot' | transloco }}
   <svg
     (click)="onNoClick()"
     xmlns="http://www.w3.org/2000/svg"
@@ -20,6 +20,10 @@
 </h1>
 <mat-dialog-content>
   <form [formGroup]="spotForm">
+    @if(spotForm.invalid && spotForm.touched){
+
+      <mat-error >{{"required" | transloco}}</mat-error>
+    }
     <div class="input-wrapper grid gap-4 pb-4">
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{ 'spot_name' | transloco }}</span>
@@ -29,6 +33,7 @@
           type="text"
           [placeholder]="'spot_name' | transloco"
           class="input bg-slate-300 input-bordered w-full"
+          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
         />
       </div>
 
@@ -40,6 +45,8 @@
           type="text"
           [placeholder]="'address' | transloco"
           class="input bg-slate-300 input-bordered w-full"
+          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
+
         />
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
@@ -52,6 +59,20 @@
           type="text"
           [placeholder]="'site_network' | transloco"
           class="input bg-slate-300 input-bordered w-full"
+          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
+
+        />
+      </div>
+      <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">{{
+          'phone' | transloco
+        }}</span>
+        <input
+          id="phone"
+          formControlName="iuo_telefon"
+          type="text"
+          [placeholder]="'phone' | transloco"
+          class="input bg-slate-300 input-bordered w-full"
         />
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
@@ -63,6 +84,7 @@
           formControlName="iuo_slika"
           type="file"
           class="bg-slate-300 file-input file-input-bordered w-full"
+          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
           (change)="onFileChangeOutside($event)"
         />
       </div>
@@ -90,13 +112,14 @@
         ></textarea>
       </div>
     </div>
+ 
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="btn btn_error" (click)="onNoClick()">
     {{ 'close' | transloco }}
   </button>
-  <button class="btn btn_primary" (click)="onSaveClick()">
+  <button class="btn btn_primary" [disabled]="spotForm.invalid" (click)="onSaveClick()">
     {{ 'save' | transloco }}
   </button>
 </mat-dialog-actions>

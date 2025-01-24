@@ -8,7 +8,7 @@
     "explore": "Explore pet-friendly places with ease",
     "hero_description": "Have you ever wondered where you can go with your dog without worry? We're here to make it easy for you! 'Where with the Dog' is a platform born out of love for pets and the desire to enjoy their company anywhere – be it a restaurant, café, or hotel.",
     "search_spots": "Search Spots",
-    "suggest_spot": "Add pet-friendly places",
+    "suggest_spot": "Add pet-friendly place",
     "intro": "We want to introduce you to the site 'Where with the Dog'",
     "description": "The site allows pet owners to easily search for places where they can go with their pets.",
     "view_all": "View All Spots",
@@ -35,7 +35,7 @@
     "site_network": "Website/Network Link",
     "image_outside": "Outside Image",
     "image_inside": "Inside Image",
-    "required": "Required Field",
+    "required": "Required field!",
     "short_description":"Short description of the spot",
     "spots_error404": "Unfortunately, there is no pet-friendly establishment in our database that matches your search.",
     "garden_option": "With or Without Garden",
@@ -80,8 +80,8 @@
     "free_search": "Search pet-friendly locations for free",
     "free_add": "Add new spots for free and help the community",
     "pet_welcome": "Always know where your pet is truly welcome!",
-    "pet_places": "See all pet-friendly places",
-    "random_spot_title": "Find pet-friendly places with ease!",
+    "pet_places": "See all pet-friendly spots",
+    "random_spot_title": "Find pet-friendly spots with ease!",
     "random_spot_description": " 'Where with the Dog' is your ultimate resource for discovering pet-friendly destinations. Whether you're looking for the perfect park or pet-friendly venues, we connect you to places that embrace your furry friends. Our platform offers detailed reviews, interactive maps, and a vibrant community hub where pet lovers can share tips and heartwarming stories. Plan your next adventure confidently, knowing that you and your pet are always welcome!",
     "see_details": "See more details",
     "explore_pet_spots": "Explore pet-friendly places with ease",
@@ -95,7 +95,9 @@
     "theme":"Theme",
     "add_pet_spot_title":"Add pet friendly spot",
     "close":"Close",
-    "save":"Save"
+    "save":"Save",
+    "phone":"Contact number"
+
 
 
 }

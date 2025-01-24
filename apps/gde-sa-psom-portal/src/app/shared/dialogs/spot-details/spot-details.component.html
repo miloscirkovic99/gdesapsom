@@ -55,6 +55,7 @@
       <p>Tip objekta: {{data?.ugo_ime}}</p>
       <p>Basta: {{data?.bas_naziv}}</p>
       <p>{{"site_network" | transloco}}: <a [href]="data?.iuo_link_web" target="_blank">{{data?.iuo_link_web}}</a></p>
+      <p>{{"phone"|transloco}}:{{data?.iuo_telefon??'/'}}</p>
     </div>
     
   </div>

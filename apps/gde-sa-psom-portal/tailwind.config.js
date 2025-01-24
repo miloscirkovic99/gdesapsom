@@ -39,7 +39,7 @@ export default Config={
     './apps/**/*.{html,ts}', // Adapt this line according to your NX workspace structure
     './libs/**/*.{html,ts}', // Include libraries if you use them
   ],
-
+  important: true,
   // DaisyUI plugin
   plugins: [daisyui],
   theme: {
@@ -58,7 +58,7 @@ export default Config={
     logs: true,
     themeRoot: ":root",
     darkMode: "class"
-
+     
   
   },
 };

@@ -1,4 +1,10 @@
 
+@use '../../../../public/styles/checkboxes';
+::ng-deep{
+    .mat-select-search-input{
+        @apply bg-white #{!important};
+    }
+}
 .pet-spots-container{
 @apply p-12 min-h-screen;
     .filter-wrapper{

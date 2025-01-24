@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes,  withInMemoryScrolling({
       scrollPositionRestoration: 'enabled',
     }),),
-    provideClientHydration(),
+    // provideClientHydration(),
     provideHttpClient(),
     importProvidersFrom(BrowserAnimationsModule),
     provideTransloco({

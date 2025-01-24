@@ -44,6 +44,8 @@ export class AddSpotComponent {
         iuo_link_web: ['', Validators.required],
         iuo_slika: ['', Validators.required],
         iuo_slika_unutra: [''],
+        iuo_telefon: [''],
+
         // ops_id: ['', Validators.required],
         // ugo_id: ['', Validators.required],
         // sta_id: ['', Validators.required],

@@ -1,0 +1,59 @@
+ ::ng-deep {
+    .mat-pseudo-checkbox-full.mat-pseudo-checkbox-checked, .mat-pseudo-checkbox-full.mat-pseudo-checkbox-indeterminate {
+      @apply bg-primary_green border-primary_green  #{!important};
+      svg {
+        @apply text-white;
+      }
+    }
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      @apply bg-primary_green  #{!important};
+    }
+    .mdc-text-field--filled .mdc-line-ripple::after{
+         @apply border-b-primary_green #{!important};
+        
+    }
+    .mat-mdc-select-arrow{
+        @apply text-primary_green #{!important};
+    }
+    .mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-floating-label{
+        @apply text-primary_green #{!important};
+
+    }
+    .mdc-checkbox__native-control:focus:focus:checked ~ .mdc-checkbox__background,
+    .mdc-checkbox__native-control:focus:focus:indeterminate
+      ~ .mdc-checkbox__background {
+      @apply bg-primary_green border-primary_green  #{!important};
+    }
+  
+    .mdc-checkbox:hover
+      .mdc-checkbox__native-control:checked
+      ~ .mdc-checkbox__background,
+    .mdc-checkbox:hover
+      .mdc-checkbox__native-control:indeterminate
+      ~ .mdc-checkbox__background {
+      @apply bg-primary_green border-primary_green  #{!important};
+    }
+  
+    .mdc-checkbox:active
+      .mdc-checkbox__native-control:checked
+      ~ .mdc-checkbox__ripple {
+      @apply opacity-10 bg-primary_green  #{!important};
+    }
+  
+    .mdc-checkbox
+      .mdc-checkbox__native-control:focus:checked
+      ~ .mdc-checkbox__ripple {
+      @apply opacity-10 bg-primary_green  #{!important};
+    }
+  
+    .mdc-checkbox:hover
+      .mdc-checkbox__native-control:checked
+      ~ .mdc-checkbox__ripple {
+      @apply opacity-5 bg-primary_green  #{!important};
+    }
+  
+    .mdc-checkbox__mixedmark {
+      @apply border-white ;
+    }
+  }
+  
