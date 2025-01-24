@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,14 +13,20 @@
 
 .btn_primary{
   @apply  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium px-4 py-2 border rounded-md outline-none border-none;
+  &:disabled{
+    @apply bg-gray-200 text-white cursor-not-allowed;
+  }
 }
 .btn_error{
   @apply  w-fit text-sm bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 border rounded-md outline-none border-none;
 }
+.mat-typography{
+  font-family: 'Dosis', serif !important;
 
+}
 
 .dialogBackdropBackground {
-  backdrop-filter: blur(2px);
+  @apply backdrop-blur-sm;
 }
 :root {
   @include mat.snack-bar-overrides((

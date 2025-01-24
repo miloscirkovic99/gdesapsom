@@ -1,7 +1,7 @@
-// Import the required types
 import { Config } from 'tailwindcss';
+const twColors = require('tailwindcss/colors');
 
-const twColors = require("tailwindcss/colors");
+// Custom color configuration
 const customColors = {
   primary: "#2d314d",
   "primary-content": "#FFFFFF",
@@ -27,38 +27,40 @@ const customColors = {
   error: "#E5667E",
   "error-content": "#FFFFFF",
   primary_green:"#44cd88",
-  primary_gray:"#404040"
+  primary_gray:"#404040",
 };
+
 // Import DaisyUI
 import daisyui from 'daisyui';
 
-// Export the Tailwind configuration
-export default Config={
+// TailwindCSS config export
+export default Config = {
   content: [
-    // Paths to your templates
-    './apps/**/*.{html,ts}', // Adapt this line according to your NX workspace structure
-    './libs/**/*.{html,ts}', // Include libraries if you use them
+    // Include paths to all of your template files
+    './apps/**/*.{html,ts}', // Adjust according to your workspace structure
+    './libs/**/*.{html,ts}', // Include libraries if necessary
   ],
   important: true,
-  // DaisyUI plugin
+  darkMode: 'class', // Enable dark mode based on class (for class-based theme toggling)
+  
+  // DaisyUI plugin configuration
   plugins: [daisyui],
+  
   theme: {
     extend: {
-      colors: { ...customColors }, // Correct way to extend colors
+      colors: { ...customColors }, // Extending Tailwind with your custom colors
     },
   },
-  // DaisyUI config
-  daisyui: {
-    themes: ["light", "dark",], // false: only light + dark | true: all themes | array: specific themes
-    darkTheme: false,
-    base: true,
-    styled: true,
-    utils: true,
-    prefix: "",
-    logs: true,
-    themeRoot: ":root",
-    darkMode: "class"
-     
   
+  // DaisyUI specific configuration
+  daisyui: {
+    themes: ["light", "dark"], // Themes to enable
+    darkTheme: "dark", // Specify dark theme
+    base: true, // Whether to include base styles
+    styled: true, // Whether to apply DaisyUI styles to components
+    utils: true, // Enable utilities like spacing, colors, etc.
+    prefix: "", // Optional prefix for DaisyUI classes
+    logs: true, // Enable logs for DaisyUI theme switches
+    themeRoot: ":root", // Define the root theme selector for the global styles
   },
 };

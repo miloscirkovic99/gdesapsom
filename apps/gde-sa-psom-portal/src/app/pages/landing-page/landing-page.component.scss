@@ -48,7 +48,7 @@
     .how-works-wrapper {
       @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-sm:gap-14 gap-7 p-4;
       .how-works-item {
-        @apply bg-green-200 rounded-lg p-4 shadow-md text-center w-full;
+        @apply bg-green-200 rounded-xl p-4 shadow-md text-center w-full;
         .how-works-item_number {
           @apply text-white text-3xl bg-primary_green rounded-full w-20 h-20 flex font-bold items-center justify-center mx-auto mb-4 relative bottom-14 border-solid border-[4px] border-white;
         }

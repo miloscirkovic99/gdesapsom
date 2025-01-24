@@ -8,8 +8,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../env/env.dev';
 import { SpotsStore } from './shared/store/spots.store';
 import { filter } from 'rxjs';
+import { ContactFormComponent } from "./components/contact-form/contact-form.component";
 @Component({
-  imports: [RouterModule, NavbarComponent, FooterComponent],
+  imports: [RouterModule, NavbarComponent, FooterComponent, ContactFormComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

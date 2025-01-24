@@ -1,8 +1,8 @@
 ::ng-deep {
 
-  .mat-mdc-dialog-surface{
+  .mat-mdc-dialog-inner-container{
     
-    @apply rounded-md;
+    @apply rounded-xl;
   }
   .mdc-dialog--open .mat-mdc-dialog-inner-container {
     
@@ -12,10 +12,10 @@
     @apply grid gap-4;
   }
   .carousel-image {
-    @apply w-full h-96 rounded-lg;
+    @apply w-full h-96 rounded-xl;
   }
-  .spot-details-container{
-    @apply grid gap-2  p-4 rounded-lg;
+  .spot-details-wrapper{
+    @apply grid gap-2  p-4 rounded-xl;
     p{
       @apply text-xl font-medium;
     }

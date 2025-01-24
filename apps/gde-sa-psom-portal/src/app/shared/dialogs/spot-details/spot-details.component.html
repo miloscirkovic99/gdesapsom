@@ -1,6 +1,7 @@
 <h1 class="text-2xl font-bold px-8 py-4">{{"spot_name" | transloco}}: {{ data?.iuo_ime }} - {{ data?.grd_ime }}</h1>
 <mat-dialog-content>
   <div class="spot-details-container">
+  <div class="spot-details-wrapper">
     <p>Images:</p>
 
     <div class="carousel w-full">
@@ -42,11 +43,11 @@
     </div>
   </div>
 
-  <div class="spot-details-container">
+  <div class="spot-details-wrapper">
     <p>Location:</p>
-    <div id="map" style="height: 250px"></div>
+    <div id="map" style="height: 250px" class="rounded-xl"></div>
   </div>
-  <div class="spot-details-container">
+  <div class="spot-details-wrapper">
     <p>Ostale informacije:</p>
     <div class="aditional-wrapper">
       <p>Velicina psa: {{data?.sta_ime}}</p>
@@ -59,6 +60,7 @@
     </div>
     
   </div>
+</div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="btn btn_primary" (click)="onNoClick()">{{"close" | transloco}}</button>

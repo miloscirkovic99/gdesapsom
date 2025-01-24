@@ -32,7 +32,7 @@
           formControlName="iuo_ime"
           type="text"
           [placeholder]="'spot_name' | transloco"
-          class="input bg-slate-300 input-bordered w-full"
+          class="input"
           [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
         />
       </div>
@@ -44,7 +44,7 @@
           formControlName="iuo_adressa"
           type="text"
           [placeholder]="'address' | transloco"
-          class="input bg-slate-300 input-bordered w-full"
+          class="input"
           [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
 
         />
@@ -58,7 +58,7 @@
           formControlName="iuo_link_web"
           type="text"
           [placeholder]="'site_network' | transloco"
-          class="input bg-slate-300 input-bordered w-full"
+          class="input"
           [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
 
         />
@@ -72,7 +72,7 @@
           formControlName="iuo_telefon"
           type="text"
           [placeholder]="'phone' | transloco"
-          class="input bg-slate-300 input-bordered w-full"
+          class="input"
         />
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
@@ -83,7 +83,7 @@
           id="iuo_slika"
           formControlName="iuo_slika"
           type="file"
-          class="bg-slate-300 file-input file-input-bordered w-full"
+          class="input"
           [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
           (change)="onFileChangeOutside($event)"
         />
@@ -96,7 +96,7 @@
           id="iuo_slika_unutra"
           formControlName="iuo_slika_unutra"
           type="file"
-          class="bg-slate-300 file-input file-input-bordered w-full"
+          class="input"
           (change)="onFileChangeInside($event)"
         />
       </div>
@@ -108,7 +108,7 @@
           id="iuo_opis"
           formControlName="iuo_opis"
           [placeholder]="'short_description' | transloco"
-          class="textarea textarea-bordered w-full bg-slate-300"
+          class="textarea textarea-bordered w-full input"
         ></textarea>
       </div>
     </div>

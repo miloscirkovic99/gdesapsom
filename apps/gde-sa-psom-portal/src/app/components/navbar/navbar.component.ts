@@ -1,7 +1,13 @@
 import { MatMenuModule } from '@angular/material/menu';
-import { Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { RouteConstants } from '../../shared/constants/route.constant';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -12,73 +18,88 @@ import { AddSpotComponent } from '../../shared/dialogs/add-spot/add-spot.compone
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,MatIconModule,RouterModule,TranslocoModule,MatMenuModule,MatButtonModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    RouterModule,
+    TranslocoModule,
+    MatMenuModule,
+    MatButtonModule,
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-
 })
 export class NavbarComponent {
   menuOpen = false;
-  public themeColor:string='dark';
-  routeConstants=RouteConstants;
+  public themeColor: string = 'dark';
+  routeConstants = RouteConstants;
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
- private dialogService=inject(DialogService)
-  ngOnInit(){
+  private dialogService = inject(DialogService);
+  ngOnInit() {
     this.initializeTheme();
-    if(localStorage.getItem('language')){
-
-      this.languageService.switchLanguage(localStorage.getItem('language') as string);
+    if (localStorage.getItem('language')) {
+      this.languageService.switchLanguage(
+        localStorage.getItem('language') as string
+      );
     }
   }
   initializeTheme(): void {
-    // Check if a theme is set in localStorage
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      this.themeColor = storedTheme;
-    } else {
-      localStorage.setItem('theme', this.themeColor); // Set default if not set
+    this.initTheme()
+  }
+  private initTheme(): void {
+    const savedTheme = localStorage.getItem('currentTheme');
+    if (savedTheme) {
+      this.themeColor = savedTheme;
+    } else if (!('currentTheme' in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      this.themeColor = 'dark';
     }
     this.applyTheme();
   }
 
   toggleTheme(): void {
-
     this.themeColor = this.themeColor === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', this.themeColor);
+    localStorage.setItem('currentTheme', this.themeColor);
     this.applyTheme();
   }
-  switchLanguage(language: string) {
-    localStorage.setItem('language',language);
-    
-      this.languageService.switchLanguage(language)
-    
-  }
+
   private applyTheme(): void {
-    document.body.classList.toggle('dark-theme', this.themeColor === 'dark');
-    document.body.classList.toggle('light-theme', this.themeColor === 'light');
+    if (this.themeColor === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }
-    // Listen for document click events to detect outside clicks
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
-      if (this.menuOpen) {
-        const clickedInsideMenu = this.mobileMenu?.nativeElement.contains(event.target);
-        const clickedInsideButton = this.hamburgerBtn?.nativeElement.contains(event.target);
-  
-        // Close the menu if clicked outside both the menu and the hamburger button
-        if (!clickedInsideMenu && !clickedInsideButton) {
-          this.menuOpen = false;
-        }
+  switchLanguage(language: string) {
+    localStorage.setItem('language', language);
+
+    this.languageService.switchLanguage(language);
+  }
+
+  // Listen for document click events to detect outside clicks
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.menuOpen) {
+      const clickedInsideMenu = this.mobileMenu?.nativeElement.contains(
+        event.target
+      );
+      const clickedInsideButton = this.hamburgerBtn?.nativeElement.contains(
+        event.target
+      );
+
+      // Close the menu if clicked outside both the menu and the hamburger button
+      if (!clickedInsideMenu && !clickedInsideButton) {
+        this.menuOpen = false;
       }
     }
-  
+  }
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
-    openDialog(){
-      this.dialogService.openDialog(AddSpotComponent, {});
-  
-    }
+  openDialog() {
+    this.dialogService.openDialog(AddSpotComponent, {});
+  }
 }
