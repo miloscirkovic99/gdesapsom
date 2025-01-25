@@ -2,13 +2,11 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { LanguageService } from './shared/services/language.service';
 import AOS from 'aos';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../env/env.dev';
 import { SpotsStore } from './shared/store/spots.store';
 import { filter } from 'rxjs';
-import { ContactFormComponent } from "./components/contact-form/contact-form.component";
+import { ContactFormComponent } from "./shared/components/contact-form/contact-form.component";
 @Component({
   imports: [RouterModule, NavbarComponent, FooterComponent, ContactFormComponent],
   selector: 'app-root',
@@ -18,16 +16,8 @@ import { ContactFormComponent } from "./components/contact-form/contact-form.com
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
-  public themeColor: string = 'dark';
-
-  spotsList: any[] = []; // Store all loaded results
-  totalResults: number = 0; // Total number of results from DB
-  limit: number = 10; // Results per page
-  offset: number = 0; // Starting offset
-  isLoading: boolean = false; // Loading state
-  spots = inject(SpotsStore);
   router=inject(Router)
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   ngOnInit() {
     AOS.init({
