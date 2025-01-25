@@ -110,9 +110,27 @@ export class AddSpotComponent {
       const reader = new FileReader();
 
       reader.onload = () => {
-        // Ovdje se postavlja base64 string
-        const base64String = reader.result as string;
+        // Ovde se postavlja base64 string
+        const base64String = reader.result as any;
         this.spotForm.get('iuo_slika')?.setValue(base64String);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+ 
+
+  // Metod za obradu fajla
+  onFileChangeInside(event: any): void {
+    const file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        // Ovde se postavlja base64 string
+        const base64String = reader.result as any;
+        this.spotForm.get('iuo_slika_unutra')?.setValue(base64String);
       };
 
       reader.readAsDataURL(file);
@@ -135,29 +153,13 @@ export class AddSpotComponent {
       )
     );
   }
-
-  // Metod za obradu fajla
-  onFileChangeInside(event: any): void {
-    const file = event.target.files[0];
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        // Ovdje se postavlja base64 string
-        const base64String = reader.result as string;
-        this.spotForm.get('iuo_slika_unutra')?.setValue(base64String);
-      };
-
-      reader.readAsDataURL(file);
-    }
-  }
   onNoClick(): void {
     this.dialogRef.close();
   }
   onSaveClick(): void {
     if (this.spotForm.valid) {
       console.log(this.spotForm.value);
+      this.spotsStore.suggestSpot(this.spotForm.value)
     } else {
       console.log('Form is invalid');
     }

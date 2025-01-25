@@ -124,7 +124,18 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
-
+     suggestSpot(data:any){
+        http.post<any>('pet-friendly-spots/suggest',data).pipe(takeUntil(destroyed$)).subscribe(({
+          next:(result)=>{
+          console.log(result);
+          
+          },
+          error:(err)=>{
+            console.error(err);
+            
+          }
+        }))
+     },
       allowedPetTypes() {
         http
           .get<any>('allowed-pet-types')
