@@ -159,7 +159,7 @@ export class AddSpotComponent {
   onSaveClick(): void {
     if (this.spotForm.valid) {
       console.log(this.spotForm.value);
-      this.spotsStore.suggestSpot(this.spotForm.value)
+      this.spotsStore.suggestSpot(this.spotForm)
     } else {
       console.log('Form is invalid');
     }

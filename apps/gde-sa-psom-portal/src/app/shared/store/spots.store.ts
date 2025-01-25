@@ -23,6 +23,7 @@ import {
 } from 'rxjs';
 import { SnackbarService } from '../services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { DialogService } from '../services/dialog.service';
 
 // Define the initial state type
 type SpotsState = {
@@ -61,6 +62,7 @@ export const SpotsStore = signalStore(
     const http = inject(HttpClient);
     const snackbarService = inject(SnackbarService);
     const translocoService = inject(TranslocoService);
+    const dialogService=inject(DialogService)
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
@@ -124,11 +126,12 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
-     suggestSpot(data:any){
-        http.post<any>('pet-friendly-spots/suggest',data).pipe(takeUntil(destroyed$)).subscribe(({
+     suggestSpot(form:any){
+        http.post<any>('pet-friendly-spots/suggest',form.value).pipe(takeUntil(destroyed$)).subscribe(({
           next:(result)=>{
           console.log(result);
-          
+          form.reset();
+          dialogService.closeDialog()
           },
           error:(err)=>{
             console.error(err);
