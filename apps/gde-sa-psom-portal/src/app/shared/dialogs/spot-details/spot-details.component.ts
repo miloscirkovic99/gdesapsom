@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet'; // Import Leaflet
 import 'leaflet-control-geocoder'; // Import geocoder control if using
 import { TranslocoModule } from '@ngneat/transloco';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
 @Component({
   selector: 'app-spot-details',
   imports: [
@@ -36,6 +37,9 @@ export class SpotDetailsComponent {
   readonly dialogRef = inject(MatDialogRef<SpotDetailsComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   currentSlide = 1;
+  descriptionToKeyMap= descriptionToKeyMap;
+  descriptionToKeyMapSpot=descriptionToKeyMapSpot;
+  descriptionToKeyMapGarden=descriptionToKeyMapGarden
 constructor(){
   this.dialogRef
   .keydownEvents()

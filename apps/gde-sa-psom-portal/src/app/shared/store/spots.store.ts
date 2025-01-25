@@ -69,10 +69,6 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      resetState(store: any) {
-        patchState(store, { offset: 0, spotsList: [] });
-      },
-
       loadData(
         ops_id?: any,
         ugo_id?: any,

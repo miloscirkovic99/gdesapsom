@@ -10,7 +10,7 @@ export class ContactFormService {
 
   sendEmail(data:any){
     console.log(data);
-    this.http.post<any>('gmail',{data}).subscribe({
+    this.http.post<any>('gmail',data).subscribe({
       next:(result)=>{
 
       },

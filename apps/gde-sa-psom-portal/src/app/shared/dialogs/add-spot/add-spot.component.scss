@@ -1,3 +1,5 @@
+@use '../../../../../public/styles/checkboxes';
+
 ::ng-deep {
   .mat-mdc-dialog-actions {
     @apply flex justify-between gap-2;
@@ -8,7 +10,29 @@
   .mat-mdc-dialog-surface {
     @apply rounded-xl;
   }
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    @apply w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white   dark:shadow-sm #{!important};
+  }
+  .mat-mdc-select-placeholder {
+    @apply text-sm text-gray-900 dark:text-gray-500;
+  }
+  .mat-select-search-input {
+    @apply bg-white #{!important};
+  }
+  mat-label {
+    @apply text-sm text-gray-900 dark:text-gray-500;
+  }
+  .mat-mdc-select-min-line{
+    @apply text-sm text-gray-900 dark:text-white;
+
+  }
+  .mat-mdc-form-field-subscript-wrapper{
+    @apply hidden;
+  }
 }
 .input {
   @apply block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white   dark:shadow-sm;
+}
+.form-field-wrapper{
+  @apply grid gap-10 mt-6;
 }

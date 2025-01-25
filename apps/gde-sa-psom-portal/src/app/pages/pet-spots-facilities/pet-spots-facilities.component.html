@@ -61,7 +61,7 @@
           <mat-label>{{ 'choose_place' | transloco }}</mat-label>
           <mat-select formControlName="ugo_id">
             <mat-option [value]="null">--</mat-option>
-            @for (item of tipObjekta(); track $index) {
+            @for (item of sharedStore.spotTypes(); track $index) {
             <mat-option [value]="item.id">
               {{ descriptionToKeyMapSpot[item.ime] | transloco }}
 
