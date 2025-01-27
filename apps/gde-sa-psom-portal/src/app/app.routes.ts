@@ -46,11 +46,32 @@ export const appRoutes: Route[] = [
    loadComponent:()=>{
     return import('./pages/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
    },
-   title:'Gde sa psom - Admin'
+   title:'Gde sa psom - Admin',
+   children:[
+    {
+      path:'settings-spot',
+      loadComponent: () => {
+        return import('./pages/pet-parks/pet-parks.component').then(
+          (m) => m.PetParksComponent
+        );
+      },
+    },
+    {
+      path:'suggested-spot',
+      loadComponent: () => {
+        return import('./pages/pet-spots-facilities/pet-spots-facilities.component').then(
+          (m) => m.PetSpotsFacilitiesComponent
+        );
+      },
+    },
+    // {
+    //   path:'township'
+    // }
+   ]
   },
-  {
-    path:'**',
-    redirectTo:'',
-    pathMatch:'full'
-  }
+  // {
+  //   path:'**',
+  //   redirectTo:'',
+  //   pathMatch:'full'
+  // }
 ];

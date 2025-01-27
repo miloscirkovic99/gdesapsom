@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -16,7 +16,8 @@ import { ContactFormComponent } from "./shared/components/contact-form/contact-f
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
-  router=inject(Router)
+  router=inject(Router);
+  hideContactForm=signal(false)
   constructor() {}
 
   ngOnInit() {
@@ -25,7 +26,11 @@ export class AppComponent {
     });
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
+    ).subscribe((result) => {
+      console.log(result);
+      if(result.url.includes('admin')){
+        this.hideContactForm.set(true)
+      }
       setTimeout(() => {
         AOS.refresh();
       }, 500); // Add delay to ensure elements are rendered

@@ -1,0 +1,60 @@
+:host ::ng-deep {
+    .mat-drawer-inner-container {
+      @apply overflow-hidden;
+    }
+    .drawer {
+      @apply flex flex-col w-[300px];
+      transition: width 0.3s ease-in-out;
+  
+      &.collapsed {
+        @apply w-20;
+  
+        mat-nav-list {
+          @apply p-5;
+        }
+  
+        .toggle-item {
+          @apply w-fit left-7;
+        }
+      }
+    }
+    .mat-drawer[style*="visibility: hidden"]{
+      @apply flex;
+    }
+    .mat-drawer-backdrop.mat-drawer-shown{
+      background: none;
+      display: none;
+    }
+  }
+  mat-nav-list {
+    @apply grid p-4 gap-2 w-80 place-content-start;
+  }
+  .icon-wrapper {
+    @apply flex gap-2  items-center;
+  }
+  .logo-img {
+    @apply pb-4 w-10/12 cursor-pointer;
+  }
+  
+  .active-link {
+    @apply font-bold text-white  bg-primary_green;
+    .icon-wrapper {
+      @apply text-white;
+    }
+  }
+  .sidebar-container {
+    @apply h-full p-0;
+  }
+  .fill-text {
+    path {
+      @apply fill-white;
+    }
+  }
+  
+  .shell-main {
+    @apply dark:bg-slate-950 w-full h-dvh p-4 flex-1;
+  }
+  .toggle-item {
+    @apply absolute bottom-2 right-5;
+  }
+  
