@@ -39,7 +39,14 @@ export const appRoutes: Route[] = [
       );
     },
     title:'Gde sa psom - About Us'
-
+  
+  },
+  {
+   path:RouteConstants.admin,
+   loadComponent:()=>{
+    return import('./pages/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
+   },
+   title:'Gde sa psom - Admin'
   },
   {
     path:'**',
