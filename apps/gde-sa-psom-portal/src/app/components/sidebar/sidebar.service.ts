@@ -18,7 +18,8 @@ export class SidebarService {
     {
       route:'admin/township',
       title:'Settings townships'
-    }
+    },
+    
   ]
   openSideBar() {
     this.isOpened.set(true);

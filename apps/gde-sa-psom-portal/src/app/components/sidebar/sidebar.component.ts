@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { SidebarService } from './sidebar.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { AuthService } from '../../pages/auth/auth.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,7 +19,9 @@ export class SidebarComponent {
   drawerMode: 'side' | 'over' = 'side';
   isSmallScreen = false;
   sidebarService = inject(SidebarService);
-  navigationButtons=signal<any>(this.sidebarService.navigationRoutes)
+  private authService=inject(AuthService)
+  navigationButtons=signal<any>(this.sidebarService.navigationRoutes);
+  private router=inject(Router)
   constructor(private breakpointObserver: BreakpointObserver) {
     this.breakpointObserver
       .observe(['(max-width: 1000px)'])
@@ -36,5 +40,12 @@ export class SidebarComponent {
     if (isOpened !== this.sidebarService.isOpened()) {
       this.sidebarService.toggleSidebar();
     }
+  }
+  logout(){
+    this.authService.logout().pipe(take(1)).subscribe({
+      next:()=>{
+        this.router.navigate([''])
+      }
+    })
   }
 }

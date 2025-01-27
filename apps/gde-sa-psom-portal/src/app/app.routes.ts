@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { RouteConstants } from './shared/constants/route.constant';
+import { authGuard } from './pages/auth/auth.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -46,6 +47,7 @@ export const appRoutes: Route[] = [
    loadComponent:()=>{
     return import('./pages/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
    },
+   canActivate:[authGuard],
    title:'Gde sa psom - Admin',
    children:[
     {
@@ -64,14 +66,20 @@ export const appRoutes: Route[] = [
         );
       },
     },
-    // {
-    //   path:'township'
-    // }
+ 
    ]
   },
-  // {
-  //   path:'**',
-  //   redirectTo:'',
-  //   pathMatch:'full'
-  // }
+  {
+    path:'login',
+    loadComponent: () => {
+      return import('./pages/auth/auth.component').then(
+        (m) => m.AuthComponent
+      );
+    },
+   },
+  {
+    path:'**',
+    redirectTo:'',
+    pathMatch:'full'
+  }
 ];
