@@ -6,7 +6,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { AuthService } from '../../pages/auth/auth.service';
+import { AuthService } from '../../features/auth/auth.service';
 import { take } from 'rxjs';
 
 @Component({

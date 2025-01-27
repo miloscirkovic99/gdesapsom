@@ -9,12 +9,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { RouteConstants } from '../../constants/route.constant';
 import { TranslocoModule } from '@ngneat/transloco';
-import { LanguageService } from '../../shared/services/language.service';
+import { LanguageService } from '../../../core/services/language.service';
 import { MatButtonModule } from '@angular/material/button';
-import { DialogService } from '../../shared/services/dialog.service';
-import { AddSpotComponent } from '../../shared/dialogs/add-spot/add-spot.component';
+import { DialogService } from '../../../core/services/dialog.service';
+import { AddSpotComponent } from '../../dialogs/add-spot/add-spot.component';
+import { AuthService } from '../../../features/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -37,6 +38,7 @@ export class NavbarComponent {
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
   private dialogService = inject(DialogService);
+  authService=inject(AuthService)
   ngOnInit() {
     this.initializeTheme();
     if (localStorage.getItem('language')) {

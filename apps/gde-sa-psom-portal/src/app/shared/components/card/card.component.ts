@@ -1,6 +1,6 @@
 import { Component, effect, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DialogService } from '../../services/dialog.service';
+import { DialogService } from '../../../core/services/dialog.service';
 import { SpotDetailsComponent } from '../../dialogs/spot-details/spot-details.component';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';

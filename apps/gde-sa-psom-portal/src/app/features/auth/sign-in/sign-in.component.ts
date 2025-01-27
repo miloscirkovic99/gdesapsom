@@ -1,18 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from './auth.service';
-import { take } from 'rxjs';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { take } from 'rxjs';
+import { RouteConstants } from '../../../shared/constants/route.constant';
+import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-auth',
+  selector: 'app-sign-in',
   imports: [CommonModule,ReactiveFormsModule],
-  templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss',
+  templateUrl: './sign-in.component.html',
+  styleUrl: './sign-in.component.scss',
 })
-export class AuthComponent {
+export class SignInComponent {
   signinForm!: FormGroup;
   protected authService=inject(AuthService);
   private router=inject(Router)

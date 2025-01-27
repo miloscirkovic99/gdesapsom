@@ -5,9 +5,9 @@ import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withFetch, withInterc
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
-import { ApiPrefixInterceptor } from './shared/interceptors/api.interceptor';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
+import { ApiPrefixInterceptor } from './core/interceptors/api.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

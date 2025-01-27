@@ -21,9 +21,9 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { SnackbarService } from '../services/snackbar.service';
+import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { DialogService } from '../services/dialog.service';
+import { DialogService } from '../../core/services/dialog.service';
 
 // Define the initial state type
 type SpotsState = {

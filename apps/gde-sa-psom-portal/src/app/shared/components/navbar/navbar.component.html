@@ -19,6 +19,11 @@
     <a [routerLink]="routeConstants.petParks">
       {{ 'find_pet_parks' | transloco }}
     </a>
+     
+    @if(authService.isAuthenticated()){
+
+      <a [routerLink]="routeConstants.admin"> Admin </a>
+    }
   </div>
 
   <!-- Right Buttons -->

@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { RouteConstants } from './shared/constants/route.constant';
-import { authGuard } from './pages/auth/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -16,7 +16,7 @@ export const appRoutes: Route[] = [
   {
     path:RouteConstants.allSpots,
     loadComponent: () => {
-      return import('./pages/pet-spots-facilities/pet-spots-facilities.component').then(
+      return import('./features/pet-spots-facilities/pet-spots-facilities.component').then(
         (m) => m.PetSpotsFacilitiesComponent
       );
     },
@@ -26,7 +26,7 @@ export const appRoutes: Route[] = [
   {
     path:RouteConstants.petParks,
     loadComponent: () => {
-      return import('./pages/pet-parks/pet-parks.component').then(
+      return import('./features/pet-parks/pet-parks.component').then(
         (m) => m.PetParksComponent
       );
     },
@@ -45,7 +45,7 @@ export const appRoutes: Route[] = [
   {
    path:RouteConstants.admin,
    loadComponent:()=>{
-    return import('./pages/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
+    return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
    },
    canActivate:[authGuard],
    title:'Gde sa psom - Admin',
@@ -53,7 +53,7 @@ export const appRoutes: Route[] = [
     {
       path:'settings-spot',
       loadComponent: () => {
-        return import('./pages/pet-parks/pet-parks.component').then(
+        return import('./features/pet-parks/pet-parks.component').then(
           (m) => m.PetParksComponent
         );
       },
@@ -61,7 +61,7 @@ export const appRoutes: Route[] = [
     {
       path:'suggested-spot',
       loadComponent: () => {
-        return import('./pages/pet-spots-facilities/pet-spots-facilities.component').then(
+        return import('./features/pet-spots-facilities/pet-spots-facilities.component').then(
           (m) => m.PetSpotsFacilitiesComponent
         );
       },
@@ -72,8 +72,8 @@ export const appRoutes: Route[] = [
   {
     path:'login',
     loadComponent: () => {
-      return import('./pages/auth/auth.component').then(
-        (m) => m.AuthComponent
+      return import('./features/auth/sign-in/sign-in.component').then(
+        (m) => m.SignInComponent
       );
     },
    },
