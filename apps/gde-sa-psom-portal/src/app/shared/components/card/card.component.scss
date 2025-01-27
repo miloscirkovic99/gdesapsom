@@ -5,10 +5,10 @@
 @apply bg-base-100 h-72 w-full  shadow-xl max-sm:h-full;
 
     .card-title{
-        @apply text-2xl font-semibold;
+        @apply text-3xl font-semibold mb-2;
     } 
     .card-body{
-        
+        @apply gap-1;
         span{
             @apply text-xl flex items-center gap-2; 
         }

@@ -4,7 +4,7 @@
   .mat-mdc-dialog-actions {
     @apply flex justify-between gap-2;
     button {
-      @apply w-40;
+      @apply w-40 max-sm:w-32;
     }
   }
   .mat-mdc-dialog-surface {
@@ -28,6 +28,10 @@
   }
   .mat-mdc-form-field-subscript-wrapper{
     @apply hidden;
+  }
+  .mdc-dialog--open .mat-mdc-dialog-inner-container {
+    
+    @apply m-3;
   }
 }
 .input {
