@@ -62,7 +62,8 @@ export const SpotsStore = signalStore(
     const http = inject(HttpClient);
     const snackbarService = inject(SnackbarService);
     const translocoService = inject(TranslocoService);
-    const dialogService=inject(DialogService)
+    const dialogService=inject(DialogService);
+
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
@@ -106,8 +107,9 @@ export const SpotsStore = signalStore(
             error: (error) => {
               const translatedMessage =
                 translocoService.translate('spots_error404');
+                const translatedButton=translocoService.translate('close')
 
-              snackbarService.openSnackbar(translatedMessage, 'Close');
+              snackbarService.openSnackbar(translatedMessage, translatedButton,'error-snackbar');
 
               patchState(store, { isLoading: false });
             },
@@ -131,11 +133,18 @@ export const SpotsStore = signalStore(
           next:(result)=>{
           console.log(result);
           form.reset();
-          dialogService.closeDialog()
-          },
+          dialogService.closeDialog();
+          const translatedMessage =
+          translocoService.translate('success_add');
+          const translatedButton=translocoService.translate('close')
+          snackbarService.openSnackbar(translatedMessage, translatedButton,'success-snackbar');
+        },
           error:(err)=>{
             console.error(err);
-            
+            const translatedMessage =
+            translocoService.translate('success_add');
+            const translatedButton=translocoService.translate('close')
+            snackbarService.openSnackbar(translatedMessage, translatedButton,'error-snackbar');
           }
         }))
      },

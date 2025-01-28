@@ -146,7 +146,7 @@
 
       <!-- Tip objekta (Single Select) -->
       <mat-form-field>
-        <mat-label>{{ 'choose_place' | transloco }}</mat-label>
+        <mat-label>{{ 'spot_type' | transloco }}</mat-label>
         <mat-select formControlName="bas_id">
           <mat-option [value]="null">--</mat-option>
           @for (item of sharedStore.spotTypes(); track $index) {

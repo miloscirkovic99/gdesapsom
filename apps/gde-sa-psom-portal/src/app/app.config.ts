@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, isDevMode, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import {  ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
@@ -7,7 +7,7 @@ import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
-import { ApiPrefixInterceptor } from './core/interceptors/api.interceptor';
+import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

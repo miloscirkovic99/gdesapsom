@@ -14,7 +14,7 @@
 .btn_primary{
   @apply  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium px-4 py-2 border rounded-md outline-none border-none;
   &:disabled{
-    @apply bg-gray-200 text-white cursor-not-allowed;
+    @apply bg-green-200 text-gray-50 cursor-not-allowed;
   }
 }
 .btn_error{
@@ -28,12 +28,22 @@
 .dialogBackdropBackground {
   @apply backdrop-blur-sm;
 }
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
 :root {
   @include mat.snack-bar-overrides((
-    container-color: red,
-    supporting-text-color: white,
-    button-color:white,
-    supporting-text-size:14px
-
+    container-color:'inherent',
   ));
+}
+.mat-mdc-snack-bar-container{
+  @apply rounded-xl;
+}
+.success-snackbar {
+  background-color: #4caf50 !important; /* Zelena boja za uspeh */
+  color: white;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important; /* Crvena boja za grešku */
+  color: white;
+
 }

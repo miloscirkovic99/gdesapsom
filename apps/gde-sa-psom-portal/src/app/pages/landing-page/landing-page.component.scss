@@ -34,7 +34,7 @@
 
   .main-section {
     .main-header {
-      @apply flex items-center justify-end;
+      @apply flex items-center justify-end pr-4;
     }
     .main-description {
       @apply grid items-center justify-center mt-10 place-items-center;

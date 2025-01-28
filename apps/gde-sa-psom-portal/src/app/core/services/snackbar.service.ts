@@ -8,9 +8,12 @@ export class SnackbarService {
   openSnackbar(
     message?: string,
     action?: string,
+    panelClass?:any,
     duration?: number,
   ) {
-this.snackbarRef= this.snackbar.open(message as string,action as string,{duration:duration});
+    console.log(panelClass);
+    
+this.snackbarRef= this.snackbar.open(message as string,action as string,{duration:duration,panelClass:panelClass});
   }
   getSnackbarRef(){
     return this.snackbarRef;
