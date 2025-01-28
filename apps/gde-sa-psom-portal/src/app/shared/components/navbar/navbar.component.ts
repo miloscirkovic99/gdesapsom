@@ -46,6 +46,7 @@ export class NavbarComponent {
         localStorage.getItem('language') as string
       );
     }
+    this.authService.getSessionResult()
   }
   initializeTheme(): void {
     this.initTheme()

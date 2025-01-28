@@ -4,6 +4,9 @@
     
     @apply rounded-xl;
   }
+  .mat-mdc-dialog-surface{
+    border-radius: 12px !important;
+  }
   .mdc-dialog--open .mat-mdc-dialog-inner-container {
     
     @apply m-3;
@@ -14,13 +17,14 @@
   .carousel-image {
     @apply w-full h-96 rounded-xl;
   }
+
   .spot-details-wrapper{
-    @apply grid gap-2  p-4 rounded-xl;
+    @apply grid gap-2  p-4 rounded-xl shadow-xl;
     p{
       @apply text-xl font-medium;
     }
     .aditional-wrapper{
-      @apply grid gap-3 mb-4 ;
+      @apply grid gap-3 mb-4 pl-3;
       p{
         @apply text-lg font-medium;
         a{
@@ -29,4 +33,7 @@
       }
     }
   }
+}
+.spot-details-container{
+  @apply grid gap-4 mb-5;
 }

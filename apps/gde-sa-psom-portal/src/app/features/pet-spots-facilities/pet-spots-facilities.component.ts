@@ -27,6 +27,7 @@ import {
   descriptionToKeyMapSpot,
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -56,7 +57,8 @@ export class PetSpotsFacilitiesComponent {
   >(1);
 
   spotsStore = inject(SpotsStore);
-  sharedStore=inject(SharedStore)
+  sharedStore = inject(SharedStore);
+  private router=inject(ActivatedRoute)
   form!: FormGroup;
   previousFormValues: any = {}; // To track previous dropdown values
 
@@ -75,15 +77,17 @@ export class PetSpotsFacilitiesComponent {
       .subscribe(() => {
         this.filterTownshipsMulti();
       });
-      effect(()=>{
-        if(this.sharedStore.townships().length){
-          this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-
-        }
-      })
+    effect(() => {
+      if (this.sharedStore.townships().length) {
+        this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
+      }
+    });
+    this.router.data.subscribe((result)=>{
+      console.log(result);
+      
+    })
   }
 
- 
   protected filterTownshipsMulti() {
     if (!this.sharedStore.townships()) {
       return;
@@ -96,16 +100,17 @@ export class PetSpotsFacilitiesComponent {
       search = search.toLowerCase();
     }
     this.filteredtownshipsMulti.next(
-      this.sharedStore.townships().filter((township: any) =>
-        township.ime.toLowerCase().includes(search)
-      )
+      this.sharedStore
+        .townships()
+        .filter((township: any) => township.ime.toLowerCase().includes(search))
     );
   }
 
-
   onSubmit(resetOffset: boolean = false) {
     const data = {
-      ops_id: this.form.value.ops_id?.length ? this.form.value.ops_id?.join(',') : null,
+      ops_id: this.form.value.ops_id?.length
+        ? this.form.value.ops_id?.join(',')
+        : null,
       ugo_id: this.form.value.ugo_id || null,
       sta_id: this.form.value.sta_id || null,
     };

@@ -20,6 +20,7 @@ export const appRoutes: Route[] = [
         (m) => m.PetSpotsFacilitiesComponent
       );
     },
+    data:["User"],
     title:'Gde sa psom - Pet Spots'
 
   },
@@ -53,10 +54,11 @@ export const appRoutes: Route[] = [
     {
       path:'settings-spot',
       loadComponent: () => {
-        return import('./features/pet-parks/pet-parks.component').then(
-          (m) => m.PetParksComponent
-        );
+        return import('./features/pet-spots-facilities/pet-spots-facilities.component').then(
+          (m) => m.PetSpotsFacilitiesComponent
+        ); 
       },
+      data:['Admin']
     },
     {
       path:'suggested-spot',

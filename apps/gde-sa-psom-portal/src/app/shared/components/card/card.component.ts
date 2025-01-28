@@ -22,10 +22,7 @@ export class CardComponent {
   descriptionToKeyMapGarden=descriptionToKeyMapGarden;
   descriptionToKeyMapSpot=descriptionToKeyMapSpot;
   ngAfterViewChecked() {
-    AOS.refresh(); // Trigger AOS refresh after DOM updates
-
-    console.log(this.data());
-    
+    AOS.refresh(); // Trigger AOS refresh after DOM updates    
   }
   openDialog(data:any){
     this.dialogService.openDialog(SpotDetailsComponent, data);

@@ -157,6 +157,14 @@
           >{{ 'find_pet_parks' | transloco }}
         </a>
       </li>
+      @if(authService.isAuthenticated()){
+
+        <li>
+          <a [routerLink]="routeConstants.admin"
+            >Admin
+          </a>
+        </li>
+      }
       <!-- Add Buttons to Mobile Menu -->
 
       <li>
