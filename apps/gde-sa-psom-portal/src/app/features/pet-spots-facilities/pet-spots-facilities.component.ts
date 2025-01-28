@@ -65,9 +65,9 @@ export class PetSpotsFacilitiesComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      ops_id: new FormControl(''), // Multiple select
-      sta_id: new FormControl(''), // Single select
-      ugo_id: new FormControl(''), // Single select
+      ops_id: new FormControl(null), // Multiple select
+      sta_id: new FormControl(null), // Single select
+      ugo_id: new FormControl(null), // Single select
     });
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
@@ -105,7 +105,7 @@ export class PetSpotsFacilitiesComponent {
 
   onSubmit(resetOffset: boolean = false) {
     const data = {
-      ops_id: this.form.value.ops_id ? this.form.value.ops_id?.join(',') : null,
+      ops_id: this.form.value.ops_id?.length ? this.form.value.ops_id?.join(',') : null,
       ugo_id: this.form.value.ugo_id || null,
       sta_id: this.form.value.sta_id || null,
     };

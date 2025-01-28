@@ -1,8 +1,8 @@
 @if(!isLoading()){
 <div class="card-container">
   @for (item of data(); track $index) {
-
-  <div class="card image-full" data-aos="fade-up" data-aos-duration="700">
+    
+    <div class="card image-full" data-aos="fade-up" data-aos-duration="700">
     <figure>
       <img
         [src]="
@@ -11,9 +11,14 @@
             : 'assets/no-photo.png'
         "
         [alt]="item.iuo_ime ?? item?.par_ime"
+        height="100"
       />
     </figure>
     <div class="card-body">
+      @if(!hiddeDetailsButton()){
+
+        <span class="indicator-item badge badge-ghost text-base mb-1">{{descriptionToKeyMapSpot[item?.ugo_ime] | transloco}}</span>
+      }
       <h2 class="card-title">{{ item?.iuo_ime??item?.par_ime }}</h2>
       <span
         ><svg

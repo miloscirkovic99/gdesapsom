@@ -4,6 +4,7 @@ import { DialogService } from '../../../core/services/dialog.service';
 import { SpotDetailsComponent } from '../../dialogs/spot-details/spot-details.component';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
 
 @Component({
   selector: 'app-card',
@@ -17,17 +18,14 @@ export class CardComponent {
   isLoading=input();
   dialogService = inject(DialogService);
   hiddeDetailsButton=input<boolean>(false)
-  descriptionToKeyMap: { [key: string]: string } = {
-    'Svi psi': 'all_dogs',
-    'Mali pas': 'small_dog',
-    'Mali pas i štenci većih rasa do 5 meseci starosti': 'small_puppies',
-  };
-  descriptionToKeyMapGarden: { [key: string]: string } = {
-    'bez bašte': 'with_garden',
-    'sa baštom': 'without_garden',
-  };
+  descriptionToKeyMap=descriptionToKeyMap
+  descriptionToKeyMapGarden=descriptionToKeyMapGarden;
+  descriptionToKeyMapSpot=descriptionToKeyMapSpot;
   ngAfterViewChecked() {
     AOS.refresh(); // Trigger AOS refresh after DOM updates
+
+    console.log(this.data());
+    
   }
   openDialog(data:any){
     this.dialogService.openDialog(SpotDetailsComponent, data);

@@ -18,6 +18,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -93,7 +94,7 @@ export const SpotsStore = signalStore(
             offset,
             limit,
           })
-          .pipe(takeUntil(destroyed$))
+          .pipe(take(1),takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
               patchState(store, (state) => ({
