@@ -13,7 +13,7 @@ export class SidebarService {
     },
     {
       route:'admin/pending-spots',
-      title:'Check pending spots'
+      title:'Setting pending spots'
     },
     // {
     //   route:'admin/township',

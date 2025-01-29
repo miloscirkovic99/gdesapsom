@@ -1,7 +1,7 @@
 <h1
   class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between gap-10"
 >
-  {{data.isEdit?'Izmeni lokaciju': 'suggest_spot' | transloco }}
+  {{ data.isEdit ? 'Izmeni lokaciju' : ('suggest_spot' | transloco) }}
   <svg
     (click)="onNoClick()"
     xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
   <form [formGroup]="spotForm">
     @if(spotForm.invalid && spotForm.touched){
 
-      <mat-error >{{"required" | transloco}}</mat-error>
+    <mat-error>{{ 'required' | transloco }}</mat-error>
     }
     <div class="input-wrapper grid gap-4 pb-4">
       <div class="label-input flex items-start gap-2 flex-col">
@@ -33,7 +33,7 @@
           type="text"
           [placeholder]="'spot_name' | transloco"
           class="input"
-          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
 
@@ -45,8 +45,7 @@
           type="text"
           [placeholder]="'address' | transloco"
           class="input"
-          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
-
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
@@ -59,122 +58,161 @@
           type="text"
           [placeholder]="'site_network' | transloco"
           class="input"
-          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
-
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'image_outside' | transloco
         }}</span>
+        @if(!spotForm.get('iuo_slika')?.value){
+
         <input
           id="iuo_slika"
           formControlName="iuo_slika"
           type="file"
           class="input"
-          [ngClass]="{'border-red-600': (spotForm.invalid && spotForm.touched)}"
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
           (change)="onFileChangeOutside($event)"
         />
+        }@else {
+        <div class="remove-image-wrapper">
+          <svg
+            (click)="spotForm.patchValue({ iuo_slika: null })"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-7"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+            />
+          </svg>
+
+          <img [src]="spotForm.get('iuo_slika')?.value" alt="" />
+        </div>
+        }
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'image_inside' | transloco
         }}</span>
-        <input
+
+        @if(!spotForm.get('iuo_slika_unutra')?.value){
+
+          <input
           id="iuo_slika_unutra"
           formControlName="iuo_slika_unutra"
           type="file"
           class="input"
           (change)="onFileChangeInside($event)"
         />
+        }@else {
+        <div class="remove-image-wrapper">
+          <svg
+            (click)="spotForm.patchValue({ iuo_slika_unutra: null })"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-7"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+            />
+          </svg>
+
+          <img [src]="spotForm.get('iuo_slika_unutra')?.value" alt="" />
+        </div>
+        }
+      
       </div>
       <div class="form-field-wrapper">
-      <mat-form-field>
-        <mat-label>{{ 'select_city' | transloco }}</mat-label>
+        <mat-form-field>
+          <mat-label>{{ 'select_city' | transloco }}</mat-label>
 
-        <mat-select
-          formControlName="ops_id"
-          [multiple]="true"
-          #multiSelect
-        >
-          <mat-option>
-            <ngx-mat-select-search
-              [placeholderLabel]="'search' | transloco"
-              [formControl]="townshipMultiFilterCtrl"
-            >
-              <svg
-                ngxMatSelectSearchClear
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
+          <mat-select formControlName="ops_id" [multiple]="true" #multiSelect>
+            <mat-option>
+              <ngx-mat-select-search
+                [placeholderLabel]="'search' | transloco"
+                [formControl]="townshipMultiFilterCtrl"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                />
-              </svg>
-              <span ngxMatSelectNoEntriesFound>
-                {{ 'no_entries' | transloco }}
-              </span>
-            </ngx-mat-select-search>
-          </mat-option>
-          @for (township of filteredtownshipsMulti | async; track $index) {
+                <svg
+                  ngxMatSelectSearchClear
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                  />
+                </svg>
+                <span ngxMatSelectNoEntriesFound>
+                  {{ 'no_entries' | transloco }}
+                </span>
+              </ngx-mat-select-search>
+            </mat-option>
+            @for (township of filteredtownshipsMulti | async; track $index) {
 
-          <mat-option [value]="township?.id">
-            {{ township.ime }}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <!-- Starost (Single Select) -->
-      <mat-form-field>
-        <mat-label>{{ 'dog_size' | transloco }}</mat-label>
-        <mat-select formControlName="sta_id">
-          <mat-option [value]="null">--</mat-option>
-          @for (item of spotsStore.allowed(); track $index) {
+            <mat-option [value]="township?.id">
+              {{ township.ime }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <!-- Starost (Single Select) -->
+        <mat-form-field>
+          <mat-label>{{ 'dog_size' | transloco }}</mat-label>
+          <mat-select formControlName="sta_id">
+            <mat-option [value]="null">--</mat-option>
+            @for (item of spotsStore.allowed(); track $index) {
 
-          <mat-option [value]="item.id">
-            {{ descriptionToKeyMap[item.ime] | transloco }}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+            <mat-option [value]="item.id">
+              {{ descriptionToKeyMap[item.ime] | transloco }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-      <!-- Tip objekta (Single Select) -->
-      <mat-form-field>
-        <mat-label>{{ 'spot_type' | transloco }}</mat-label>
-        <mat-select formControlName="bas_id">
-          <mat-option [value]="null">--</mat-option>
-          @for (item of sharedStore.spotTypes(); track $index) {
-          <mat-option [value]="item.id">
-            {{ descriptionToKeyMapSpot[item.ime] | transloco }}
-
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-       <!-- Sa bastom (Single Select) -->
-       <mat-form-field>
-        <mat-label>{{ 'garden' | transloco }}</mat-label>
-        <mat-select formControlName="ugo_id">
-          <mat-option [value]="null">--</mat-option>
-          @for (item of sharedStore.gardens(); track $index) {
-          <mat-option [value]="item.id">
-            {{ descriptionToKeyMapGarden[item.ime] | transloco }}
-
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
+        <!-- Tip objekta (Single Select) -->
+        <mat-form-field>
+          <mat-label>{{ 'spot_type' | transloco }}</mat-label>
+          <mat-select formControlName="ugo_id">
+            <mat-option [value]="null">--</mat-option>
+            @for (item of sharedStore.spotTypes(); track $index) {
+            <mat-option [value]="item.id">
+              {{ descriptionToKeyMapSpot[item.ime] | transloco }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <!-- Sa bastom (Single Select) -->
+        <mat-form-field>
+          <mat-label>{{ 'garden' | transloco }}</mat-label>
+          <mat-select formControlName="bas_id">
+            <mat-option [value]="null">--</mat-option>
+            @for (item of sharedStore.gardens(); track $index) {
+            <mat-option [value]="item.id">
+              {{ descriptionToKeyMapGarden[item.ime] | transloco }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
       <div class="label-input flex items-start gap-2 flex-col">
-        <span class="text-md font-medium">{{
-          'phone' | transloco
-        }}</span>
+        <span class="text-md font-medium">{{ 'phone' | transloco }}</span>
         <input
           id="phone"
           formControlName="iuo_telefon"
@@ -183,7 +221,7 @@
           class="input"
         />
       </div>
-     
+
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'short_description' | transloco
@@ -196,14 +234,17 @@
         ></textarea>
       </div>
     </div>
- 
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="btn btn_error" (click)="onNoClick()">
     {{ 'close' | transloco }}
   </button>
-  <button class="btn btn_primary" [disabled]="spotForm.invalid" (click)="onSaveClick()">
-     {{data.isEdit?'Izmeni' : 'save' | transloco }}
+  <button
+    class="btn btn_primary"
+    [disabled]="spotForm.invalid || !spotForm.dirty"
+    (click)="onSaveClick()"
+  >
+    {{ ('save' | transloco) }}
   </button>
 </mat-dialog-actions>

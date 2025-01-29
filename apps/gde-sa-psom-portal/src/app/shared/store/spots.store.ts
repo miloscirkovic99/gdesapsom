@@ -11,16 +11,9 @@ import {
 } from '@ngrx/signals';
 import AOS from 'aos';
 import {
-  catchError,
-  debounceTime,
-  finalize,
-  map,
-  of,
   Subject,
-  switchMap,
-  take,
   takeUntil,
-  tap,
+
 } from 'rxjs';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
@@ -63,7 +56,7 @@ export const SpotsStore = signalStore(
     const http = inject(HttpClient);
     const snackbarService = inject(SnackbarService);
     const translocoService = inject(TranslocoService);
-    const dialogService=inject(DialogService);
+    const dialogService = inject(DialogService);
 
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
@@ -94,7 +87,7 @@ export const SpotsStore = signalStore(
             offset,
             limit,
           })
-          .pipe(take(1),takeUntil(destroyed$))
+          .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
               patchState(store, (state) => ({
@@ -108,9 +101,13 @@ export const SpotsStore = signalStore(
             error: (error) => {
               const translatedMessage =
                 translocoService.translate('spots_error404');
-                const translatedButton=translocoService.translate('close')
+              const translatedButton = translocoService.translate('close');
 
-              snackbarService.openSnackbar(translatedMessage, translatedButton,'error-snackbar');
+              snackbarService.openSnackbar(
+                translatedMessage,
+                translatedButton,
+                'error-snackbar'
+              );
 
               patchState(store, { isLoading: false });
             },
@@ -129,26 +126,64 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
-     suggestSpot(form:any){
-        http.post<any>('pet-friendly-spots/suggest',form.value).pipe(takeUntil(destroyed$)).subscribe(({
-          next:(result)=>{
-          console.log(result);
-          form.reset();
-          dialogService.closeDialog();
-          const translatedMessage =
-          translocoService.translate('success_add');
-          const translatedButton=translocoService.translate('close')
-          snackbarService.openSnackbar(translatedMessage, translatedButton,'success-snackbar');
-        },
-          error:(err)=>{
-            console.error(err);
-            const translatedMessage =
-            translocoService.translate('success_add');
-            const translatedButton=translocoService.translate('close')
-            snackbarService.openSnackbar(translatedMessage, translatedButton,'error-snackbar');
-          }
-        }))
-     },
+      suggestSpot(form: any) {
+        http
+          .post<any>('pet-friendly-spots/suggest', form.value)
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              console.log(result);
+              form.reset();
+              dialogService.closeDialog();
+              const translatedMessage =
+                translocoService.translate('success_add');
+              const translatedButton = translocoService.translate('close');
+              snackbarService.openSnackbar(
+                translatedMessage,
+                translatedButton,
+                'success-snackbar'
+              );
+            },
+            error: (err) => {
+              console.error(err);
+              const translatedMessage =
+                translocoService.translate('success_add');
+              const translatedButton = translocoService.translate('close');
+              snackbarService.openSnackbar(
+                translatedMessage,
+                translatedButton,
+                'error-snackbar'
+              );
+            },
+          });
+      },
+      updateSpot(form: any) {
+        http
+          .post<any>('pet-friendly-spots/update', form.value)
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              this.loadData(null,null,null,true);
+              console.log(result);
+              dialogService.closeDialog();
+              snackbarService.openSnackbar(
+                'Successfully updated pet-friendly location.',
+                'Zatvori',
+                
+                'success-snackbar'
+              );
+              refreshAOS()
+            },
+            error:(error)=>{
+              snackbarService.openSnackbar(
+                'Oops... Something went wrong, please check your fields and try again',
+                'Close',
+                'error-snackbar'
+              );
+            }
+          });
+      },
+      
       allowedPetTypes() {
         http
           .get<any>('allowed-pet-types')

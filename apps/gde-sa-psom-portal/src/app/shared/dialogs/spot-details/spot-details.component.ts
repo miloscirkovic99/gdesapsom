@@ -53,6 +53,8 @@ constructor(){
 
   ngAfterViewInit(): void {
     this.initializeMap();
+    console.log(this.data);
+    
     this.geocodeAddress(`${this.data?.iuo_adressa},${this?.data.grd_ime}`);
   }
 

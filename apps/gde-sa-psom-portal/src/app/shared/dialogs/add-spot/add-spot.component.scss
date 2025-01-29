@@ -40,3 +40,12 @@
 .form-field-wrapper{
   @apply grid gap-10 mt-6;
 }
+.remove-image-wrapper{
+  @apply grid w-full relative;
+  img{
+    @apply w-full h-80 rounded-xl;
+  }
+  svg{
+    @apply right-0 top-0 absolute text-white cursor-pointer hover:text-primary_green m-2;
+  }
+}

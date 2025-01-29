@@ -77,17 +77,18 @@ export class AddSpotComponent {
     });
 
     this.spotForm = this.fb.group({
-      iuo_ime: [this.data.data.iuo_ime, Validators.required],
-      iuo_adressa: [this.data.data.iuo_adressa, Validators.required],
-      iuo_link_web: [this.data.data.iuo_link_web, Validators.required],
-      iuo_slika: [this.data.data.iuo_slika_base64, Validators.required],
-      iuo_slika_unutra: [this.data.data.iuo_slika_base64_unutra],
-      iuo_telefon: [this.data.data.iuo_telefon],
-      ops_id: [[this.data.data.ops_id], Validators.required],
-      ugo_id: [this.data.data.ugo_id, Validators.required],
-      sta_id: [this.data.data.sta_id, Validators.required],
-      bas_id: [this.data.data.bas_id, Validators.required],
-      iuo_opis: [this.data.data.iuo_opis],
+      iuo_id:[this.data.data?.iuo_id],
+      iuo_ime: [this.data.data?.iuo_ime, Validators.required],
+      iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
+      iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
+      iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
+      iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
+      iuo_telefon: [this.data.data?.iuo_telefon],
+      ops_id: [[this.data.data?.ops_id], Validators.required],
+      ugo_id: [this.data.data?.ugo_id, Validators.required],
+      sta_id: [this.data.data?.sta_id, Validators.required],
+      bas_id: [this.data.data?.bas_id, Validators.required],
+      iuo_opis: [this.data.data?.iuo_opis],
     });
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
@@ -161,7 +162,7 @@ export class AddSpotComponent {
   onSaveClick(): void {
     if (this.spotForm.valid) {
       console.log(this.spotForm.value);
-      this.spotsStore.suggestSpot(this.spotForm)
+      this.data.isEdit?this.spotsStore.updateSpot(this.spotForm): this.spotsStore.suggestSpot(this.spotForm)
     } else {
       console.log('Form is invalid');
     }

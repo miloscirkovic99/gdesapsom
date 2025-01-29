@@ -1,1 +1,9 @@
-<p>pending-spots works!</p>
+<div class="pending-spots-container">
+  <app-card
+    [data]="pendingSpots()"
+    [isPendingSpot]="true"
+    [isAdmin]="true"
+    [isLoading]="false"
+    (onActionClick)="onAction($event)"
+  ></app-card>
+</div>
