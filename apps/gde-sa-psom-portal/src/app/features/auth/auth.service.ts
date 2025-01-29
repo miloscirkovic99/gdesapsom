@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
@@ -20,8 +20,8 @@ export class AuthService {
   getToken(): string | null {
     return this.token || localStorage.getItem('sid');
   }
-  getSessionResult(){
-    this.http.get<any>('auth/session' ).subscribe((result)=>{
+  getSessionResult(){   
+    this.http.get<any>('auth/session').subscribe((result)=>{
       console.log(result);
       
     })

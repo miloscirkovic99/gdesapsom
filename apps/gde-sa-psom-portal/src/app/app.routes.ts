@@ -48,23 +48,30 @@ export const appRoutes: Route[] = [
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
    },
+ 
    canActivate:[authGuard],
    title:'Gde sa psom - Admin',
    children:[
     {
-      path:'settings-spot',
+      path: '', // This will be the default route for 'admin', automatically redirects to 'settingSpots'
+      pathMatch: 'full',
+      redirectTo: RouteConstants.settingSpots
+    },
+    {
+      path:RouteConstants.settingSpots,
+   
       loadComponent: () => {
-        return import('./features/pet-spots-facilities/pet-spots-facilities.component').then(
-          (m) => m.PetSpotsFacilitiesComponent
+        return import('./features/admin-page/components/setting-spots/setting-spots.component').then(
+          (m) => m.SettingSpotsComponent
         ); 
       },
       data:['Admin']
     },
     {
-      path:'suggested-spot',
+      path:RouteConstants.pendingSpots,
       loadComponent: () => {
-        return import('./features/pet-spots-facilities/pet-spots-facilities.component').then(
-          (m) => m.PetSpotsFacilitiesComponent
+        return import('./features/admin-page/components/pending-spots/pending-spots.component').then(
+          (m) => m.PendingSpotsComponent
         );
       },
     },

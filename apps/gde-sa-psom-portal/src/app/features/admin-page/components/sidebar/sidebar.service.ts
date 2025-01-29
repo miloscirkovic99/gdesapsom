@@ -7,18 +7,18 @@ export class SidebarService {
   isOpened = signal(true);
   navigationRoutes=[
     {
-       route:'admin/settings-spot',
+       route:'admin/setting-spots',
        title:'Setting spot',
        icon:""
     },
     {
-      route:'admin/suggested-spot',
-      title:'Check suggested spots'
+      route:'admin/pending-spots',
+      title:'Check pending spots'
     },
-    {
-      route:'admin/township',
-      title:'Settings townships'
-    },
+    // {
+    //   route:'admin/township',
+    //   title:'Settings townships'
+    // },
     
   ]
   openSideBar() {

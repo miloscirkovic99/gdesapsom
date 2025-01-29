@@ -1,7 +1,7 @@
 <h1
   class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between gap-10"
 >
-  {{ 'suggest_spot' | transloco }}
+  {{data.isEdit?'Izmeni lokaciju': 'suggest_spot' | transloco }}
   <svg
     (click)="onNoClick()"
     xmlns="http://www.w3.org/2000/svg"
@@ -204,6 +204,6 @@
     {{ 'close' | transloco }}
   </button>
   <button class="btn btn_primary" [disabled]="spotForm.invalid" (click)="onSaveClick()">
-    {{ 'save' | transloco }}
+     {{data.isEdit?'Izmeni' : 'save' | transloco }}
   </button>
 </mat-dialog-actions>

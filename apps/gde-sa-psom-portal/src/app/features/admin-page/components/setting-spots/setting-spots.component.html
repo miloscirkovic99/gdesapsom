@@ -1,0 +1,19 @@
+<div class="setting-spots-container">
+  <app-card
+    [data]="spotsStore.spots()"
+    [isLoading]="spotsStore.isLoading()"
+    [isAdmin]="true"
+    (onActionClick)="onAction($event)"
+  ></app-card>
+  @if(spotsStore.spots().length!=spotsStore.totalResult() && spotsStore.spots().length){
+    <button
+      [disabled]="spotsStore.isLoading()"
+      (click)="onSubmit()"
+      class="btn_primary mt-8"
+    >
+      {{"see_more" | transloco}}
+  
+      
+    </button>
+    } 
+</div>

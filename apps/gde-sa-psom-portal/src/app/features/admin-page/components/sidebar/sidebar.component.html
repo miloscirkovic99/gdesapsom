@@ -89,8 +89,8 @@
       </mat-nav-list>
     </mat-drawer>
     <mat-drawer-content [ngClass]="{ 'ml-20': !sidebarService.isOpened() }">
-      <div class="shell-content">
-        <div class="shell-main">
+      <div class="shell-content min-h-screen">
+        <div class="shell-main h-full">
           <router-outlet></router-outlet>
         </div>
       </div>
