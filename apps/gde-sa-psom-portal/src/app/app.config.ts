@@ -25,15 +25,13 @@ const cookieConfig:NgcCookieConsentConfig = {
       background: '#44cd88'
     }
   },
-  type: 'opt-out',
+  type: 'info',
   content: {
     "message": "This website uses cookies to ensure you get the best experience on our website.",
-    "deny": "Decline",
     "link": "Learn more",
     "href": `${environment.baseUrl}${'/cookies-policy'}`,
     "policy": "Cookie Policy",
-    "header": "Cookies used on the website!",
-    "allow": "Allow cookies"
+   
   }
 };
 export const appConfig: ApplicationConfig = {

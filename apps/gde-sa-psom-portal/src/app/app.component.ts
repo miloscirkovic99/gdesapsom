@@ -14,6 +14,7 @@ import {
   NgcStatusChangeEvent,
 } from 'ngx-cookieconsent';
 import { TranslocoService } from '@ngneat/transloco';
+import { environment } from '../env/env.dev';
 @Component({
   imports: [
     RouterModule,
@@ -38,8 +39,9 @@ export class AppComponent {
 
   ngOnInit() {
     AOS.init({
-      easing: 'linear', // Customize easing
+      easing: 'linear',
     });
+  
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((result) => {
@@ -48,26 +50,49 @@ export class AppComponent {
         }
         setTimeout(() => {
           AOS.refresh();
-        }, 500); // Add delay to ensure elements are rendered
+        }, 500); // Ensure elements are rendered before refreshing AOS
       });
+  
     this.setupCookie();
+    this.checkAndEnableAnalytics(); // Check and enable Google Analytics
   }
-
-  setupCookie() {
+  
+  private checkAndEnableAnalytics(): void {
+    if (this.isAnalyticsConsentGranted()) {
+      this.enableAnalytics();
+    }
+  }
+  
+  // Check if Google Analytics consent is granted (either from localStorage or cookie service)
+  private isAnalyticsConsentGranted(): boolean {
+    return localStorage.getItem('analyticsAccepted') === 'true' || this.ccService.hasConsented();
+  }
+  
+  private enableAnalytics(): void {
+    if (!this.isAnalyticsEnabled()) {
+      (window as any).gtag('config', environment.googleAnalyticsId);
+      console.log('Google Analytics initialized');
+    }
+  }
+  
+  private isAnalyticsEnabled(): boolean {
+    return localStorage.getItem('analyticsAccepted') === 'true';
+  }
+  
+  private setupCookie(): void {
     this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
       (event: NgcStatusChangeEvent) => {
-        // you can use this.ccService.getConfig() to do stuff...
-        if (event.status === 'allow') {
-          localStorage.setItem('analyticsAccepted', 'true');
-          // this.enableAnalytics();
-        } else if (event.status === 'deny') {
-          localStorage.setItem('analyticsAccepted', 'false');
-        }
+        this.handleCookieConsent(event);
       }
     );
   }
-  private enableAnalytics(): void {
-    (window as any).gtag('config', 'G-BW5JF0HZ5Z');
+  
+  private handleCookieConsent(event: NgcStatusChangeEvent): void {
+    console.log('Cookie consent event:', event);
+    if (event.status === 'dismiss') {
+      localStorage.setItem('analyticsAccepted', 'true');
+      // this.enableAnalytics();
+    }
   }
   ngOnDestroy() {
     this.statusChangeSubscription.unsubscribe();
