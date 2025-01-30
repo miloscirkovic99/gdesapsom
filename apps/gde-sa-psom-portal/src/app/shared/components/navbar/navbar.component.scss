@@ -63,7 +63,7 @@
   }
 
   .mobile-menu {
-    @apply absolute w-full md:hidden top-20 mx-1 flex justify-center items-center bg-gray-950 backdrop-blur-lg border border-white/30 rounded-2xl p-8 shadow-xl z-50;
+    @apply absolute w-full md:hidden top-28 mx-1 flex justify-center items-center bg-gray-950 backdrop-blur-lg border border-white/30 rounded-2xl p-8 shadow-xl z-50;
    a{
     @apply text-white  text-sm after:bg-transparent;
    }

@@ -52,7 +52,7 @@
       </svg>
     </button>
 
-    <div class="dropdown dropdown-bottom dropdown-end">
+    <div class="dropdown dropdown-bottom dropdown-end z-50">
       <div tabindex="0" role="button" class="btn m-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@
       </ul>
     </div>
 
-    <div class="dropdown dropdown-bottom dropdown-end">
+    <div class="dropdown dropdown-bottom dropdown-end z-50">
       <div tabindex="0" role="button" class="btn m-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -140,26 +140,26 @@
   <!-- Mobile Menu -->
   <div #mobileMenu *ngIf="menuOpen" class="mobile-menu">
     <ul class="space-y-4 text-sm">
-      <li>
+      <li (click)="toggleMenu()">
         <a routerLink=""> {{ 'home' | transloco }} </a>
       </li>
-      <li>
+      <li (click)="toggleMenu()">
         <a [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
       </li>
-      <li>
+      <li (click)="toggleMenu()">
         <a [routerLink]="routeConstants.allSpots"
           >{{ 'find_pet_spots' | transloco }}
         </a>
       </li>
 
-      <li>
+      <li (click)="toggleMenu()">
         <a [routerLink]="routeConstants.petParks"
           >{{ 'find_pet_parks' | transloco }}
         </a>
       </li>
       @if(authService.isAuthenticated()){
 
-        <li>
+        <li (click)="toggleMenu()">
           <a [routerLink]="routeConstants.admin"
             >Admin
           </a>
@@ -167,7 +167,7 @@
       }
       <!-- Add Buttons to Mobile Menu -->
 
-      <li>
+      <li (click)="toggleMenu()">
         <button
           class="accommodation-btn text-white hover:bg-primary_green font-medium px-4 py-2 border border-gray-300 rounded-md"
           (click)="openDialog()"

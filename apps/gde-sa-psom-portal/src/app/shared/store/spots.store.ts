@@ -10,11 +10,7 @@ import {
   withComputed,
 } from '@ngrx/signals';
 import AOS from 'aos';
-import {
-  Subject,
-  takeUntil,
-
-} from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService } from '../../core/services/dialog.service';
@@ -128,7 +124,7 @@ export const SpotsStore = signalStore(
       },
       suggestSpot(form: any) {
         http
-          .post<any>('pet-friendly-spots/suggest', form.value)
+          .post<any>('pet-friendly-spots/pending', form.value)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
@@ -163,27 +159,75 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              this.loadData(null,null,null,true);
+              this.loadData(null, null, null, true);
               console.log(result);
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',
                 'Zatvori',
-                
+
                 'success-snackbar'
               );
-              refreshAOS()
+              refreshAOS();
             },
-            error:(error)=>{
+            error: (error) => {
               snackbarService.openSnackbar(
                 'Oops... Something went wrong, please check your fields and try again',
                 'Close',
                 'error-snackbar'
               );
-            }
+            },
           });
       },
-      
+      deleteSpot(spotId: any) {        
+        http
+          .post('pet-friendly-spots/delete', {iuo_id:spotId})
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              console.log(result);
+              this.loadData(null, null, null, true);
+              snackbarService.openSnackbar(
+                'Successfully deleted pet-friendly location.',
+                'Zatvori',
+
+                'success-snackbar'
+              );
+            },
+          });
+      },
+      acceptPendingSpot(data:any){
+        http
+        .post<any>('pet-friendly-spots/create',data)
+        .pipe(takeUntil(destroyed$)).subscribe(({
+          next:(result)=>{
+            console.log(result);
+            
+            snackbarService.openSnackbar(
+              'Successfully accepted pet-friendly location.',
+              'Zatvori',
+
+              'success-snackbar'
+            );
+          }
+        }))
+      },
+      declinePendingSpot(spotId:any){
+        http
+          .put('pet-friendly-spots/pending', { pr_id: spotId })
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              console.log(result);
+              snackbarService.openSnackbar(
+                'Successfully accepted pending pet-friendly location.',
+                'Zatvori',
+  
+                'success-snackbar'
+              );
+            },
+          });
+      },
       allowedPetTypes() {
         http
           .get<any>('allowed-pet-types')

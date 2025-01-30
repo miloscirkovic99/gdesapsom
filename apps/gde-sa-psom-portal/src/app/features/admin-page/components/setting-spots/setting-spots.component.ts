@@ -20,10 +20,20 @@ export class SettingSpotsComponent {
   }
   onAction(data: any) {
     console.log(data);
-
+    const options = {
+      data: data.data,
+      isEdit: true,
+      onSave: (form: any) => {
+        this.spotsStore.updateSpot(form);
+      },
+    };
     switch (data.action) {
       case 'edit': {
-        this.dialogService.openDialog(AddSpotComponent, { data:data.data, isEdit: true });
+        this.dialogService.openDialog(AddSpotComponent, options);
+        break;
+      }
+      case 'delete':{
+        this.spotsStore.deleteSpot(data.data.iuo_id);
         break;
       }
     }

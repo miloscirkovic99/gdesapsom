@@ -109,5 +109,28 @@
     "garden":"Garden",
     "pet_size":"Dog size",
     "subject":"Subject",
-    "rest_information":"Other information"
+    "remove":"Remove",
+
+    "rest_information":"Other information",
+    "cookie_message":"This site uses cookies to enhance your user experience.",
+    "cookie_header": "Cookie Policy",
+    "cookie_header_description": "Cookie usage notification on our site.",
+    "cookie_description": "This site uses cookies to enhance your user experience by analyzing site traffic. By using this site, you agree to the use of cookies in accordance with this policy.",
+    "what_is_cookie_header": "What are cookies?",
+    "what_is_cookie_description": "Cookies are small text files stored on your device when you visit a site. They are used to save your data or preferences over time, allowing the site to better adapt to your needs.",
+    "cookie_used_header": "Which cookies do we use?",
+    "cookie_used_type": "On our site, we use the following types of cookies:",
+    "cookie_necessary": "<strong>Necessary cookies</strong>: These cookies are essential for basic site functions, such as navigation or access to specific parts of the site.",
+    "cookie_analytics": "<strong>Analytical cookies</strong>: We use Google Analytics to collect data on how visitors use our site. Google Analytics uses cookies that allow the collection of information about your visit, such as the time spent on the site, number of visits, and pages visited. This data is used to analyze and improve the site’s performance.",
+    "cookie_google_information": "Google Analytics cookies may collect the following information:",
+    "cookie_google_information_1": "Device type and operating system",
+    "cookie_google_information_2": "Pages visited",
+    "cookie_google_information_3": "Traffic source (how they arrived at the site)",
+    "cookie_google_information_4": "Duration of the visit",
+    "cookie_anonymous_information": "This information is anonymous and is used solely for statistical purposes.",
+    "cookie_control": "How do you control cookies?",
+    "cookie_control_description": "You can control and/or delete cookies as you wish – for details, <a href=\"http://www.aboutcookies.org\" target=\"_blank\" class=\"text-blue-500\">AboutCookies.org</a>. You can delete all cookies already on your computer, as well as set most browsers to block them. However, if you decide to block cookies, you may have limited access to certain features of the site.",
+    "cookie_policy_change_header": "Changes to the cookie policy",
+    "cookie_policy_change_description": "We may update this cookie policy occasionally. We recommend that you check this page periodically to stay informed of any changes."
+
 }

@@ -14,7 +14,36 @@
       <a class="link link-hover">Press kit</a>
     </nav>
    
-  </footer> -->
+  </footer>
   <div class="text-sm w-full flex justify-center bg-zinc-950 text-white p-3">
     Copyright © 2021-{{date}} Designed And Developed By — <a class="link link-hover" referrerpolicy="no-referrer" href="https://www.linkedin.com/in/milos-cirkovic99/" target="_blank">Miloš Ćirković </a>
-</div>
+</div> -->
+<footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-2">
+  <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+      <div class="sm:flex sm:items-center sm:justify-between">
+          <a href="https://gdesapsom.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+              <img src="assets/logo-small.png" class="h-24" alt="Flowbite Logo" />
+              <!-- <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span> -->
+          </a>
+          <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400 gap-6">
+              <li>
+                  <a [routerLink]="routeConstants.about" class="hover:underline me-4 md:me-6">{{"about" | transloco}}</a>
+              </li>
+              <li>
+                  <a [routerLink]="routeConstants.cookiesPolicy"  class="hover:underline me-4 md:me-6">{{"cookie_header" | transloco}}</a>
+              </li>
+          
+              <li>
+                  <a [routerLink]="routeConstants.allSpots"  class="hover:underline">{{"find_pet_spots" | transloco}}</a>
+              </li>
+
+              <li>
+                <a [routerLink]="routeConstants.petParks" class="hover:underline">{{"find_pet_parks" | transloco}}</a>
+            </li>
+          </ul>
+      </div>
+      <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+      <span> Designed And Developed By — <a class="link link-hover" referrerpolicy="no-referrer" href="https://www.linkedin.com/in/milos-cirkovic99/" target="_blank">Miloš Ćirković </a></span>
+      <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2021-{{date}} <a href="https://gdesapsom.com/" class="hover:underline">gdesapsom.com</a>. All Rights Reserved.</span>
+  </div>
+</footer>

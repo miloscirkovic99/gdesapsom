@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DialogService } from '../../../core/services/dialog.service';
 import { AddSpotComponent } from '../../dialogs/add-spot/add-spot.component';
 import { AuthService } from '../../../features/auth/auth.service';
+import { SpotsStore } from '../../store/spots.store';
 
 @Component({
   selector: 'app-navbar',
@@ -38,6 +39,7 @@ export class NavbarComponent {
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
   private dialogService = inject(DialogService);
+  private spotsStore=inject(SpotsStore)
   authService=inject(AuthService)
   ngOnInit() {
     this.initializeTheme();
@@ -102,6 +104,11 @@ export class NavbarComponent {
   }
 
   openDialog() {
-    this.dialogService.openDialog(AddSpotComponent, {});
+    const data={
+      onSave:(form:any)=>{
+        this.spotsStore.suggestSpot(form)
+      }
+    }
+    this.dialogService.openDialog(AddSpotComponent, data);
   }
 }

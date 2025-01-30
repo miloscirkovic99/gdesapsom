@@ -1,22 +1,49 @@
-import {  ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { RouteConstants } from './shared/constants/route.constant';
+import {  ApplicationConfig, importProvidersFrom, inject, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
+import { provideTransloco, TRANSLOCO_LOADER, TranslocoService } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
 import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
+import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent';
 
+const cookieConfig:NgcCookieConsentConfig = {
+  cookie: {
+    domain: `${environment.cookieDomain}` 
+  },
+  position: "bottom",
+  theme:'classic',
+  palette: {
+    popup: {
+      background: '#000'
+    },
+    button: {
+      background: '#44cd88'
+    }
+  },
+  type: 'opt-out',
+  content: {
+    "message": "This website uses cookies to ensure you get the best experience on our website.",
+    "deny": "Decline",
+    "link": "Learn more",
+    "href": `${environment.baseUrl}${'/cookies-policy'}`,
+    "policy": "Cookie Policy",
+    "header": "Cookies used on the website!",
+    "allow": "Allow cookies"
+  }
+};
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     provideRouter(appRoutes,  withInMemoryScrolling({
-      scrollPositionRestoration: 'enabled',
+      scrollPositionRestoration: 'top',
     }),),
-    // provideClientHydration(),
+    provideNgcCookieConsent(cookieConfig),
     provideHttpClient(),
     importProvidersFrom(BrowserAnimationsModule),
     provideTransloco({

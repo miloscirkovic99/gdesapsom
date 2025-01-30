@@ -26,16 +26,18 @@
             "input": "apps/gde-sa-psom-portal/src/assets/i18n/",
             "output": "/assets/i18n/"
           }
-        
         ],
         "styles": [
-           "node_modules/leaflet/dist/leaflet.css",
+          "node_modules/leaflet/dist/leaflet.css",
           "apps/gde-sa-psom-portal/src/styles.scss",
           "node_modules/aos/dist/aos.css",
-          "@angular/material/prebuilt-themes/azure-blue.css"
-
+          "@angular/material/prebuilt-themes/azure-blue.css",
+          "node_modules/cookieconsent/build/cookieconsent.min.css"
         ],
-        "scripts": ["node_modules/aos/dist/aos.js"]
+        "scripts": [
+          "node_modules/aos/dist/aos.js",
+          "node_modules/cookieconsent/build/cookieconsent.min.js"
+        ]
       },
       "configurations": {
         "production": {

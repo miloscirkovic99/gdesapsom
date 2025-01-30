@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Subject, take, takeUntil } from 'rxjs';
 import { CardComponent } from "../../../../shared/components/card/card.component";
+import { DialogService } from 'apps/gde-sa-psom-portal/src/app/core/services/dialog.service';
+import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-spot/add-spot.component';
+import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
 
 @Component({
   selector: 'app-pending-spots',
@@ -14,6 +17,9 @@ export class PendingSpotsComponent {
   private destroyed$ = new Subject<void>();
   pendingSpots = signal<any>([]);
   private http = inject(HttpClient);
+  private spotsStore=inject(SpotsStore)
+    private dialogService = inject(DialogService);
+  
   ngOnInit(): void {
    
     this.getPendingSpots()
@@ -30,7 +36,30 @@ export class PendingSpotsComponent {
   }
   onAction(data:any){
     console.log(data);
-    
+       switch (data.action) {
+
+          case 'edit': {
+            const options={
+              data:data.data,
+              onSave:(form:any)=>{
+                console.log(form);
+                
+              },
+              isEdit:true,
+              isPending:true
+            }
+            this.dialogService.openDialog(AddSpotComponent,options);
+            break;
+          }
+          case 'add':{
+            this.spotsStore.acceptPendingSpot(data.data)
+            break;
+          }
+          case 'delete':{
+            this.spotsStore.declinePendingSpot(data.data.pr_id)
+            break;
+          }
+        }
   }
   ngOnDestroy(): void {
 

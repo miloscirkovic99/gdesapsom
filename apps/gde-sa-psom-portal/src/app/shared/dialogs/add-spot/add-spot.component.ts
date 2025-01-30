@@ -77,19 +77,24 @@ export class AddSpotComponent {
     });
 
     this.spotForm = this.fb.group({
-      iuo_id:[this.data.data?.iuo_id],
       iuo_ime: [this.data.data?.iuo_ime, Validators.required],
       iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
       iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
       iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
       iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
       iuo_telefon: [this.data.data?.iuo_telefon],
-      ops_id: [[this.data.data?.ops_id], Validators.required],
+      ops_id: [this.data.data?.ops_id, Validators.required],
       ugo_id: [this.data.data?.ugo_id, Validators.required],
       sta_id: [this.data.data?.sta_id, Validators.required],
       bas_id: [this.data.data?.bas_id, Validators.required],
       iuo_opis: [this.data.data?.iuo_opis],
     });
+    if(this.data.isEdit && !this.data?.isPending){
+      this.spotForm.addControl('iuo_id', new FormControl(this.data.data?.iuo_id));
+    }else if(this.data.isEdit && this.data?.isPending){
+      this.spotForm.addControl('pr_id', new FormControl(this.data.data?.pr_id));
+
+    }
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -100,7 +105,6 @@ export class AddSpotComponent {
       if (this.sharedStore.townships().length) {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
         console.log(this.data);
-        
       }
     });
   }
@@ -121,7 +125,6 @@ export class AddSpotComponent {
       reader.readAsDataURL(file);
     }
   }
- 
 
   // Metod za obradu fajla
   onFileChangeInside(event: any): void {
@@ -151,9 +154,9 @@ export class AddSpotComponent {
       search = search.toLowerCase();
     }
     this.filteredtownshipsMulti.next(
-      this.sharedStore.townships().filter((township: any) =>
-        township.ime.toLowerCase().includes(search)
-      )
+      this.sharedStore
+        .townships()
+        .filter((township: any) => township.ime.toLowerCase().includes(search))
     );
   }
   onNoClick(): void {
@@ -162,7 +165,7 @@ export class AddSpotComponent {
   onSaveClick(): void {
     if (this.spotForm.valid) {
       console.log(this.spotForm.value);
-      this.data.isEdit?this.spotsStore.updateSpot(this.spotForm): this.spotsStore.suggestSpot(this.spotForm)
+        this.data.onSave(this.spotForm)
     } else {
       console.log('Form is invalid');
     }

@@ -104,7 +104,7 @@
         @if(isAdmin()){
 
           <button class="btn btn_error" (click)="onAction(item,'delete')">
-           Ukloni
+           {{"remove" | transloco}}
            </button>
           }
           @if (isPendingSpot()) {

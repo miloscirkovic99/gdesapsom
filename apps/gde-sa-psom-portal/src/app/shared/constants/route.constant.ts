@@ -5,4 +5,5 @@ export class RouteConstants {
     static readonly admin='admin';
     static readonly settingSpots='setting-spots';
     static readonly pendingSpots='pending-spots';
+    static readonly cookiesPolicy='cookies-policy'
 }

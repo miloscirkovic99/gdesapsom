@@ -1,0 +1,67 @@
+<div class="cookie-page-container">
+  <!-- Container -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-semibold">{{ 'cookie_header' | transloco }}</h1>
+      <p class="mt-2 text-lg">
+        {{ 'cookie_header_description' | transloco }}
+      </p>
+    </header>
+
+    <!-- Content -->
+    <section>
+      <p class="text-lg mb-6">
+        {{ 'cookie_description' | transloco }}
+      </p>
+
+      <h2 class="text-2xl font-semibold mb-4">
+        {{ 'what_is_cookie_header' | transloco }}
+      </h2>
+      <p class="text-lg mb-6">
+        {{ 'what_is_cookie_description' | transloco }}
+      </p>
+
+      <h2 class="text-2xl font-semibold mb-4">
+        {{ 'cookie_used_header' | transloco }}
+      </h2>
+      <p class="text-lg mb-6">
+        {{ 'cookie_used_type' | transloco }}
+      </p>
+
+      <ol class="list-decimal pl-8 text-lg mb-6">
+        <li [innerHTML]="sanitizedCookieNecessary"></li>
+        <li [innerHTML]="sanitizedCookieAnalytics"></li>
+      </ol>
+
+      <p class="text-lg mb-6">
+        {{ 'cookie_google_information' | transloco }}
+      </p>
+
+      <ul class="list-disc pl-8 text-lg mb-6">
+        <li>{{ 'cookie_google_information_1' | transloco }}</li>
+        <li>{{ 'cookie_google_information_2' | transloco }}</li>
+        <li>{{ 'cookie_google_information_3' | transloco }}</li>
+        <li>{{ 'cookie_google_information_4' | transloco }}</li>
+      </ul>
+      <p class="text-lg mb-10">
+        {{ 'cookie_anonymous_information' | transloco }}
+      </p>
+
+      <h3 class="text-xl font-semibold mb-4">
+        {{ 'cookie_control' | transloco }}
+      </h3>
+      <p
+        class="text-lg mb-6"
+        [innerHTML]="sanitizedCookieControlDescription"
+      ></p>
+
+      <h3 class="text-xl font-semibold mb-4">
+        {{ 'cookie_policy_change_header' | transloco }}
+      </h3>
+      <p class="text-lg">
+        {{ 'cookie_policy_change_description' | transloco }}
+      </p>
+    </section>
+  </div>
+</div>

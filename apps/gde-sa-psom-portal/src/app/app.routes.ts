@@ -44,6 +44,15 @@ export const appRoutes: Route[] = [
   
   },
   {
+    path:RouteConstants.cookiesPolicy,
+    loadComponent: () => {
+      return import('./pages/cookies-page/cookie-page.component').then(
+        (m) => m.CookiePageComponent
+      );
+    },
+    title:'Gde sa psom - Cookies Policy'
+  },
+  {
    path:RouteConstants.admin,
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)
