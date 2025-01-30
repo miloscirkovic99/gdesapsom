@@ -31,15 +31,9 @@ export class AppComponent {
   router = inject(Router);
   private translocoService = inject(TranslocoService);
   hideContactForm = signal(false);
-  //keep refs to subscriptions to be able to unsubscribe later
-  private popupOpenSubscription!: Subscription;
-  private popupCloseSubscription!: Subscription;
-  private initializingSubscription!: Subscription;
-  private initializedSubscription!: Subscription;
-  private initializationErrorSubscription!: Subscription;
+
   private statusChangeSubscription!: Subscription;
-  private revokeChoiceSubscription!: Subscription;
-  private noCookieLawSubscription!: Subscription;
+
   constructor(private ccService: NgcCookieConsentService) {}
 
   ngOnInit() {
@@ -49,7 +43,6 @@ export class AppComponent {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((result) => {
-        console.log(result);
         if (result.url.includes('admin')) {
           this.hideContactForm.set(true);
         }
@@ -57,29 +50,10 @@ export class AppComponent {
           AOS.refresh();
         }, 500); // Add delay to ensure elements are rendered
       });
-      this.setupCookie();
+    this.setupCookie();
   }
 
   setupCookie() {
-    // subscribe to cookieconsent observables to react to main events
-    this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(() => {
-      // you can use this.ccService.getConfig() to do stuff...
-
-      console.log('popupOpen', this.ccService.hasAnswered());
-    });
-
-    this.popupCloseSubscription = this.ccService.popupClose$.subscribe(() => {
-      // you can use this.ccService.getConfig() to do stuff...
-      console.log('popuClose');
-    });
-
-    this.initializingSubscription = this.ccService.initializing$.subscribe(
-      (event: NgcInitializingEvent) => {
-        // the cookieconsent is initilializing... Not yet safe to call methods like `NgcCookieConsentService.hasAnswered()`
-        console.log(`initializing: ${JSON.stringify(event)}`);
-      }
-    );
-
     this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
       (event: NgcStatusChangeEvent) => {
         // you can use this.ccService.getConfig() to do stuff...
@@ -89,16 +63,6 @@ export class AppComponent {
         } else if (event.status === 'deny') {
           localStorage.setItem('analyticsAccepted', 'false');
         }
-        console.log(`statusChange: ${JSON.stringify(event)}`);
-      }
-    );
-
-    this.noCookieLawSubscription = this.ccService.noCookieLaw$.subscribe(
-      (event: NgcNoCookieLawEvent) => {
-        console.log(event.country, event.countryCode);
-
-        // you can use this.ccService.getConfig() to do stuff...
-        console.log(`noCookieLaw: ${JSON.stringify(event)}`);
       }
     );
   }
@@ -106,14 +70,6 @@ export class AppComponent {
     (window as any).gtag('config', 'G-BW5JF0HZ5Z');
   }
   ngOnDestroy() {
-    // unsubscribe to cookieconsent observables to prevent memory leaks
-    this.popupOpenSubscription.unsubscribe();
-    this.popupCloseSubscription.unsubscribe();
-    this.initializingSubscription.unsubscribe();
-    this.initializedSubscription.unsubscribe();
-    this.initializationErrorSubscription.unsubscribe();
     this.statusChangeSubscription.unsubscribe();
-    this.revokeChoiceSubscription.unsubscribe();
-    this.noCookieLawSubscription.unsubscribe();
   }
 }

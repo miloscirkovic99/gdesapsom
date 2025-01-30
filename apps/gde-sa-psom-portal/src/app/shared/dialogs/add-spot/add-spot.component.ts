@@ -104,7 +104,6 @@ export class AddSpotComponent {
     effect(() => {
       if (this.sharedStore.townships().length) {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-        console.log(this.data);
       }
     });
   }
@@ -164,10 +163,7 @@ export class AddSpotComponent {
   }
   onSaveClick(): void {
     if (this.spotForm.valid) {
-      console.log(this.spotForm.value);
         this.data.onSave(this.spotForm)
-    } else {
-      console.log('Form is invalid');
     }
   }
 }

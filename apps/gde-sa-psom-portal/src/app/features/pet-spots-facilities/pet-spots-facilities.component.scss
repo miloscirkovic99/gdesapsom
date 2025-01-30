@@ -8,12 +8,18 @@
 .pet-spots-container{
 @apply p-12 min-h-screen;
     .filter-wrapper{
-        @apply grid gap-10 place-content-center place-items-center mb-16;
+        @apply grid gap-10 place-content-center place-items-center mb-10;
         .select-wrapper{
             @apply flex items-start gap-8 max-md:flex-col max-md:items-center;
             form{
                 @apply max-md:flex-col;
             }
         }
+    }
+    .form{
+        @apply flex gap-8;
+    }
+    .spots-container{
+        @apply grid gap-8;
     }
 }

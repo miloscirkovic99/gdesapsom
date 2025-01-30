@@ -2,11 +2,9 @@ import {
   Component,
   effect,
   inject,
-  signal,
   ViewChild,
-  ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule, ViewportScroller } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import {
@@ -17,8 +15,7 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { HttpClient } from '@angular/common/http';
-import { ReplaySubject, take, takeUntil } from 'rxjs';
+import { ReplaySubject, takeUntil } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -27,7 +24,6 @@ import {
   descriptionToKeyMapSpot,
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -58,7 +54,6 @@ export class PetSpotsFacilitiesComponent {
 
   spotsStore = inject(SpotsStore);
   sharedStore = inject(SharedStore);
-  private router=inject(ActivatedRoute)
   form!: FormGroup;
   previousFormValues: any = {}; // To track previous dropdown values
 
@@ -82,10 +77,7 @@ export class PetSpotsFacilitiesComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
-    this.router.data.subscribe((result)=>{
-      console.log(result);
-      
-    })
+
   }
 
   protected filterTownshipsMulti() {

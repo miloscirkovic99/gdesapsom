@@ -3,19 +3,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class SnackbarService {
-    snackbarRef:any;
-  constructor(private snackbar: MatSnackBar) {}
+  snackbarRef: any;
+  constructor(private snackbar: MatSnackBar) { }
   openSnackbar(
     message?: string,
     action?: string,
-    panelClass?:any,
+    panelClass?: any,
     duration?: number,
   ) {
-    console.log(panelClass);
-    
-this.snackbarRef= this.snackbar.open(message as string,action as string,{duration:duration,panelClass:panelClass});
+    this.snackbarRef = this.snackbar.open(message as string, action as string, { duration: duration, panelClass: panelClass });
   }
-  getSnackbarRef(){
+  getSnackbarRef() {
     return this.snackbarRef;
   }
 }

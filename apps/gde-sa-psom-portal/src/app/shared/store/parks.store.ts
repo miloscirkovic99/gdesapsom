@@ -10,6 +10,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Subject, takeUntil } from 'rxjs';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 // Define the initial state type
 type ParksState = {
@@ -30,8 +31,18 @@ export const ParksStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
+
+    const snackbarService = inject(SnackbarService);
+
+    const handleError = (error: any) => {
+      snackbarService.openSnackbar(
+        'Oops... Something went wrong, please check your fields and try again',
+        'Close',
+        'error-snackbar'
+      );
+    };
     return {
-        petParks() {
+      petParks() {
         http
           .get<any>('pet-friendly-parks/list')
           .pipe(takeUntil(destroyed$))
@@ -41,17 +52,18 @@ export const ParksStore = signalStore(
                 parks: [...state.parks, ...response.petFriendlyParks],
               }));
             },
+            error: handleError,
           });
       },
     };
   }),
-    withHooks({
-      onInit(store) {
-        store.petParks();
-      },
-      onDestroy(store) {
-        destroyed$.next(); // Ensures cleanup of ongoing HTTP requests
-        destroyed$.complete();
-      },
-    })
+  withHooks({
+    onInit(store) {
+      store.petParks();
+    },
+    onDestroy(store) {
+      destroyed$.next(); // Ensures cleanup of ongoing HTTP requests
+      destroyed$.complete();
+    },
+  })
 );

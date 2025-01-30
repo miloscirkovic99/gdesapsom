@@ -28,12 +28,9 @@ export class ContactFormComponent {
         subject:this.contactForm.value.subject,
         message:'From: ' + this.contactForm.value.email + ' message: ' + this.contactForm.value.message
       }
-      console.log('Form Submitted', data);
       this.contactFormService.sendEmail(data)
       this.contactForm.reset()
       // Here you can handle the form submission
-    } else {
-      console.log('Form is not valid');
     }
   }
 }

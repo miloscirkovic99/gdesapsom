@@ -1,37 +1,28 @@
-
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img class="mx-auto h-20 w-auto" src="assets/logo-normal.png" alt="Gde sa psom">
-      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight ">Sign in to your account</h2>
-    </div>
-  
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form [formGroup]="signinForm" class="space-y-6">
-        <div>
-          <label for="email" class="block text-sm/6 font-medium 0">Email address</label>
-          <div class="mt-2">
-            <input  formControlName="email"  type="email" name="email" id="email" autocomplete="email" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6">
-          </div>
-        </div>
-  
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm/6 font-medium ">Password</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold text-primary_green hover:text-primary_green">Forgot password?</a>
-            </div>
-          </div>
-          <div class="mt-2">
-            <input  formControlName="password"  type="password" name="password" id="password" autocomplete="current-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6">
-          </div>
-        </div>
-  
-        <div>
-          <button (click)="signIn()" type="submit" class="flex w-full justify-center rounded-md bg-primary_green px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Sign in</button>
-        </div>
-      </form>
-  
-   
-    </div>
+<div class="container">
+  <div class="logo-container">
+    <img src="assets/logo-normal.png" alt="Gde sa psom">
+    <h2>Sign in to your account</h2>
   </div>
-  
+
+  <div class="form-container">
+    <form [formGroup]="signinForm">
+      <div class="input-group">
+        <label for="email" class="label">Email address</label>
+        <div class="input-wrapper">
+          <input formControlName="email" type="email" name="email" id="email" autocomplete="email" required>
+        </div>
+      </div>
+
+      <div class="input-group input-group--password">
+        <label for="password" class="label">Password</label>
+        <div class="input-wrapper">
+          <input formControlName="password" type="password" name="password" id="password" autocomplete="current-password" required>
+        </div>
+      </div>
+
+      <div>
+        <button (click)="signIn()" type="submit" class="submit-btn">Sign in</button>
+      </div>
+    </form>
+  </div>
+</div>

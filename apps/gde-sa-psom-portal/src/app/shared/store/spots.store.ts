@@ -57,7 +57,11 @@ export const SpotsStore = signalStore(
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
-      console.error('Error loading data:', error);
+      snackbarService.openSnackbar(
+        'Oops... Something went wrong, please check your fields and try again',
+        'Close',
+        'error-snackbar'
+      );
       patchState(store, { isLoading: false });
     };
 
@@ -94,7 +98,7 @@ export const SpotsStore = signalStore(
               }));
               refreshAOS();
             },
-            error: (error) => {
+            error: () => {
               const translatedMessage =
                 translocoService.translate('spots_error404');
               const translatedButton = translocoService.translate('close');
@@ -128,7 +132,6 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              console.log(result);
               form.reset();
               dialogService.closeDialog();
               const translatedMessage =
@@ -160,7 +163,6 @@ export const SpotsStore = signalStore(
           .subscribe({
             next: (result) => {
               this.loadData(null, null, null, true);
-              console.log(result);
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',
@@ -170,13 +172,7 @@ export const SpotsStore = signalStore(
               );
               refreshAOS();
             },
-            error: (error) => {
-              snackbarService.openSnackbar(
-                'Oops... Something went wrong, please check your fields and try again',
-                'Close',
-                'error-snackbar'
-              );
-            },
+            error: handleError,
           });
       },
       deleteSpot(spotId: any) {        
@@ -185,7 +181,6 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              console.log(result);
               this.loadData(null, null, null, true);
               snackbarService.openSnackbar(
                 'Successfully deleted pet-friendly location.',
@@ -194,15 +189,14 @@ export const SpotsStore = signalStore(
                 'success-snackbar'
               );
             },
+            error: handleError,
           });
       },
       acceptPendingSpot(data:any){
         http
         .post<any>('pet-friendly-spots/create',data)
         .pipe(takeUntil(destroyed$)).subscribe(({
-          next:(result)=>{
-            console.log(result);
-            
+          next:(result)=>{            
             snackbarService.openSnackbar(
               'Successfully accepted pet-friendly location.',
               'Zatvori',
@@ -218,7 +212,6 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              console.log(result);
               snackbarService.openSnackbar(
                 'Successfully accepted pending pet-friendly location.',
                 'Zatvori',
@@ -226,6 +219,8 @@ export const SpotsStore = signalStore(
                 'success-snackbar'
               );
             },
+            error: handleError,
+
           });
       },
       allowedPetTypes() {
@@ -252,7 +247,6 @@ export const SpotsStore = signalStore(
     onDestroy(store) {
       destroyed$.next(); // Ensures cleanup of ongoing HTTP requests
       destroyed$.complete();
-      console.log('SpotsStore destroyed', store.spotsList());
     },
   })
 );

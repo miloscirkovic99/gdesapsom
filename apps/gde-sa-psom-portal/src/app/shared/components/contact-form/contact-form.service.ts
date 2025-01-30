@@ -9,10 +9,8 @@ export class ContactFormService {
   constructor() { }
 
   sendEmail(data:any){
-    console.log(data);
     this.http.post<any>('gmail',data).subscribe({
       next:(result)=>{
-
       },
       error:(err)=>{
         console.error(err);

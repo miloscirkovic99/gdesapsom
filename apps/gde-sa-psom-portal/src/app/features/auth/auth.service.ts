@@ -1,7 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private token: string | null = null;
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
   login(email:string,password:string): Observable<any> {
     return this.http.post(`auth/login`, { email,password});
   }
@@ -21,9 +19,7 @@ export class AuthService {
     return this.token || localStorage.getItem('sid');
   }
   getSessionResult(){   
-    this.http.get<any>('auth/session').subscribe((result)=>{
-      console.log(result);
-      
+    this.http.get<any>('auth/session').subscribe((result)=>{      
     })
   }
   logout(): Observable<any> {

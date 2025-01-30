@@ -19,7 +19,6 @@ export class SettingSpotsComponent {
     this.spotsStore.loadData(null, null, null, resetOffset);
   }
   onAction(data: any) {
-    console.log(data);
     const options = {
       data: data.data,
       isEdit: true,

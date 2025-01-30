@@ -19,19 +19,6 @@
     }
   }
 
-  .hero__statistics {
-    @apply flex gap-16;
-    .hero__statistics_wrapper {
-      @apply grid;
-      p {
-        @apply text-3xl font-bold;
-      }
-      span {
-        @apply text-xl;
-      }
-    }
-  }
-
   .main-section {
     .main-header {
       @apply flex items-center justify-end pr-4;
