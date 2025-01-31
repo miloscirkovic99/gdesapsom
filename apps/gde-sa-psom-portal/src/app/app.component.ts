@@ -68,7 +68,6 @@ export class AppComponent {
   private enableAnalytics(): void {
     if (!this.isAnalyticsEnabled()) {
       (window as any).gtag('config', environment.googleAnalyticsId);
-      console.log('Google Analytics initialized');
     }
   }
 
@@ -85,7 +84,6 @@ export class AppComponent {
   }
 
   private handleCookieConsent(event: NgcStatusChangeEvent): void {
-    console.log('Cookie consent event:', event);
     if (event.status === 'dismiss') {
       localStorage.setItem('analyticsAccepted', 'true');
       // this.enableAnalytics();

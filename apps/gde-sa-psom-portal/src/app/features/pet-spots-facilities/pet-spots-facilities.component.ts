@@ -1,9 +1,4 @@
-import {
-  Component,
-  effect,
-  inject,
-  ViewChild,
-} from '@angular/core';
+import { Component, effect, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
@@ -77,7 +72,6 @@ export class PetSpotsFacilitiesComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
-
   }
 
   protected filterTownshipsMulti() {
@@ -123,5 +117,6 @@ export class PetSpotsFacilitiesComponent {
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+    this.spotsStore.loadData(null, null, null, true);
   }
 }

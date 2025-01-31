@@ -70,7 +70,7 @@ export const appRoutes: Route[] = [
       path:RouteConstants.settingSpots,
    
       loadComponent: () => {
-        return import('./features/admin-page/components/setting-spots/setting-spots.component').then(
+        return import('./features/admin-page/components/setting-active-spots/setting-spots.component').then(
           (m) => m.SettingSpotsComponent
         ); 
       },
@@ -84,7 +84,14 @@ export const appRoutes: Route[] = [
         );
       },
     },
- 
+    {
+      path:RouteConstants.townships,
+      loadComponent: () => {
+        return import('./features/admin-page/components/setting-townships/setting-township.component').then(
+          (m) => m.SettingTownshipComponent
+        );
+      },
+    },
    ]
   },
   {

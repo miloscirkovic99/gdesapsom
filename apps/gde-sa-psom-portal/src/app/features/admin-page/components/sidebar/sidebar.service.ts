@@ -15,10 +15,10 @@ export class SidebarService {
       route:'admin/pending-spots',
       title:'Setting pending spots'
     },
-    // {
-    //   route:'admin/township',
-    //   title:'Settings townships'
-    // },
+    {
+      route:'admin/townships',
+      title:'Settings townships'
+    },
     
   ]
   openSideBar() {
