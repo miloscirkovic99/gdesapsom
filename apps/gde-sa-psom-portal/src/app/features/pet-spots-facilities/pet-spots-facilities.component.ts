@@ -78,6 +78,7 @@ export class PetSpotsFacilitiesComponent {
     if (!this.sharedStore.townships()) {
       return;
     }
+    
     let search = this.townshipMultiFilterCtrl.value;
     if (!search) {
       this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
@@ -85,10 +86,18 @@ export class PetSpotsFacilitiesComponent {
     } else {
       search = search.toLowerCase();
     }
+  
+    // Function to normalize accented characters
+    const normalizeString = (str: string) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+  
     this.filteredtownshipsMulti.next(
       this.sharedStore
         .townships()
-        .filter((township: any) => township.ime.toLowerCase().includes(search))
+        .filter((township: any) =>
+          normalizeString(township.ime).includes(normalizeString(search))
+        )
     );
   }
 

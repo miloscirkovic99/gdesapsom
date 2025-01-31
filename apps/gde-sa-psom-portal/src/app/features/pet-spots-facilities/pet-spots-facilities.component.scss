@@ -4,6 +4,9 @@
     .mat-select-search-input{
         @apply bg-white #{!important};
     }
+    .mat-select-search-clear{
+        @apply top-1 #{!important};
+    }
 }
 .pet-spots-container{
 @apply p-12 min-h-screen;
