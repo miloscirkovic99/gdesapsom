@@ -3,7 +3,7 @@
  <div class="app-container">
 
      <router-outlet></router-outlet>
-     @if(!hideContactForm()){
+     @if(!isAdminMode()){
          
          <app-contact-form></app-contact-form>
         }

@@ -11,12 +11,14 @@ import {
 } from 'ngx-cookieconsent';
 
 import { environment } from '../env/env.dev';
+import { CommonModule } from '@angular/common';
 @Component({
   imports: [
     RouterModule,
     NavbarComponent,
     FooterComponent,
     ContactFormComponent,
+    CommonModule
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -25,7 +27,7 @@ import { environment } from '../env/env.dev';
 export class AppComponent {
   title = 'gde-sa-psom-portal';
   router = inject(Router);
-  hideContactForm = signal(false);
+  isAdminMode = signal(false);
   private statusChangeSubscription!: Subscription;
 
   constructor(private ccService: NgcCookieConsentService) {}
@@ -39,7 +41,7 @@ export class AppComponent {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((result) => {
         if (result.url.includes('admin')) {
-          this.hideContactForm.set(true);
+          this.isAdminMode.set(true);
         }
         setTimeout(() => {
           AOS.refresh();
