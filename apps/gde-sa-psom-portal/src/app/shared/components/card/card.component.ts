@@ -44,4 +44,13 @@ export class CardComponent {
     
     this.onActionClick.emit(actions)
   }
+  navigateToGoogleMaps(item:any) {
+    const location = item.par_lokacija? (item?.par_lokacija + ' ' + item?.ops_ime + ' ' + item?.grd_ime):item.iuo_adressa  ;
+  
+    // Check if location exists
+    if (location) {
+      const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(location)}`;
+      window.open(googleMapsUrl, '_blank'); // Open in a new tab
+    }
+  }
 }

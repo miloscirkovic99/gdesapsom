@@ -30,8 +30,7 @@
       </div>
 
       <h2 class="card-title">{{ item?.iuo_ime??item?.par_ime }}</h2>
-      <span
-        ><svg
+      <span (click)="item?.par_lokacija ?navigateToGoogleMaps(item): null" [ngClass]="{'link-custom': item?.par_lokacija}"><svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
