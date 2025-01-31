@@ -70,7 +70,7 @@
           </mat-select>
         </mat-form-field>
       </form>
-      <button class="btn btn_primary" (click)="onSubmit(true)">
+      <button class="btn btn_primary max-sm:w-full" (click)="onSubmit(true)">
         {{ 'search' | transloco }}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@
       </button>
 
       <button
-        class="btn btn_primary"
+        class="btn btn_primary max-sm:w-full"
         [disabled]="
           !form.get('sta_id')?.value &&
           !form.get('ugo_id')?.value &&

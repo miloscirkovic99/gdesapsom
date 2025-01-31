@@ -35,6 +35,7 @@ export class SettingSpotsComponent {
         this.spotsStore.deleteSpot(data.data.iuo_id);
         break;
       }
+   
     }
   }
 }

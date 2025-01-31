@@ -23,17 +23,17 @@ export class LandingPageComponent {
     {
       id: 1,
       title: 'free_search',
-      duration: 800,
+      duration: 600,
     },
     {
       id: 2,
       title: 'free_add',
-      duration: 1000,
+      duration: 700,
     },
     {
       id: 3,
       title: 'pet_welcome',
-      duration: 1200,
+      duration: 850,
     },
   ];
   
