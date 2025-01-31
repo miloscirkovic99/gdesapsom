@@ -1,9 +1,11 @@
 
 <app-navbar></app-navbar>
+ <div class="app-container">
 
-<router-outlet></router-outlet>
-@if(!hideContactForm()){
-
-    <app-contact-form></app-contact-form>
-}
+     <router-outlet></router-outlet>
+     @if(!hideContactForm()){
+         
+         <app-contact-form></app-contact-form>
+        }
+    </div>
 <app-footer></app-footer>

@@ -8,9 +8,10 @@
         @apply text-3xl font-semibold mb-1;
     } 
     .card-body{
-        @apply gap-1 p-5;
+        @apply gap-2 p-5;
         span{
-            @apply text-xl flex items-center gap-2; 
+            @apply text-base flex items-center gap-2; 
+
         }
     }
 }
