@@ -69,18 +69,18 @@ export class SettingTownshipComponent implements OnInit, OnDestroy {
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
       .subscribe((search: any) => {
-        this.filterTownships(search);
+        this.filterCity(search);
       });
   }
 
-  private filterTownships(search: string = ''): void {
-    const townships = this.sharedStore.townships() || [];
+  private filterCity(search: string = ''): void {
+    const city = this.sharedStore.city() || [];
     if (!search.trim()) {
-      this.filteredTownships$.next(townships);
+      this.filteredTownships$.next(city);
       return;
     }
 
-    const filtered = townships.filter(({ grd_ime }: any) =>
+    const filtered = city.filter(({ grd_ime }: any) =>
       grd_ime.toLowerCase().includes(search.toLowerCase())
     );
 
