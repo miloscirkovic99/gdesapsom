@@ -8,7 +8,7 @@
         .text-wrapper{
             @apply grid gap-8 w-1/2 max-sm:w-full;
             .about-subtitle{
-                @apply text-4xl font-semibold;
+                @apply text-4xl font-semibold max-sm:text-center;
             }
             .about-description{
                 @apply text-xl font-medium;
