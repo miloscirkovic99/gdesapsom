@@ -12,9 +12,9 @@
 }
 
 .btn_primary{
-  @apply  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium px-4 py-2 border rounded-md outline-none border-none;
+  @apply flex items-center gap-2  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium max-sm:px-1 max-sm:py-1 px-4 py-2 border rounded-md outline-none border-none;
   &:disabled{
-    @apply bg-green-200 text-gray-50 cursor-not-allowed;
+    @apply opacity-50 cursor-not-allowed;
   }
 }
 .btn_error{

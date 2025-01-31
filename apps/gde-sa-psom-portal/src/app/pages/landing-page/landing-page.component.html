@@ -42,16 +42,16 @@
         >
           {{"explore_pet_spots"| transloco}}
         </button>
-        <div class="py-24 sm:py-32">
+        <div class="py-24 max-sm:py-24">
           <div class="max-w-7xl">
             <dl class="grid grid-cols-1 gap-x-8 gap-y-16 text-center lg:grid-cols-3">
               <div class=" flex max-w-xs flex-col gap-y-4 text-start">
-                <dt class="text-lg">{{"pet_spots" | transloco}}</dt>
-                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">{{spotsStore.totalResult()}}+</dd>
+                <dt class="text-lg max-sm:text-center">{{"pet_spots" | transloco}}</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight  max-sm:text-center sm:text-5xl">{{spotsStore.totalResult()}}+</dd>
               </div>
               <div class=" flex max-w-xs flex-col gap-y-4 text-start">
-                <dt class="text-lg ">{{"pet_parks" | transloco}}</dt>
-                <dd class="order-first text-3xl font-semibold tracking-tight  sm:text-5xl">{{parksStore.parks().length}}+</dd>
+                <dt class="text-lg max-sm:text-center">{{"pet_parks" | transloco}}</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight max-sm:text-center  sm:text-5xl">{{parksStore.parks().length}}+</dd>
               </div>
            
             </dl>
