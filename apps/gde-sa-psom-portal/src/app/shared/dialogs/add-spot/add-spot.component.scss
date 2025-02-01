@@ -22,30 +22,28 @@
   mat-label {
     @apply text-sm text-gray-900 dark:text-gray-500;
   }
-  .mat-mdc-select-min-line{
+  .mat-mdc-select-min-line {
     @apply text-sm text-gray-900 dark:text-white;
-
   }
-  .mat-mdc-form-field-subscript-wrapper{
+  .mat-mdc-form-field-subscript-wrapper {
     @apply hidden;
   }
   .mdc-dialog--open .mat-mdc-dialog-inner-container {
-    
     @apply m-3;
   }
 }
 .input {
   @apply block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white   dark:shadow-sm;
 }
-.form-field-wrapper{
+.form-field-wrapper {
   @apply grid gap-10 mt-6;
 }
-.remove-image-wrapper{
+.remove-image-wrapper {
   @apply grid w-full relative;
-  img{
+  img {
     @apply w-full h-80 rounded-xl;
   }
-  svg{
+  svg {
     @apply right-0 top-0 absolute text-white cursor-pointer hover:text-primary_green m-2;
   }
 }

@@ -1,30 +1,29 @@
-.card-container{
-@apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-12 ;
-  
-.card{
-@apply bg-base-100 h-72 w-full  shadow-xl max-sm:h-full;
+.card-container {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-12;
 
-    .card-title{
-        @apply text-3xl font-semibold mb-1;
-    } 
-    .card-body{
-        @apply gap-2 p-5;
-        span{
-            @apply text-base flex items-center gap-2; 
+  .card {
+    @apply bg-base-100 h-72 w-full  shadow-xl max-sm:h-full;
 
-        }
+    .card-title {
+      @apply text-3xl font-semibold mb-1;
     }
-}
-.show-more{
+    .card-body {
+      @apply gap-2 p-5;
+      span {
+        @apply text-base flex items-center gap-2;
+      }
+    }
+  }
+  .show-more {
     @apply w-full flex justify-end cursor-pointer;
-    :hover{
-        @apply scale-110;
+    :hover {
+      @apply scale-110;
     }
-}
-.indicator-edit{
+  }
+  .indicator-edit {
     @apply flex items-center justify-between;
+  }
 }
-}
-.link-custom{
-    @apply link link-hover;
+.link-custom {
+  @apply link link-hover;
 }

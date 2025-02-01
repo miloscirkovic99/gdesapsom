@@ -104,7 +104,7 @@
 
         @if(!spotForm.get('iuo_slika_unutra')?.value){
 
-          <input
+        <input
           id="iuo_slika_unutra"
           formControlName="iuo_slika_unutra"
           type="file"
@@ -132,13 +132,12 @@
           <img [src]="spotForm.get('iuo_slika_unutra')?.value" alt="" />
         </div>
         }
-      
       </div>
       <div class="form-field-wrapper">
         <mat-form-field>
           <mat-label>{{ 'select_city' | transloco }}</mat-label>
 
-          <mat-select formControlName="ops_id"  #multiSelect>
+          <mat-select formControlName="ops_id" #multiSelect>
             <mat-option>
               <ngx-mat-select-search
                 [placeholderLabel]="'search' | transloco"
@@ -241,10 +240,10 @@
     {{ 'close' | transloco }}
   </button>
   <button
-    class="btn btn_primary"
+    class="h-12 btn_primary"
     [disabled]="spotForm.invalid || !spotForm.dirty"
     (click)="onSaveClick()"
   >
-    {{ ('save' | transloco) }}
+    {{ 'save' | transloco }}
   </button>
 </mat-dialog-actions>
