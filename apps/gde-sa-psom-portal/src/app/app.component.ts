@@ -86,7 +86,7 @@ export class AppComponent {
   private handleCookieConsent(event: NgcStatusChangeEvent): void {
     if (event.status === 'dismiss') {
       localStorage.setItem('analyticsAccepted', 'true');
-      // this.enableAnalytics();
+      this.enableAnalytics();
     }
   }
   ngOnDestroy() {

@@ -78,7 +78,7 @@ export class PetSpotsFacilitiesComponent {
     if (!this.sharedStore.townships()) {
       return;
     }
-    
+
     let search = this.townshipMultiFilterCtrl.value;
     if (!search) {
       this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
@@ -86,12 +86,15 @@ export class PetSpotsFacilitiesComponent {
     } else {
       search = search.toLowerCase();
     }
-  
+
     // Function to normalize accented characters
     const normalizeString = (str: string) => {
-      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
     };
-  
+
     this.filteredtownshipsMulti.next(
       this.sharedStore
         .townships()
@@ -122,7 +125,16 @@ export class PetSpotsFacilitiesComponent {
     this.form.reset();
     this.spotsStore.loadData(null, null, null, true);
   }
-
+  disableForm(): boolean {
+    if (
+      !this.form.get('sta_id')?.value &&
+      !this.form.get('ugo_id')?.value &&
+      !this.form.get('ops_id')?.value
+    ) {
+      return true;
+    }
+    return false;
+  }
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();

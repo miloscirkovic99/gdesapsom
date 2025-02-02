@@ -64,13 +64,16 @@
             @for (item of sharedStore.spotTypes(); track $index) {
             <mat-option [value]="item.id">
               {{ descriptionToKeyMapSpot[item.ime] | transloco }}
-
             </mat-option>
             }
           </mat-select>
         </mat-form-field>
       </form>
-      <button class="btn btn_primary max-sm:w-full" (click)="onSubmit(true)">
+      <button
+        [disabled]="disableForm()"
+        class="btn_primary max-sm:w-full"
+        (click)="onSubmit(true)"
+      >
         {{ 'search' | transloco }}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -89,12 +92,8 @@
       </button>
 
       <button
-        class=" btn_primary "
-        [disabled]="
-          !form.get('sta_id')?.value &&
-          !form.get('ugo_id')?.value &&
-          !form.get('ops_id')?.value
-        "
+        class="btn_primary max-sm:w-full"
+        [disabled]="disableForm()"
         (click)="clearFilters()"
       >
         {{ 'clear_filters' | transloco }}
@@ -115,25 +114,24 @@
       </button>
     </div>
   </div>
-  <div class="spots-container ">
+  <div class="spots-container">
     @if(spotsStore.isLoading()){
     <span class="loading loading-ring loading-lg"></span>
-    
+
     }@else {
 
     <app-card
       [data]="spotsStore.spots()"
       [isLoading]="spotsStore.isLoading()"
     ></app-card>
-    @if(spotsStore.spots().length!=spotsStore.totalResult() && spotsStore.spots().length){
+    @if(spotsStore.spots().length!=spotsStore.totalResult() &&
+    spotsStore.spots().length){
     <button
       [disabled]="spotsStore.isLoading()"
       (click)="onSubmit()"
-      class="btn_primary "
+      class="btn_primary"
     >
-      {{"see_more" | transloco}}
-  
-      
+      {{ 'see_more' | transloco }}
     </button>
     } }
   </div>
