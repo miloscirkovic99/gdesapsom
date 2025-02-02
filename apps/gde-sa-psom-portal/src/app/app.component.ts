@@ -10,8 +10,8 @@ import {
   NgcStatusChangeEvent,
 } from 'ngx-cookieconsent';
 
-import { environment } from '../env/env.dev';
 import { CommonModule } from '@angular/common';
+import { GoogleAnalyticsService } from './core/services/google-analytics.service';
 @Component({
   imports: [
     RouterModule,
@@ -27,6 +27,7 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   title = 'gde-sa-psom-portal';
   router = inject(Router);
+  private readonly googleAnalyticsService=inject(GoogleAnalyticsService)
   isAdminMode = signal(false);
   private statusChangeSubscription!: Subscription;
 
@@ -66,14 +67,9 @@ export class AppComponent {
   }
 
   private enableAnalytics(): void {
-    if (!this.isAnalyticsEnabled()) {
-      (window as any).gtag('config', environment.googleAnalyticsId);
-    }
+    this.googleAnalyticsService.initialize()
   }
 
-  private isAnalyticsEnabled(): boolean {
-    return localStorage.getItem('analyticsAccepted') === 'true';
-  }
 
   private setupCookie(): void {
     this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
