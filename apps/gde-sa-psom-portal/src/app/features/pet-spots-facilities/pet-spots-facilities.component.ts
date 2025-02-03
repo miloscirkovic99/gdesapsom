@@ -10,7 +10,10 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { ReplaySubject, takeUntil } from 'rxjs';
+import {
+  ReplaySubject,
+  takeUntil,
+} from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -50,17 +53,18 @@ export class PetSpotsFacilitiesComponent {
   spotsStore = inject(SpotsStore);
   sharedStore = inject(SharedStore);
   form!: FormGroup;
-  previousFormValues: any = {}; // To track previous dropdown values
 
   descriptionToKeyMap = descriptionToKeyMap;
   descriptionToKeyMapSpot = descriptionToKeyMapSpot;
-
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       ops_id: new FormControl(null), // Multiple select
       sta_id: new FormControl(null), // Single select
       ugo_id: new FormControl(null), // Single select
+      word: new FormControl(null),
     });
+
+
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -103,7 +107,9 @@ export class PetSpotsFacilitiesComponent {
         )
     );
   }
-
+  onSearchUpdated(event: any) {
+    this.onSubmit(true);
+  }
   onSubmit(resetOffset: boolean = false) {
     const data = {
       ops_id: this.form.value.ops_id?.length
@@ -111,25 +117,30 @@ export class PetSpotsFacilitiesComponent {
         : null,
       ugo_id: this.form.value.ugo_id || null,
       sta_id: this.form.value.sta_id || null,
+      word: this.form.value.word || null,
     };
 
     this.spotsStore.loadData(
       data.ops_id,
       data.ugo_id,
       data.sta_id,
+      data.word,
       resetOffset
     );
   }
-
+  resetData() {
+    this.spotsStore.loadData(null, null, null, null, true);
+  }
   clearFilters() {
     this.form.reset();
-    this.spotsStore.loadData(null, null, null, true);
+    this.resetData();
   }
   disableForm(): boolean {
     if (
       !this.form.get('sta_id')?.value &&
       !this.form.get('ugo_id')?.value &&
-      !this.form.get('ops_id')?.value
+      !this.form.get('ops_id')?.value &&
+      !this.form.get('word')?.value
     ) {
       return true;
     }
@@ -138,6 +149,6 @@ export class PetSpotsFacilitiesComponent {
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
-    this.spotsStore.loadData(null, null, null, true);
+    this.resetData();
   }
 }

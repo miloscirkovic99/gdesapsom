@@ -13,6 +13,7 @@
     'Teretana': 'gym',
     'Apartman': 'apartment',
     'Ostalo': 'other',
+    'Kafeterija':'cafeteria'
   };
   export const descriptionToKeyMapGarden: { [key: string]: string } = {
     'sa baštom': 'with_garden',

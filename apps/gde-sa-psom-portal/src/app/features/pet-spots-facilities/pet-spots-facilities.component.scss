@@ -7,6 +7,9 @@
     .mat-select-search-clear{
         @apply top-1 #{!important};
     }
+    .mat-mdc-form-field-subscript-wrapper{
+        @apply hidden;
+    }
 }
 .pet-spots-container{
 @apply p-12 min-h-screen;
@@ -20,7 +23,10 @@
         }
     }
     .form{
-        @apply flex gap-8;
+        @apply grid gap-8;
+        .drop-down-wrapper{
+            @apply flex items-start gap-8 max-lg:flex-col max-md:items-center;
+        }
     }
     .spots-container{
         @apply grid gap-8;

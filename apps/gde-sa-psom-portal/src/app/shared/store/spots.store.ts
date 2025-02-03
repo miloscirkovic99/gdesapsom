@@ -10,7 +10,17 @@ import {
   withComputed,
 } from '@ngrx/signals';
 import AOS from 'aos';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  debounce,
+  Subject,
+  switchMap,
+  takeUntil,
+  debounceTime,
+  catchError,
+  tap,
+  throwError,
+  of,
+} from 'rxjs';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService } from '../../core/services/dialog.service';
@@ -70,35 +80,43 @@ export const SpotsStore = signalStore(
         ops_id?: any,
         ugo_id?: any,
         sta_id?: any,
+        word?: any,
         resetOffset: boolean = false
       ) {
         patchState(store, { isLoading: true });
+
         if (resetOffset) {
           patchState(store, { offset: 0, spotsList: [] });
         }
+
         const limit = store.limit();
         const offset = store.offset();
 
-        http
-          .post<any>('pet-friendly-spots/search-query', {
-            ops_id,
-            ugo_id,
-            sta_id,
-            offset,
-            limit,
-          })
-          .pipe(takeUntil(destroyed$))
-          .subscribe({
-            next: (response) => {
+        return of({}) // Emits an initial empty value
+          .pipe(
+            takeUntil(destroyed$),
+            debounceTime(300), // Adds debounce directly in the function
+            switchMap(() =>
+              http.post<any>('pet-friendly-spots/search-query', {
+                ops_id,
+                ugo_id,
+                sta_id,
+                word,
+                offset,
+                limit,
+              })
+            ),
+            takeUntil(destroyed$),
+            tap((response) => {
               patchState(store, (state) => ({
-                spotsList: [...state?.spotsList, ...response?.spotsList],
-                totalResult: response?.totalResults,
+                spotsList: [...state.spotsList, ...response.spotsList],
+                totalResult: response.totalResults,
                 offset: state.spotsList.length + response.spotsList.length,
                 isLoading: false,
               }));
               refreshAOS();
-            },
-            error: () => {
+            }),
+            catchError((error) => {
               const translatedMessage =
                 translocoService.translate('spots_error404');
               const translatedButton = translocoService.translate('close');
@@ -110,9 +128,13 @@ export const SpotsStore = signalStore(
               );
 
               patchState(store, { isLoading: false });
-            },
-          });
+
+              return throwError(() => error);
+            })
+          )
+          .subscribe(); // Subscribe here since no Subject is used
       },
+
       randomSpots() {
         http
           .get<any>('pet-friendly-spots/random')
@@ -162,7 +184,7 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              this.loadData(null, null, null, true);
+              this.loadData(null, null, null,null, true);
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',
@@ -175,9 +197,9 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
-      deleteSpot(spotId: any) {        
+      deleteSpot(spotId: any) {
         http
-          .post('pet-friendly-spots/delete', {iuo_id:spotId})
+          .post('pet-friendly-spots/delete', { iuo_id: spotId })
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
@@ -192,21 +214,22 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
-      acceptPendingSpot(data:any){
+      acceptPendingSpot(data: any) {
         http
-        .post<any>('pet-friendly-spots/create',data)
-        .pipe(takeUntil(destroyed$)).subscribe(({
-          next:(result)=>{            
-            snackbarService.openSnackbar(
-              'Successfully accepted pet-friendly location.',
-              'Zatvori',
+          .post<any>('pet-friendly-spots/create', data)
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              snackbarService.openSnackbar(
+                'Successfully accepted pet-friendly location.',
+                'Zatvori',
 
-              'success-snackbar'
-            );
-          }
-        }))
+                'success-snackbar'
+              );
+            },
+          });
       },
-      declinePendingSpot(spotId:any){
+      declinePendingSpot(spotId: any) {
         http
           .put('pet-friendly-spots/pending', { pr_id: spotId })
           .pipe(takeUntil(destroyed$))
@@ -215,12 +238,11 @@ export const SpotsStore = signalStore(
               snackbarService.openSnackbar(
                 'Successfully accepted pending pet-friendly location.',
                 'Zatvori',
-  
+
                 'success-snackbar'
               );
             },
             error: handleError,
-
           });
       },
       allowedPetTypes() {
