@@ -20,11 +20,14 @@
 </h1>
 <mat-dialog-content>
   <div class="radio-group">
-    <mat-radio-group [(ngModel)]="selectedType" (change)="changeRadio($event)">
-      <mat-radio-button value="spot">{{"pet_spot" | transloco}}</mat-radio-button>
-      <mat-radio-button value="park">{{"park" | transloco}}</mat-radio-button>
+    <mat-radio-group aria-label="Select an option"  [(ngModel)]="selectedType" (change)="changeRadio($event)">
+      <mat-radio-button value="spot">{{
+        'pet_spot' | transloco
+      }}</mat-radio-button>
+      <mat-radio-button value="park">{{ 'park' | transloco }}</mat-radio-button>
     </mat-radio-group>
   </div>
+  @switch (selectedType) { @case ('spot') {
   <form [formGroup]="spotForm">
     @if(spotForm.invalid && spotForm.touched){
 
@@ -35,27 +38,25 @@
         <span class="text-md font-medium">{{ 'spot_name' | transloco }}</span>
         <input
           id="name"
-          [formControlName]="selectedType === 'spot' ? 'iuo_ime' : 'par_ime'"
+          formControlName="iuo_ime"
           type="text"
           [placeholder]="'spot_name' | transloco"
           class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
-       
-     
+
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{ 'address' | transloco }}</span>
         <input
           id="iuo_adressa"
-          [formControlName]="selectedType==='spot'?'iuo_adressa':'par_lokacija'"
+          formControlName="iuo_adressa"
           type="text"
           [placeholder]="'address' | transloco"
           class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
-      @if(selectedType==='spot'){
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'site_network' | transloco
@@ -73,22 +74,20 @@
         <span class="text-md font-medium">{{
           'image_outside' | transloco
         }}</span>
-        @if(!spotForm.get('iuo_slika')?.value){
+        @if(!imageSrc){
         <input
           type="file"
           class="input"
-          formControlName="iuo_slika"
-          
+     
           class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
-          (change)="handleInputChange($event)"
-          accept="image/*"
+          (change)="handleInputChange($event,'iuo_slika')"
         />
-
+      
         }@else {
         <div class="remove-image-wrapper">
           <svg
-            (click)="spotForm.patchValue({ iuo_slika: null }); imageSrc=null"
+            (click)="spotForm.patchValue({ iuo_slika: null }); imageSrc = null"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -103,12 +102,13 @@
             />
           </svg>
 
-          <img
-            [src]="imageSrc"
-            alt="slika"
-          />
+          <img [src]="imageSrc" alt="slika" />
         </div>
         }
+          @if(spotForm.get('iuo_slika')?.errors?.['fileSize']){
+
+          <mat-error>{{ 'file_limit' | transloco }}</mat-error>
+          }
       </div>
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
@@ -121,14 +121,22 @@
           formControlName="iuo_slika_unutra"
           type="file"
           class="input"
-          (change)="handleInputChangeAdditional($event)"
+          (change)="handleInputChange($event,'iuo_slika_unutra')"
           accept="image/*"
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
 
         />
+        @if(spotForm.get('iuo_slika_unutra')?.errors?.['fileSize']){
+
+          <mat-error>{{ 'file_limit' | transloco }}</mat-error>
+          }
         }@else {
         <div class="remove-image-wrapper">
           <svg
-            (click)="spotForm.patchValue({ iuo_slika_unutra: null }); imageSrcAdditional=null"
+            (click)="
+              spotForm.patchValue({ iuo_slika_unutra: null });
+              imageSrcAdditional = null
+            "
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -147,9 +155,9 @@
         </div>
         }
       </div>
-    }
+
       <div class="form-field-wrapper">
-        <mat-form-field>
+        <mat-form-field >
           <mat-label>{{ 'select_city' | transloco }}</mat-label>
 
           <mat-select formControlName="ops_id" #multiSelect>
@@ -187,7 +195,6 @@
           </mat-select>
         </mat-form-field>
         <!-- Starost (Single Select) -->
-      @if (selectedType==='spot') {
         <mat-form-field>
           <mat-label>{{ 'dog_size' | transloco }}</mat-label>
           <mat-select formControlName="sta_id">
@@ -225,8 +232,6 @@
             }
           </mat-select>
         </mat-form-field>
-      }
-
       </div>
       @if(selectedType==='spot'){
       <div class="label-input flex items-start gap-2 flex-col">
@@ -239,7 +244,7 @@
           class="input"
         />
       </div>
-    }
+      }
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'short_description' | transloco
@@ -247,13 +252,96 @@
         <textarea
           id="iuo_opis"
           formControlName="iuo_opis"
-          [formControlName]="selectedType==='spot'?'iuo_opis':'par_opis'"
+          formControlName="iuo_opis"
           [placeholder]="'short_description' | transloco"
           class="textarea textarea-bordered w-full input"
         ></textarea>
       </div>
     </div>
   </form>
+  }
+ @case ('park') {
+  <form [formGroup]="parkForm">
+    @if(spotForm.invalid && spotForm.touched){
+
+    <mat-error>{{ 'required' | transloco }}</mat-error>
+    }
+    <div class="input-wrapper grid gap-4 pb-4">
+      <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">{{ 'spot_name' | transloco }}</span>
+        <input
+          id="par_ime"
+          formControlName="par_ime"
+          type="text"
+          [placeholder]="'spot_name' | transloco"
+          class="input"
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
+        />
+      </div>
+
+      <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">{{ 'address' | transloco }}</span>
+        <input
+          id="par_lokacija"
+          [formControlName]="'par_lokacija'"
+          type="text"
+          [placeholder]="'address' | transloco"
+          class="input"
+          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
+        />
+      </div>
+      <mat-form-field>
+        <mat-label>{{ 'select_city' | transloco }}</mat-label>
+
+        <mat-select formControlName="ops_id" #multiSelect>
+          <mat-option>
+            <ngx-mat-select-search
+              [placeholderLabel]="'search' | transloco"
+              [formControl]="townshipMultiFilterCtrl"
+            >
+              <svg
+                ngxMatSelectSearchClear
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                />
+              </svg>
+              <span ngxMatSelectNoEntriesFound>
+                {{ 'no_entries' | transloco }}
+              </span>
+            </ngx-mat-select-search>
+          </mat-option>
+          @for (township of filteredtownshipsMulti | async; track $index) {
+
+          <mat-option [value]="township?.id">
+            {{ township.ime }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">{{
+          'short_description' | transloco
+        }}</span>
+        <textarea
+          id="par_opis"
+          formControlName="par_opis"
+          [placeholder]="'short_description' | transloco"
+          class="textarea textarea-bordered w-full input"
+        ></textarea>
+      </div>
+    </div>
+  </form>
+ }
+}
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="btn btn_error" (click)="onNoClick()">
@@ -261,7 +349,7 @@
   </button>
   <button
     class="h-12 btn_primary"
-    [disabled]="spotForm.invalid || !spotForm.dirty"
+    [disabled]="disableButton()"
     (click)="onSaveClick()"
   >
     {{ 'save' | transloco }}

@@ -55,6 +55,18 @@ export const ParksStore = signalStore(
             error: handleError,
           });
       },
+      addPark(form:any){
+        http.post<any>('pet-friendly-parks/list',form.value).pipe(takeUntil(destroyed$)).subscribe(({
+          next:()=>{
+            snackbarService.openSnackbar(
+              'You have successfully proposed a pet-friendly park.',
+              'Close',
+              'success-snackbar'
+            );
+          },
+          error:handleError
+        }))
+      }
     };
   }),
   withHooks({
