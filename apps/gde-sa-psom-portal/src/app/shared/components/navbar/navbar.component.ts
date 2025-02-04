@@ -14,7 +14,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { LanguageService } from '../../../core/services/language.service';
 import { MatButtonModule } from '@angular/material/button';
 import { DialogService } from '../../../core/services/dialog.service';
-import { AddSpotComponent } from '../../dialogs/add-spot/add-spot.component';
+import { AddSpotComponent } from '../../dialogs/add-location/add-location.component';
 import { AuthService } from '../../../features/auth/auth.service';
 import { SpotsStore } from '../../store/spots.store';
 

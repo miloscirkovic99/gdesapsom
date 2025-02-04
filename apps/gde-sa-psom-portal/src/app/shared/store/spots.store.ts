@@ -197,6 +197,26 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
+      updatePendingSpot(form: any) {
+        http
+          .post<any>('pet-friendly-spots/update_pending', form.value)
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (result) => {
+              console.log(result);
+              
+              dialogService.closeDialog();
+              snackbarService.openSnackbar(
+                'Successfully updated pet-friendly location.',
+                'Zatvori',
+
+                'success-snackbar'
+              );
+              refreshAOS();
+            },
+            error: handleError,
+          });
+      },
       deleteSpot(spotId: any) {
         http
           .post('pet-friendly-spots/delete', { iuo_id: spotId })

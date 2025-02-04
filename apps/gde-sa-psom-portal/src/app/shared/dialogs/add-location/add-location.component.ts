@@ -28,6 +28,7 @@ import {
 import { SpotsStore } from '../../store/spots.store';
 import { SharedStore } from '../../store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-add-spot',
@@ -44,9 +45,10 @@ import { ReplaySubject, takeUntil } from 'rxjs';
     MatFormFieldModule,
     MatSelectModule,
     NgxMatSelectSearchModule,
+    MatRadioModule,
   ],
-  templateUrl: './add-spot.component.html',
-  styleUrl: './add-spot.component.scss',
+  templateUrl: './add-location.component.html',
+  styleUrl: './add-location.component.scss',
 })
 export class AddSpotComponent {
   readonly dialogRef = inject(MatDialogRef<AddSpotComponent>);
@@ -69,32 +71,17 @@ export class AddSpotComponent {
 
   spotsStore = inject(SpotsStore);
   sharedStore = inject(SharedStore);
+  imageSrc: any;
+  imageSrcAdditional: any;
+  selectedType: string = 'spot'; // Default to Spot
+
   constructor(private fb: FormBuilder) {
     this.dialogRef.keydownEvents().subscribe((event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         this.onNoClick();
       }
     });
-
-    this.spotForm = this.fb.group({
-      iuo_ime: [this.data.data?.iuo_ime, Validators.required],
-      iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
-      iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
-      iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
-      iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
-      iuo_telefon: [this.data.data?.iuo_telefon],
-      ops_id: [this.data.data?.ops_id, Validators.required],
-      ugo_id: [this.data.data?.ugo_id, Validators.required],
-      sta_id: [this.data.data?.sta_id, Validators.required],
-      bas_id: [this.data.data?.bas_id, Validators.required],
-      iuo_opis: [this.data.data?.iuo_opis],
-    });
-    if(this.data.isEdit && !this.data?.isPending){
-      this.spotForm.addControl('iuo_id', new FormControl(this.data.data?.iuo_id));
-    }else if(this.data.isEdit && this.data?.isPending){
-      this.spotForm.addControl('pr_id', new FormControl(this.data.data?.pr_id));
-
-    }
+    this.initForm();
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -106,41 +93,95 @@ export class AddSpotComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
+
   }
+  changeRadio(event: any) {
+    console.log(event);
+    setTimeout(() => {
+      
+      this.initForm();
+    }, 300);
+  }
+  initForm() {
+    this.spotForm = this.fb.group({});
 
-  // Metod za obradu fajla
-  onFileChangeOutside(event: any): void {
-    const file = event.target.files[0];
+    if (this.selectedType === 'spot') {
+      this.spotForm = this.fb.group({
+        iuo_ime: [this.data.data?.iuo_ime, Validators.required],
+        iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
+        iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
+        iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
+        iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
+        iuo_telefon: [this.data.data?.iuo_telefon],
+        ops_id: [this.data.data?.ops_id, Validators.required],
+        ugo_id: [this.data.data?.ugo_id, Validators.required],
+        sta_id: [this.data.data?.sta_id, Validators.required],
+        bas_id: [this.data.data?.bas_id, Validators.required],
+        iuo_opis: [this.data.data?.iuo_opis],
+      });
 
-    if (file) {
-      const reader = new FileReader();
+      if (this.data.isEdit) {
+        const controlName = this.data?.isPending ? 'pr_id' : 'iuo_id';
+        this.spotForm.addControl(
+          controlName,
+          new FormControl(this.data.data?.[controlName])
+        );
+      }
 
-      reader.onload = () => {
-        // Ovde se postavlja base64 string
-        const base64String = reader.result as any;
-        this.spotForm.get('iuo_slika')?.setValue(base64String);
-      };
-
-      reader.readAsDataURL(file);
+      this.imageSrc = this.spotForm.get('iuo_slika')?.value;
+      this.imageSrcAdditional = this.spotForm.get('iuo_slika_unutra')?.value;
+    } else {
+      this.spotForm = this.fb.group({
+        par_ime: [this.data.data?.par_ime, Validators.required],
+        par_lokacija: [this.data.data?.par_lokacija, Validators.required],
+        ops_id: [this.data.data?.ops_id, Validators.required],
+        par_opis: [this.data.data?.par_opis],
+      });
     }
+    console.log(this.spotForm.value);
+
   }
+  handleInputChange(e: any) {
+    console.log('input change');
+    var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
 
-  // Metod za obradu fajla
-  onFileChangeInside(event: any): void {
-    const file = event.target.files[0];
+    var pattern = /image-*/;
+    var reader = new FileReader();
 
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        // Ovde se postavlja base64 string
-        const base64String = reader.result as any;
-        this.spotForm.get('iuo_slika_unutra')?.setValue(base64String);
-      };
-
-      reader.readAsDataURL(file);
+    if (!file.type.match(pattern)) {
+      alert('invalid format');
+      return;
     }
+    reader.onload = this._handleReaderLoaded.bind(this);
+    reader.readAsDataURL(file);
   }
+
+  _handleReaderLoaded(e: any) {
+    console.log('_handleReaderLoaded');
+    var reader = e.target;
+    this.imageSrc = reader.result;
+  }
+
+  handleInputChangeAdditional(e: any) {
+    var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
+
+    var pattern = /image-*/;
+    var reader = new FileReader();
+
+    if (!file.type.match(pattern)) {
+      alert('invalid format');
+      return;
+    }
+
+    reader.onload = this._handleReaderLoadedAdditional.bind(this);
+    reader.readAsDataURL(file);
+  }
+
+  _handleReaderLoadedAdditional(e: any) {
+    var reader = e.target;
+    this.imageSrcAdditional = reader.result;
+  }
+
   protected filterTownshipsMulti() {
     if (!this.sharedStore.townships()) {
       return;
@@ -163,7 +204,9 @@ export class AddSpotComponent {
   }
   onSaveClick(): void {
     if (this.spotForm.valid) {
-        this.data.onSave(this.spotForm)
+      console.log(this.spotForm.value);
+
+      // this.data.onSave(this.spotForm)
     }
   }
 }

@@ -33,7 +33,16 @@
   @include mat.snack-bar-overrides((
     container-color:'inherent',
   ));
+  @include mat.radio-overrides((
+    selected-icon-color: "#44cd88",
+    checked-ripple-color: "#44cd88",
+    selected-focus-icon-color:"#44cd88",
+    selected-hover-icon-color:"#44cd88"
+
+
+  ));
 }
+
 .mat-mdc-snack-bar-container{
   @apply rounded-xl;
 }

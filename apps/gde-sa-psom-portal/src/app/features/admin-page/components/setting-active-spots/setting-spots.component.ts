@@ -4,7 +4,7 @@ import { CardComponent } from '../../../../shared/components/card/card.component
 import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
 import { TranslocoModule } from '@ngneat/transloco';
 import { DialogService } from 'apps/gde-sa-psom-portal/src/app/core/services/dialog.service';
-import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-spot/add-spot.component';
+import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-location/add-location.component';
 
 @Component({
   selector: 'app-setting-spots',
@@ -15,8 +15,24 @@ import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs
 export class SettingSpotsComponent {
   spotsStore = inject(SpotsStore);
   private dialogService = inject(DialogService);
-  onSubmit(resetOffset: boolean = false) {
-    this.spotsStore.loadData(null, null, null, resetOffset);
+  onSearchUpdated(event: any) {
+    this.onSubmit(event,true);
+  }
+  onSubmit(word:any=null,resetOffset: boolean = false) {
+    const data = {
+      ops_id:null,
+      ugo_id: null,
+      sta_id: null,
+      word: word || null,
+    };
+
+    this.spotsStore.loadData(
+      data.ops_id,
+      data.ugo_id,
+      data.sta_id,
+      data.word,
+      resetOffset
+    );
   }
   onAction(data: any) {
     const options = {

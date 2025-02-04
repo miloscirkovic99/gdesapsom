@@ -19,6 +19,12 @@
   </svg>
 </h1>
 <mat-dialog-content>
+  <div class="radio-group">
+    <mat-radio-group [(ngModel)]="selectedType" (change)="changeRadio($event)">
+      <mat-radio-button value="spot">{{"pet_spot" | transloco}}</mat-radio-button>
+      <mat-radio-button value="park">{{"park" | transloco}}</mat-radio-button>
+    </mat-radio-group>
+  </div>
   <form [formGroup]="spotForm">
     @if(spotForm.invalid && spotForm.touched){
 
@@ -28,26 +34,28 @@
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{ 'spot_name' | transloco }}</span>
         <input
-          id="iuo_ime"
-          formControlName="iuo_ime"
+          id="name"
+          [formControlName]="selectedType === 'spot' ? 'iuo_ime' : 'par_ime'"
           type="text"
           [placeholder]="'spot_name' | transloco"
           class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
-
+       
+     
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{ 'address' | transloco }}</span>
         <input
           id="iuo_adressa"
-          formControlName="iuo_adressa"
+          [formControlName]="selectedType==='spot'?'iuo_adressa':'par_lokacija'"
           type="text"
           [placeholder]="'address' | transloco"
           class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
         />
       </div>
+      @if(selectedType==='spot'){
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'site_network' | transloco
@@ -66,19 +74,21 @@
           'image_outside' | transloco
         }}</span>
         @if(!spotForm.get('iuo_slika')?.value){
-
         <input
-          id="iuo_slika"
-          formControlName="iuo_slika"
           type="file"
           class="input"
+          formControlName="iuo_slika"
+          
+          class="input"
           [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
-          (change)="onFileChangeOutside($event)"
+          (change)="handleInputChange($event)"
+          accept="image/*"
         />
+
         }@else {
         <div class="remove-image-wrapper">
           <svg
-            (click)="spotForm.patchValue({ iuo_slika: null })"
+            (click)="spotForm.patchValue({ iuo_slika: null }); imageSrc=null"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -93,7 +103,10 @@
             />
           </svg>
 
-          <img [src]="spotForm.get('iuo_slika')?.value" alt="" />
+          <img
+            [src]="imageSrc"
+            alt="slika"
+          />
         </div>
         }
       </div>
@@ -102,19 +115,20 @@
           'image_inside' | transloco
         }}</span>
 
-        @if(!spotForm.get('iuo_slika_unutra')?.value){
+        @if(!imageSrcAdditional){
 
         <input
-          id="iuo_slika_unutra"
           formControlName="iuo_slika_unutra"
           type="file"
           class="input"
-          (change)="onFileChangeInside($event)"
+          (change)="handleInputChangeAdditional($event)"
+          accept="image/*"
+
         />
         }@else {
         <div class="remove-image-wrapper">
           <svg
-            (click)="spotForm.patchValue({ iuo_slika_unutra: null })"
+            (click)="spotForm.patchValue({ iuo_slika_unutra: null }); imageSrcAdditional=null"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -129,10 +143,11 @@
             />
           </svg>
 
-          <img [src]="spotForm.get('iuo_slika_unutra')?.value" alt="" />
+          <img [src]="imageSrcAdditional" alt="" />
         </div>
         }
       </div>
+    }
       <div class="form-field-wrapper">
         <mat-form-field>
           <mat-label>{{ 'select_city' | transloco }}</mat-label>
@@ -172,6 +187,7 @@
           </mat-select>
         </mat-form-field>
         <!-- Starost (Single Select) -->
+      @if (selectedType==='spot') {
         <mat-form-field>
           <mat-label>{{ 'dog_size' | transloco }}</mat-label>
           <mat-select formControlName="sta_id">
@@ -209,7 +225,10 @@
             }
           </mat-select>
         </mat-form-field>
+      }
+
       </div>
+      @if(selectedType==='spot'){
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{ 'phone' | transloco }}</span>
         <input
@@ -220,7 +239,7 @@
           class="input"
         />
       </div>
-
+    }
       <div class="label-input flex items-start gap-2 flex-col">
         <span class="text-md font-medium">{{
           'short_description' | transloco
@@ -228,6 +247,7 @@
         <textarea
           id="iuo_opis"
           formControlName="iuo_opis"
+          [formControlName]="selectedType==='spot'?'iuo_opis':'par_opis'"
           [placeholder]="'short_description' | transloco"
           class="textarea textarea-bordered w-full input"
         ></textarea>
