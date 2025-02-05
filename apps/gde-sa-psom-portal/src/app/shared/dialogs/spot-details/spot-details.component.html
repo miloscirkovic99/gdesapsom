@@ -1,5 +1,20 @@
-<h1 class="text-2xl font-bold px-8 py-4">
+<h1 class="text-2xl font-bold px-8 py-4 flex items-center justify-between">
   {{ 'spot_name' | transloco }}: {{ data?.iuo_ime }} - {{ data?.grd_ime }}
+  <svg
+  (click)="onNoClick()"
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  stroke-width="1.5"
+  stroke="currentColor"
+  class="size-7 cursor-pointer hover:text-black"
+>
+  <path
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M6 18 18 6M6 6l12 12"
+  />
+</svg>
 </h1>
 <mat-dialog-content>
   <div class="spot-details-container">
@@ -139,6 +154,7 @@
           }}</a>
         </p>
         <p>{{ 'phone' | transloco }}:{{ data?.iuo_telefon ?? '/' }}</p>
+        <p>{{'short_description'| transloco}}: {{ data?.iuo_opis ?? '/' }}</p>
       </div>
     </div>
   </div>
