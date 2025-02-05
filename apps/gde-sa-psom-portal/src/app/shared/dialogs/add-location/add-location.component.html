@@ -263,7 +263,7 @@
   }
  @case ('park') {
   <form [formGroup]="parkForm">
-    @if(spotForm.invalid && spotForm.touched){
+    @if(parkForm.invalid && parkForm.touched){
 
     <mat-error>{{ 'required' | transloco }}</mat-error>
     }
@@ -276,7 +276,7 @@
           type="text"
           [placeholder]="'spot_name' | transloco"
           class="input"
-          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
+          [ngClass]="{ 'border-red-600': parkForm.invalid && parkForm.touched }"
         />
       </div>
 
@@ -288,8 +288,20 @@
           type="text"
           [placeholder]="'address' | transloco"
           class="input"
-          [ngClass]="{ 'border-red-600': spotForm.invalid && spotForm.touched }"
+          [ngClass]="{ 'border-red-600': parkForm.invalid && parkForm.touched }"
         />
+      </div>
+     
+      <div class="label-input flex items-start gap-2 flex-col">
+        <span class="text-md font-medium">{{
+          'short_description' | transloco
+        }}</span>
+        <textarea
+          id="par_opis"
+          formControlName="par_opis"
+          [placeholder]="'short_description' | transloco"
+          class="textarea textarea-bordered w-full input"
+        ></textarea>
       </div>
       <mat-form-field>
         <mat-label>{{ 'select_city' | transloco }}</mat-label>
@@ -328,17 +340,6 @@
           }
         </mat-select>
       </mat-form-field>
-      <div class="label-input flex items-start gap-2 flex-col">
-        <span class="text-md font-medium">{{
-          'short_description' | transloco
-        }}</span>
-        <textarea
-          id="par_opis"
-          formControlName="par_opis"
-          [placeholder]="'short_description' | transloco"
-          class="textarea textarea-bordered w-full input"
-        ></textarea>
-      </div>
     </div>
   </form>
  }
