@@ -17,6 +17,7 @@ import { DialogService } from '../../../core/services/dialog.service';
 import { AddSpotComponent } from '../../dialogs/add-location/add-location.component';
 import { AuthService } from '../../../features/auth/auth.service';
 import { SpotsStore } from '../../store/spots.store';
+import { ParksStore } from '../../store/parks.store';
 
 @Component({
   selector: 'app-navbar',
@@ -39,7 +40,9 @@ export class NavbarComponent {
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
   private dialogService = inject(DialogService);
-  private spotsStore=inject(SpotsStore)
+  private spotsStore=inject(SpotsStore);
+  private parksStore=inject(ParksStore)
+
   authService=inject(AuthService)
   ngOnInit() {
     this.initializeTheme();
@@ -105,8 +108,8 @@ export class NavbarComponent {
 
   openDialog() {
     const data={
-      onSave:(form:any)=>{
-        this.spotsStore.suggestSpot(form)
+      onSave:(form:any)=>{        
+       form.spotType==='spot'?  this.spotsStore.suggestSpot(form.form): this.parksStore.addPark(form.form)
       }
     }
     this.dialogService.openDialog(AddSpotComponent, data);

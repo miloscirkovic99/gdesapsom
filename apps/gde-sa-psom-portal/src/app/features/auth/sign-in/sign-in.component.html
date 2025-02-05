@@ -1,6 +1,6 @@
 <div class="container">
   <div class="logo-container">
-    <img src="assets/logo-normal.png" alt="Gde sa psom">
+    <img src="assets/logo-normal.png" alt="Gde sa psom" loading="lazy" />
     <h2>Sign in to your account</h2>
   </div>
 
@@ -9,19 +9,35 @@
       <div class="input-group">
         <label for="email" class="label">Email address</label>
         <div class="input-wrapper">
-          <input formControlName="email" type="email" name="email" id="email" autocomplete="email" required>
+          <input
+            formControlName="email"
+            type="email"
+            name="email"
+            id="email"
+            autocomplete="email"
+            required
+          />
         </div>
       </div>
 
       <div class="input-group input-group--password">
         <label for="password" class="label">Password</label>
         <div class="input-wrapper">
-          <input formControlName="password" type="password" name="password" id="password" autocomplete="current-password" required>
+          <input
+            formControlName="password"
+            type="password"
+            name="password"
+            id="password"
+            autocomplete="current-password"
+            required
+          />
         </div>
       </div>
 
       <div>
-        <button (click)="signIn()" type="submit" class="submit-btn">Sign in</button>
+        <button (click)="signIn()" type="submit" class="submit-btn">
+          Sign in
+        </button>
       </div>
     </form>
   </div>

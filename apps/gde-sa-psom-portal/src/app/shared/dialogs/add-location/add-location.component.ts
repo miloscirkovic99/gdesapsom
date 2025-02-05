@@ -1,6 +1,7 @@
 import { Component, effect, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -29,6 +30,8 @@ import { SpotsStore } from '../../store/spots.store';
 import { SharedStore } from '../../store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { MatRadioModule } from '@angular/material/radio';
+import { fileSizeValidator } from '../../../core/validators/file-size-valdiator';
+import { filterTownshipsMulti } from '../../utils/township.util';
 
 @Component({
   selector: 'app-add-spot',
@@ -65,6 +68,8 @@ export class AddSpotComponent {
   >(1);
 
   spotForm!: FormGroup;
+  parkForm!: FormGroup;
+
   descriptionToKeyMap = descriptionToKeyMap;
   descriptionToKeyMapSpot = descriptionToKeyMapSpot;
   descriptionToKeyMapGarden = descriptionToKeyMapGarden;
@@ -81,7 +86,8 @@ export class AddSpotComponent {
         this.onNoClick();
       }
     });
-    this.initForm();
+    this.initSpotForm();
+    this.initParkForm();
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -93,120 +99,129 @@ export class AddSpotComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
-
   }
   changeRadio(event: any) {
-    console.log(event);
-    setTimeout(() => {
-      
-      this.initForm();
-    }, 300);
+    this.selectedType = event.value;
   }
-  initForm() {
-    this.spotForm = this.fb.group({});
+  initParkForm() {
+    this.parkForm = this.fb.group({
+      par_ime: [this.data.data?.par_ime, Validators.required],
+      par_lokacija: [this.data.data?.par_lokacija, Validators.required],
+      ops_id: [this.data.data?.ops_id, Validators.required],
+      par_opis: [this.data.data?.par_opis],
+      par_accepted: [0],
+    });
+  }
+  initSpotForm() {
+    this.spotForm = this.fb.group({
+      iuo_ime: [this.data.data?.iuo_ime, Validators.required],
+      iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
+      iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
+      iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
+      iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
+      iuo_telefon: [this.data.data?.iuo_telefon],
+      ops_id: [this.data.data?.ops_id, Validators.required],
+      ugo_id: [this.data.data?.ugo_id, Validators.required],
+      sta_id: [this.data.data?.sta_id, Validators.required],
+      bas_id: [this.data.data?.bas_id, Validators.required],
+      iuo_opis: [this.data.data?.iuo_opis],
+    });
 
-    if (this.selectedType === 'spot') {
-      this.spotForm = this.fb.group({
-        iuo_ime: [this.data.data?.iuo_ime, Validators.required],
-        iuo_adressa: [this.data.data?.iuo_adressa, Validators.required],
-        iuo_link_web: [this.data.data?.iuo_link_web, Validators.required],
-        iuo_slika: [this.data.data?.iuo_slika_base64, Validators.required],
-        iuo_slika_unutra: [this.data.data?.iuo_slika_base64_unutra],
-        iuo_telefon: [this.data.data?.iuo_telefon],
-        ops_id: [this.data.data?.ops_id, Validators.required],
-        ugo_id: [this.data.data?.ugo_id, Validators.required],
-        sta_id: [this.data.data?.sta_id, Validators.required],
-        bas_id: [this.data.data?.bas_id, Validators.required],
-        iuo_opis: [this.data.data?.iuo_opis],
-      });
+    if (this.data.isEdit) {
+      const controlName = this.data?.isPending ? 'pr_id' : 'iuo_id';
+      this.spotForm.addControl(
+        controlName,
+        new FormControl(this.data.data?.[controlName])
+      );
+    }
 
-      if (this.data.isEdit) {
-        const controlName = this.data?.isPending ? 'pr_id' : 'iuo_id';
-        this.spotForm.addControl(
-          controlName,
-          new FormControl(this.data.data?.[controlName])
-        );
+    this.imageSrc = this.spotForm.get('iuo_slika')?.value;
+    this.imageSrcAdditional = this.spotForm.get('iuo_slika_unutra')?.value;
+  }
+
+
+  handleInputChange(e: any, controlName: string) {
+    const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
+  
+    if (!this.isValidFile(file)) {
+      alert('Invalid format. Please upload an image.');
+      return;
+    }
+  
+    const maxSize = 1 * 1024 * 1024; // 1MB
+  
+    if (file.size > maxSize) {
+      alert('File size exceeds the limit. Please upload a smaller image.');
+      return;
+    }
+  
+    // Update the form control with the file and validate
+    this.updateFormControl(controlName, file, maxSize);
+  
+    // Read and process the image
+    this.readFileAsBase64(file, controlName);
+  }
+  
+  // Helper function to check file type
+  private isValidFile(file: File): any {
+    const pattern = /image-*/;
+    return file.type.match(pattern);
+  }
+  
+  // Helper function to update the form control with file and validation
+  private updateFormControl(controlName: string, file: File, maxSize: number) {
+    const control = this.spotForm.get(controlName);
+    if (control) {
+      control.setValue(file);  // Store the File object in the form control
+      control.setValidators([fileSizeValidator(maxSize)]);  // Apply file size validator
+      control.updateValueAndValidity();  // Trigger validation
+    }
+  }
+  
+  // Helper function to read file as a base64 string
+  private readFileAsBase64(file: File, controlName: string) {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      const base64String = event.target.result;
+      // Store base64 string based on control name
+      if (controlName === 'iuo_slika') {
+        this.imageSrc = base64String;
+      } else if (controlName === 'iuo_slika_unutra') {
+        this.imageSrcAdditional = base64String;
       }
-
-      this.imageSrc = this.spotForm.get('iuo_slika')?.value;
-      this.imageSrcAdditional = this.spotForm.get('iuo_slika_unutra')?.value;
-    } else {
-      this.spotForm = this.fb.group({
-        par_ime: [this.data.data?.par_ime, Validators.required],
-        par_lokacija: [this.data.data?.par_lokacija, Validators.required],
-        ops_id: [this.data.data?.ops_id, Validators.required],
-        par_opis: [this.data.data?.par_opis],
-      });
-    }
-    console.log(this.spotForm.value);
-
-  }
-  handleInputChange(e: any) {
-    console.log('input change');
-    var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-
-    var pattern = /image-*/;
-    var reader = new FileReader();
-
-    if (!file.type.match(pattern)) {
-      alert('invalid format');
-      return;
-    }
-    reader.onload = this._handleReaderLoaded.bind(this);
+    };
     reader.readAsDataURL(file);
   }
-
-  _handleReaderLoaded(e: any) {
-    console.log('_handleReaderLoaded');
-    var reader = e.target;
-    this.imageSrc = reader.result;
-  }
-
-  handleInputChangeAdditional(e: any) {
-    var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-
-    var pattern = /image-*/;
-    var reader = new FileReader();
-
-    if (!file.type.match(pattern)) {
-      alert('invalid format');
-      return;
-    }
-
-    reader.onload = this._handleReaderLoadedAdditional.bind(this);
-    reader.readAsDataURL(file);
-  }
-
-  _handleReaderLoadedAdditional(e: any) {
-    var reader = e.target;
-    this.imageSrcAdditional = reader.result;
-  }
-
   protected filterTownshipsMulti() {
-    if (!this.sharedStore.townships()) {
-      return;
-    }
-    let search = this.townshipMultiFilterCtrl.value;
-    if (!search) {
-      this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    this.filteredtownshipsMulti.next(
-      this.sharedStore
-        .townships()
-        .filter((township: any) => township.ime.toLowerCase().includes(search))
-    );
+    const search: any = this.townshipMultiFilterCtrl.value;
+    const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
+
+    this.filteredtownshipsMulti.next(filteredTownships);
   }
   onNoClick(): void {
     this.dialogRef.close();
   }
+  disableButton(): boolean {
+    if (
+      (this.spotForm.invalid || !this.spotForm.dirty) &&
+      (this.parkForm.invalid || !this.parkForm.dirty)
+    ) {
+      return true;
+    }
+    return false;
+  }
   onSaveClick(): void {
-    if (this.spotForm.valid) {
-      console.log(this.spotForm.value);
-
-      // this.data.onSave(this.spotForm)
+    if (this.spotForm.valid || this.parkForm.valid) {
+      const spotForm = {
+        ...this.spotForm.value,
+        iuo_slika: this.imageSrc,
+        iuo_slika_unutra: this.imageSrcAdditional,
+      };
+      const dataOnSave = {
+        form: this.selectedType === 'spot' ? spotForm : this.parkForm.value,
+        spotType: this.selectedType,
+      };
+      this.data.onSave(dataOnSave);
     }
   }
 }

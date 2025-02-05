@@ -1,0 +1,6 @@
+.pending-spots-container{
+    @apply grid gap-6;
+    h1{
+        @apply text-3xl font-semibold dark:text-white my-2;
+    }
+}

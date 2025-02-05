@@ -20,10 +20,12 @@ import {
   tap,
   throwError,
   of,
+  delay,
 } from 'rxjs';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService } from '../../core/services/dialog.service';
+import { ContactFormService } from '../components/contact-form/contact-form.service';
 
 // Define the initial state type
 type SpotsState = {
@@ -63,19 +65,23 @@ export const SpotsStore = signalStore(
     const snackbarService = inject(SnackbarService);
     const translocoService = inject(TranslocoService);
     const dialogService = inject(DialogService);
-
+    const contactFormService=inject(ContactFormService)
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
+      const translatedButton = translocoService.translate('close');
+
+      const translatedMessage = translocoService.translate('error_global');
       snackbarService.openSnackbar(
-        'Oops... Something went wrong, please check your fields and try again',
-        'Close',
+        translatedMessage,
+        translatedButton,
         'error-snackbar'
       );
       patchState(store, { isLoading: false });
     };
 
     return {
+      
       loadData(
         ops_id?: any,
         ugo_id?: any,
@@ -119,7 +125,7 @@ export const SpotsStore = signalStore(
             catchError((error) => {
               const translatedMessage =
                 translocoService.translate('spots_error404');
-              const translatedButton = translocoService.translate('close');
+                const translatedButton = translocoService.translate('close');
 
               snackbarService.openSnackbar(
                 translatedMessage,
@@ -149,27 +155,34 @@ export const SpotsStore = signalStore(
           });
       },
       suggestSpot(form: any) {
+        const translatedButton = translocoService.translate('close');
+
         http
-          .post<any>('pet-friendly-spots/pending', form.value)
+          .post<any>('pet-friendly-spots/pending', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              form.reset();
               dialogService.closeDialog();
               const translatedMessage =
                 translocoService.translate('success_add');
-              const translatedButton = translocoService.translate('close');
+
               snackbarService.openSnackbar(
                 translatedMessage,
                 translatedButton,
                 'success-snackbar'
               );
+              const data={
+                email:'noreply@gdesapsom.com',
+                subject:`Novi objekat ${form.iuo_ime}`,
+                message:`New pet location u have  check on: gdesapsom.com`
+              }
+              contactFormService.sendEmail(data)
             },
             error: (err) => {
               console.error(err);
               const translatedMessage =
-                translocoService.translate('success_add');
-              const translatedButton = translocoService.translate('close');
+                translocoService.translate('error_global');
+
               snackbarService.openSnackbar(
                 translatedMessage,
                 translatedButton,
@@ -180,11 +193,11 @@ export const SpotsStore = signalStore(
       },
       updateSpot(form: any) {
         http
-          .post<any>('pet-friendly-spots/update', form.value)
+          .post<any>('pet-friendly-spots/update', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              this.loadData(null, null, null,null, true);
+              this.loadData(null, null, null, null, true);
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',
@@ -199,12 +212,10 @@ export const SpotsStore = signalStore(
       },
       updatePendingSpot(form: any) {
         http
-          .post<any>('pet-friendly-spots/update_pending', form.value)
+          .post<any>('pet-friendly-spots/update_pending', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
-            next: (result) => {
-              console.log(result);
-              
+            next: (result) => {              
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',

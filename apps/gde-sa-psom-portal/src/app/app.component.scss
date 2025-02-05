@@ -1,3 +1,9 @@
 .app-container{
   @apply max-w-[1340px]  m-auto;
 }
+
+.go-to-top {
+  @apply fixed bottom-5 right-1 bg-primary_green border-none p-3 rounded-xl  cursor-pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+

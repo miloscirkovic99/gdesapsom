@@ -1,0 +1,9 @@
+.filter_wrapper{
+    @apply grid justify-center gap-4;
+    .form{
+        @apply grid gap-4;
+    }
+    .dropdown_wrapper{
+        @apply flex items-center gap-4 max-md:flex-col;
+    }
+}

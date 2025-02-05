@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
@@ -30,6 +30,7 @@ export class AppComponent {
   private readonly googleAnalyticsService=inject(GoogleAnalyticsService)
   isAdminMode = signal(false);
   private statusChangeSubscription!: Subscription;
+  showTopButton=false;
 
   constructor(private ccService: NgcCookieConsentService) {}
 
@@ -67,7 +68,15 @@ export class AppComponent {
   }
 
   private enableAnalytics(): void {
-    this.googleAnalyticsService.initialize()
+    this.googleAnalyticsService.initialize();
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    this.showTopButton = window.scrollY > 350;
+  }
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 

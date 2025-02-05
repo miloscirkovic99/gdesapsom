@@ -1,9 +1,19 @@
 <div class="pending-spots-container">
+  <h1 >Spots</h1>
   <app-card
     [data]="pendingSpots()"
     [isPendingSpot]="true"
     [isAdmin]="true"
     [isLoading]="false"
-    (onActionClick)="onAction($event)"
+    (onActionClick)="onAction($event,'spot')"
   ></app-card>
+
+  <h1>Parks</h1>
+  <app-card
+  [data]="parksStore.pendingParks()"
+  [isPendingSpot]="true"
+  [isAdmin]="true"
+  [isLoading]="false"
+  (onActionClick)="onAction($event,'park')"
+></app-card>
 </div>

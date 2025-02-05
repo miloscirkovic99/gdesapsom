@@ -6,6 +6,7 @@ import { CardComponent } from '../../../../shared/components/card/card.component
 import { DialogService } from 'apps/gde-sa-psom-portal/src/app/core/services/dialog.service';
 import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-location/add-location.component';
 import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
+import { ParksStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/parks.store';
 
 @Component({
   selector: 'app-pending-spots',
@@ -19,9 +20,10 @@ export class PendingSpotsComponent {
   private http = inject(HttpClient);
   private spotsStore = inject(SpotsStore);
   private dialogService = inject(DialogService);
-
+  parksStore=inject(ParksStore)
   ngOnInit(): void {
     this.getPendingSpots();
+    this.parksStore.petParks(0);
   }
   getPendingSpots() {
     this.http
@@ -33,16 +35,15 @@ export class PendingSpotsComponent {
         },
       });
   }
-  onAction(data: any) {
+  onAction(data: any,type:string) {
+    
     switch (data.action) {
       case 'edit': {
         const options = {
           data: data.data,
           onSave: (form: any) => {
             //TODO: implement edit pending spot 
-
-            console.log(form);
-            this.spotsStore.updatePendingSpot(form)
+            this.spotsStore.updatePendingSpot(form.form)
           },
           isEdit: true,
           isPending: true,
@@ -51,11 +52,12 @@ export class PendingSpotsComponent {
         break;
       }
       case 'add': {
-        this.spotsStore.acceptPendingSpot(data.data);
+     
+       type=='spot'?  this.spotsStore.acceptPendingSpot(data.data):this.parksStore.updatePark({par_id:data.data.par_id, par_accepted:1});
         break;
       }
       case 'delete': {
-        this.spotsStore.declinePendingSpot(data.data.pr_id);
+        type=='spot'? this.spotsStore.declinePendingSpot(data.data.pr_id):this.parksStore.updatePark({par_id:data.data.par_id, par_accepted:0,par_declined:1});
         break;
       }
     }
