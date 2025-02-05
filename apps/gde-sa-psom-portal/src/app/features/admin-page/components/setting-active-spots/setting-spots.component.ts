@@ -39,7 +39,7 @@ export class SettingSpotsComponent {
       data: data.data,
       isEdit: true,
       onSave: (form: any) => {
-        this.spotsStore.updateSpot(form);
+        this.spotsStore.updateSpot(form.form);
       },
     };
     switch (data.action) {

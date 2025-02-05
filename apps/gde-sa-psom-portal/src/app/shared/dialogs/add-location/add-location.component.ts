@@ -136,15 +136,12 @@ export class AddSpotComponent {
 
     this.imageSrc = this.spotForm.get('iuo_slika')?.value;
     this.imageSrcAdditional = this.spotForm.get('iuo_slika_unutra')?.value;
+    
   }
 
   handleInputChange(e: any, controlName: string) {
-    console.log('input change');
-
     // Get the file from the event
     const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-    console.log(file);
-
     // Validate file type
     const pattern = /image-*/;
     if (!file.type.match(pattern)) {
@@ -168,7 +165,6 @@ export class AddSpotComponent {
     // Read the file as a data URL (base64) for display or other purposes
     const reader = new FileReader();
     reader.onload = (event: any) => {
-      console.log('FileReader loaded');
       const base64String = event.target.result;
 
       // Optionally, store the base64 string in a component property
@@ -212,11 +208,19 @@ export class AddSpotComponent {
   }
   onSaveClick(): void {
     if (this.spotForm.valid || this.parkForm.valid) {
-      console.log(
-        this.selectedType === 'spot' ? this.spotForm.value : this.parkForm.value
-      );
-
-      // this.data.onSave(this.spotForm)
+      const spotForm={
+        ...this.spotForm.value,
+        iuo_slika:this.imageSrc,
+        iuo_slika_unutra:this.imageSrcAdditional
+      }
+      const dataOnSave = {
+        form:
+          this.selectedType === 'spot'
+            ? spotForm
+            : this.parkForm.value,
+        spotType: this.selectedType,
+      };
+      this.data.onSave(dataOnSave)
     }
   }
 }

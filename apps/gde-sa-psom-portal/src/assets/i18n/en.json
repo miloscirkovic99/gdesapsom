@@ -68,6 +68,7 @@
     "dog_parks": "Dog Parks",
     "park_rules": "Basic park rules",
     "park": "Pet Park", 
+    "error_global": "Something went wrong, please check your fields and try again.",
     "pet_spot": "Pet Spot",
     "rule_1": "The dog must be under constant supervision by the owner.",
     "rule_2": "Owners are responsible for any damage caused by their dog.",

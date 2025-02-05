@@ -52,6 +52,7 @@
     "apartment":"Apartman",
     "type": "Tip objekta",
     "success_add": "Uspešno predloženo, čeka odobrenje!",
+    "error_global": "Nešto nije u redu, proverite polja i pokušajte ponovo.",
     "who_we_are": "Ko smo mi?",
     "site_info": "Dobrodošli na Gde sa psom – vašu omiljenu platformu koja olakšava putovanja i izlazak sa vašim ljubimcima! Inspirisani svakodnevnim izazovima vlasnika pasa i mačaka, odlučili smo da kreiramo rešenje koje omogućava svima da uživaju u društvu svojih ljubimaca, bez stresa oko toga da li je određeni objekat pet-friendly. Naša misija je jednostavna – omogućiti vlasnicima ljubimaca da brzo i lako pronađu restorane, kafiće, hotele i druge objekte koji su otvoreni za pse i druge kućne ljubimce. Verujemo da ljubimci zaslužuju biti deo naših avantura, a Gde sa psom je tu da vam olakša svaki korak.",
     "free_use": "Potpuno besplatno!?",

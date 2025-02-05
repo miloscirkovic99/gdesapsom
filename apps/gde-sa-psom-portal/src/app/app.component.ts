@@ -67,7 +67,7 @@ export class AppComponent {
   }
 
   private enableAnalytics(): void {
-    this.googleAnalyticsService.initialize()
+    // this.googleAnalyticsService.initialize()
   }
 
 
