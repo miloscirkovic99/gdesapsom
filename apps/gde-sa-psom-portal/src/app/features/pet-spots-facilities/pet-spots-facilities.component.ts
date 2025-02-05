@@ -20,7 +20,6 @@ import {
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { SearchFilterComponent } from '../../shared/components/search-filter/search-filter.component';
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -33,7 +32,6 @@ import { SearchFilterComponent } from '../../shared/components/search-filter/sea
     CardComponent,
     NgxMatSelectSearchModule,
     TranslocoModule,
-    SearchFilterComponent,
   ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
