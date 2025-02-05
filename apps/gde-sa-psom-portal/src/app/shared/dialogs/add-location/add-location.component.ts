@@ -31,6 +31,7 @@ import { SharedStore } from '../../store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { MatRadioModule } from '@angular/material/radio';
 import { fileSizeValidator } from '../../../core/validators/file-size-valdiator';
+import { filterTownshipsMulti } from '../../utils/township.util';
 
 @Component({
   selector: 'app-add-spot',
@@ -136,63 +137,66 @@ export class AddSpotComponent {
 
     this.imageSrc = this.spotForm.get('iuo_slika')?.value;
     this.imageSrcAdditional = this.spotForm.get('iuo_slika_unutra')?.value;
-    
   }
 
+
   handleInputChange(e: any, controlName: string) {
-    // Get the file from the event
     const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-    // Validate file type
-    const pattern = /image-*/;
-    if (!file.type.match(pattern)) {
+  
+    if (!this.isValidFile(file)) {
       alert('Invalid format. Please upload an image.');
       return;
     }
-
-    // Validate file size
-    const maxSize = 1 * 1024 * 1024; // 2MB
-
-    // Update the form control value with the file object
-    const control = this.spotForm.get(controlName);
-    if (control) {
-      control.setValue(file); // Store the File object in the form control
-      control.setValidators([fileSizeValidator(maxSize)]);
-      control.updateValueAndValidity(); // Trigger validation
-    }
+  
+    const maxSize = 1 * 1024 * 1024; // 1MB
+  
     if (file.size > maxSize) {
+      alert('File size exceeds the limit. Please upload a smaller image.');
       return;
     }
-    // Read the file as a data URL (base64) for display or other purposes
+  
+    // Update the form control with the file and validate
+    this.updateFormControl(controlName, file, maxSize);
+  
+    // Read and process the image
+    this.readFileAsBase64(file, controlName);
+  }
+  
+  // Helper function to check file type
+  private isValidFile(file: File): any {
+    const pattern = /image-*/;
+    return file.type.match(pattern);
+  }
+  
+  // Helper function to update the form control with file and validation
+  private updateFormControl(controlName: string, file: File, maxSize: number) {
+    const control = this.spotForm.get(controlName);
+    if (control) {
+      control.setValue(file);  // Store the File object in the form control
+      control.setValidators([fileSizeValidator(maxSize)]);  // Apply file size validator
+      control.updateValueAndValidity();  // Trigger validation
+    }
+  }
+  
+  // Helper function to read file as a base64 string
+  private readFileAsBase64(file: File, controlName: string) {
     const reader = new FileReader();
     reader.onload = (event: any) => {
       const base64String = event.target.result;
-
-      // Optionally, store the base64 string in a component property
+      // Store base64 string based on control name
       if (controlName === 'iuo_slika') {
-        this.imageSrc = base64String; // Store for display or other use
+        this.imageSrc = base64String;
       } else if (controlName === 'iuo_slika_unutra') {
-        this.imageSrcAdditional = base64String; // Store for display or other use
+        this.imageSrcAdditional = base64String;
       }
     };
     reader.readAsDataURL(file);
   }
-
   protected filterTownshipsMulti() {
-    if (!this.sharedStore.townships()) {
-      return;
-    }
-    let search = this.townshipMultiFilterCtrl.value;
-    if (!search) {
-      this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    this.filteredtownshipsMulti.next(
-      this.sharedStore
-        .townships()
-        .filter((township: any) => township.ime.toLowerCase().includes(search))
-    );
+    const search: any = this.townshipMultiFilterCtrl.value;
+    const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
+
+    this.filteredtownshipsMulti.next(filteredTownships);
   }
   onNoClick(): void {
     this.dialogRef.close();
@@ -208,19 +212,16 @@ export class AddSpotComponent {
   }
   onSaveClick(): void {
     if (this.spotForm.valid || this.parkForm.valid) {
-      const spotForm={
+      const spotForm = {
         ...this.spotForm.value,
-        iuo_slika:this.imageSrc,
-        iuo_slika_unutra:this.imageSrcAdditional
-      }
+        iuo_slika: this.imageSrc,
+        iuo_slika_unutra: this.imageSrcAdditional,
+      };
       const dataOnSave = {
-        form:
-          this.selectedType === 'spot'
-            ? spotForm
-            : this.parkForm.value,
+        form: this.selectedType === 'spot' ? spotForm : this.parkForm.value,
         spotType: this.selectedType,
       };
-      this.data.onSave(dataOnSave)
+      this.data.onSave(dataOnSave);
     }
   }
 }

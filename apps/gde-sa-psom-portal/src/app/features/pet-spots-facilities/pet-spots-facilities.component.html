@@ -1,5 +1,16 @@
 <div class="pet-spots-container">
   <div class="filter-wrapper">
+    <!-- <app-search-filter
+    [form]="form"
+    [filteredtownshipsMulti]="filteredtownshipsMulti"
+    [townshipMultiFilterCtrl]="townshipMultiFilterCtrl"
+    [spotSizes]="spotsStore.allowed()"
+    [spotTypes]="sharedStore.spotTypes()"
+    (filterChange)="onSubmit()"
+    (clearFiltersEvent)="clearFilters()"
+    [formDisabled]="disableForm()"
+    (searchChange)="onSearchUpdated()"
+  ></app-search-filter> -->
       <form [formGroup]="form" class="form">
         <label class="input input-bordered flex items-center gap-2">
           <input
@@ -8,7 +19,7 @@
             formControlName="word"
             class="grow"
             [placeholder]="'search_name' | transloco"
-            (input)="onSearchUpdated(searchQuery.value)"
+            (input)="onSearchUpdated()"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -31,6 +42,7 @@
               [placeholder]="'select_city' | transloco"
               [multiple]="true"
               #multiSelect
+              (selectionChange)="onSelectionChange('ops_id',$event)"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -68,7 +80,7 @@
           <!-- Starost (Single Select) -->
           <mat-form-field>
             <mat-label>{{ 'dog_size' | transloco }}</mat-label>
-            <mat-select formControlName="sta_id">
+            <mat-select formControlName="sta_id" (selectionChange)="onSelectionChange('sta_id',$event)">
               <mat-option [value]="null">--</mat-option>
               @for (item of spotsStore.allowed(); track $index) {
 
@@ -82,7 +94,7 @@
           <!-- Tip objekta (Single Select) -->
           <mat-form-field>
             <mat-label>{{ 'choose_place' | transloco }}</mat-label>
-            <mat-select formControlName="ugo_id">
+            <mat-select formControlName="ugo_id" (selectionChange)="onSelectionChange('sta_id',$event)">
               <mat-option [value]="null">--</mat-option>
               @for (item of sharedStore.spotTypes(); track $index) {
               <mat-option [value]="item.id">

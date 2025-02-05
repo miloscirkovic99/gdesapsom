@@ -10,10 +10,7 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import {
-  ReplaySubject,
-  takeUntil,
-} from 'rxjs';
+import { delay, ReplaySubject, takeUntil } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -22,6 +19,8 @@ import {
   descriptionToKeyMapSpot,
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
+import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import { SearchFilterComponent } from "../../shared/components/search-filter/search-filter.component";
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -34,7 +33,8 @@ import { SharedStore } from '../../shared/store/shared.store';
     CardComponent,
     NgxMatSelectSearchModule,
     TranslocoModule,
-  ],
+    SearchFilterComponent
+],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
 })
@@ -64,7 +64,6 @@ export class PetSpotsFacilitiesComponent {
       word: new FormControl(null),
     });
 
-
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -79,35 +78,12 @@ export class PetSpotsFacilitiesComponent {
   }
 
   protected filterTownshipsMulti() {
-    if (!this.sharedStore.townships()) {
-      return;
-    }
+    const search:any = this.townshipMultiFilterCtrl.value;
+    const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
 
-    let search = this.townshipMultiFilterCtrl.value;
-    if (!search) {
-      this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-
-    // Function to normalize accented characters
-    const normalizeString = (str: string) => {
-      return str
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase();
-    };
-
-    this.filteredtownshipsMulti.next(
-      this.sharedStore
-        .townships()
-        .filter((township: any) =>
-          normalizeString(township.ime).includes(normalizeString(search))
-        )
-    );
+    this.filteredtownshipsMulti.next(filteredTownships);
   }
-  onSearchUpdated(event: any) {
+  onSearchUpdated() {
     this.onSubmit(true);
   }
   onSubmit(resetOffset: boolean = false) {
@@ -119,7 +95,9 @@ export class PetSpotsFacilitiesComponent {
       sta_id: this.form.value.sta_id || null,
       word: this.form.value.word || null,
     };
-
+    if(this.form.value.word){
+      resetOffset=true;
+    }
     this.spotsStore.loadData(
       data.ops_id,
       data.ugo_id,
@@ -134,6 +112,14 @@ export class PetSpotsFacilitiesComponent {
   clearFilters() {
     this.form.reset();
     this.resetData();
+  }
+  onSelectionChange(controlName: string, event: any) {
+    const value = event.value;
+    const isFormDisabled = this.disableForm();
+
+    if (value === null && isFormDisabled) {
+      this.resetData();
+    }
   }
   disableForm(): boolean {
     if (
