@@ -20,7 +20,7 @@ import {
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { SearchFilterComponent } from "../../shared/components/search-filter/search-filter.component";
+import { SearchFilterComponent } from '../../shared/components/search-filter/search-filter.component';
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -33,8 +33,8 @@ import { SearchFilterComponent } from "../../shared/components/search-filter/sea
     CardComponent,
     NgxMatSelectSearchModule,
     TranslocoModule,
-    SearchFilterComponent
-],
+    SearchFilterComponent,
+  ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
 })
@@ -78,7 +78,7 @@ export class PetSpotsFacilitiesComponent {
   }
 
   protected filterTownshipsMulti() {
-    const search:any = this.townshipMultiFilterCtrl.value;
+    const search: any = this.townshipMultiFilterCtrl.value;
     const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
 
     this.filteredtownshipsMulti.next(filteredTownships);
@@ -95,8 +95,8 @@ export class PetSpotsFacilitiesComponent {
       sta_id: this.form.value.sta_id || null,
       word: this.form.value.word || null,
     };
-    if(this.form.value.word){
-      resetOffset=true;
+    if (this.form.value.word) {
+      resetOffset = true;
     }
     this.spotsStore.loadData(
       data.ops_id,
