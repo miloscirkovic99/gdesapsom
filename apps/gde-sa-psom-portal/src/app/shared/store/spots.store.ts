@@ -65,7 +65,7 @@ export const SpotsStore = signalStore(
     const snackbarService = inject(SnackbarService);
     const translocoService = inject(TranslocoService);
     const dialogService = inject(DialogService);
-    const contactFormService=inject(ContactFormService)
+    const contactFormService = inject(ContactFormService);
     const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const handleError = (error: any) => {
@@ -81,7 +81,6 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      
       loadData(
         ops_id?: any,
         ugo_id?: any,
@@ -89,8 +88,6 @@ export const SpotsStore = signalStore(
         word?: any,
         resetOffset: boolean = false
       ) {
-        patchState(store, { isLoading: true });
-
         if (resetOffset) {
           patchState(store, { offset: 0, spotsList: [] });
         }
@@ -98,47 +95,67 @@ export const SpotsStore = signalStore(
         const limit = store.limit();
         const offset = store.offset();
 
-        return of({}) // Emits an initial empty value
+        return of(null) // Emits an initial empty value
           .pipe(
             takeUntil(destroyed$),
-            debounceTime(300), // Adds debounce directly in the function
+            tap(() => patchState(store, { isLoading: true })), // Set loading state
             switchMap(() =>
-              http.post<any>('pet-friendly-spots/search-query', {
-                ops_id,
-                ugo_id,
-                sta_id,
-                word,
-                offset,
-                limit,
-              })
+              http
+                .post<any>('pet-friendly-spots/search-query', {
+                  ops_id,
+                  ugo_id,
+                  sta_id,
+                  word,
+                  offset,
+                  limit,
+                })
+                .pipe(
+                  catchError((error) => {
+                    const translatedMessage =
+                      translocoService.translate('spots_error404');
+                    const translatedButton =
+                      translocoService.translate('close');
+
+                    snackbarService.openSnackbar(
+                      translatedMessage,
+                      translatedButton,
+                      'error-snackbar',
+                      5000
+                    );
+
+                    patchState(store, { isLoading: false }); // Reset loading state on error
+                    return throwError(() => error); // Re-throw the error for further handling if needed
+                  })
+                )
             ),
-            takeUntil(destroyed$),
             tap((response) => {
               patchState(store, (state) => ({
                 spotsList: [...state.spotsList, ...response.spotsList],
                 totalResult: response.totalResults,
                 offset: state.spotsList.length + response.spotsList.length,
-                isLoading: false,
+                isLoading: false, // Reset loading state on success
               }));
-              refreshAOS();
+              refreshAOS(); // Refresh any animations or UI elements
             }),
             catchError((error) => {
-              const translatedMessage =
-                translocoService.translate('spots_error404');
-                const translatedButton = translocoService.translate('close');
+              // Handle any unexpected errors
+              const translatedMessage = translocoService.translate(
+                'spots_error404'
+              );
+              const translatedButton = translocoService.translate('close');
 
               snackbarService.openSnackbar(
                 translatedMessage,
                 translatedButton,
-                'error-snackbar'
+                'error-snackbar',
+                5000
               );
 
-              patchState(store, { isLoading: false });
-
+              patchState(store, { isLoading: false }); // Reset loading state on error
               return throwError(() => error);
             })
           )
-          .subscribe(); // Subscribe here since no Subject is used
+          .subscribe(); // Subscribe to the observable
       },
 
       randomSpots() {
@@ -171,12 +188,12 @@ export const SpotsStore = signalStore(
                 translatedButton,
                 'success-snackbar'
               );
-              const data={
-                email:'noreply@gdesapsom.com',
-                subject:`Novi objekat ${form.iuo_ime}`,
-                message:`New pet location u have  check on: gdesapsom.com`
-              }
-              contactFormService.sendEmail(data)
+              const data = {
+                email: 'noreply@gdesapsom.com',
+                subject: `Novi objekat ${form.iuo_ime}`,
+                message: `New pet location u have  check on: gdesapsom.com`,
+              };
+              contactFormService.sendEmail(data);
             },
             error: (err) => {
               console.error(err);
@@ -215,7 +232,7 @@ export const SpotsStore = signalStore(
           .post<any>('pet-friendly-spots/update_pending', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
-            next: (result) => {              
+            next: (result) => {
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',

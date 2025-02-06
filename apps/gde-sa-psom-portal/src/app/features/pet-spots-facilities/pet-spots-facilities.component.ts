@@ -1,4 +1,4 @@
-import { Component, effect, inject, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { delay, ReplaySubject, takeUntil } from 'rxjs';
+import { debounceTime, delay, fromEvent, map, ReplaySubject, Subscription, takeUntil } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -38,6 +38,7 @@ import { filterTownshipsMulti } from '../../shared/utils/township.util';
 })
 export class PetSpotsFacilitiesComponent {
   @ViewChild('multiSelect', { static: true }) multiSelect!: MatSelect;
+  @ViewChild("searchQuery") searchQuery!: ElementRef;
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   /** control for the MatSelect filter keyword multi-selection */
@@ -54,6 +55,8 @@ export class PetSpotsFacilitiesComponent {
 
   descriptionToKeyMap = descriptionToKeyMap;
   descriptionToKeyMapSpot = descriptionToKeyMapSpot;
+  subscription!: Subscription;
+
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       ops_id: new FormControl(null), // Multiple select
@@ -75,6 +78,15 @@ export class PetSpotsFacilitiesComponent {
     });
   }
 
+ngAfterViewInit(): void {
+  this.subscription = fromEvent(this.searchQuery?.nativeElement, "keyup").pipe(
+    map(event => this.searchQuery.nativeElement.value),
+    debounceTime(500)
+  ).subscribe(val =>{
+   this.onSubmit(true)
+  });
+  
+}
   protected filterTownshipsMulti() {
     const search: any = this.townshipMultiFilterCtrl.value;
     const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
@@ -82,7 +94,7 @@ export class PetSpotsFacilitiesComponent {
     this.filteredtownshipsMulti.next(filteredTownships);
   }
   onSearchUpdated() {
-    this.onSubmit(true);
+    // this.onSubmit(true);
   }
   onSubmit(resetOffset: boolean = false) {
     const data = {
@@ -134,5 +146,8 @@ export class PetSpotsFacilitiesComponent {
     this.destroyed$.next(true);
     this.destroyed$.complete();
     this.resetData();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
