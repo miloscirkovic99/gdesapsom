@@ -21,11 +21,15 @@ import {
   throwError,
   of,
   delay,
+  pipe,
+  EMPTY,
 } from 'rxjs';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService } from '../../core/services/dialog.service';
 import { ContactFormService } from '../components/contact-form/contact-form.service';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import{tapResponse} from '@ngrx/operators'
 
 // Define the initial state type
 type SpotsState = {
@@ -81,83 +85,64 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      loadData(
-        ops_id?: any,
-        ugo_id?: any,
-        sta_id?: any,
-        word?: any,
-        resetOffset: boolean = false
-      ) {
-        if (resetOffset) {
-          patchState(store, { offset: 0, spotsList: [] });
-        }
-
-        const limit = store.limit();
-        const offset = store.offset();
-
-        return of(null) // Emits an initial empty value
-          .pipe(
-            takeUntil(destroyed$),
-            tap(() => patchState(store, { isLoading: true })), // Set loading state
-            switchMap(() =>
-              http
-                .post<any>('pet-friendly-spots/search-query', {
-                  ops_id,
-                  ugo_id,
-                  sta_id,
-                  word,
-                  offset,
-                  limit,
-                })
-                .pipe(
-                  catchError((error) => {
-                    const translatedMessage =
-                      translocoService.translate('spots_error404');
-                    const translatedButton =
-                      translocoService.translate('close');
-
-                    snackbarService.openSnackbar(
-                      translatedMessage,
-                      translatedButton,
-                      'error-snackbar',
-                      5000
-                    );
-
-                    patchState(store, { isLoading: false }); // Reset loading state on error
-                    return throwError(() => error); // Re-throw the error for further handling if needed
-                  })
-                )
-            ),
-            tap((response) => {
+      loadSpots: rxMethod<any>(
+        pipe(
+          tap(() => {
+            debounceTime(300);
+            patchState(store, { isLoading: true });
+          }),
+          switchMap((params: any) => {      
+            if (params?.data?.resetOffset) {
+              patchState(store, { offset: 0, spotsList: [] });
+            }
+      
+            const limit = store.limit();
+            const offset = store.offset();
+      
+            return http.post<any>('pet-friendly-spots/search-query', {
+              ops_id: params?.data?.ops_id,
+              ugo_id: params?.data?.ugo_id,
+              sta_id: params?.data?.sta_id,
+              word: params.data?.word,
+              offset,
+              limit,
+            }).pipe(
+              // Handle errors inside switchMap to prevent stream completion
+              catchError((error) => {
+                const translatedMessage = translocoService.translate('spots_error404');
+                const translatedButton = translocoService.translate('close');
+      
+                snackbarService.openSnackbar(
+                  translatedMessage,
+                  translatedButton,
+                  'error-snackbar'
+                );
+      
+                patchState(store, { isLoading: false });
+      
+                // Return EMPTY to keep the stream alive
+                return EMPTY;
+              })
+            );
+         
+          }),
+          tapResponse({
+            next: (response:any) => {
               patchState(store, (state) => ({
                 spotsList: [...state.spotsList, ...response.spotsList],
                 totalResult: response.totalResults,
                 offset: state.spotsList.length + response.spotsList.length,
                 isLoading: false, // Reset loading state on success
               }));
-              refreshAOS(); // Refresh any animations or UI elements
-            }),
-            catchError((error) => {
-              // Handle any unexpected errors
-              const translatedMessage = translocoService.translate(
-                'spots_error404'
-              );
-              const translatedButton = translocoService.translate('close');
-
-              snackbarService.openSnackbar(
-                translatedMessage,
-                translatedButton,
-                'error-snackbar',
-                5000
-              );
-
-              patchState(store, { isLoading: false }); // Reset loading state on error
-              return throwError(() => error);
-            })
-          )
-          .subscribe(); // Subscribe to the observable
-      },
-
+              refreshAOS();
+            },
+            error: function (error: unknown): void {
+               of(null)
+            }
+          })
+        )
+      ),
+      
       randomSpots() {
         http
           .get<any>('pet-friendly-spots/random')
@@ -214,7 +199,7 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              this.loadData(null, null, null, null, true);
+              this.loadInitialData();
               dialogService.closeDialog();
               snackbarService.openSnackbar(
                 'Successfully updated pet-friendly location.',
@@ -245,13 +230,23 @@ export const SpotsStore = signalStore(
             error: handleError,
           });
       },
+      loadInitialData() {
+        const data = {
+          ops_id: null,
+          ugo_id: null,
+          sta_id: null,
+          word: null,
+          resetOffset: true,
+        };
+        this.loadSpots({ data });
+      },
       deleteSpot(spotId: any) {
         http
           .post('pet-friendly-spots/delete', { iuo_id: spotId })
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (result) => {
-              this.loadData(null, null, null, true);
+              this.loadInitialData();
               snackbarService.openSnackbar(
                 'Successfully deleted pet-friendly location.',
                 'Zatvori',
@@ -310,7 +305,7 @@ export const SpotsStore = signalStore(
   }),
   withHooks({
     onInit(store) {
-      store.loadData();
+      store.loadInitialData();
       store.randomSpots();
       store.allowedPetTypes();
     },

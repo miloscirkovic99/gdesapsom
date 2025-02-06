@@ -1,3 +1,4 @@
+@defer (on timer(100ms)) {
 <div class="pet-spots-container">
   <div class="filter-wrapper">
     <!-- <app-search-filter
@@ -19,7 +20,7 @@
             formControlName="word"
             class="grow"
             [placeholder]="'search_name' | transloco"
-            (input)="onSearchUpdated()"
+
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -175,3 +176,4 @@
     } 
   </div>
 </div>
+}

@@ -100,6 +100,10 @@ export class AddSpotComponent {
       }
     });
   }
+  ngOnInit(): void {
+    this.sharedStore.getGardenTypes()
+    
+  }
   changeRadio(event: any) {
     this.selectedType = event.value;
   }

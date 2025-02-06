@@ -24,15 +24,10 @@ export class SettingSpotsComponent {
       ugo_id: null,
       sta_id: null,
       word: word || null,
+      resetOffset:resetOffset
     };
 
-    this.spotsStore.loadData(
-      data.ops_id,
-      data.ugo_id,
-      data.sta_id,
-      data.word,
-      resetOffset
-    );
+    this.spotsStore.loadSpots({data})
   }
   onAction(data: any) {
     const options = {

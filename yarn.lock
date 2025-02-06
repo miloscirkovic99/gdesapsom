@@ -2553,6 +2553,13 @@
     replace-in-file "^7.0.1"
     tslib "^2.2.0"
 
+"@ngrx/operators@^19.0.1":
+  version "19.0.1"
+  resolved "https://registry.yarnpkg.com/@ngrx/operators/-/operators-19.0.1.tgz#657c880fc2833dc075af7b5278c874a389f87953"
+  integrity sha512-4CA+VexfK6nkRb6glmyCSoQgU7zQpEgMF0wVDamxyCO8hJo6E4TwUAN2W5tE5cxWFAsS0+wpFXFncpigvPL9Vw==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngrx/signals@^19.0.0":
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/@ngrx/signals/-/signals-19.0.0.tgz#10bc494eae6d96ff6e2d4514fb0bc0e5824102f2"

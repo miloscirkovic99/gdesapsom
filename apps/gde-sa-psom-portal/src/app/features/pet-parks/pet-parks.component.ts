@@ -12,4 +12,5 @@ import { TranslocoModule } from '@ngneat/transloco';
 })
 export class PetParksComponent {
   parkStore = inject(ParksStore);
+
 }
