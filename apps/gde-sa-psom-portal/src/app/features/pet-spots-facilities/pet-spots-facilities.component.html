@@ -1,3 +1,4 @@
+@defer (on timer(100ms)) {
 <div class="pet-spots-container">
   <div class="filter-wrapper">
     <!-- <app-search-filter
@@ -19,7 +20,7 @@
             formControlName="word"
             class="grow"
             [placeholder]="'search_name' | transloco"
-            (input)="onSearchUpdated()"
+
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -153,14 +154,10 @@
       </form>
   </div>
   <div class="spots-container">
-    @if(spotsStore.isLoading()){
-    <span class="loading loading-ring loading-lg"></span>
-
-    }@else {
+  
 
     <app-card
       [data]="spotsStore.spots()"
-      [isLoading]="spotsStore.isLoading()"
     ></app-card>
     @if(spotsStore.spots().length!=spotsStore.totalResult() &&
     spotsStore.spots().length){
@@ -169,8 +166,14 @@
       (click)="onSubmit()"
       class="btn_primary"
     >
+    
+     @if (spotsStore.isLoading()) {
+      <span class="loading loading-spinner loading-md"></span>
+     }@else {
       {{ 'see_more' | transloco }}
+     } 
     </button>
-    } }
+    } 
   </div>
 </div>
+}

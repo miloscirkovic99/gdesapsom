@@ -144,7 +144,7 @@ export const SharedStore = signalStore(
   }),
   withHooks({
     onInit(store) {
-      store.getGardenTypes();
+      // store.getGardenTypes();
       store.getTownships();
       store.getSpotTypes();
       store.getCityandState()

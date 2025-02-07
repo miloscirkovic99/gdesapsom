@@ -61,6 +61,27 @@
           ],
           "outputHashing": "all"
         },
+        "uat": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "100kb",
+              "maximumError": "200kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/gde-sa-psom-portal/src/env/env.dev.ts",
+              "with": "apps/gde-sa-psom-portal/src/env/env.qa.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
         "development": {
           "optimization": false,
           "extractLicenses": false,

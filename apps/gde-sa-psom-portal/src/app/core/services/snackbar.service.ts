@@ -9,7 +9,7 @@ export class SnackbarService {
     message?: string,
     action?: string,
     panelClass?: any,
-    duration?: number,
+    duration=5000,
   ) {
     this.snackbarRef = this.snackbar.open(message as string, action as string, { duration: duration, panelClass: panelClass });
   }
