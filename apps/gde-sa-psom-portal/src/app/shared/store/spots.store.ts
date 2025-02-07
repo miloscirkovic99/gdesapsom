@@ -136,7 +136,7 @@ export const SpotsStore = signalStore(
               }));
               refreshAOS();
             },
-            error: function (error: unknown): void {
+            error:  (error: unknown)=> {
                of(null)
             }
           })
