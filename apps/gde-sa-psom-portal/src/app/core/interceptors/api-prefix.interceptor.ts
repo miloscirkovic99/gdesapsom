@@ -10,7 +10,9 @@ import { HttpParams } from "@angular/common/http"; // Make sure to import HttpPa
 @Injectable()
 export class ApiPrefixInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        if (!request.url.includes('assets')) {
+        console.log(request.url.includes('api.opencagedata.com'));
+        
+        if (!request.url.includes('assets') && !request.url.includes('api.opencagedata.com')) {
             let sid:any = localStorage.getItem('sid') ?? null;
             
             // Ensure sid is not null or undefined

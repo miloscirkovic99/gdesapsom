@@ -1,0 +1,21 @@
+
+<div class="vet-clinics-wrapper">
+
+@for (item of vetClinics(); track $index) {
+    <div class="card  image-full shadow-xl">
+        <figure>
+          <img
+            [src]="item?.vetc_logo??'assets/vet_clinic.jpg'"
+            alt="Vet logo" />
+        </figure>
+        <div class="card-body">
+          <h2 class="card-title">{{item?.vetc_naziv}}</h2>
+          <p>{{item?.vetc_telefon}}</p>
+          <p>{{item?.vetc_adresa}}</p>
+          <div class="card-actions justify-end">
+            <button class="btn_primary" (click)="getTownship(item)">Vidi opstinu</button>
+          </div>
+        </div>
+      </div>
+}
+</div>

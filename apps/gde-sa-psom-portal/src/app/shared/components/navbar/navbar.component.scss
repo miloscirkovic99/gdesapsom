@@ -6,15 +6,15 @@
   }
 
   .navbar-center {
-    @apply flex-1 flex justify-center  md:flex;
+    @apply flex-1 flex justify-center  md:flex items-center;
     a {
-      @apply cursor-pointer text-base;
+      @apply cursor-pointer text-base h-fit;
     }
     .nav-links {
       @apply list-none flex gap-6;
 
       li a {
-        @apply font-medium cursor-pointer;
+        @apply font-medium cursor-pointer ;
       }
     }
   }
@@ -67,11 +67,17 @@
   }
 }
 a {
-  @apply text-base   cursor-pointer relative block  hover:text-primary_green font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary_green after:transition-all after:duration-300 hover:after:w-full;
+  @apply text-base h-fit  cursor-pointer relative block  hover:text-primary_green font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary_green after:transition-all after:duration-300 hover:after:w-full;
 }
 .dropdown-content a {
   @apply flex items-center;
 }
 .theme-wrapper {
   @apply flex items-center gap-2;
+}
+.menu{
+  @apply p-0 z-50;
+  summary{
+    @apply text-base font-medium;
+  }
 }
