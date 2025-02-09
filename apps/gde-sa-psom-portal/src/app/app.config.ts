@@ -1,19 +1,16 @@
-import { RouteConstants } from './shared/constants/route.constant';
 import {  ApplicationConfig, importProvidersFrom, inject, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { provideClientHydration } from '@angular/platform-browser';
-import { provideTransloco, TRANSLOCO_LOADER, TranslocoService } from '@ngneat/transloco';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
 import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent';
-
 const cookieConfig:NgcCookieConsentConfig = {
   cookie: {
-    domain: `${environment.cookieDomain}` 
+    domain: `${environment.cookieDomain}`
   },
   position: "bottom",
   theme:'classic',
@@ -31,7 +28,7 @@ const cookieConfig:NgcCookieConsentConfig = {
     "link": "Learn more",
     "href": `${environment.baseUrl}${'/cookies-policy'}`,
     "policy": "Cookie Policy",
-   
+
   }
 };
 export const appConfig: ApplicationConfig = {
@@ -61,6 +58,6 @@ export const appConfig: ApplicationConfig = {
     },
     { provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader }
 
-    
+
   ]
 };

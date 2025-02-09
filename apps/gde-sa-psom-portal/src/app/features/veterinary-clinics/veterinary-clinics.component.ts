@@ -2,38 +2,45 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { OpencageService } from '../../core/services/opencage.service';
+import { VetClinicsStore } from '../../shared/store/vetclinics.store';
+import { TranslocoModule } from '@ngneat/transloco';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-veterinary-clinics',
-  imports: [CommonModule],
+  imports: [CommonModule,TranslocoModule],
   templateUrl: './veterinary-clinics.component.html',
   styleUrl: './veterinary-clinics.component.scss',
 })
 export class VeterinaryClinicsComponent {
   vetClinics = signal<any>([]);
   private http = inject(HttpClient);
-  private opencService = inject(OpencageService);
-  constructor(){
-    let opstineData = [];
+   vetClinicsStore = inject(VetClinicsStore);
+  form!: FormGroup;
+  constructor(private fb:FormBuilder){
+   this.form = this.fb.group({
+      grd_id: new FormControl(null), // Multiple select
+      word: new FormControl(null),
+    });
 
     effect(()=>{
 
       if(this.vetClinics()){
         this.vetClinics().map((item:any)=>{
           if(item.grd_id==1){
-            
+
             // this.opencService.getGeocode(item?.vetc_adresa).subscribe({
             //   next: (results) => {
             //     console.log(results);
-              
+
             //     const data = {
             //       naziv: item.vetc_naziv,
             //       opstina: results?.results[0]?.components?.suburb
             //     };
-                
+
             //     // Push the data to the opstineData array
             //     opstineData.push(data);
-                
+
             //     // After collecting all data, store the array in localStorage
             //     localStorage.setItem('opstine', JSON.stringify(opstineData));
             //   },
@@ -45,10 +52,10 @@ export class VeterinaryClinicsComponent {
         })
       }
     })
-     
+
   }
   ngOnInit() {
-    this.getClinics();
+    // this.vetClinicsStore.loadVetclinics({})
   }
 
   getClinics() {
@@ -58,7 +65,7 @@ export class VeterinaryClinicsComponent {
         // Assuming veterinary_clinics is the correct property name
         this.vetClinics.set(result.veterinary_clinics);
 
-        
+
       },
       error: (err) => {
         console.error(err);
@@ -66,40 +73,31 @@ export class VeterinaryClinicsComponent {
     });
   }
 
-  // getClinics() {
-  //   this.http.get('veterinary-clinics/list').subscribe({
-  //     next: (result: any) => {
-  //       console.log(result);
-  //       // Assuming veterinary_clinics is the correct property name
-  //       this.vetClinics.set(result.veterinary_clinics);
+  onSubmit(resetOffset: boolean = false) {
+    this.formData(resetOffset);
+  }
+  formData(resetOffset: boolean = false,word=null) {
+    const data = {
+      // ops_id: this.form.value.ops_id?.length
+      //   ? this.form.value.ops_id?.join(',')
+      //   : null,
+      grd_id: this.form.value.grd_id || null,
+      sta_id: this.form.value.sta_id || null,
+      word: word || null,
+      resetOffset: this.form.value.word || resetOffset ? true : false,
+    };
 
-  //       // Check if vetc_adresa exists in any of the clinics
-  //       const clinic = result?.veterinary_clinics?.find((clinic: any) => clinic?.vetc_adresa);
-  //       if (clinic?.vetc_adresa) {
-  //         console.log(clinic.vetc_adresa);
-
-  //         this.opencService.getGeocode(clinic?.vetc_adresa).subscribe({
-  //           next: (results) => {
-  //             console.log(results.results[0].components.suburb);
-  //             // Extract the relevant address or municipality from the response
-  //             const opstina = results?.results?.[0]?.components?.county; // Example, adjust according to response structure
-  //             if (opstina) {
-  //               localStorage.setItem('opstine', opstina);
-  //             }
-  //           },
-  //           error: (err) => {
-  //             console.error(err);
-
-  //           }
-  //         });
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error(err);
-  //     }
-  //   });
-  // }
-
+    this.vetClinicsStore.loadVetclinics({ data });
+  }
+  navigateToGoogleMaps(item:any) {
+    const location = item.vetc_adresa ;
+  
+    // Check if location exists
+    if (location) {
+      const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(location)}`;
+      window.open(googleMapsUrl, '_blank'); // Open in a new tab
+    }
+  }
   getTownship(event: any) {
       // Retrieve the data from localStorage
   const opstine = JSON.parse(localStorage.getItem('opstine')!);
@@ -117,6 +115,6 @@ export class VeterinaryClinicsComponent {
 
   // Trigger the download by simulating a click event
   link.click();
-  
+
   }
 }
