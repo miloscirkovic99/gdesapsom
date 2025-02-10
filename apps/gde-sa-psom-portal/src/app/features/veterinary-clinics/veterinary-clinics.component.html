@@ -1,4 +1,4 @@
-<div class="vet-clinics-wrapper mb-8">
+<div class="vet-clinics-wrapper">
   @for (item of vetClinicsStore.vetClinicsList(); track $index) {
   <div class="card image-full shadow-xl">
     <figure>
@@ -53,18 +53,22 @@
     </div>
   </div>
   }
+ 
 </div>
 @if(vetClinicsStore.vetClinicsList().length!=vetClinicsStore.totalResult() &&
-vetClinicsStore.vetClinicsList().length){
-<button
-  [disabled]="vetClinicsStore.isLoading()"
-  (click)="onSubmit()"
-  class="btn_primary"
->
-  @if (vetClinicsStore.isLoading()) {
-  <span class="loading loading-spinner loading-md"></span>
-  }@else {
-  {{ 'see_more' | transloco }}
-  }
-</button>
+  vetClinicsStore.vetClinicsList().length){
+<div class="pl-12">
+
+  <button
+    [disabled]="vetClinicsStore.isLoading()"
+    (click)="onSubmit()"
+    class="btn_primary"
+  >
+    @if (vetClinicsStore.isLoading()) {
+    <span class="loading loading-spinner loading-md"></span>
+    }@else {
+    {{ 'see_more' | transloco }}
+    }
+  </button>
+</div>
 }
