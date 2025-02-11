@@ -133,10 +133,10 @@
   <div #mobileMenu *ngIf="menuOpen" class="mobile-menu">
     <ul class="space-y-4 text-sm">
       <li (click)="toggleMenu()">
-        <a routerLink=""> {{ 'home' | transloco }} </a>
+        <a routerLink="" class="link_default"> {{ 'home' | transloco }} </a>
       </li>
       <li (click)="toggleMenu()">
-        <a [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
+        <a class="link_default" [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
       </li>
 
       <ul class="menu menu-horizontal">
@@ -145,7 +145,7 @@
             <summary>{{ 'explore_pet_spots_link' | transloco }}</summary>
             <ul class="rounded-t-none p-2 w-64">
               <li (click)="toggleMenu()">
-                <a [routerLink]="routeConstants.allSpots">
+                <a  [routerLink]="routeConstants.allSpots">
                   {{ 'find_pet_spots' | transloco }}
                 </a>
               </li>
@@ -166,7 +166,7 @@
       @if(authService.isAuthenticated()){
 
       <li (click)="toggleMenu()">
-        <a [routerLink]="routeConstants.admin">Admin </a>
+        <a class="link_default" [routerLink]="routeConstants.admin">Admin </a>
       </li>
       }
       <!-- Add Buttons to Mobile Menu -->
