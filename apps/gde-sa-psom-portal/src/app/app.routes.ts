@@ -25,6 +25,16 @@ export const appRoutes: Route[] = [
 
   },
   {
+    path:RouteConstants.vet_clinics,
+    loadComponent: () => {
+      return import('./features/veterinary-clinics/veterinary-clinics.component').then(
+        (m) => m.VeterinaryClinicsComponent
+      );
+    },
+    title:'Gde sa psom - Vet clinics'
+
+  },
+  {
     path:RouteConstants.petParks,
     loadComponent: () => {
       return import('./features/pet-parks/pet-parks.component').then(

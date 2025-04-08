@@ -53,18 +53,22 @@
                 <dd class="order-first text-3xl font-semibold tracking-tight  max-sm:text-center sm:text-5xl">{{spotsStore.totalResult()}}+</dd>
               </div>
               <div class=" flex max-w-xs flex-col gap-y-4 text-start">
+                <dt class="text-lg max-sm:text-center">{{"vet_clinics" | transloco}}</dt>
+                <dd class="order-first text-3xl font-semibold tracking-tight max-sm:text-center  sm:text-5xl">{{vetClinicsStore.totalCount()}}+</dd>
+              </div>
+              <div class=" flex max-w-xs flex-col gap-y-4 text-start">
                 <dt class="text-lg max-sm:text-center">{{"pet_parks" | transloco}}</dt>
                 <dd class="order-first text-3xl font-semibold tracking-tight max-sm:text-center  sm:text-5xl">{{parksStore.parks().length}}+</dd>
               </div>
-           
+
             </dl>
           </div>
         </div>
-        
+
       </div>
-      
+
     </div>
-    
+
   </div>
 
   <!-- How Works -->

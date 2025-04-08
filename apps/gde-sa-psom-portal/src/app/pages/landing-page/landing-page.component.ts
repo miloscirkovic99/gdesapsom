@@ -7,6 +7,7 @@ import { RouteConstants } from '../../shared/constants/route.constant';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ParksStore } from '../../shared/store/parks.store';
+import { VetClinicsStore } from '../../shared/store/vetclinics.store';
 
 @Component({
   selector: 'app-landing-page',
@@ -17,6 +18,7 @@ import { ParksStore } from '../../shared/store/parks.store';
 export class LandingPageComponent {
   spotsStore = inject(SpotsStore);
   parksStore=inject(ParksStore)
+  vetClinicsStore = inject(VetClinicsStore);
   routeConstants = RouteConstants;
   private router = inject(Router);
   howItWorks = [
@@ -36,7 +38,7 @@ export class LandingPageComponent {
       duration: 850,
     },
   ];
-  
+
   navigateTo(route: any) {
     this.router.navigate([`${route}`]);
   }

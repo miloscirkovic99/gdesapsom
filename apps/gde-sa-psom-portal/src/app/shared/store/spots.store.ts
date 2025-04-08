@@ -30,6 +30,7 @@ import { DialogService } from '../../core/services/dialog.service';
 import { ContactFormService } from '../components/contact-form/contact-form.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import{tapResponse} from '@ngrx/operators'
+import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
 
 // Define the initial state type
 type SpotsState = {
@@ -91,14 +92,14 @@ export const SpotsStore = signalStore(
             debounceTime(300);
             patchState(store, { isLoading: true });
           }),
-          switchMap((params: any) => {      
+          switchMap((params: any) => {
             if (params?.data?.resetOffset) {
               patchState(store, { offset: 0, spotsList: [] });
             }
-      
+
             const limit = store.limit();
             const offset = store.offset();
-      
+
             return http.post<any>('pet-friendly-spots/search-query', {
               ops_id: params?.data?.ops_id,
               ugo_id: params?.data?.ugo_id,
@@ -111,20 +112,20 @@ export const SpotsStore = signalStore(
               catchError((error) => {
                 const translatedMessage = translocoService.translate('spots_error404');
                 const translatedButton = translocoService.translate('close');
-      
+
                 snackbarService.openSnackbar(
                   translatedMessage,
                   translatedButton,
                   'error-snackbar'
                 );
-      
+
                 patchState(store, { isLoading: false });
-      
+
                 // Return EMPTY to keep the stream alive
                 return EMPTY;
               })
             );
-         
+
           }),
           tapResponse({
             next: (response:any) => {
@@ -142,7 +143,7 @@ export const SpotsStore = signalStore(
           })
         )
       ),
-      
+
       randomSpots() {
         http
           .get<any>('pet-friendly-spots/random')
@@ -173,12 +174,15 @@ export const SpotsStore = signalStore(
                 translatedButton,
                 'success-snackbar'
               );
-              const data = {
-                email: 'noreply@gdesapsom.com',
-                subject: `Novi objekat ${form.iuo_ime}`,
-                message: `New pet location u have  check on: gdesapsom.com`,
-              };
-              contactFormService.sendEmail(data);
+              if(environment.production){
+
+                const data = {
+                  email: 'noreply@gdesapsom.com',
+                  subject: `Novi objekat ${form.iuo_ime}`,
+                  message: `New pet location u have  check on: gdesapsom.com`,
+                };
+                contactFormService.sendEmail(data);
+              }
             },
             error: (err) => {
               console.error(err);

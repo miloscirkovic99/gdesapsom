@@ -7,4 +7,6 @@ export class RouteConstants {
     static readonly pendingSpots='pending-spots';
     static readonly cookiesPolicy='cookies-policy';
     static readonly townships='townships';
+    static readonly vet_clinics='vet-clinics';
+
 }
