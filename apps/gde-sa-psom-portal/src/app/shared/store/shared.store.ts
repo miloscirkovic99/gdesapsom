@@ -18,7 +18,8 @@ type SharedState = {
   spotTypes: any;
   gardenTypes: any;
   city:any;
-  state:any
+  state:any;
+  townshipsByCity:any;
 };
 
 // Create the signal state
@@ -27,7 +28,8 @@ const initialSharedState = signalState<SharedState>({
   gardenTypes: [],
   spotTypes: [],
   city:[],
-  state:[]
+  state:[],
+  townshipsByCity:[]
 });
 const destroyed$ = new Subject<void>();
 
@@ -40,6 +42,7 @@ export const SharedStore = signalStore(
     gardens: computed(() => store.gardenTypes()),
     city:computed(() => store.city()),
     state:computed(() => store.state()),
+    townshipsByCity:computed(()=>store.townshipsByCity())
 
   })),
   withMethods((store) => {
@@ -81,12 +84,26 @@ export const SharedStore = signalStore(
             error: handleError,
           });
       },
+      getTownshipsByCity(id: any) {
+        const url = `township/${id}`;
+        http
+          .post<any>(url, { grd_id: id })
+          .pipe( takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => {
+              patchState(store, (state) => ({
+                townshipsByCity: response.township_by_city,
+              }));
+            },
+            error: handleError,
+          });
+      },
       getCityandState(){
         http
         .get<any>('countryandcities')
         .pipe(take(1), takeUntil(destroyed$))
         .subscribe({
-          next: (response) => {            
+          next: (response) => {
             patchState(store, (state) => ({
               city: response.city,
               state:response.state

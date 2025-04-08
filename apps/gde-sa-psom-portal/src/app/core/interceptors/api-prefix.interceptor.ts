@@ -10,16 +10,17 @@ import { HttpParams } from "@angular/common/http"; // Make sure to import HttpPa
 @Injectable()
 export class ApiPrefixInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
         if (!request.url.includes('assets')) {
             let sid:any = localStorage.getItem('sid') ?? null;
-            
+
             // Ensure sid is not null or undefined
                 const params = new HttpParams().set('sid', sid);  // Create HttpParams with 'sid'
-                request = request.clone({ 
+                request = request.clone({
                     url: `${environment.apiUrl}api/v2/` + request.url,
                     params: params  // Set the HttpParams
                 });
-            
+
         }
         return next.handle(request);
     }
