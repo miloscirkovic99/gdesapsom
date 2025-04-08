@@ -1,7 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { OpencageService } from '../../core/services/opencage.service';
 import { VetClinicsStore } from '../../shared/store/vetclinics.store';
 import { TranslocoModule } from '@ngneat/transloco';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -22,40 +21,10 @@ export class VeterinaryClinicsComponent {
       grd_id: new FormControl(null), // Multiple select
       word: new FormControl(null),
     });
-
-    effect(()=>{
-
-      if(this.vetClinics()){
-        this.vetClinics().map((item:any)=>{
-          if(item.grd_id==1){
-
-            // this.opencService.getGeocode(item?.vetc_adresa).subscribe({
-            //   next: (results) => {
-            //     console.log(results);
-
-            //     const data = {
-            //       naziv: item.vetc_naziv,
-            //       opstina: results?.results[0]?.components?.suburb
-            //     };
-
-            //     // Push the data to the opstineData array
-            //     opstineData.push(data);
-
-            //     // After collecting all data, store the array in localStorage
-            //     localStorage.setItem('opstine', JSON.stringify(opstineData));
-            //   },
-            //   error: (err) => {
-            //     console.error(err);
-            //   },
-            // });
-          }
-        })
-      }
-    })
-
   }
   ngOnInit() {
-    // this.vetClinicsStore.loadVetclinics({})
+    this.vetClinicsStore.loadVetclinics({})
+    this.getClinics()
   }
 
   getClinics() {
@@ -91,7 +60,7 @@ export class VeterinaryClinicsComponent {
   }
   navigateToGoogleMaps(item:any) {
     const location = item.vetc_adresa ;
-  
+
     // Check if location exists
     if (location) {
       const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(location)}`;
