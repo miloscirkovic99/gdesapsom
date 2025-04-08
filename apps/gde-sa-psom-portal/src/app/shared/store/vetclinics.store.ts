@@ -74,7 +74,7 @@ export const VetClinicsStore = signalStore(
 
             return http
               .post<any>('veterinary-clinics/list', {
-                //  ops_id: params?.data?.ops_id,
+                 ops_id: params?.data?.ops_id,
                 grd_id: params?.data?.grd_id,
                 word: params.data?.word,
                 offset,

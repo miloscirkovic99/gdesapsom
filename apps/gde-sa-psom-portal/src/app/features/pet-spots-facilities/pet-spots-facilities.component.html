@@ -1,17 +1,7 @@
 @defer (on timer(100ms)) {
 <div class="pet-spots-container">
   <div class="filter-wrapper">
-    <!-- <app-search-filter
-    [form]="form"
-    [filteredtownshipsMulti]="filteredtownshipsMulti"
-    [townshipMultiFilterCtrl]="townshipMultiFilterCtrl"
-    [spotSizes]="spotsStore.allowed()"
-    [spotTypes]="sharedStore.spotTypes()"
-    (filterChange)="onSubmit()"
-    (clearFiltersEvent)="clearFilters()"
-    [formDisabled]="disableForm()"
-    (searchChange)="onSearchUpdated()"
-  ></app-search-filter> -->
+ 
       <form [formGroup]="form" class="form">
         <label class="input input-bordered flex items-center gap-2">
           <input

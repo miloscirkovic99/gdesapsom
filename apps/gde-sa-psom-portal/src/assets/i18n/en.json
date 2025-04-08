@@ -19,6 +19,9 @@
   "search_name": "Search by name",
   "loading": "Loading data, please wait...",
   "select_city": "Select city and municipality",
+  "city":"Select city",
+  "vet_clinis":"Find veterinary clinics",
+  "municipality":"Select municipality",
   "or_filters": "Or choose filters",
   "choose_place": "Where would you like to go?",
   "clear_filters": "Clear filters",
@@ -93,7 +96,7 @@
   "random_spot_description": "Where to Go with a Dog platform is your ultimate resource for discovering pet destinations. Whether you're looking for the perfect park or pet-friendly places, we connect you to spots that welcome your furry friends. Our platform offers detailed reviews, interactive maps, and a vibrant community hub where pet lovers can exchange tips and heartwarming stories. Plan your next adventure with confidence, knowing that you and your pet are always welcome!",
   "see_details": "See more details",
   "explore_pet_spots": "Explore pet-friendly places with ease",
-  "explore_pet_spots_link": "Explore pet-friendly places",
+  "explore_pet_spots_link": "Explore pet-friendly locations and services",
 
   "pet_spots": "Pet-friendly places",
   "pet_parks": "Pet-friendly parks",

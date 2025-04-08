@@ -13,33 +13,38 @@
   <div class="navbar-center hidden md:flex space-x-6 items-center">
     <a routerLink=""> {{ 'home' | transloco }} </a>
     <a [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
-    <ul class="menu menu-horizontal ">
-  
+    <ul class="menu menu-horizontal">
       <li>
         <details>
-          <summary>{{'explore_pet_spots_link' | transloco}}</summary>
+          <summary>{{ 'explore_pet_spots_link' | transloco }}</summary>
           <ul class="rounded-t-none p-2 w-72">
-            <li>    <a [routerLink]="routeConstants.allSpots">
-              {{ 'find_pet_spots' | transloco }}
-            </a></li>
-            <li><a [routerLink]="routeConstants.vet_clinics"> Pronađite veterinarske stanice </a></li>
+            <li>
+              <a [routerLink]="routeConstants.allSpots">
+                {{ 'find_pet_spots' | transloco }}
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="routeConstants.petParks">
+                {{ 'find_pet_parks' | transloco }}
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="routeConstants.vet_clinics">
+                {{"vet_clinis" | transloco}}
+              </a>
+            </li>
           </ul>
         </details>
       </li>
-      </ul>
-    <!-- <a [routerLink]="routeConstants.allSpots">
-      {{ 'find_pet_spots' | transloco }}
-    </a> -->
+    </ul>
 
-    <a [routerLink]="routeConstants.petParks">
-      {{ 'find_pet_parks' | transloco }}
-    </a>
-  
+
+
+
     @if(authService.isAuthenticated()){
 
-      <a [routerLink]="routeConstants.admin"> Admin </a>
+    <a [routerLink]="routeConstants.admin"> Admin </a>
     }
- 
   </div>
   <!-- Right Buttons -->
   <div class="navbar-right flex items-center space-x-4">
@@ -128,52 +133,46 @@
   <div #mobileMenu *ngIf="menuOpen" class="mobile-menu">
     <ul class="space-y-4 text-sm">
       <li (click)="toggleMenu()">
-        <a routerLink=""> {{ 'home' | transloco }} </a>
+        <a routerLink="" class="link_default"> {{ 'home' | transloco }} </a>
       </li>
       <li (click)="toggleMenu()">
-        <a [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
-      </li>
-      <li (click)="toggleMenu()">
-        <a [routerLink]="routeConstants.allSpots"
-          >{{ 'find_pet_spots' | transloco }}
-        </a>
+        <a class="link_default" [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
       </li>
 
-      <li (click)="toggleMenu()">
-        <a [routerLink]="routeConstants.petParks"
-          >{{ 'find_pet_parks' | transloco }}
-        </a>
-      </li>
-
-      <ul class="menu menu-horizontal ">
-  
+      <ul class="menu menu-horizontal">
         <li>
           <details>
-            <summary>{{'explore_pet_spots_link' | transloco}}</summary>
+            <summary>{{ 'explore_pet_spots_link' | transloco }}</summary>
             <ul class="rounded-t-none p-2 w-64">
-              <li>    <a [routerLink]="routeConstants.allSpots">
-                {{ 'find_pet_spots' | transloco }}
-              </a></li>
-              <li><a [routerLink]="routeConstants.vet_clinics"> Pronađite veterinarske stanice </a></li>
+              <li (click)="toggleMenu()">
+                <a  [routerLink]="routeConstants.allSpots">
+                  {{ 'find_pet_spots' | transloco }}
+                </a>
+              </li>
+              <li (click)="toggleMenu()">
+                <a [routerLink]="routeConstants.petParks"
+                  >{{ 'find_pet_parks' | transloco }}
+                </a>
+              </li>
+              <li (click)="toggleMenu()">
+                <a [routerLink]="routeConstants.vet_clinics">
+                  {{"vet_clinis" | transloco}}
+                </a>
+              </li>
             </ul>
           </details>
         </li>
-        </ul>
+      </ul>
       @if(authService.isAuthenticated()){
 
-        <li (click)="toggleMenu()">
-          <a [routerLink]="routeConstants.admin"
-            >Admin
-          </a>
-        </li>
+      <li (click)="toggleMenu()">
+        <a class="link_default" [routerLink]="routeConstants.admin">Admin </a>
+      </li>
       }
       <!-- Add Buttons to Mobile Menu -->
 
       <li (click)="toggleMenu()">
-        <button
-          class="accommodation_btn "
-          (click)="openDialog()"
-        >
+        <button class="accommodation_btn" (click)="openDialog()">
           {{ 'suggest_spot' | transloco }}
         </button>
       </li>

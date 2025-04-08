@@ -34,17 +34,7 @@
   .mobile-menu {
     @apply hidden absolute top-full left-0 right-0 bg-base-200 z-50 shadow-md p-4  justify-center items-center;
   
-    ul {
-      @apply list-none p-0 m-0 flex flex-col gap-4;
-
-      li a {
-        @apply text-gray-800 font-medium;
-
-        &:hover {
-          @apply text-blue-600;
-        }
-      }
-    }
+ 
   }
 }
 .accommodation_btn {
@@ -61,12 +51,12 @@
 
   .mobile-menu {
     @apply absolute w-full md:hidden top-28 mx-1 flex justify-center items-center bg-gray-950 backdrop-blur-lg border border-white/30 rounded-2xl p-8 shadow-xl z-50;
-    a {
+    .link_default{
       @apply text-white  text-sm after:bg-transparent;
     }
   }
 }
-a {
+.link_default{
   @apply text-base h-fit  cursor-pointer relative block  hover:text-primary_green font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary_green after:transition-all after:duration-300 hover:after:w-full;
 }
 .dropdown-content a {
@@ -78,6 +68,14 @@ a {
 .menu{
   @apply p-0 z-50;
   summary{
-    @apply text-base font-medium;
+    @apply text-base max-sm:text-white font-medium p-2 max-sm:p-0;
+  }
+  ul{
+    // @apply bg-gray-950;
+    li{
+      a{
+        // @apply text-white;
+      }
+    }
   }
 }

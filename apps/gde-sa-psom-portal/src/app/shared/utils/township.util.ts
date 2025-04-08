@@ -9,18 +9,19 @@
   }
   
   // Function to filter townships with normalized strings
-  export function filterTownshipsMulti(sharedStore: any, searchValue: string) {
-    if (!sharedStore.townships()) {
+  export function filterTownshipsMulti(sharedStore: any, searchValue: string,onlyTownships=false) {
+      const filter=onlyTownships?sharedStore.townshipsByCity() : sharedStore.townships()
+    if (!filter) {
       return [];
     }
   
     if (!searchValue) {
-      return sharedStore.townships().slice();
+      return filter.slice();
     }
   
     const normalizedSearch = normalizeString(searchValue);
   
-    return sharedStore.townships().filter((township: any) =>
+    return filter.filter((township: any) =>
       normalizeString(township.ime).includes(normalizedSearch)
     );
   }
