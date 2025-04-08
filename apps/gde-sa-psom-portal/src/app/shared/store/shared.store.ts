@@ -85,14 +85,14 @@ export const SharedStore = signalStore(
           });
       },
       getTownshipsByCity(id: any) {
-        const url = `township/${id}`; 
+        const url = `township/${id}`;
         http
-          .post<any>(url, { grd_id: id }) 
-          .pipe(take(1), takeUntil(destroyed$))
+          .post<any>(url, { grd_id: id })
+          .pipe( takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
               patchState(store, (state) => ({
-                townshipsByCity: response.township_by_city, 
+                townshipsByCity: response.township_by_city,
               }));
             },
             error: handleError,
@@ -103,7 +103,7 @@ export const SharedStore = signalStore(
         .get<any>('countryandcities')
         .pipe(take(1), takeUntil(destroyed$))
         .subscribe({
-          next: (response) => {            
+          next: (response) => {
             patchState(store, (state) => ({
               city: response.city,
               state:response.state

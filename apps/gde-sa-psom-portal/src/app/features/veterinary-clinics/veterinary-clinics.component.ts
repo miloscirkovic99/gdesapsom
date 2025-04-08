@@ -53,7 +53,6 @@ export class VeterinaryClinicsComponent {
     });
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
-      .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.filterTownshipsMulti();
       });
@@ -70,12 +69,11 @@ export class VeterinaryClinicsComponent {
 
   onSelectionChange(event: any) {
     const selectedGrdId = event.value;
-    console.log(event);
-
     if(selectedGrdId==1){
 
       // Call the function to fetch townships or any other data related to the selected value
       this.sharedStore.getTownshipsByCity(selectedGrdId);
+      this.filterTownshipsMulti()
     }else{
       this.form.get('ops_id')?.setValue(null)
     }
@@ -99,7 +97,6 @@ export class VeterinaryClinicsComponent {
       word: word || null,
       resetOffset: this.form.value.word || resetOffset ? true : false,
     };
- console.log(data);
 
     this.vetClinicsStore.loadVetclinics({ data });
   }

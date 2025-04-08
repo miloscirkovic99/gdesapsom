@@ -30,6 +30,7 @@ import { tapResponse } from '@ngrx/operators';
 type vetClinics = {
   vetClinicsList: any[];
   totalResult: number;
+  totalCount:number;
   limit: number;
   offset: number;
   isLoading: boolean;
@@ -38,6 +39,7 @@ type vetClinics = {
 const initialVetState = signalState<vetClinics>({
   vetClinicsList: [],
   totalResult: 0,
+  totalCount:0,
   limit: 10,
   offset: 0,
   isLoading: false,
@@ -102,11 +104,10 @@ export const VetClinicsStore = signalStore(
           }),
           tapResponse({
             next: (response: any) => {
-              console.log(response);
-
               patchState(store, (state) => ({
                 vetClinicsList: [...state.vetClinicsList, ...response.vetClinics],
                 totalResult: response.totalResults,
+                totalCount:response.totalCount - 1,
                 offset:state.vetClinicsList.length + response.vetClinics.length,
                 isLoading: false, // Reset loading state on success
               }));
