@@ -59,7 +59,8 @@
               "with": "apps/gde-sa-psom-portal/src/env/env.prod.ts"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "serviceWorker": "apps/gde-sa-psom-portal/ngsw-config.json"
         },
         "uat": {
           "budgets": [
@@ -80,7 +81,8 @@
               "with": "apps/gde-sa-psom-portal/src/env/env.qa.ts"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "serviceWorker": "apps/gde-sa-psom-portal/ngsw-config.json"
         },
         "development": {
           "optimization": false,

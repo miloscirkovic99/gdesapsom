@@ -8,6 +8,8 @@ import { BrowserAnimationsModule, } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
 import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent';
+import { provideServiceWorker } from '@angular/service-worker';
+
 const cookieConfig:NgcCookieConsentConfig = {
   cookie: {
     domain: `${environment.cookieDomain}`
@@ -41,6 +43,10 @@ export const appConfig: ApplicationConfig = {
     provideNgcCookieConsent(cookieConfig),
     provideHttpClient(),
     importProvidersFrom(BrowserAnimationsModule),
+     provideServiceWorker('ngsw-worker.js', {
+      enabled:true,
+      registrationStrategy: 'registerWhenStable:3000'
+    }),
     provideTransloco({
       config: {
         availableLangs: ['en', 'rs'],

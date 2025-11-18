@@ -1,0 +1,27 @@
+{
+  "name": "Gde sa psom",
+  "short_name": "Gde Sa Psom",
+  "description": "Progressive Web App built with Angular 19 & Nx",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0D542B",
+  "background_color": "#ffffff",
+  "id": "angular-pwa-app",
+  "lang": "en",
+  "dir": "ltr",
+
+  "icons": [
+     {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

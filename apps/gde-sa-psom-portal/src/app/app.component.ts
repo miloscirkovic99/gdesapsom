@@ -12,13 +12,17 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { GoogleAnalyticsService } from './core/services/google-analytics.service';
+import { PushNotificationService } from './core/services/push-notification.service';
+import { VersionUpdateService } from './core/services/version-update.service';
+import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/pwa-install-dialog.component';
 @Component({
   imports: [
     RouterModule,
     NavbarComponent,
     FooterComponent,
     ContactFormComponent,
-    CommonModule
+    CommonModule,
+    PwaInstallDialogComponent
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -28,6 +32,8 @@ export class AppComponent {
   title = 'gde-sa-psom-portal';
   router = inject(Router);
   private readonly googleAnalyticsService=inject(GoogleAnalyticsService)
+  private readonly pushNotificationService = inject(PushNotificationService);
+  private readonly versionUpdateService = inject(VersionUpdateService);
   isAdminMode = signal(false);
   private statusChangeSubscription!: Subscription;
   showTopButton=false;
@@ -39,6 +45,13 @@ export class AppComponent {
       easing: 'linear',
     });
 
+    void this.versionUpdateService;
+
+    // Initialize push notifications and start listening for messages
+    // this.pushNotificationService.listenForMessages();
+    // Optionally request subscription on app init (or show a button to the user)
+    // this.pushNotificationService.subscribeToNotifications();
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((result) => {
@@ -47,10 +60,10 @@ export class AppComponent {
         }
         setTimeout(() => {
           AOS.refresh();
-        }, 500); // Ensure elements are rendered before refreshing AOS
+        }, 500); 
       });
     this.setupCookie();
-    this.checkAndEnableAnalytics(); // Check and enable Google Analytics
+    this.checkAndEnableAnalytics(); 
   }
 
   private checkAndEnableAnalytics(): void {
@@ -59,7 +72,6 @@ export class AppComponent {
     }
   }
 
-  // Check if Google Analytics consent is granted (either from localStorage or cookie service)
   private isAnalyticsConsentGranted(): boolean {
     return (
       localStorage.getItem('analyticsAccepted') === 'true' ||
