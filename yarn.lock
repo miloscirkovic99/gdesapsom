@@ -118,6 +118,18 @@
     rxjs "7.8.1"
     source-map "0.7.4"
 
+"@angular-devkit/core@19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular-devkit/core/-/core-19.2.19.tgz#371b917a0a3f0f14c07a6b99813ba05d5ffe4aea"
+  integrity sha512-JbLL+4IMLMBgjLZlnPG4lYDfz4zGrJ/s6Aoon321NJKuw1Kb1k5KpFu9dUY0BqLIe8xPQ2UJBpI+xXdK5MXMHQ==
+  dependencies:
+    ajv "8.17.1"
+    ajv-formats "3.0.1"
+    jsonc-parser "3.3.1"
+    picomatch "4.0.2"
+    rxjs "7.8.1"
+    source-map "0.7.4"
+
 "@angular-devkit/schematics@19.0.7", "@angular-devkit/schematics@~19.0.0":
   version "19.0.7"
   resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-19.0.7.tgz#79b9f951a8b4a61d4d7bb8e3e4b2707f3575b9d6"
@@ -126,6 +138,17 @@
     "@angular-devkit/core" "19.0.7"
     jsonc-parser "3.3.1"
     magic-string "0.30.12"
+    ora "5.4.1"
+    rxjs "7.8.1"
+
+"@angular-devkit/schematics@19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-19.2.19.tgz#fc9b41372c2f080721673b357d7d8a5fd33d5941"
+  integrity sha512-J4Jarr0SohdrHcb40gTL4wGPCQ952IMWF1G/MSAQfBAPvA9ZKApYhpxcY7PmehVePve+ujpus1dGsJ7dPxz8Kg==
+  dependencies:
+    "@angular-devkit/core" "19.2.19"
+    jsonc-parser "3.3.1"
+    magic-string "0.30.17"
     ora "5.4.1"
     rxjs "7.8.1"
 
@@ -307,10 +330,26 @@
   dependencies:
     tslib "^2.3.0"
 
+"@angular/pwa@19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular/pwa/-/pwa-19.2.19.tgz#9d3a02e28967db544c410d5dfd8a1b642fc6e3a1"
+  integrity sha512-H6yjDmArLZDoq5w7vL6Z33ZYxD1FE/LD7wHTPwRxm0+XTFQGeXbWGp25WZMlWHwmxcsxqyQTcfK9CXtfVpeKKg==
+  dependencies:
+    "@angular-devkit/schematics" "19.2.19"
+    "@schematics/angular" "19.2.19"
+    parse5-html-rewriting-stream "7.0.0"
+
 "@angular/router@~19.0.0":
   version "19.0.7"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-19.0.7.tgz#32c5fa94572d4a2b4fabe319ad2fd25a87ba2a36"
   integrity sha512-TwJMZMBtD6xoBbq8EGuZ8Lfhwk2JLir11DUGEUEH09HRcOlHjAp6paGSGUrJLa7oG/RWObnVnouVC6O0USJfSA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/service-worker@19.2.15":
+  version "19.2.15"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-19.2.15.tgz#7027abb114f74c85487fbebf904e1f3510ffc7f8"
+  integrity sha512-H40T8ni4Inx3tNinoQvcEmDsgFErjfzEWnJpoAonDQkzarlu1Qr8vBgv+DX+KzuMKZ3xtsWW9vFnAI4/DilnDw==
   dependencies:
     tslib "^2.3.0"
 
@@ -3577,6 +3616,15 @@
   dependencies:
     "@angular-devkit/core" "19.0.7"
     "@angular-devkit/schematics" "19.0.7"
+    jsonc-parser "3.3.1"
+
+"@schematics/angular@19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-19.2.19.tgz#43b3a035684490a4f00ef6b02a59d3ba02204233"
+  integrity sha512-6/0pvbPCY4UHeB4lnM/5r250QX5gcLgOYbR5FdhFu+22mOPHfWpRc5tNuY9kCephDHzAHjo6fTW1vefOOmA4jw==
+  dependencies:
+    "@angular-devkit/core" "19.2.19"
+    "@angular-devkit/schematics" "19.2.19"
     jsonc-parser "3.3.1"
 
 "@sigstore/bundle@^3.1.0":
@@ -8546,7 +8594,7 @@ magic-string@0.30.12:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.5.0"
 
-magic-string@~0.30.2:
+magic-string@0.30.17, magic-string@~0.30.2:
   version "0.30.17"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.30.17.tgz#450a449673d2460e5bbcfba9a61916a1714c7453"
   integrity sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==

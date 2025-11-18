@@ -142,5 +142,21 @@
   "cookie_control": "How do you control cookies?",
   "cookie_control_description": "You can control and/or delete cookies as you wish – for details, <a href=\"http://www.aboutcookies.org\" target=\"_blank\" class=\"text-blue-500\">AboutCookies.org</a>. You can delete all cookies already on your computer, as well as set most browsers to block them. However, if you decide to block cookies, you may have limited access to certain features of the site.",
   "cookie_policy_change_header": "Changes to the cookie policy",
-  "cookie_policy_change_description": "We may update this cookie policy occasionally. We recommend that you check this page periodically to stay informed of any changes."
+  "cookie_policy_change_description": "We may update this cookie policy occasionally. We recommend that you check this page periodically to stay informed of any changes.",
+  
+  "pwa_install_title": "Install Gde sa psom",
+  "pwa_install_subtitle": "Offline access available",
+  "pwa_install_description": "The icon will be added to your device's home screen for quick access.",
+  "pwa_install_feature_1_title": "Quick Access",
+  "pwa_install_feature_1_desc": "Open from home screen",
+  "pwa_install_feature_2_title": "Offline Mode",
+  "pwa_install_feature_2_desc": "Access without internet",
+  "pwa_install_feature_3_title": "No Ads",
+  "pwa_install_feature_3_desc": "Clean experience",
+  "pwa_install_feature_4_title": "All Devices",
+  "pwa_install_feature_4_desc": "Synchronized",
+  "pwa_install_later": "Later",
+  "pwa_install_now": "Install",
+  "pwa_install_info": "You can install later from the browser menu",
+  "pwa_offline_access":"Offline access"
 }

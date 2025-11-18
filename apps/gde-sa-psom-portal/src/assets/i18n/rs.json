@@ -141,5 +141,21 @@
   "cookie_control": "Kako kontrolišete kolačiće?",
   "cookie_control_description": "Možeš kontrolisati i/ili obrisati kolačiće prema svom izboru – za detalje, <a href=\"http://www.aboutcookies.org\" target=\"_blank\" class=\"text-blue-500\">AboutCookies.org</a>. Možeš obrisati sve kolačiće koji su već na tvom računaru, kao i postaviti većinu pretraživača da ih blokira. Međutim, ako odlučiš da blokiraš kolačiće, možeš imati ograničen pristup određenim funkcijama sajta.",
   "cookie_policy_change_header": "Promene u politici kolačića",
-  "cookie_policy_change_description": "Ovu politiku kolačića možemo povremeno ažurirati. Preporučujemo ti da povremeno proveriš ovu stranicu kako bi bio u toku sa svim promenama."
+  "cookie_policy_change_description": "Ovu politiku kolačića možemo povremeno ažurirati. Preporučujemo ti da povremeno proveriš ovu stranicu kako bi bio u toku sa svim promenama.",
+  
+  "pwa_install_title": "Instaliraj Gde sa psom",
+  "pwa_install_subtitle": "Offline pristup dostupan",
+  "pwa_install_description": "Ikonica će biti dodata na početnu stranicu tvog uređaja za brži pristup.",
+  "pwa_install_feature_1_title": "Brži pristup",
+  "pwa_install_feature_1_desc": "Otvori sa početnog ekrana",
+  "pwa_install_feature_2_title": "Offline režim",
+  "pwa_install_feature_2_desc": "Pristupi bez interneta",
+  "pwa_install_feature_3_title": "Bez oglasa",
+  "pwa_install_feature_3_desc": "Čisto iskustvo",
+  "pwa_install_feature_4_title": "Na svim uređajima",
+  "pwa_install_feature_4_desc": "Sinhronizovano",
+  "pwa_install_later": "Kasnije",
+  "pwa_install_now": "Instaliraj",
+  "pwa_install_info": "Možeš instalirati i kasnije iz menija pregledača",
+  "pwa_offline_access":"Offline pristup"
 }
