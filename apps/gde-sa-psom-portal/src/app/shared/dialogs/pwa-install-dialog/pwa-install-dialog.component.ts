@@ -1,4 +1,10 @@
-import { Component, OnInit, signal, HostListener, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  HostListener,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
 
@@ -14,10 +20,12 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   isLoading = signal(false);
   canInstall = signal(false);
   showDialog = signal(false);
+  isIOS = signal(false);
   private deferredPrompt: any;
   readonly PWA_FIRST_VISIT_KEY = 'pwa_first_visit';
 
   ngOnInit() {
+    this.detectPlatform();
     this.checkFirstVisit();
     this.setupInstallPrompt();
   }
@@ -26,11 +34,15 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
     // Cleanup
   }
 
+  private detectPlatform(): void {
+    const ua = navigator.userAgent;
+    this.isIOS.set(/iPad|iPhone|iPod/.test(ua) && !('MSStream' in window));
+  }
+
   private checkFirstVisit(): void {
     const hasVisited = localStorage.getItem(this.PWA_FIRST_VISIT_KEY);
     if (!hasVisited) {
       localStorage.setItem(this.PWA_FIRST_VISIT_KEY, 'true');
-      // Delay showing dialog to ensure service worker is ready
       setTimeout(() => {
         this.showDialog.set(true);
         setTimeout(() => this.isOpen.set(true), 50);
@@ -60,28 +72,53 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   }
 
   installApp(): void {
-    if (this.deferredPrompt) {
-      this.isLoading.set(true);
-      this.deferredPrompt.prompt();
-      
-      this.deferredPrompt.userChoice.then((choiceResult: any) => {
+    if (this.isIOS()) {
+      this.handleIOSInstall();
+    } else if (this.deferredPrompt) {
+      this.handleAndroidInstall();
+    }
+  }
+
+  private handleAndroidInstall(): void {
+    if (!this.deferredPrompt) return;
+
+    this.isLoading.set(true);
+    this.deferredPrompt.prompt();
+
+    this.deferredPrompt.userChoice
+      .then((choiceResult: any) => {
         this.isLoading.set(false);
-        
+
         if (choiceResult.outcome === 'accepted') {
-          console.log('✅ Korisnik je prihvatio instalaciju');
           localStorage.setItem('pwa_installed', 'true');
-        } else {
-          console.log('❌ Korisnik je odbio instalaciju');
         }
-        
         this.deferredPrompt = null;
         this.canInstall.set(false);
         this.closeDialog();
-      }).catch((err: any) => {
-        console.error('❌ Greška pri instalaciji:', err);
+      })
+      .catch((err: any) => {
         this.isLoading.set(false);
       });
-    }
+  }
+
+  private handleIOSInstall(): void {
+    this.isLoading.set(true);
+
+    const message = `
+📱 iOS PWA Installation:
+
+1. Tap the Share button (square with arrow)
+2. Select "Add to Home Screen"
+3. Name: Gde sa psom
+4. Tap "Add"
+
+Your app will appear on your home screen!
+    `;
+
+    alert(message);
+    this.isLoading.set(false);
+    localStorage.setItem('pwa_installed', 'true');
+    this.closeDialog();
   }
 
   closeDialog(): void {
