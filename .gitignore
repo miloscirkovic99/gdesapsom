@@ -42,3 +42,48 @@ Thumbs.db
 .nx/workspace-data
 
 .angular
+
+# Environment & Configuration Files (Sensitive)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# API Keys & Tokens (Sensitive)
+**/api-keys.json
+**/secrets.json
+**/credentials.json
+**/.aws/
+**/.gcloud/
+
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+
+# Documentation Files (Exclude all .md except README.md)
+*.md
+!README.md
+
+# Security & Configuration
+security-headers.json
+.htaccess
+nginx.conf
+docker-compose.override.yml
+apps/gde-sa-psom-portal/src/app/config/security.config.ts
+
+# Logs
+logs/
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+*~
+.cache/

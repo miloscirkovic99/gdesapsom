@@ -4,31 +4,48 @@
     <meta charset="utf-8" />
     <title>Gde sa psom - Top Pet-Friendly Restorani, Kafići i Hoteli u Srbiji</title>
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- CSP Header - Allows necessary external resources for production -->
+    <!-- NOTE: frame-ancestors can only be set via HTTP headers, not meta tags -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://rsms.me; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com https://rsms.me; connect-src 'self' https: wss: http://318j122.mars1.mars-hosting.com; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="permissions-policy" content="geolocation=(self), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" />
+    
     <meta name="theme-color" content="#44cd88" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Gde sa psom" />
+    
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="apple-touch-icon" href="assets/logo-big.png" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 
-    <!-- Primary Meta Tags -->
     <meta
       name="title"
       content="Gde sa psom - Top Pet-Friendly Restorani, Kafići i Hoteli u Srbiji"
     />
     <meta
       name="description"
-      content="Otkrijte najbolje pet-friendly restorane, kafiće, hotele i parkove za pse u Srbiji. Pronađite idealna mesta gde su vaši ljubimci dobrodošli. Pretraga po lokaciji i vrstama usluga."
+      content="Pronađite najbolje pet-friendly restorane, kafiće, hotele i parkove za pse u Srbiji. Pretraga po lokaciji, vrsti usluge i veličini psa. 100% besplatna platforma za vlasnike ljubimaca."
     />
     <meta
       name="keywords"
-      content="gde sa psom, pet friendly restorani Srbija, kafići za pse, hoteli za ljubimce, psi u restoranima, pet-friendly mesta, parkovi za pse, veterinarske klinike, the best pet-friendly places"
+      content="gde sa psom, pet friendly restorani Srbija, kafići za pse, hoteli za ljubimce, psi u restoranima, pet-friendly mesta, parkovi za pse, veterinarske klinike, pet-friendly kafići Beograd, pet-friendly hoteli"
     />
     <meta name="author" content="Gde sa psom" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="language" content="Serbian" />
     <meta name="revisit-after" content="7 days" />
+    <meta name="application-name" content="Gde sa psom" />
     <link rel="canonical" href="https://www.gdesapsom.com" />
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph Tags (Social Media) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.gdesapsom.com/" />
     <meta
@@ -37,7 +54,7 @@
     />
     <meta
       property="og:description"
-      content="Otkrijte najbolje pet-friendly restorane, kafiće, hotele i parkove za pse. Pronađite idealna mesta gde su vaši ljubimci dobrodošli u Srbiji."
+      content="Pronađite gde su vaši ljubimci dobrodošli! Preko 1000+ pet-friendly lokacija u Srbiji - restorani, kafići, hoteli, parkovi i veterinarske klinike."
     />
     <meta
       property="og:image"
@@ -45,24 +62,29 @@
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:site_name" content="Gde sa psom" />
     <meta property="og:locale" content="sr_RS" />
-    <!-- Twitter / X -->
+    <meta property="og:locale:alternate" content="en_US" />
+    
+    <!-- Twitter Card Tags -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://www.gdesapsom.com/" />
     <meta
       property="twitter:title"
-      content="Gde sa psom - Top Pet-Friendly Restorani, Kafići i Hoteli u Srbiji"
+      content="Gde sa psom - Pet-Friendly Restorani i Hoteli u Srbiji"
     />
     <meta
       property="twitter:description"
-      content="Pronađite gde su psi i mačke dobrodošli. Restorani, kafići, hoteli i parkovi za pse u Srbiji - sve na jednom mjestu!"
+      content="Pronađite gde su psi i mačke dobrodošli. Restorani, kafići, hoteli i parkovi za pse u Srbiji."
     />
     <meta
       property="twitter:image"
       content="https://www.gdesapsom.com/assets/logo-big.png"
     />
     <meta name="twitter:creator" content="@gdesapsom" />
+    <meta name="twitter:site" content="@gdesapsom" />
+    <!-- Fonts & Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -70,15 +92,14 @@
       rel="stylesheet"
     />
     
-    <!-- Preload critical resources -->
-    <link rel="preload" href="assets/logo-big.png" as="image" />
-    <link rel="preload" href="assets/favicon.ico" as="image" />
-    
-    <!-- DNS prefetch for external services -->
+    <!-- Resource Hints & Preload -->
+    <link rel="preload" href="assets/logo-big.png" as="image" type="image/png" />
+    <link rel="preload" href="assets/favicon.ico" as="image" type="image/x-icon" />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
     
-    <!-- Schema Markup - Organization -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
