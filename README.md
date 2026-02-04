@@ -1,17 +1,119 @@
-# Ko smo mi?
+# Gde sa psom 🐾
 
-Dobrodošli na *Gde sa psom* – vašu omiljenu platformu koja olakšava putovanja i izlazak sa vašim ljubimcima! Inspirisani svakodnevnim izazovima vlasnika pasa i mačaka, odlučili smo da kreiramo rešenje koje omogućava svima da uživaju u društvu svojih ljubimaca, bez stresa oko toga da li je određeni objekat pet-friendly. Naša misija je jednostavna – omogućiti vlasnicima ljubimaca da brzo i lako pronađu restorane, kafiće, hotele i druge objekte koji su otvoreni za pse i druge kućne ljubimce. Verujemo da ljubimci zaslužuju biti deo naših avantura, a *Gde sa psom* je tu da vam olakša svaki korak.
+Dobrodošli na **Gde sa psom** — inovativnu i praktičnu platformu koja povezuje vlasnike pasa sa pet-friendly mestima širom Srbije i regiona. Naša misija je da vam omogućimo da sa svojim ljubimcem uživate u svakom izlasku, putovanju ili vikend avanturi, bez brige da li ste dobrodošli.
 
-# Potpuno besplatno!?
+---
 
-Korišćenje naše platforme je potpuno besplatno, kako za korisnike, tako i za vlasnike ugostiteljskih objekata. Dodavanje novih objekata na sajt je jednostavno i besplatno – želimo da naša zajednica raste i da svi ljubitelji životinja imaju pristup najnovijim informacijama. *Gde sa psom* je mesto gde ljubav prema ljubimcima spaja ljude i objekte koji nude prijatel
+## Zašto Gde sa psom?
 
+Vlasnici pasa često nailaze na problem pronalaska mesta gde su njihovi četvoronožni prijatelji dobrodošli — bilo da je reč o restoranima, kafićima, hotelima ili izletničkim destinacijama. Naša platforma rešava ovaj problem pružajući detaljne informacije i recenzije o pet-friendly objektima, kao i korisne savete za putovanja i aktivnosti sa psom.
 
+---
 
-# Who are we?
+## Šta nudimo?
 
-Welcome to *Gde sa psom* – your favorite platform that makes traveling and going out with your pets easier! Inspired by the everyday challenges of dog and cat owners, we decided to create a solution that allows everyone to enjoy the company of their pets without the stress of wondering if a particular place is pet-friendly. Our mission is simple – to enable pet owners to quickly and easily find restaurants, cafes, hotels, and other establishments that welcome dogs and other pets. We believe pets deserve to be part of our adventures, and *Gde sa psom* is here to make every step of that journey easier for you.
+- **Pregled pet-friendly objekata:** restorani, kafići, smeštajni kapaciteti i izletišta  
 
-# Completely Free!?
+---
 
-Using our platform is completely free, both for users and for the owners of hospitality establishments. Adding new places to the site is simple and free – we want our community to grow and for all animal lovers to have access to the latest information. *Gde sa psom* is a place where the love for pets connects people and establishments that offer a friendly environment for our four-legged friends.
+## Misija
+
+Verujemo da ljubimci zaslužuju da budu deo naših svakodnevnih i posebnih trenutaka. Gde sa psom je tu da vam olakša planiranje i uživanje u aktivnostima sa vašim ljubimcem, bilo gde da krenete.
+
+---
+
+## Potpuno besplatno
+
+Korišćenje platforme je besplatno za sve korisnike i vlasnike objekata. Dodavanje novih mesta i informacija je jednostavno i dostupno svima — jer želimo da zajednica raste i da svaki vlasnik psa može lako pronaći informacije koje su mu potrebne.
+
+---
+
+## Tehnologije
+
+Projekat je razvijen koristeći najmodernije web tehnologije za brzu i pouzdanu upotrebu:
+
+- Angular 19  
+- Material UI  
+- NgRx za upravljanje stanjem  
+- Leaflet za interaktivne mape  
+- DaisyUI za stilizaciju
+
+---
+
+## Doprinosi su dobrodošli
+
+Želite da doprinesete? Bilo da je u pitanju kod, dizajn, predlog novih funkcionalnosti ili ispravka grešaka, vaša pomoć je dobrodošla! Otvorite issue ili pošaljite pull request.
+
+---
+
+## Kontakt
+
+Za pitanja ili saradnju, slobodno nas kontaktirajte na:  
+[gdesapsom@gmail.com]
+
+---
+
+## Licenca
+
+Ovaj projekat je licenciran pod MIT licencom.
+
+---
+
+# Where with Dog 🐾
+
+Welcome to **Where with Dog** — an innovative and practical platform connecting dog owners with pet-friendly places across Serbia and the region. Our mission is to help you enjoy every outing, trip, or weekend adventure with your furry friend, without worrying if you’re welcome.
+
+---
+
+## Why Where with Dog?
+
+Dog owners often face the challenge of finding places where their four-legged friends are welcome — whether restaurants, cafes, hotels, or recreational destinations. Our platform solves this problem by providing detailed information and reviews about pet-friendly venues, along with useful tips for traveling and activities with your dog.
+
+---
+
+## What we offer
+
+- **Overview of pet-friendly places:** restaurants, cafes, accommodation options, and recreational spots  
+
+---
+
+## Mission
+
+We believe pets deserve to be part of our everyday and special moments. Where with Dog is here to make planning and enjoying activities with your pet easier, wherever you go.
+
+---
+
+## Completely free
+
+Using the platform is free for all users and venue owners. Adding new places and information is simple and accessible to everyone — because we want the community to grow and every dog owner to easily find the information they need.
+
+---
+
+## Technologies
+
+The project is built using modern web technologies for fast and reliable performance:
+
+- Angular 19  
+- Material UI  
+- NgRx for state management  
+- Leaflet for interactive maps  
+- DaisyUI for styling
+
+---
+
+## Contributions welcome
+
+Want to contribute? Whether it’s code, design, feature suggestions, or bug fixes, your help is appreciated! Open an issue or submit a pull request.
+
+---
+
+## Contact
+
+For questions or collaboration, feel free to contact us at:  
+[gdesapsom@gmail.com]
+
+---
+
+## License
+
+This project is licensed under the MIT License.
