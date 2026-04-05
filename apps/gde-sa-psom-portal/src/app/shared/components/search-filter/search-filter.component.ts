@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -24,6 +24,8 @@ import { descriptionToKeyMap, descriptionToKeyMapSpot } from '../../helpers/map.
   ],
   templateUrl: './search-filter.component.html',
   styleUrl: './search-filter.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class SearchFilterComponent {
   @Input() form!: FormGroup;

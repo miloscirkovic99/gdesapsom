@@ -11,19 +11,19 @@
     @apply rounded-xl;
   }
   .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    @apply w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white   dark:shadow-sm #{!important};
+    @apply w-full text-sm text-base-content bg-base-200 rounded-lg border border-base-300 shadow-sm #{!important};
   }
   .mat-mdc-select-placeholder {
-    @apply text-sm text-gray-900 dark:text-gray-500;
+    @apply text-sm text-base-content/50;
   }
   .mat-select-search-input {
-    @apply bg-white #{!important};
+    @apply bg-base-100 #{!important};
   }
   mat-label {
-    @apply text-sm text-gray-900 dark:text-gray-500;
+    @apply text-sm text-base-content/70;
   }
   .mat-mdc-select-min-line {
-    @apply text-sm text-gray-900 dark:text-white;
+    @apply text-sm text-base-content;
   }
   .mat-mdc-form-field-subscript-wrapper {
     @apply hidden;
@@ -34,7 +34,7 @@
 
 }
 .input {
-  @apply block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white   dark:shadow-sm;
+  @apply block p-3 w-full text-sm text-base-content bg-base-200 rounded-lg border border-base-300 shadow-sm;
 }
 .form-field-wrapper {
   @apply grid gap-10 mt-6;
@@ -45,6 +45,6 @@
     @apply w-full h-80 rounded-xl;
   }
   svg {
-    @apply right-0 top-0 absolute text-white cursor-pointer hover:text-primary_green m-2;
+    @apply right-0 top-0 absolute text-white cursor-pointer hover:text-secondary m-2;
   }
 }

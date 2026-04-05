@@ -1,24 +1,22 @@
-<div class="pet-parks-container">
-    <h1>{{'dog_parks'| transloco}}</h1>
-    <app-card
+<div class="py-8 space-y-8">
+  <h1 class="font-display text-4xl font-bold text-center max-sm:text-3xl">{{ 'dog_parks' | transloco }}</h1>
+
+  <app-card
     [data]="parkStore.parks()"
     [hiddeDetailsButton]="true"
   ></app-card>
-  <div class="rules-wrapper">
-    <h3>{{"park_rules" | transloco}}:</h3>
-    <p>{{"rule_1" | transloco}}</p>
-    <p>{{"rule_2" | transloco}}</p>
-    <p>{{"rule_3" | transloco}}</p>
-    <p>{{"rule_4" | transloco}}</p>
-    <p>{{"rule_5" | transloco}}</p>
-    <p>{{"rule_6" | transloco}}</p>
-    <p>{{"rule_7" | transloco}}</p>
-    <p>{{"rule_8" | transloco}}</p>
-    <p>{{"rule_9" | transloco}}</p>
-    <p>{{"rule_10" | transloco}}</p>
-    <p>{{"rule_11" | transloco}}</p>
-    <p>{{"rule_12" | transloco}}</p>
-    <p>{{"rule_13" | transloco}}</p>
 
+  <div class="card bg-base-200 shadow-sm">
+    <div class="card-body">
+      <h3 class="card-title font-display text-2xl">{{ 'park_rules' | transloco }}</h3>
+      <ul class="space-y-2 text-base text-base-content/80">
+        @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13]; track i) {
+          <li class="flex items-start gap-2">
+            <span class="badge badge-secondary badge-xs mt-1.5 shrink-0"></span>
+            <span>{{ 'rule_' + i | transloco }}</span>
+          </li>
+        }
+      </ul>
+    </div>
   </div>
 </div>

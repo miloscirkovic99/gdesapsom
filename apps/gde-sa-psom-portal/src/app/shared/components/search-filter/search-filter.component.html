@@ -83,11 +83,11 @@
         </mat-select>
       </mat-form-field>
   
-      <button class="btn_primary max-sm:w-full" [disabled]="formDisabled" (click)="onSubmit()">
+      <button class="btn btn-secondary max-sm:w-full" [disabled]="formDisabled" (click)="onSubmit()">
         {{ 'search' | transloco }}
       </button>
   
-      <button class="btn_primary max-sm:w-full" [disabled]="formDisabled" (click)="clearFilters()">
+      <button class="btn btn-ghost max-sm:w-full" [disabled]="formDisabled" (click)="clearFilters()">
         {{ 'clear_filters' | transloco }}
       </button>
     </div>

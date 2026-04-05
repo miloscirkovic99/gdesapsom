@@ -8,16 +8,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RouteConstants } from '../../constants/route.constant';
 import { TranslocoModule } from '@ngneat/transloco';
 import { LanguageService } from '../../../core/services/language.service';
 import { MatButtonModule } from '@angular/material/button';
-import { DialogService } from '../../../core/services/dialog.service';
-import { AddSpotComponent } from '../../dialogs/add-location/add-location.component';
 import { AuthService } from '../../../features/auth/auth.service';
-import { SpotsStore } from '../../store/spots.store';
-import { ParksStore } from '../../store/parks.store';
 
 @Component({
   selector: 'app-navbar',
@@ -39,9 +35,7 @@ export class NavbarComponent {
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   private languageService = inject(LanguageService);
-  private dialogService = inject(DialogService);
-  private spotsStore=inject(SpotsStore);
-  private parksStore=inject(ParksStore)
+  private router = inject(Router);
 
   authService=inject(AuthService)
   ngOnInit() {
@@ -107,11 +101,14 @@ export class NavbarComponent {
   }
 
   openDialog() {
-    const data={
-      onSave:(form:any)=>{        
-       form.spotType==='spot'?  this.spotsStore.suggestSpot(form.form): this.parksStore.addPark(form.form)
-      }
-    }
-    this.dialogService.openDialog(AddSpotComponent, data);
+    this.router.navigate(['/' + RouteConstants.addSpot]);
+  }
+
+  navigateToAddSpot(): void {
+    this.router.navigate(['/' + RouteConstants.addSpot]);
+  }
+
+  navigateToAddPark(): void {
+    this.router.navigate(['/' + RouteConstants.addPark]);
   }
 }

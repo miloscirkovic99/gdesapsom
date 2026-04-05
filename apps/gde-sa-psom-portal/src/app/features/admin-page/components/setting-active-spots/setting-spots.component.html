@@ -1,41 +1,46 @@
-<div class="setting-spots-container">
-  <label class="input input-bordered flex items-center gap-2">
-    <input
-      #searchQuery
-      type="text"
-      formControlName="word"
-      class="grow dark:text-white text-black"
-      [placeholder]="'search_name' | transloco"
-      (input)="onSearchUpdated(searchQuery.value)"
-    />
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      class="h-4 w-4 opacity-70"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-        clip-rule="evenodd"
-      />
-    </svg>
-  </label>
+<div class="space-y-6">
+  <div class="card bg-base-200/50 shadow-sm border border-base-300/30">
+    <div class="card-body">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-secondary/15 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-secondary" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+          </svg>
+        </div>
+        <h2 class="font-display text-xl font-bold">{{ 'setting_spots' | transloco }}</h2>
+      </div>
+      <label class="input input-bordered flex items-center gap-2">
+        <input
+          #searchQuery
+          type="text"
+          formControlName="word"
+          class="grow"
+          [placeholder]="'search_name' | transloco"
+          (input)="onSearchUpdated(searchQuery.value)"
+        />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70" aria-hidden="true">
+          <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+        </svg>
+      </label>
+    </div>
+  </div>
+
   <app-card
     [data]="spotsStore.spots()"
     [isLoading]="spotsStore.isLoading()"
     [isAdmin]="true"
     (onActionClick)="onAction($event)"
   ></app-card>
-  @if(spotsStore.spots().length!=spotsStore.totalResult() && spotsStore.spots().length){
-    <button
-      [disabled]="spotsStore.isLoading()"
-      (click)="onSubmit()"
-      class="btn_primary mt-8"
-    >
-      {{"see_more" | transloco}}
-  
-      
-    </button>
-    } 
+  @if (spotsStore.spots().length !== spotsStore.totalResult() && spotsStore.spots().length) {
+    <div class="flex justify-center">
+      <button
+        [disabled]="spotsStore.isLoading()"
+        (click)="onSubmit()"
+        class="btn btn-secondary btn-sm"
+      >
+        {{ 'see_more' | transloco }}
+      </button>
+    </div>
+  }
 </div>

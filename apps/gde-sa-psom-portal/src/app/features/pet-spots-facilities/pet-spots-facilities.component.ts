@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   effect,
   ElementRef,
@@ -49,6 +50,8 @@ import { filterTownshipsMulti } from '../../shared/utils/township.util';
   ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class PetSpotsFacilitiesComponent {
   @ViewChild('multiSelect', { static: true }) multiSelect!: MatSelect;

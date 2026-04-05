@@ -8,5 +8,7 @@ export class RouteConstants {
     static readonly cookiesPolicy='cookies-policy';
     static readonly townships='townships';
     static readonly vet_clinics='vet-clinics';
-
+    static readonly addSpot = 'spots/new';
+    static readonly addPark = 'parks/new';
+    static readonly spotDetail = 'spots/:id';
 }

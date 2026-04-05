@@ -63,6 +63,33 @@ export const appRoutes: Route[] = [
     title:'Gde sa psom - Cookies Policy'
   },
   {
+    path: RouteConstants.addSpot,
+    loadComponent: () => {
+      return import('./pages/add-spot/add-spot-page.component').then(
+        (m) => m.AddSpotPageComponent
+      );
+    },
+    title: 'Gde sa psom - Add Spot'
+  },
+  {
+    path: RouteConstants.addPark,
+    loadComponent: () => {
+      return import('./pages/add-park/add-park-page.component').then(
+        (m) => m.AddParkPageComponent
+      );
+    },
+    title: 'Gde sa psom - Add Park'
+  },
+  {
+    path: RouteConstants.spotDetail,
+    loadComponent: () => {
+      return import('./pages/spot-detail/spot-detail-page.component').then(
+        (m) => m.SpotDetailPageComponent
+      );
+    },
+    title: 'Gde sa psom - Spot Details'
+  },
+  {
    path:RouteConstants.admin,
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)

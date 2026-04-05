@@ -8,51 +8,170 @@
 * {
   padding: 0;
   margin: 0;
-  font-family: 'Dosis', serif;
 }
 
-.btn_primary{
-  @apply flex items-center justify-center gap-2  w-fit text-sm bg-primary_green hover:bg-green-500 text-white font-medium max-sm:px-1 max-sm:py-1 px-4 py-2 border rounded-md outline-none border-none;
-  &:disabled{
-    @apply opacity-50 cursor-not-allowed;
+body {
+  font-family: 'Inter', sans-serif;
+  @apply bg-base-100 text-base-content;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Dosis', sans-serif;
+}
+
+.mat-typography {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Smooth global transitions ── */
+a, button, .btn, .card, .badge, input, select, textarea {
+  @apply transition-all duration-200 ease-out;
+}
+
+.btn {
+  @apply active:scale-[0.97];
+}
+
+.card {
+  @apply hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300;
+}
+
+.badge {
+  @apply hover:scale-105;
+}
+
+/* ── Link hover glow ── */
+.link-secondary {
+  @apply hover:brightness-110;
+}
+
+/* ── Smooth page / route transitions ── */
+router-outlet + * {
+  animation: routeFadeIn 0.35s ease-out;
+}
+
+@keyframes routeFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
-.btn_error{
-  @apply  w-fit text-sm bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 border rounded-md outline-none border-none;
-}
-.mat-typography{
-  font-family: 'Dosis', serif !important;
 
+/* ── Focus ring ── */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-secondary;
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-base-200;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-base-300 rounded-full;
+  &:hover {
+    @apply bg-secondary/40;
+  }
+}
+
+/* ── Selection color ── */
+::selection {
+  @apply bg-secondary/30 text-base-content;
 }
 
 .dialogBackdropBackground {
   @apply backdrop-blur-sm;
 }
-// Customize the entire app. Change :root to your selector if you want to scope the styles.
+
 :root {
   @include mat.snack-bar-overrides((
     container-color:'inherent',
   ));
   @include mat.radio-overrides((
-    selected-icon-color: "#44cd88",
-    checked-ripple-color: "#44cd88",
-    selected-focus-icon-color:"#44cd88",
-    selected-hover-icon-color:"#44cd88"
-
-
+    selected-icon-color: oklch(var(--s)),
+    checked-ripple-color: oklch(var(--s)),
+    selected-focus-icon-color: oklch(var(--s)),
+    selected-hover-icon-color: oklch(var(--s)),
   ));
 }
 
-.mat-mdc-snack-bar-container{
+.mat-mdc-snack-bar-container {
   @apply rounded-xl;
 }
+
 .success-snackbar {
-  background-color: #4caf50 !important; /* Zelena boja za uspeh */
-  color: white;
+  @apply bg-success text-success-content;
 }
 
 .error-snackbar {
-  background-color: #f44336 !important; /* Crvena boja za grešku */
-  color: white;
+  @apply bg-error text-error-content;
+}
 
+.cdk-overlay-pane {
+  .mat-mdc-select-panel,
+  .mdc-menu-surface {
+    @apply bg-base-100 text-base-content;
+  }
+}
+
+.mat-mdc-option {
+  @apply text-base-content #{!important};
+
+  &:hover:not(.mdc-list-item--disabled),
+  &:focus:not(.mdc-list-item--disabled),
+  &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    @apply bg-base-200 #{!important};
+  }
+
+  .mdc-list-item__primary-text {
+    @apply text-base-content #{!important};
+  }
+}
+
+.mat-mdc-select-panel .mat-mdc-optgroup-label {
+  @apply text-base-content/70;
+}
+
+.mat-mdc-dialog-surface {
+  @apply bg-base-100 text-base-content #{!important};
+}
+
+.ngx-mat-select-search {
+  @apply bg-base-100 #{!important};
+
+  input {
+    @apply bg-base-100 text-base-content caret-secondary #{!important};
+
+    &::placeholder {
+      @apply text-base-content/50 #{!important};
+    }
+  }
+}
+
+.mat-mdc-form-field {
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    @apply bg-base-200 #{!important};
+  }
+
+  .mat-mdc-floating-label {
+    @apply text-base-content/70 #{!important};
+  }
+
+  .mat-mdc-select-value-text {
+    @apply text-base-content #{!important};
+  }
+
+  .mat-mdc-select-arrow {
+    color: oklch(var(--s)) !important;
+  }
+
+  .mdc-line-ripple::after {
+    border-bottom-color: oklch(var(--s)) !important;
+  }
 }

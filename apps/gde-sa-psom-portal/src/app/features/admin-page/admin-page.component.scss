@@ -1,4 +1,15 @@
+:host {
+  display: block;
+}
 
-.app-container{
-    max-width: 100% !important;
+:host ::ng-deep .app-container {
+  max-width: 100% !important;
+}
+
+.admin-nav-active {
+  @apply bg-secondary/15 text-secondary font-semibold;
+
+  svg {
+    @apply text-secondary;
+  }
 }

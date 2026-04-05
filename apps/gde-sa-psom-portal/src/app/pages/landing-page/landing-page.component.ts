@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import AOS from 'aos';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -14,6 +14,8 @@ import { VetClinicsStore } from '../../shared/store/vetclinics.store';
   imports: [CommonModule, CardComponent,TranslocoModule],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class LandingPageComponent {
   spotsStore = inject(SpotsStore);

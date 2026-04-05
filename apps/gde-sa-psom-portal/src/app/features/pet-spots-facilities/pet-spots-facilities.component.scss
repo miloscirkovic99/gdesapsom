@@ -1,34 +1,11 @@
-
-@use '../../../../public/styles/checkboxes';
-::ng-deep{
-    .mat-select-search-input{
-        @apply bg-white #{!important};
-    }
-    .mat-select-search-clear{
-        @apply top-1 #{!important};
-    }
-    .mat-mdc-form-field-subscript-wrapper{
-        @apply hidden;
-    }
-}
-.pet-spots-container{
-@apply p-12 min-h-screen;
-    .filter-wrapper{
-        @apply grid gap-10 place-content-center place-items-center mb-3;
-        .select-wrapper{
-            @apply flex items-start gap-8 max-lg:flex-col max-md:items-center;
-            form{
-                @apply max-md:flex-col;
-            }
-        }
-    }
-    .form{
-        @apply grid gap-8;
-        .drop-down-wrapper{
-            @apply flex items-start gap-8 max-lg:flex-col max-md:items-center;
-        }
-    }
-    .spots-container{
-        @apply grid gap-8;
-    }
+::ng-deep {
+  .mat-select-search-input {
+    @apply bg-base-100 #{!important};
+  }
+  .mat-select-search-clear {
+    @apply top-1 #{!important};
+  }
+  .mat-mdc-form-field-subscript-wrapper {
+    @apply hidden;
+  }
 }

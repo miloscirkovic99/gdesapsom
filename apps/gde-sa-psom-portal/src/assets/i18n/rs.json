@@ -157,5 +157,21 @@
   "pwa_install_later": "Kasnije",
   "pwa_install_now": "Instaliraj",
   "pwa_install_info": "Možeš instalirati i kasnije iz menija pregledača",
-  "pwa_offline_access":"Offline pristup"
+  "pwa_offline_access":"Offline pristup",
+  "send_message": "Pošalji poruku",
+  "no_results": "Nema rezultata",
+  "admin": "Admin",
+  "ios": "iOS",
+  "city_name": "Ime grada",
+  "country": "Država",
+  "edit_location": "Izmeni lokaciju",
+  "add_city": "Dodaj grad",
+  "ios_instructions": "iOS uputstva",
+  "add_spot": "Dodajte pet-friendly objekat",
+  "add_park": "Dodajte park za kućne ljubimce",
+  "back": "Nazad",
+  "setting_spots": "Upravljanje objektima",
+  "pending_spots": "Objekti na čekanju",
+  "townships": "Opštine",
+  "logout": "Odjavi se"
 }

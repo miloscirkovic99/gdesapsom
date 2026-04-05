@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { VetClinicsStore } from '../../shared/store/vetclinics.store';
@@ -28,6 +28,8 @@ import { filterTownshipsMulti } from '../../shared/utils/township.util';
   ],
   templateUrl: './veterinary-clinics.component.html',
   styleUrl: './veterinary-clinics.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class VeterinaryClinicsComponent {
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);

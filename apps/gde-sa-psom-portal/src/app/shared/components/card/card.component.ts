@@ -1,7 +1,6 @@
-import { Component, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DialogService } from '../../../core/services/dialog.service';
-import { SpotDetailsComponent } from '../../dialogs/spot-details/spot-details.component';
+import { Router } from '@angular/router';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
@@ -11,9 +10,11 @@ import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot
   imports: [CommonModule,TranslocoModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class CardComponent {
-  dialogService = inject(DialogService);
+  private router = inject(Router);
 
   data=input<any>();
   isLoading=input();
@@ -29,11 +30,10 @@ export class CardComponent {
 
 
   ngAfterViewChecked() {
-    AOS.refresh(); // Trigger AOS refresh after DOM updates    
+    AOS.refresh();
   }
   openDialog(data:any){
-    this.dialogService.openDialog(SpotDetailsComponent, data);
-
+    this.router.navigate(['/spots', data.iuo_id || 0], { state: { spot: data } });
   }
   onAction(data:any,action:string){
     const actions={

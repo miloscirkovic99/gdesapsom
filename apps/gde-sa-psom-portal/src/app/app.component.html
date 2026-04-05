@@ -1,28 +1,29 @@
+<a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] btn btn-primary btn-sm" href="#main-content">
+  Skip to content
+</a>
 <app-navbar></app-navbar>
-<div class="app-container">
-  <router-outlet></router-outlet>
-  @if(!isAdminMode()){
-
-  <app-contact-form></app-contact-form>
+<main id="main-content" class="min-h-screen">
+  @if (!isAdminMode()) {
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <router-outlet></router-outlet>
+    </div>
+  } @else {
+    <router-outlet></router-outlet>
   }
-</div>
-<app-footer></app-footer>
+</main>
+@if (!isAdminMode()) {
+  <app-contact-form></app-contact-form>
+  <app-footer></app-footer>
+}
 <app-pwa-install-dialog></app-pwa-install-dialog>
 @if (showTopButton) {
-<button class="go-to-top" (click)="scrollToTop()">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke-width="1.5"
-    stroke="currentColor"
-    class="size-6 text-white"
+  <button
+    class="fixed bottom-6 right-6 btn btn-secondary btn-circle shadow-lg z-40 hover:scale-110 transition-transform"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
   >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"
-    />
-  </svg>
-</button>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+    </svg>
+  </button>
 }

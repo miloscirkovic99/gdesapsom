@@ -1,7 +1,7 @@
 <h1
-  class="text-2xl text-black font-bold px-8 py-4 flex items-center justify-between gap-10"
+  class="text-2xl text-base-content font-bold px-8 py-4 flex items-center justify-between gap-10"
 >
-  {{ data.isEdit ? 'Izmeni lokaciju' : ('suggest_spot' | transloco) }}
+  {{ data.isEdit ? ('edit_location' | transloco) : ('suggest_spot' | transloco) }}
   <svg
     (click)="onNoClick()"
     xmlns="http://www.w3.org/2000/svg"
@@ -346,11 +346,11 @@
 }
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button class="btn btn_error" (click)="onNoClick()">
+  <button class="btn btn-error btn-outline" (click)="onNoClick()">
     {{ 'close' | transloco }}
   </button>
   <button
-    class="h-12 btn_primary"
+    class="h-12 btn btn-secondary"
     [disabled]="disableButton()"
     (click)="onSaveClick()"
   >

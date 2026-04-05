@@ -158,5 +158,21 @@
   "pwa_install_later": "Later",
   "pwa_install_now": "Install",
   "pwa_install_info": "You can install later from the browser menu",
-  "pwa_offline_access":"Offline access"
+  "pwa_offline_access":"Offline access",
+  "send_message": "Send message",
+  "no_results": "No results found",
+  "admin": "Admin",
+  "ios": "iOS",
+  "city_name": "City name",
+  "country": "Country",
+  "edit_location": "Edit location",
+  "add_city": "Add city",
+  "ios_instructions": "iOS Instructions",
+  "add_spot": "Add a pet-friendly spot",
+  "add_park": "Add a pet-friendly park",
+  "back": "Back",
+  "setting_spots": "Manage spots",
+  "pending_spots": "Pending spots",
+  "townships": "Townships",
+  "logout": "Logout"
 }

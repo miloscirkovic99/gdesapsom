@@ -1,42 +1,10 @@
 ::ng-deep {
-
-  .mat-mdc-dialog-inner-container{
-    
-    @apply rounded-xl;
-  }
-  .mat-mdc-dialog-surface{
+  .mat-mdc-dialog-surface {
     border-radius: 12px !important;
-  }
-  .mdc-dialog--open .mat-mdc-dialog-inner-container {
-    
-    @apply m-3;
-  }
-  .mat-mdc-dialog-content{
-    @apply grid gap-4;
-  }
-  .carousel-image {
-    @apply w-full h-96 rounded-xl;
+    @apply bg-base-100;
   }
 
-  .spot-details-wrapper{
-    @apply grid gap-2  p-4 rounded-xl shadow-xl;
-    p{
-      @apply text-xl font-medium;
-    }
-    .aditional-wrapper{
-      @apply grid gap-3 mb-4 pl-3;
-      p{
-        @apply text-lg font-medium;
-        a{
-          @apply text-blue-600 link-hover link;
-        }
-      }
-    }
+  .mat-mdc-dialog-content {
+    max-height: 70vh;
   }
-  .carousel-image{
-    @apply w-full h-80;
-  }
-}
-.spot-details-container{
-  @apply grid gap-4 mb-5;
 }

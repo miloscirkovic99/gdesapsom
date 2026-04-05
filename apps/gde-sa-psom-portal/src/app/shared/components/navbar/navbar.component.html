@@ -1,78 +1,78 @@
-<nav class="relative flex items-center justify-around px-4 py-2 shadow-xl">
-  <div class="navbar-left">
+<nav class="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-3 sm:px-4 lg:px-8 min-h-[56px] sm:min-h-[64px]">
+  <!-- Logo -->
+  <div class="navbar-start">
     <img
-      routerLink=""
+      routerLink="/"
       src="assets/logo-small.png"
-      alt="Logo"
-      class="h-28 rounded-full"
+      alt="Gde sa psom"
+      class="h-10 w-10 sm:h-16 sm:w-16 rounded-full cursor-pointer object-cover hover:opacity-80 transition-opacity"
       loading="lazy"
     />
   </div>
 
-  <!-- Center Navigation Links -->
-  <div class="navbar-center hidden md:flex space-x-6 items-center">
-    <a routerLink=""> {{ 'home' | transloco }} </a>
-    <a [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
-    <ul class="menu menu-horizontal">
+  <!-- Desktop Navigation -->
+  <div class="navbar-center hidden md:flex">
+    <ul class="menu menu-horizontal gap-1 font-body text-base">
+      <li>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="rounded-lg">
+          {{ 'home' | transloco }}
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="routeConstants.about" routerLinkActive="active" class="rounded-lg">
+          {{ 'about' | transloco }}
+        </a>
+      </li>
       <li>
         <details>
-          <summary>{{ 'explore_pet_spots_link' | transloco }}</summary>
-          <ul class="rounded-t-none p-2 w-72">
+          <summary class="rounded-lg">{{ 'explore_pet_spots_link' | transloco }}</summary>
+          <ul class="rounded-lg bg-base-100 shadow-lg w-64 p-2 z-50">
             <li>
-              <a [routerLink]="routeConstants.allSpots">
+              <a [routerLink]="routeConstants.allSpots" routerLinkActive="active" class="rounded-lg">
                 {{ 'find_pet_spots' | transloco }}
               </a>
             </li>
             <li>
-              <a [routerLink]="routeConstants.petParks">
+              <a [routerLink]="routeConstants.petParks" routerLinkActive="active" class="rounded-lg">
                 {{ 'find_pet_parks' | transloco }}
               </a>
             </li>
             <li>
-              <a [routerLink]="routeConstants.vet_clinics">
-                {{"search_vet_clinics" | transloco}}
+              <a [routerLink]="routeConstants.vet_clinics" routerLinkActive="active" class="rounded-lg">
+                {{ 'search_vet_clinics' | transloco }}
               </a>
             </li>
           </ul>
         </details>
       </li>
+      @if (authService.isAuthenticated()) {
+        <li>
+          <a [routerLink]="routeConstants.admin" routerLinkActive="active" class="rounded-lg">
+            {{ 'admin' | transloco }}
+          </a>
+        </li>
+      }
     </ul>
-
-
-
-
-    @if(authService.isAuthenticated()){
-
-    <a [routerLink]="routeConstants.admin"> Admin </a>
-    }
   </div>
-  <!-- Right Buttons -->
-  <div class="navbar-right flex items-center space-x-4">
-    <button (click)="openDialog()" class="btn hidden md:block btn_primary">
-      {{ 'suggest_spot' | transloco }}
-    </button>
-    <button
-      #hamburgerBtn
-      class="hamburger-btn md:hidden text-gray-700 hover:bg-primary_green"
-      (click)="toggleMenu()"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="size-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
-        />
-      </svg>
-    </button>
 
-    <label (click)="toggleTheme()" class="swap swap-rotate">
+  <!-- Right Actions -->
+  <div class="navbar-end flex items-center gap-1 sm:gap-2">
+    <!-- Suggest Spot/Park Dropdown (Desktop) -->
+    <div class="dropdown dropdown-bottom dropdown-end hidden md:block">
+      <div tabindex="0" role="button" class="btn btn-secondary btn-sm">
+        {{ 'suggest_spot' | transloco }}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-lg shadow-lg z-[1] w-52 p-2">
+        <li><a (click)="navigateToAddSpot()">{{ 'add_spot' | transloco }}</a></li>
+        <li><a (click)="navigateToAddPark()">{{ 'add_park' | transloco }}</a></li>
+      </ul>
+    </div>
+
+    <!-- Theme Toggle -->
+    <label class="swap swap-rotate btn btn-ghost btn-sm btn-circle" aria-label="Toggle theme">
       <input
         type="checkbox"
         (click)="toggleTheme()"
@@ -80,102 +80,107 @@
         class="theme-controller"
         [value]="themeColor"
       />
-
-      <svg
-        class="swap-off fill-current w-6 h-6"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
-        />
+      <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
       </svg>
-
-      <svg
-        class="swap-on fill-current w-6 h-6"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
-        />
+      <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
       </svg>
     </label>
 
+    <!-- Language Dropdown -->
     <div class="dropdown dropdown-bottom dropdown-end z-50">
-      <div tabindex="0" role="button" class="btn m-1">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"
-          />
+      <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle" aria-label="Change language">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
         </svg>
       </div>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-      >
-        <li (click)="switchLanguage('rs')"><a>Srb</a></li>
-        <li (click)="switchLanguage('en')"><a>Eng</a></li>
+      <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-lg shadow-lg z-[1] w-36 p-2">
+        <li (click)="switchLanguage('rs')"><a class="rounded-lg">🇷🇸 Srpski</a></li>
+        <li (click)="switchLanguage('en')"><a class="rounded-lg">🇬🇧 English</a></li>
       </ul>
     </div>
-  </div>
 
-  <!-- Mobile Menu -->
-  <div #mobileMenu *ngIf="menuOpen" class="mobile-menu">
-    <ul class="space-y-4 text-sm">
-      <li (click)="toggleMenu()">
-        <a routerLink="" class="link_default"> {{ 'home' | transloco }} </a>
-      </li>
-      <li (click)="toggleMenu()">
-        <a class="link_default" [routerLink]="routeConstants.about"> {{ 'about' | transloco }} </a>
-      </li>
-
-      <ul class="menu menu-horizontal">
-        <li>
-          <details>
-            <summary>{{ 'explore_pet_spots_link' | transloco }}</summary>
-            <ul class="rounded-t-none p-2 w-64">
-              <li (click)="toggleMenu()">
-                <a  [routerLink]="routeConstants.allSpots">
-                  {{ 'find_pet_spots' | transloco }}
-                </a>
-              </li>
-              <li (click)="toggleMenu()">
-                <a [routerLink]="routeConstants.petParks"
-                  >{{ 'find_pet_parks' | transloco }}
-                </a>
-              </li>
-              <li (click)="toggleMenu()">
-                <a [routerLink]="routeConstants.vet_clinics">
-                  {{"search_vet_clinics" | transloco}}
-                </a>
-              </li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-      @if(authService.isAuthenticated()){
-
-      <li (click)="toggleMenu()">
-        <a class="link_default" [routerLink]="routeConstants.admin">Admin </a>
-      </li>
+    <!-- Mobile Hamburger -->
+    <button
+      #hamburgerBtn
+      class="btn btn-ghost btn-sm btn-circle md:hidden"
+      (click)="toggleMenu()"
+      aria-label="Open menu"
+    >
+      @if (menuOpen) {
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5" />
+        </svg>
       }
-      <!-- Add Buttons to Mobile Menu -->
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu (outside nav, full-width overlay) -->
+@if (menuOpen) {
+  <div
+    #mobileMenu
+    class="fixed inset-x-0 top-[56px] sm:top-[64px] bottom-0 bg-base-100/95 backdrop-blur-lg z-50 md:hidden overflow-y-auto animate-fade-in"
+  >
+    <ul class="menu menu-lg p-6 gap-1 w-full">
+      <li (click)="toggleMenu()">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="rounded-xl py-3 text-lg">
+          {{ 'home' | transloco }}
+        </a>
+      </li>
+      <li (click)="toggleMenu()">
+        <a [routerLink]="routeConstants.about" routerLinkActive="active" class="rounded-xl py-3 text-lg">
+          {{ 'about' | transloco }}
+        </a>
+      </li>
+
+      <div class="divider my-1 opacity-30"></div>
+
+      <li class="menu-title text-xs uppercase tracking-wider text-base-content/40 px-4">
+        {{ 'explore_pet_spots_link' | transloco }}
+      </li>
+      <li (click)="toggleMenu()">
+        <a [routerLink]="routeConstants.allSpots" routerLinkActive="active" class="rounded-xl py-3 text-lg">
+          {{ 'find_pet_spots' | transloco }}
+        </a>
+      </li>
+      <li (click)="toggleMenu()">
+        <a [routerLink]="routeConstants.petParks" routerLinkActive="active" class="rounded-xl py-3 text-lg">
+          {{ 'find_pet_parks' | transloco }}
+        </a>
+      </li>
+      <li (click)="toggleMenu()">
+        <a [routerLink]="routeConstants.vet_clinics" routerLinkActive="active" class="rounded-xl py-3 text-lg">
+          {{ 'search_vet_clinics' | transloco }}
+        </a>
+      </li>
+
+      @if (authService.isAuthenticated()) {
+        <div class="divider my-1 opacity-30"></div>
+        <li (click)="toggleMenu()">
+          <a [routerLink]="routeConstants.admin" routerLinkActive="active" class="rounded-xl py-3 text-lg">
+            {{ 'admin' | transloco }}
+          </a>
+        </li>
+      }
+
+      <div class="divider my-1 opacity-30"></div>
 
       <li (click)="toggleMenu()">
-        <button class="accommodation_btn" (click)="openDialog()">
-          {{ 'suggest_spot' | transloco }}
+        <button (click)="navigateToAddSpot()" class="btn btn-secondary w-full text-base">
+          {{ 'add_spot' | transloco }}
+        </button>
+      </li>
+      <li class="mt-2" (click)="toggleMenu()">
+        <button (click)="navigateToAddPark()" class="btn btn-outline btn-secondary w-full text-base">
+          {{ 'add_park' | transloco }}
         </button>
       </li>
     </ul>
   </div>
-</nav>
+}
