@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
@@ -11,6 +11,7 @@ import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs
   imports: [CommonModule, CardComponent, TranslocoModule],
   templateUrl: './setting-spots.component.html',
   styleUrl: './setting-spots.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingSpotsComponent {
   spotsStore = inject(SpotsStore);

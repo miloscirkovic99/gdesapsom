@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ContactFormService } from './contact-form.service';
@@ -9,6 +9,7 @@ import { TranslocoModule } from '@ngneat/transloco';
   imports: [CommonModule,ReactiveFormsModule,TranslocoModule],
   templateUrl: './contact-form.component.html',
   styleUrl: './contact-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactFormComponent {
   contactForm: FormGroup;

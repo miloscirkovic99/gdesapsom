@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   signal,
@@ -14,6 +15,7 @@ import { TranslocoModule } from '@ngneat/transloco';
   imports: [CommonModule, TranslocoModule],
   templateUrl: './pwa-install-dialog.component.html',
   styleUrl: './pwa-install-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   isOpen = signal(false);
@@ -23,6 +25,15 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   isIOS = signal(false);
   private deferredPrompt: any;
   readonly PWA_FIRST_VISIT_KEY = 'pwa_first_visit';
+  private beforeInstallHandler = (e: Event) => {
+    e.preventDefault();
+    this.deferredPrompt = e;
+    this.canInstall.set(true);
+  };
+  private appInstalledHandler = () => {
+    localStorage.setItem('pwa_installed', 'true');
+    this.closeDialog();
+  };
 
   ngOnInit() {
     this.detectPlatform();
@@ -31,7 +42,8 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Cleanup
+    window.removeEventListener('beforeinstallprompt', this.beforeInstallHandler);
+    window.removeEventListener('appinstalled', this.appInstalledHandler);
   }
 
   private detectPlatform(): void {
@@ -51,17 +63,8 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   }
 
   private setupInstallPrompt(): void {
-    window.addEventListener('beforeinstallprompt', (e: any) => {
-      e.preventDefault();
-      this.deferredPrompt = e;
-      this.canInstall.set(true);
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('✅ PWA je instalirana');
-      localStorage.setItem('pwa_installed', 'true');
-      this.closeDialog();
-    });
+    window.addEventListener('beforeinstallprompt', this.beforeInstallHandler);
+    window.addEventListener('appinstalled', this.appInstalledHandler);
   }
 
   @HostListener('document:keydown.escape')

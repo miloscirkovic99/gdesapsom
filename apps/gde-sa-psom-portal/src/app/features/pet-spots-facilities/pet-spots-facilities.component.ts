@@ -91,7 +91,7 @@ export class PetSpotsFacilitiesComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
-    this.form.get('word')?.valueChanges.subscribe((result)=>{      
+    this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{      
       this.formData(true,result);
     })
   }

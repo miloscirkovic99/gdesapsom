@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-cookie-page',
   imports: [CommonModule, TranslocoModule],
   templateUrl: './cookie-page.component.html',
   styleUrl: './cookie-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CookiePageComponent {
   sanitizedCookieNecessary: any;
   sanitizedCookieAnalytics: any;
   sanitizedCookieControlDescription: any;
-  private langChangeSubscription!: Subscription;
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -23,7 +24,7 @@ export class CookiePageComponent {
 
   ngOnInit(): void {
     this.setupSanitizedText();
-    this.translocoService.langChanges$.subscribe(() => {
+    this.translocoService.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       setTimeout(() => {
         this.setupSanitizedText();
       }, 100);
@@ -50,10 +51,5 @@ export class CookiePageComponent {
       sanitizedCookieNecessary
     );
   }
-  ngOnDestroy(): void {
-    // Unsubscribe from the langChange observable to avoid memory leaks
-    if (this.langChangeSubscription) {
-      this.langChangeSubscription.unsubscribe();
-    }
-  }
+  ngOnDestroy(): void {}
 }

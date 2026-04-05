@@ -42,7 +42,6 @@ export const appConfig: ApplicationConfig = {
       scrollPositionRestoration: 'top',
     }),),
     provideNgcCookieConsent(cookieConfig),
-    provideHttpClient(),
     importProvidersFrom(BrowserAnimationsModule),
      provideServiceWorker('ngsw-worker.js', {
       enabled:true,

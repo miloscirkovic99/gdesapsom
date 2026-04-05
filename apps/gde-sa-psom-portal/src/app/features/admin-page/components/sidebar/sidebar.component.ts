@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { SidebarService } from './sidebar.service';
@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { take } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../auth/auth.service';
 
 @Component({
@@ -14,6 +15,7 @@ import { AuthService } from '../../../auth/auth.service';
   imports: [CommonModule, MatSidenavModule, RouterModule, MatIconModule,MatListModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
   drawerMode: 'side' | 'over' = 'side';
@@ -22,9 +24,11 @@ export class SidebarComponent {
   private authService=inject(AuthService)
   navigationButtons=signal<any>(this.sidebarService.navigationRoutes);
   private router=inject(Router)
+  private destroyRef = inject(DestroyRef);
   constructor(private breakpointObserver: BreakpointObserver) {
     this.breakpointObserver
       .observe(['(max-width: 1000px)'])
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         this.drawerMode = result.matches ? 'over' : 'side';
         if (!result.matches) {

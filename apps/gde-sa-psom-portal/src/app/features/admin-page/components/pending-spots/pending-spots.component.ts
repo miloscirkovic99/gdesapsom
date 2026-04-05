@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Subject, take, takeUntil } from 'rxjs';
@@ -13,6 +13,7 @@ import { ParksStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/parks.s
   imports: [CommonModule, CardComponent],
   templateUrl: './pending-spots.component.html',
   styleUrl: './pending-spots.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PendingSpotsComponent {
   private destroyed$ = new Subject<void>();

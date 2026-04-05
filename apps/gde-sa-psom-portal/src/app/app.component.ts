@@ -1,9 +1,10 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import AOS from 'aos';
 import { filter, Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ContactFormComponent } from './shared/components/contact-form/contact-form.component';
 import {
   NgcCookieConsentService,
@@ -27,6 +28,7 @@ import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/p
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   title = 'gde-sa-psom-portal';
@@ -35,6 +37,7 @@ export class AppComponent {
   private readonly pushNotificationService = inject(PushNotificationService);
   private readonly versionUpdateService = inject(VersionUpdateService);
   isAdminMode = signal(false);
+  private destroyRef = inject(DestroyRef);
   private statusChangeSubscription!: Subscription;
   showTopButton=false;
 
@@ -53,7 +56,7 @@ export class AppComponent {
     // this.pushNotificationService.subscribeToNotifications();
 
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         if (result.url.includes('admin')) {
           this.isAdminMode.set(true);

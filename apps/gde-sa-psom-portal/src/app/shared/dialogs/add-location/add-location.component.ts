@@ -1,4 +1,4 @@
-import { Component, effect, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -52,8 +52,9 @@ import { filterTownshipsMulti } from '../../utils/township.util';
   ],
   templateUrl: './add-location.component.html',
   styleUrl: './add-location.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddSpotComponent {
+export class AddSpotComponent implements OnDestroy {
   readonly dialogRef = inject(MatDialogRef<AddSpotComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   @ViewChild('multiSelect', { static: true }) multiSelect!: MatSelect;
@@ -81,7 +82,7 @@ export class AddSpotComponent {
   selectedType: string = 'spot'; // Default to Spot
 
   constructor(private fb: FormBuilder) {
-    this.dialogRef.keydownEvents().subscribe((event: KeyboardEvent) => {
+    this.dialogRef.keydownEvents().pipe(takeUntil(this.destroyed$)).subscribe((event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         this.onNoClick();
       }
@@ -227,5 +228,9 @@ export class AddSpotComponent {
       };
       this.data.onSave(dataOnSave);
     }
+  }
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

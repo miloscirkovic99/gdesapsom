@@ -1,5 +1,6 @@
 import { MatMenuModule } from '@angular/material/menu';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -27,6 +28,7 @@ import { AuthService } from '../../../features/auth/auth.service';
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   menuOpen = false;

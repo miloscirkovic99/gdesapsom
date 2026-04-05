@@ -1,4 +1,4 @@
-import { Component, importProvidersFrom, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {
@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet'; // Import Leaflet
 import 'leaflet-control-geocoder'; // Import geocoder control if using
 import { TranslocoModule } from '@ngneat/transloco';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
 @Component({
   selector: 'app-spot-details',
@@ -31,6 +32,7 @@ import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot
   ],
   templateUrl: './spot-details.component.html',
   styleUrl: './spot-details.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpotDetailsComponent {
   private map: L.Map | undefined;
@@ -40,9 +42,11 @@ export class SpotDetailsComponent {
   descriptionToKeyMap= descriptionToKeyMap;
   descriptionToKeyMapSpot=descriptionToKeyMapSpot;
   descriptionToKeyMapGarden=descriptionToKeyMapGarden
+  private destroyRef = inject(DestroyRef);
 constructor(){
   this.dialogRef
   .keydownEvents()
+  .pipe(takeUntilDestroyed(this.destroyRef))
   .subscribe((event: KeyboardEvent) => {
   
     if (event.key === 'Escape') {

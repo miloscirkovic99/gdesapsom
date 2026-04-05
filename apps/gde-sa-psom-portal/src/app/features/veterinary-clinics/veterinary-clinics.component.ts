@@ -55,6 +55,7 @@ export class VeterinaryClinicsComponent {
     });
     // listen for search field value changes
     this.townshipMultiFilterCtrl.valueChanges
+      .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.filterTownshipsMulti();
       });
@@ -64,7 +65,7 @@ export class VeterinaryClinicsComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townshipsByCity().slice());
       }
     });
-    this.form.get('word')?.valueChanges.subscribe((result)=>{
+    this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{
       this.formData(true,result);
     })
   }

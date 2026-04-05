@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -28,6 +28,7 @@ import { SharedStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/shared
   ],
   templateUrl: './setting-township.component.html',
   styleUrls: ['./setting-township.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingTownshipComponent implements OnInit, OnDestroy {
   private destroyed$ = new ReplaySubject<boolean>(1);
