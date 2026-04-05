@@ -7,7 +7,7 @@
         <div class="label">
           <span class="label-text">{{ 'your_email' | transloco }}</span>
         </div>
-        <input type="email" id="email" formControlName="email" class="input input-bordered w-full" placeholder="name@domain.com" required />
+        <input type="email" id="email" formControlName="email" class="input input-bordered w-full" [placeholder]="'email_placeholder' | transloco" required />
       </label>
 
       <label class="form-control w-full">

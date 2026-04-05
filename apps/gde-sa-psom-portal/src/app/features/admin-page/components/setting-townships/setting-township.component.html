@@ -21,7 +21,7 @@
             [placeholder]="'select_city' | transloco"
             [multiple]="false"
           >
-            <mat-option [value]="null">None</mat-option>
+            <mat-option [value]="null">{{ 'none_option' | transloco }}</mat-option>
             <mat-option>
               <ngx-mat-select-search
                 [placeholderLabel]="'search' | transloco"
@@ -66,7 +66,7 @@
         <mat-form-field>
           <mat-label>{{ 'country' | transloco }}</mat-label>
           <mat-select formControlName="drz_id">
-            <mat-option [value]="null">None</mat-option>
+            <mat-option [value]="null">{{ 'none_option' | transloco }}</mat-option>
             @for (state of sharedStore.state(); track state) {
               <mat-option [value]="state.drz_id">{{ state.drz_naziv }}</mat-option>
             }

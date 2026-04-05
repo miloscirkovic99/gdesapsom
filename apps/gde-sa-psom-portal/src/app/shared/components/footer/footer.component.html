@@ -39,7 +39,7 @@
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-base-content/50">
       <span>
-        Designed & Developed by
+        {{ 'footer_credit' | transloco }}
         <a
           class="link link-hover text-secondary"
           referrerpolicy="no-referrer"
@@ -48,7 +48,7 @@
           rel="noopener noreferrer"
         >Miloš Ćirković</a>
       </span>
-      <span>© 2021–{{ date }} gdesapsom.com. All Rights Reserved.</span>
+      <span>© 2021–{{ date }} {{ 'footer_copyright' | transloco }}</span>
     </div>
   </div>
 </footer>
