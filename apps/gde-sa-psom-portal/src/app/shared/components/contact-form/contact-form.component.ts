@@ -25,13 +25,12 @@ export class ContactFormComponent {
   onSubmit() {
     if (this.contactForm.valid) {
       const data={
-        email:this.contactForm.value.email,
-        subject:this.contactForm.value.subject,
-        message:'From: ' + this.contactForm.value.email + ' message: ' + this.contactForm.value.message
+        from: this.contactForm.value.email,
+        subject: this.contactForm.value.subject,
+        message: this.contactForm.value.message
       }
       this.contactFormService.sendEmail(data)
       this.contactForm.reset()
-      // Here you can handle the form submission
     }
   }
 }

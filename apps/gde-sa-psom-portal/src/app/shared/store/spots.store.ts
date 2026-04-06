@@ -162,7 +162,7 @@ export const SpotsStore = signalStore(
               showSuccess('success_add');
               if (environment.production) {
                 contactFormService.sendEmail({
-                  email: 'noreply@gdesapsom.com',
+                  from: 'noreply@gdesapsom.com',
                   subject: `Novi objekat ${form.iuo_ime}`,
                   message: 'New pet location to check on: gdesapsom.com',
                 });

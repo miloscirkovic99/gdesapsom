@@ -12,7 +12,7 @@ export class ContactFormService {
   private translocoService = inject(TranslocoService);
   constructor() {}
 
-  sendEmail(data: any) {
+  sendEmail(data: { from: string; subject: string; message: string }) {
     const translatedActionButton = this.translocoService.translate('close');
 
     this.http.post<any>('gmail', data).subscribe({

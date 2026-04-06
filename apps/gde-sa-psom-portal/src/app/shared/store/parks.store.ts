@@ -101,9 +101,9 @@ export const ParksStore = signalStore(
                 'success-snackbar'
               );
               const data={
-                email:'noreply@gdesapsom.com',
-                subject:`Novi park ${form.par_ime}`,
-                message:`${form.par_lokacija} ${form.par_ime}  check on: gdesapsom.com`
+                from: 'noreply@gdesapsom.com',
+                subject: `Novi park ${form.par_ime}`,
+                message: `${form.par_lokacija} ${form.par_ime}  check on: gdesapsom.com`
               }
               contactFormService.sendEmail(data)
             },
