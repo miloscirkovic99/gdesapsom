@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { SpotsStore } from '../../shared/store/spots.store';
@@ -23,6 +23,7 @@ import * as L from 'leaflet';
 export class SpotDetailPageComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
   private spotsStore = inject(SpotsStore);
   private map: L.Map | undefined;
 
@@ -56,7 +57,7 @@ export class SpotDetailPageComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/' + RouteConstants.allSpots]);
+    this.location.back();
   }
 
   private initializeMap(): void {
