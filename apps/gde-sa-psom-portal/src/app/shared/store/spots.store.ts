@@ -152,7 +152,7 @@ export const SpotsStore = signalStore(
             error: () => showError(),
           });
       },
-      suggestSpot(form: any) {
+      suggestSpot(form: any, onSuccess?: () => void, onError?: () => void) {
         http
           .post<unknown>('pet-friendly-spots/pending', form)
           .pipe(takeUntil(destroyed$))
@@ -167,8 +167,12 @@ export const SpotsStore = signalStore(
                   message: 'New pet location to check on: gdesapsom.com',
                 });
               }
+              onSuccess?.();
             },
-            error: () => showError(),
+            error: () => {
+              showError();
+              onError?.();
+            },
           });
       },
       updateSpot(form: any) {

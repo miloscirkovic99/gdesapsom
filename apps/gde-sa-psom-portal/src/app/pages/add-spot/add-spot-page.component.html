@@ -33,7 +33,11 @@
     <!-- Image Outside -->
     <div class="form-control w-full">
       <div class="label"><span class="label-text font-medium">{{ 'image_outside' | transloco }}</span></div>
-      @if (!imageSrc) {
+      @if (imageLoading() === 'iuo_slika') {
+        <div class="w-full h-48 sm:h-72 rounded-xl bg-base-300 animate-pulse flex items-center justify-center">
+          <span class="loading loading-spinner loading-md"></span>
+        </div>
+      } @else if (!imageSrc()) {
         <input type="file" class="file-input file-input-bordered w-full" accept="image/*"
           (change)="handleInputChange($event, 'iuo_slika')" />
         @if (spotForm.get('iuo_slika')?.errors?.['fileSize']) {
@@ -47,7 +51,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
-          <img [src]="imageSrc" alt="Image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
+          <img [src]="imageSrc()" alt="Image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
         </div>
       }
     </div>
@@ -55,7 +59,11 @@
     <!-- Image Inside -->
     <div class="form-control w-full">
       <div class="label"><span class="label-text font-medium">{{ 'image_inside' | transloco }}</span></div>
-      @if (!imageSrcAdditional) {
+      @if (imageLoading() === 'iuo_slika_unutra') {
+        <div class="w-full h-48 sm:h-72 rounded-xl bg-base-300 animate-pulse flex items-center justify-center">
+          <span class="loading loading-spinner loading-md"></span>
+        </div>
+      } @else if (!imageSrcAdditional()) {
         <input type="file" class="file-input file-input-bordered w-full" accept="image/*"
           (change)="handleInputChange($event, 'iuo_slika_unutra')" />
         @if (spotForm.get('iuo_slika_unutra')?.errors?.['fileSize']) {
@@ -69,7 +77,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
-          <img [src]="imageSrcAdditional" alt="Additional image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
+          <img [src]="imageSrcAdditional()" alt="Additional image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
         </div>
       }
     </div>
@@ -145,8 +153,11 @@
 
     <!-- Actions -->
     <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-4">
-      <button type="button" (click)="onCancel()" class="btn btn-ghost w-full sm:w-auto">{{ 'close' | transloco }}</button>
-      <button type="button" (click)="onSave()" [disabled]="spotForm.invalid" class="btn btn-secondary w-full sm:w-auto">
+      <button type="button" (click)="onCancel()" class="btn btn-ghost w-full sm:w-auto" [disabled]="submitting()">{{ 'close' | transloco }}</button>
+      <button type="button" (click)="onSave()" [disabled]="spotForm.invalid || submitting()" class="btn btn-secondary w-full sm:w-auto">
+        @if (submitting()) {
+          <span class="loading loading-spinner loading-sm"></span>
+        }
         {{ 'save' | transloco }}
       </button>
     </div>

@@ -1,4 +1,4 @@
-import { Component, effect, inject, ViewChild } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -61,8 +61,10 @@ export class AddSpotPageComponent {
   descriptionToKeyMapGarden = descriptionToKeyMapGarden;
 
   spotForm!: FormGroup;
-  imageSrc: string | null = null;
-  imageSrcAdditional: string | null = null;
+  imageSrc = signal<string | null>(null);
+  imageSrcAdditional = signal<string | null>(null);
+  imageLoading = signal<string | null>(null);
+  submitting = signal(false);
 
   constructor() {
     this.initSpotForm();
@@ -121,14 +123,16 @@ export class AddSpotPageComponent {
       control.updateValueAndValidity();
     }
 
+    this.imageLoading.set(controlName);
     const reader = new FileReader();
     reader.onload = (event: ProgressEvent<FileReader>) => {
       const base64 = event.target?.result as string;
       if (controlName === 'iuo_slika') {
-        this.imageSrc = base64;
+        this.imageSrc.set(base64);
       } else if (controlName === 'iuo_slika_unutra') {
-        this.imageSrcAdditional = base64;
+        this.imageSrcAdditional.set(base64);
       }
+      this.imageLoading.set(null);
     };
     reader.readAsDataURL(file);
   }
@@ -136,21 +140,26 @@ export class AddSpotPageComponent {
   removeImage(controlName: string) {
     this.spotForm.patchValue({ [controlName]: null });
     if (controlName === 'iuo_slika') {
-      this.imageSrc = null;
+      this.imageSrc.set(null);
     } else {
-      this.imageSrcAdditional = null;
+      this.imageSrcAdditional.set(null);
     }
   }
 
   onSave(): void {
     if (this.spotForm.valid) {
+      this.submitting.set(true);
       const formData = {
         ...this.spotForm.value,
-        iuo_slika: this.imageSrc,
-        iuo_slika_unutra: this.imageSrcAdditional,
+        iuo_slika: this.imageSrc(),
+        iuo_slika_unutra: this.imageSrcAdditional(),
       };
-      this.spotsStore.suggestSpot(formData);
-      this.router.navigate(['/' + RouteConstants.allSpots]);
+      this.spotsStore.suggestSpot(formData, () => {
+        this.submitting.set(false);
+        this.router.navigate(['/' + RouteConstants.allSpots]);
+      }, () => {
+        this.submitting.set(false);
+      });
     }
   }
 
