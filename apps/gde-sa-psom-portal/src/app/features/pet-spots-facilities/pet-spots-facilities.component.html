@@ -95,7 +95,7 @@
     <app-card
       [data]="spotsStore.spots()"
     ></app-card>
-    @if (spotsStore.spots().length !== spotsStore.totalResult() && spotsStore.spots().length) {
+    @if (spotsStore.spots().length < spotsStore.totalResult()) {
       <div class="flex justify-center">
         <button
           [disabled]="spotsStore.isLoading()"

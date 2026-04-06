@@ -181,5 +181,9 @@
   "signin_title": "Prijavite se na svoj nalog",
   "email_address": "Email adresa",
   "password": "Lozinka",
-  "signin_button": "Prijavi se"
+  "signin_button": "Prijavi se",
+  "spot_updated_success": "Lokacija je uspešno ažurirana.",
+  "spot_deleted_success": "Lokacija je uspešno obrisana.",
+  "spot_accepted_success": "Lokacija je uspešno prihvaćena.",
+  "spot_declined_success": "Lokacija na čekanju je uspešno odbijena."
 }
