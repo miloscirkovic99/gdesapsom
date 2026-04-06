@@ -10,7 +10,7 @@ export const appRoutes: Route[] = [
         (m) => m.LandingPageComponent
       );
     },
-    title:'Gde sa psom'
+    title:'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji'
 
   },
   {
@@ -21,7 +21,7 @@ export const appRoutes: Route[] = [
       );
     },
     data:["User"],
-    title:'Gde sa psom - Pet Spots'
+    title:'Pet-Friendly Restorani i Kafići u Srbiji - Gde sa psom'
 
   },
   {
@@ -31,7 +31,7 @@ export const appRoutes: Route[] = [
         (m) => m.VeterinaryClinicsComponent
       );
     },
-    title:'Gde sa psom - Vet clinics'
+    title:'Veterinarske Klinike i Ambulante u Srbiji - Gde sa psom'
 
   },
   {
@@ -41,7 +41,7 @@ export const appRoutes: Route[] = [
         (m) => m.PetParksComponent
       );
     },
-    title:'Gde sa psom - Pet Parks'
+    title:'Parkovi za Pse u Beogradu i Srbiji - Gde sa psom'
   },
   {
     path:RouteConstants.about,
@@ -50,7 +50,7 @@ export const appRoutes: Route[] = [
         (m) => m.AboutUsComponent
       );
     },
-    title:'Gde sa psom - About Us'
+    title:'O nama - Gde sa psom | Platforma za Vlasnike Ljubimaca'
   
   },
   {
@@ -60,7 +60,7 @@ export const appRoutes: Route[] = [
         (m) => m.CookiePageComponent
       );
     },
-    title:'Gde sa psom - Cookies Policy'
+    title:'Politika Kolačića - Gde sa psom'
   },
   {
     path: RouteConstants.addSpot,
@@ -69,7 +69,7 @@ export const appRoutes: Route[] = [
         (m) => m.AddSpotPageComponent
       );
     },
-    title: 'Gde sa psom - Add Spot'
+    title: 'Dodaj Pet-Friendly Objekat - Gde sa psom'
   },
   {
     path: RouteConstants.addPark,
@@ -78,7 +78,7 @@ export const appRoutes: Route[] = [
         (m) => m.AddParkPageComponent
       );
     },
-    title: 'Gde sa psom - Add Park'
+    title: 'Dodaj Park za Ljubimce - Gde sa psom'
   },
   {
     path: RouteConstants.spotDetail,
@@ -99,7 +99,7 @@ export const appRoutes: Route[] = [
    title:'Gde sa psom - Admin',
    children:[
     {
-      path: '', // This will be the default route for 'admin', automatically redirects to 'settingSpots'
+      path: '', 
       pathMatch: 'full',
       redirectTo: RouteConstants.settingSpots
     },

@@ -1,16 +1,17 @@
 {
-  "name": "Gde sa psom",
-  "short_name": "Gde Sa Psom",
-  "description": "Progressive Web App built with Angular 19 & Nx",
+  "name": "Gde sa psom - Pet-Friendly Mesta u Srbiji",
+  "short_name": "Gde sa psom",
+  "description": "Pronađite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Srbiji. Besplatna platforma za vlasnike ljubimaca.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0D542B",
   "background_color": "#ffffff",
-  "id": "angular-pwa-app",
-  "lang": "en",
+  "id": "gde-sa-psom",
+  "lang": "sr",
   "dir": "ltr",
+  "categories": ["lifestyle", "travel", "food"],
 
   "icons": [
      {

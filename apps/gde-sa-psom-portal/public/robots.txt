@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /spots/new
+Disallow: /parks/new
+
+Sitemap: https://www.gdesapsom.com/sitemap.xml
