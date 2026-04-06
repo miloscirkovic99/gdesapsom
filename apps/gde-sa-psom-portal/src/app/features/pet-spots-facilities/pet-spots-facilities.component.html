@@ -17,11 +17,11 @@
 
       <p class="text-base font-medium text-center text-base-content/60">{{ 'or_filters' | transloco }}</p>
 
-      <div class="flex flex-wrap items-start gap-4 justify-center">
+      <div class="flex flex-wrap items-start gap-4 justify-center max-sm:flex-col max-sm:w-full">
         <mat-form-field>
+          <mat-label>{{ 'select_city' | transloco }}</mat-label>
           <mat-select
             formControlName="ops_id"
-            [placeholder]="'select_city' | transloco"
             [multiple]="true"
             #multiSelect
             (selectionChange)="onSelectionChange('ops_id',$event)"

@@ -35,6 +35,7 @@ import {
 } from '../../shared/helpers/map.helpers';
 import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-pet-spots-facilities',
@@ -67,6 +68,7 @@ export class PetSpotsFacilitiesComponent {
 
   spotsStore = inject(SpotsStore);
   sharedStore = inject(SharedStore);
+  private route = inject(ActivatedRoute);
   form!: FormGroup;
 
   descriptionToKeyMap = descriptionToKeyMap;
@@ -91,6 +93,22 @@ export class PetSpotsFacilitiesComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
       }
     });
+
+    // Auto-apply spotType filter from query params (e.g. from landing page quick filters)
+    effect(() => {
+      const spotTypes = this.sharedStore.spotTypes();
+      if (spotTypes?.length) {
+        const spotTypeName = this.route.snapshot.queryParamMap.get('spotType');
+        if (spotTypeName) {
+          const match = spotTypes.find((t: any) => t.ime === spotTypeName);
+          if (match) {
+            this.form.patchValue({ ugo_id: match.id });
+            this.onSubmit(true);
+          }
+        }
+      }
+    });
+
     this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{      
       this.formData(true,result);
     })

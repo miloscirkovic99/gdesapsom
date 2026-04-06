@@ -185,5 +185,11 @@
   "spot_updated_success": "Pet-friendly location updated successfully.",
   "spot_deleted_success": "Pet-friendly location deleted successfully.",
   "spot_accepted_success": "Pet-friendly location accepted successfully.",
-  "spot_declined_success": "Pending location declined successfully."
+  "spot_declined_success": "Pending location declined successfully.",
+  "quick_filters_title": "What are you looking for?",
+  "filter_restaurants": "Restaurants",
+  "filter_cafes": "Cafés",
+  "filter_hotels": "Hotels",
+  "filter_parks": "Parks",
+  "filter_vet": "Vet"
 }

@@ -35,6 +35,24 @@
           {{ 'explore_pet_spots' | transloco }}
         </button>
 
+        <!-- Quick Filters -->
+        <div class="pt-8" data-aos="fade-up" data-aos-duration="600">
+          <p class="text-sm font-medium text-base-content/50 mb-3">
+            {{ 'quick_filters_title' | transloco }}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            @for (filter of quickFilters; track filter.label) {
+              <button
+                (click)="onQuickFilter(filter)"
+                class="quick-filter-chip"
+              >
+                <span>{{ filter.icon }}</span>
+                <span>{{ filter.label | transloco }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
         <!-- Stats -->
         <div class="py-16">
           <dl class="grid grid-cols-1 gap-x-8 gap-y-8 text-center lg:grid-cols-3">

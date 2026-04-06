@@ -9,3 +9,9 @@
     @apply hidden;
   }
 }
+
+@media (max-width: 639px) {
+  mat-form-field {
+    width: 100%;
+  }
+}

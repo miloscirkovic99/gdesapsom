@@ -41,7 +41,27 @@ export class LandingPageComponent {
     },
   ];
 
+  quickFilters = [
+    { label: 'filter_restaurants', icon: '🍽️', type: 'spot', spotType: 'Restoran' },
+    { label: 'filter_cafes', icon: '☕', type: 'spot', spotType: 'Kafić' },
+    { label: 'filter_hotels', icon: '🏨', type: 'spot', spotType: 'Hotel' },
+    { label: 'filter_parks', icon: '🌳', type: 'parks' },
+    { label: 'filter_vet', icon: '🐾', type: 'vet' },
+  ];
+
   navigateTo(route: any) {
     this.router.navigate([`${route}`]);
+  }
+
+  onQuickFilter(filter: any) {
+    if (filter.type === 'spot') {
+      this.router.navigate([`/${RouteConstants.allSpots}`], {
+        queryParams: { spotType: filter.spotType },
+      });
+    } else if (filter.type === 'parks') {
+      this.router.navigate([`/${RouteConstants.petParks}`]);
+    } else if (filter.type === 'vet') {
+      this.router.navigate([`/${RouteConstants.vet_clinics}`]);
+    }
   }
 }

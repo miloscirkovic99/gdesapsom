@@ -185,5 +185,11 @@
   "spot_updated_success": "Lokacija je uspešno ažurirana.",
   "spot_deleted_success": "Lokacija je uspešno obrisana.",
   "spot_accepted_success": "Lokacija je uspešno prihvaćena.",
-  "spot_declined_success": "Lokacija na čekanju je uspešno odbijena."
+  "spot_declined_success": "Lokacija na čekanju je uspešno odbijena.",
+  "quick_filters_title": "Šta tražite?",
+  "filter_restaurants": "Restorani",
+  "filter_cafes": "Kafići",
+  "filter_hotels": "Hoteli",
+  "filter_parks": "Parkovi",
+  "filter_vet": "Vet"
 }

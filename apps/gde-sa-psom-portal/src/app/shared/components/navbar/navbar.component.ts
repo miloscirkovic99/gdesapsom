@@ -32,10 +32,12 @@ import { AuthService } from '../../../features/auth/auth.service';
 })
 export class NavbarComponent {
   menuOpen = false;
+  suggestDropdownOpen = false;
   public themeColor: string = 'dark';
   routeConstants = RouteConstants;
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
+  @ViewChild('suggestDropdown') suggestDropdown: ElementRef | undefined;
   private languageService = inject(LanguageService);
   private router = inject(Router);
 
@@ -96,21 +98,46 @@ export class NavbarComponent {
         this.menuOpen = false;
       }
     }
+
+    // Close suggest dropdown on outside click
+    if (this.suggestDropdownOpen && this.suggestDropdown) {
+      if (!this.suggestDropdown.nativeElement.contains(event.target)) {
+        this.suggestDropdownOpen = false;
+      }
+    }
   }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
+  closeDropdowns(): void {
+    this.suggestDropdownOpen = false;
+    // Close DaisyUI tabindex dropdowns by removing focus
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    // Close any open <details> elements inside the navbar
+    const openDetails = document.querySelectorAll('nav details[open]');
+    openDetails.forEach((el) => el.removeAttribute('open'));
+  }
+
+  toggleSuggestDropdown(): void {
+    this.suggestDropdownOpen = !this.suggestDropdownOpen;
+  }
+
   openDialog() {
+    this.closeDropdowns();
     this.router.navigate(['/' + RouteConstants.addSpot]);
   }
 
   navigateToAddSpot(): void {
+    this.closeDropdowns();
     this.router.navigate(['/' + RouteConstants.addSpot]);
   }
 
   navigateToAddPark(): void {
+    this.closeDropdowns();
     this.router.navigate(['/' + RouteConstants.addPark]);
   }
 }
