@@ -12,29 +12,32 @@ export class ContactFormService {
   private translocoService = inject(TranslocoService);
   constructor() {}
 
-  sendEmail(data: { from: string; subject: string; message: string }) {
+  sendEmail(data: { from: string; subject: string; message: string,showSnackbar?: boolean }) {
     const translatedActionButton = this.translocoService.translate('close');
 
     this.http.post<any>('gmail', data).subscribe({
       next: (result) => {
         const translatedMessage =
           this.translocoService.translate('email_success');
-
-        this.snackbarService.openSnackbar(
-          translatedMessage,
-          translatedActionButton,
-          'success-snackbar'
-        );
+        if (data.showSnackbar) {
+          this.snackbarService.openSnackbar(
+            translatedMessage,
+            translatedActionButton,
+            'success-snackbar'
+          );
+        }
       },
       error: (err) => {
         const translatedMessage =
           this.translocoService.translate('error_global');
 
-        this.snackbarService.openSnackbar(
-          translatedMessage,
-          translatedActionButton,
-          'error-snackbar'
-        );
+        if (data.showSnackbar) {
+          this.snackbarService.openSnackbar(
+            translatedMessage,
+            translatedActionButton,
+            'error-snackbar'
+          );
+        }
       },
     });
   }

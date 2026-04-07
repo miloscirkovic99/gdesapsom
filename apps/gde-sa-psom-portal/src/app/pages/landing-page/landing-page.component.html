@@ -64,7 +64,7 @@
             </div>
             <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="800">
               <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ vetClinicsStore.totalCount() }}+
+                {{ vetClinicsStore.totalCount() > 0 ? vetClinicsStore.totalCount() + '+' : 0 }}
               </dd>
               <dt class="text-base text-base-content/60">{{ 'vet_clinics' | transloco }}</dt>
             </div>

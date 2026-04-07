@@ -103,7 +103,8 @@ export const ParksStore = signalStore(
               const data={
                 from: 'noreply@gdesapsom.com',
                 subject: `Novi park ${form.par_ime}`,
-                message: `${form.par_lokacija} ${form.par_ime}  check on: gdesapsom.com`
+                message: `${form.par_lokacija} ${form.par_ime}  check on: gdesapsom.com`,
+                showSnackbar: false,
               }
               contactFormService.sendEmail(data)
             },

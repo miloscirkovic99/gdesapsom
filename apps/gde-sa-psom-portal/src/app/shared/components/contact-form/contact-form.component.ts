@@ -27,7 +27,8 @@ export class ContactFormComponent {
       const data={
         from: this.contactForm.value.email,
         subject: this.contactForm.value.subject,
-        message: this.contactForm.value.message
+        message: this.contactForm.value.message,
+        showSnackbar: true
       }
       this.contactFormService.sendEmail(data)
       this.contactForm.reset()

@@ -47,6 +47,7 @@
   "cafe": "Kafić",
   "restaurant": "Restoran",
   "float": "Splav",
+  "bar": "Bar",
   "hotel": "Hotel",
   "motel": "Motel",
   "pub": "Pab",
@@ -191,5 +192,8 @@
   "filter_cafes": "Kafići",
   "filter_hotels": "Hoteli",
   "filter_parks": "Parkovi",
-  "filter_vet": "Vet"
+  "filter_vet": "Vet",
+  "share": "Podeli",
+  "copy_link": "Kopiraj link",
+  "link_copied": "Link kopiran u clipboard"
 }

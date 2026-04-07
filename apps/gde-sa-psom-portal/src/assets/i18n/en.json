@@ -47,6 +47,7 @@
   "cafe": "Café",
   "restaurant": "Restaurant",
   "float": "Raft",
+  "bar": "Bar",
   "hotel": "Hotel",
   "motel": "Motel",
   "pub": "Pub",
@@ -191,5 +192,8 @@
   "filter_cafes": "Cafés",
   "filter_hotels": "Hotels",
   "filter_parks": "Parks",
-  "filter_vet": "Vet"
+  "filter_vet": "Vet",
+  "share": "Share",
+  "copy_link": "Copy Link",
+  "link_copied": "Link copied to clipboard"
 }

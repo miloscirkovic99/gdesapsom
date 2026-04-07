@@ -139,6 +139,15 @@ export const SpotsStore = signalStore(
         )
       ),
 
+      getSpotById(id: string, onSuccess: (spot: any) => void, onError: () => void) {
+        http
+          .post<any>(`pet-friendly-spots/all/${id}`, { iuo_id: id })
+          .pipe(takeUntil(destroyed$))
+          .subscribe({
+            next: (response) => onSuccess(response?.spotsListSingle?.[0] ?? null),
+            error: () => onError(),
+          });
+      },
       randomSpots() {
         http
           .get<RandomSpotsResponse>('pet-friendly-spots/random')
@@ -165,6 +174,7 @@ export const SpotsStore = signalStore(
                   from: 'noreply@gdesapsom.com',
                   subject: `Novi objekat ${form.iuo_ime}`,
                   message: 'New pet location to check on: gdesapsom.com',
+                  showSnackbar: false,
                 });
               }
               onSuccess?.();
