@@ -1,0 +1,221 @@
+<div class="space-y-20 pb-20">
+  <!-- Hero Section -->
+  <section class="min-h-[70vh] flex items-center justify-center pt-16 md:pt-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center space-y-6">
+        <h1 class="font-display text-5xl md:text-6xl font-bold text-base-content leading-tight">
+          {{ 'business_hero_headline' | transloco }}
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-base-content/70 max-w-3xl mx-auto">
+          {{ 'business_hero_subheadline' | transloco }}
+        </p>
+        
+        <p class="text-lg text-base-content/60 max-w-2xl mx-auto">
+          {{ 'business_hero_description' | transloco }}
+        </p>
+
+        <!-- CTA Button -->
+        <div class="pt-8">
+          <button
+            (click)="navigateToAddSpot()"
+            class="btn btn-secondary btn-lg font-bold text-lg"
+            data-aos="zoom-in"
+          >
+            {{ 'business_cta_primary' | transloco }}
+          </button>
+          <p class="text-sm text-base-content/50 mt-4">
+            {{ 'business_reassurance' | transloco }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Join Section -->
+  <section class="py-20 bg-gradient-to-b from-secondary/5 to-transparent">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-display text-4xl md:text-5xl font-bold text-center mb-16">
+        {{ 'business_why_join_title' | transloco }}
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <!-- Benefit 1 -->
+        <div class="space-y-4" data-aos="fade-right" data-aos-duration="600">
+          <h3 class="font-display text-2xl font-bold text-base-content">
+            {{ 'business_benefit_1_reach' | transloco }}
+          </h3>
+          <p class="text-base-content/70 text-lg leading-relaxed">
+            {{ 'business_benefit_1_desc' | transloco }}
+          </p>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="space-y-4" data-aos="fade-left" data-aos-duration="600">
+          <h3 class="font-display text-2xl font-bold text-base-content">
+            {{ 'business_benefit_2_traffic' | transloco }}
+          </h3>
+          <p class="text-base-content/70 text-lg leading-relaxed">
+            {{ 'business_benefit_2_desc' | transloco }}
+          </p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="space-y-4" data-aos="fade-right" data-aos-duration="700">
+          <h3 class="font-display text-2xl font-bold text-base-content">
+            {{ 'business_benefit_3_transparency' | transloco }}
+          </h3>
+          <p class="text-base-content/70 text-lg leading-relaxed">
+            {{ 'business_benefit_3_desc' | transloco }}
+          </p>
+        </div>
+
+        <!-- Benefit 4 -->
+        <div class="space-y-4" data-aos="fade-left" data-aos-duration="700">
+          <h3 class="font-display text-2xl font-bold text-base-content">
+            {{ 'business_benefit_4_free' | transloco }}
+          </h3>
+          <p class="text-base-content/70 text-lg leading-relaxed">
+            {{ 'business_benefit_4_desc' | transloco }}
+          </p>
+        </div>
+
+        <!-- Benefit 5 - Full Width -->
+        <div class="space-y-4 md:col-span-2" data-aos="fade-up" data-aos-duration="800">
+          <h3 class="font-display text-2xl font-bold text-base-content">
+            {{ 'business_benefit_5_brand' | transloco }}
+          </h3>
+          <p class="text-base-content/70 text-lg leading-relaxed">
+            {{ 'business_benefit_5_desc' | transloco }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-display text-4xl md:text-5xl font-bold text-center mb-16">
+        {{ 'business_how_title' | transloco }}
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="relative" data-aos="fade-up" data-aos-duration="600">
+          <div class="bg-base-100 border-2 border-base-200 rounded-2xl p-8 h-full">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/20 text-secondary font-display font-bold text-2xl mb-6">
+              1
+            </div>
+            <h3 class="font-display text-xl font-bold text-base-content mb-3">
+              {{ 'business_step_1' | transloco }}
+            </h3>
+            <p class="text-base-content/70">
+              {{ 'business_step_1_desc' | transloco }}
+            </p>
+          </div>
+          <div class="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-base-content/20 rounded-full"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative" data-aos="fade-up" data-aos-duration="700">
+          <div class="bg-base-100 border-2 border-base-200 rounded-2xl p-8 h-full">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 text-accent font-display font-bold text-2xl mb-6">
+              2
+            </div>
+            <h3 class="font-display text-xl font-bold text-base-content mb-3">
+              {{ 'business_step_2' | transloco }}
+            </h3>
+            <p class="text-base-content/70">
+              {{ 'business_step_2_desc' | transloco }}
+            </p>
+          </div>
+          <div class="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-base-content/20 rounded-full"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative" data-aos="fade-up" data-aos-duration="800">
+          <div class="bg-base-100 border-2 border-base-200 rounded-2xl p-8 h-full">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 text-primary font-display font-bold text-2xl mb-6">
+              3
+            </div>
+            <h3 class="font-display text-xl font-bold text-base-content mb-3">
+              {{ 'business_step_3' | transloco }}
+            </h3>
+            <p class="text-base-content/70">
+              {{ 'business_step_3_desc' | transloco }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-display text-4xl md:text-5xl font-bold text-center mb-16">
+        {{ 'faq_title' | transloco }}
+      </h2>
+
+      <div class="space-y-4">
+        <!-- FAQ Item 1 -->
+        <div class="collapse collapse-plus border border-base-200 rounded-lg bg-base-100" data-aos="fade-up" data-aos-duration="600">
+          <input type="checkbox" />
+          <div class="collapse-title text-lg font-semibold text-base-content">
+            {{ 'faq_q1' | transloco }}
+          </div>
+          <div class="collapse-content text-base-content/70">
+            <p>{{ 'faq_a1' | transloco }}</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="collapse collapse-plus border border-base-200 rounded-lg bg-base-100" data-aos="fade-up" data-aos-duration="700">
+          <input type="checkbox" />
+          <div class="collapse-title text-lg font-semibold text-base-content">
+            {{ 'faq_q2' | transloco }}
+          </div>
+          <div class="collapse-content text-base-content/70">
+            <p>{{ 'faq_a2' | transloco }}</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="collapse collapse-plus border border-base-200 rounded-lg bg-base-100" data-aos="fade-up" data-aos-duration="800">
+          <input type="checkbox" />
+          <div class="collapse-title text-lg font-semibold text-base-content">
+            {{ 'faq_q3' | transloco }}
+          </div>
+          <div class="collapse-content text-base-content/70">
+            <p>{{ 'faq_a3' | transloco }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="py-20 bg-gradient-to-r from-secondary/10 to-primary/10 rounded-3xl mx-4 sm:mx-6 lg:mx-8">
+    <div class="max-w-4xl mx-auto px-8 text-center space-y-8">
+      <h2 class="font-display text-4xl md:text-5xl font-bold text-base-content">
+        {{ 'business_ready_title' | transloco }}
+      </h2>
+      
+      <p class="text-xl text-base-content/70">
+        {{ 'business_reassurance_full' | transloco }}
+      </p>
+
+      <button
+        (click)="navigateToAddSpot()"
+        class="btn btn-secondary btn-lg font-bold text-lg"
+        data-aos="zoom-in"
+      >
+        {{ 'business_cta_primary' | transloco }}
+      </button>
+
+    
+    </div>
+  </section>
+</div>
+

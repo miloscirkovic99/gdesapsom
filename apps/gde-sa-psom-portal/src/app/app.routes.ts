@@ -54,6 +54,33 @@ export const appRoutes: Route[] = [
   
   },
   {
+    path:RouteConstants.business,
+    loadComponent: () => {
+      return import('./pages/business-page/business-page.component').then(
+        (m) => m.BusinessPageComponent
+      );
+    },
+    title:'Za Biznise - Listaj Svoju Lokaciju na Gde sa psom'
+  },
+  {
+  path:RouteConstants.blog,
+    loadComponent: () => {
+      return import('./pages/blog/blog-list/blog-list.component').then(
+        (m) => m.BlogListComponent
+      );
+    },
+    title:'Blog - Saveti, Priče i Vesti za Vlasnike Pasa - Gde sa psom'
+  },
+  {
+    path:RouteConstants.blogDetails,
+    loadComponent: () => {
+      return import('./pages/blog/blog-details/blog-details.component').then(
+        (m) => m.BlogDetailsComponent
+      );
+    },
+    title:'Blog članak - Gde sa psom'
+  },
+  {
     path:RouteConstants.cookiesPolicy,
     loadComponent: () => {
       return import('./pages/cookies-page/cookie-page.component').then(

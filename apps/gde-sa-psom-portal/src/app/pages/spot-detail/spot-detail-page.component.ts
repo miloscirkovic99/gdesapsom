@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -30,9 +30,16 @@ export class SpotDetailPageComponent {
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
   private map: L.Map | undefined;
+  private routeLayers: L.Layer[] = [];
 
+  @ViewChild('startLocationInput') startLocationInput!: ElementRef<HTMLInputElement>;
+
+  readonly showDirectionsModal = signal(false);
+  readonly showInlineRoute = signal(false);
   readonly spot = signal<any>(null);
   readonly isLoading = signal(false);
+  readonly isLoadingDirections = signal(false);
+  readonly isGettingLocation = signal(false);
   currentSlide = 1;
 
   descriptionToKeyMap = descriptionToKeyMap;
@@ -139,8 +146,16 @@ export class SpotDetailPageComponent {
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
-          const lat = data[0].lat;
-          const lon = data[0].lon;
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+
+          // Store coordinates in spot for directions
+          if (this.spot()) {
+            const currentSpot = this.spot();
+            currentSpot.grd_lat = lat;
+            currentSpot.grd_lon = lon;
+            this.spot.set(currentSpot);
+          }
 
           if (this.map) {
             this.map.setView([lat, lon], 15);
@@ -167,4 +182,237 @@ export class SpotDetailPageComponent {
       })
       .catch((error) => console.error('Geocoding error:', error));
   }
+  openDirections(): void {
+  this.showDirectionsModal.set(true);
+}
+
+closeDirectionsModal(): void {
+  this.showDirectionsModal.set(false);
+  // this.showInlineRoute.set(false);
+}
+
+openInGoogleMaps(): void {
+  const data = this.spot();
+  if (!data?.grd_lat || !data?.grd_lon) return;
+  window.open(
+    `https://www.google.com/maps/dir/?api=1&destination=${data.grd_lat},${data.grd_lon}`,
+    '_blank', 'noopener,noreferrer'
+  );
+  this.closeDirectionsModal();
+}
+
+openInWaze(): void {
+  const data = this.spot();
+  if (!data?.grd_lat || !data?.grd_lon) return;
+  window.open(
+    `https://waze.com/ul?ll=${data.grd_lat},${data.grd_lon}&navigate=yes`,
+    '_blank', 'noopener,noreferrer'
+  );
+  this.closeDirectionsModal();
+}
+
+openInAppleMaps(): void {
+  const data = this.spot();
+  if (!data?.grd_lat || !data?.grd_lon) return;
+  window.open(
+    `https://maps.apple.com/?daddr=${data.grd_lat},${data.grd_lon}`,
+    '_blank', 'noopener,noreferrer'
+  );
+  this.closeDirectionsModal();
+}
+
+showRouteOnMap(): void {
+  this.showInlineRoute.set(true);
+  this.closeDirectionsModal();
+}
+
+getCurrentLocation(): void {
+  this.isGettingLocation.set(true);
+  
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        
+        // Reverse geocode to get address
+        this.reverseGeocode(lat, lon).then((address) => {
+          if (this.startLocationInput) {
+            this.startLocationInput.nativeElement.value = address || `${lat}, ${lon}`;
+          }
+          this.isGettingLocation.set(false);
+          const msg = this.translocoService.translate('close');
+          this.snackbarService.openSnackbar(this.translocoService.translate('use_current_location'), msg, 'success-snackbar');
+        });
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        const msg = this.translocoService.translate('unable_to_get_location');
+        this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+        this.isGettingLocation.set(false);
+      }
+    );
+  } else {
+    const msg = this.translocoService.translate('geolocation_not_supported');
+    this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+    this.isGettingLocation.set(false);
+  }
+}
+
+async getDirections(): Promise<void> {
+  const startLocation = this.startLocationInput?.nativeElement?.value;
+  if (!startLocation) {
+    const msg = this.translocoService.translate('enter_start_location');
+    this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'warning');
+    return;
+  }
+
+  this.isLoadingDirections.set(true);
+
+  try {
+    // Clear previous route layers
+    this.clearRouteOverlays();
+
+    // Geocode start location
+    const startCoords = await this.geocodeLocation(startLocation);
+    if (!startCoords) {
+      const msg = this.translocoService.translate('start_location_not_found');
+      this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+      this.isLoadingDirections.set(false);
+      return;
+    }
+
+    const data = this.spot();
+    if (!data?.grd_lat || !data?.grd_lon) {
+      const msg = this.translocoService.translate('destination_coordinates_not_found');
+      this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+      this.isLoadingDirections.set(false);
+      return;
+    }
+
+    // Ensure map is initialized
+    if (!this.map) {
+      this.initializeMap();
+    }
+
+    // Get route from OSRM
+    const route = await this.getRoute(startCoords.lat, startCoords.lon, data.grd_lat, data.grd_lon);
+    
+    if (route && this.map) {
+      // Draw route on map
+      const coordinates = route.map((coord: [number, number]) => [coord[1], coord[0]] as L.LatLngExpression);
+      const polyline = L.polyline(coordinates, {
+        color: 'blue',
+        weight: 4,
+        opacity: 0.7,
+      }).addTo(this.map);
+      this.routeLayers.push(polyline);
+
+      // Fit map to route bounds
+      setTimeout(() => {
+        if (this.map && polyline.getBounds()) {
+          this.map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        }
+      }, 100);
+
+      // Add start marker
+      const startIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        shadowSize: [41, 41],
+        iconAnchor: [12, 41],
+        shadowAnchor: [12, 41],
+        popupAnchor: [1, -34],
+      });
+
+      const startMarker = L.marker([startCoords.lat, startCoords.lon], { icon: startIcon })
+        .addTo(this.map)
+        .bindPopup(this.translocoService.translate('start_location'));
+      this.routeLayers.push(startMarker);
+
+      // Add end marker
+      const endIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        shadowSize: [41, 41],
+        iconAnchor: [12, 41],
+        shadowAnchor: [12, 41],
+        popupAnchor: [1, -34],
+      });
+
+      const endMarker = L.marker([data.grd_lat, data.grd_lon], { icon: endIcon })
+        .addTo(this.map)
+        .bindPopup(this.translocoService.translate('destination_coordinates_not_found'));
+      this.routeLayers.push(endMarker);
+
+      const msg = this.translocoService.translate('route_loaded');
+      this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'success-snackbar');
+    } else {
+      const msg = this.translocoService.translate('error_getting_directions');
+      this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+    }
+  } catch (error) {
+    console.error('Directions error:', error);
+    const msg = this.translocoService.translate('error_getting_directions');
+    this.snackbarService.openSnackbar(msg, this.translocoService.translate('close'), 'error');
+  }
+
+  this.isLoadingDirections.set(false);
+}
+
+private clearRouteOverlays(): void {
+  this.routeLayers.forEach(layer => {
+    if (this.map) {
+      this.map.removeLayer(layer);
+    }
+  });
+  this.routeLayers = [];
+}
+
+private async geocodeLocation(address: string): Promise<{ lat: number; lon: number } | null> {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    }
+  } catch (error) {
+    console.error('Geocoding error:', error);
+  }
+  return null;
+}
+
+private async reverseGeocode(lat: number, lon: number): Promise<string | null> {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.address?.city || data.address?.town || data.address?.county || null;
+  } catch (error) {
+    console.error('Reverse geocoding error:', error);
+  }
+  return null;
+}
+
+private async getRoute(
+  startLat: number,
+  startLon: number,
+  endLat: number,
+  endLon: number
+): Promise<[number, number][] | null> {
+  const url = `https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.routes && data.routes.length > 0) {
+      return data.routes[0].geometry.coordinates;
+    }
+  } catch (error) {
+    console.error('Routing error:', error);
+  }
+  return null;
+}
 }

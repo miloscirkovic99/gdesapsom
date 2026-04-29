@@ -1,0 +1,10 @@
+// daisyUI handles all styling, minimal customization needed
+
+// Support line-clamp for card titles across browsers
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

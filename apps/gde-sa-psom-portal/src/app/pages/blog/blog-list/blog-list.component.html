@@ -1,0 +1,91 @@
+<div class="container mx-auto px-4 py-8">
+  @if (ucitavanje()) {
+    <div class="flex flex-col items-center justify-center min-h-[400px] gap-4">
+      <span class="loading loading-spinner loading-lg text-error"></span>
+      <p class="text-lg text-gray-600 font-medium">Učitavanje članaka...</p>
+    </div>
+  } @else {
+    @if (greska()) {
+      <div class="alert alert-warning">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2M8.228 4.228a2.228 2.228 0 1 1 3.142 3.142m-6.284 6.284a2.228 2.228 0 1 1 3.142 3.142m0 0a2.228 2.228 0 1 1 3.142 3.142M3.228 3.228a2.228 2.228 0 1 1 3.142 3.142" />
+        </svg>
+        <span>{{ greska() }}</span>
+      </div>
+    } @else {
+      @if (postovi().length === 0) {
+        <div class="flex items-center justify-center min-h-[400px] text-center">
+          <p class="text-xl text-gray-500 font-medium">📚 Nema objavljenih članaka za sada. Pratite nas za nove sadržaje!</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (post of postovi(); track post.post_id) {
+            <article class="card card-bordered bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+              
+              <figure class="relative h-48 overflow-hidden group">
+                @if (post.slika_naslovna) {
+                  <img
+                    [src]="'/assets/slike/' + post.slika_naslovna"
+                    [alt]="post.naslov"
+                    loading="lazy"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                } @else {
+                  <img
+                    [src]="'https://placedog.net/600/400?id=' + post.post_id"
+                    [alt]="post.naslov"
+                    loading="lazy"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
+                  />
+                }
+                <div class="badge badge-lg badge-success gap-2 absolute top-3 right-3 text-white">
+                  {{ getReadingTime(post.sadrzaj) }} min
+                </div>
+              </figure>
+
+              <div class="card-body">
+                <div class="badge badge-success badge-outline">{{ post.kategorija || 'Ostalo' }}</div>
+                <h2 class="card-title text-lg font-bold line-clamp-2 hover:text-success transition-colors">
+                  {{ post.naslov }}
+                </h2>
+
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600 py-2">
+                  <span class="flex items-center gap-1">
+                    <span>📅</span>
+                    <span>{{ post.objavljen_u | date: 'd. MMM yyyy.' }}</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span>✍️</span>
+                    <span>{{ post.autor }}</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span>💬</span>
+                    <span>{{ post.broj_komentara }}</span>
+                  </span>
+                </div>
+
+                @if (getTags(post.tagovi).length > 0) {
+                  <div class="flex flex-wrap gap-2 py-2">
+                    @for (tag of getTags(post.tagovi); track tag) {
+                      <span class="badge badge-sm badge-ghost">{{ tag }}</span>
+                    }
+                  </div>
+                }
+
+                <div class="divider my-2"></div>
+
+                <div class="card-actions">
+                  <a [routerLink]="['/blog', post.slug]" class="btn btn-secondary btn-sm btn-outline w-full gap-2">
+                    {{'read_more' | transloco}}
+                    <span>→</span>
+                  </a>
+                </div>
+              </div>
+
+            </article>
+          }
+        </div>
+      }
+    }
+  }
+</div>

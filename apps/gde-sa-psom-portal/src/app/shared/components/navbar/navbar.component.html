@@ -24,6 +24,16 @@
         </a>
       </li>
       <li>
+        <a [routerLink]="routeConstants.blog" routerLinkActive="active" class="rounded-lg">
+          {{ 'blog' | transloco }}
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="routeConstants.business" routerLinkActive="active" class="rounded-lg">
+          {{ 'for_business_nav' | transloco }}
+        </a>
+      </li>
+      <li>
         <details>
           <summary class="rounded-lg">{{ 'explore_pet_spots_link' | transloco }}</summary>
           <ul class="rounded-lg bg-base-100 shadow-lg w-64 p-2 z-50">
@@ -169,6 +179,25 @@
             {{ 'about' | transloco }}
           </a>
         </li>
+        <li (click)="toggleMenu()">
+          <a [routerLink]="routeConstants.business" routerLinkActive="active"
+             class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-medium transition-colors hover:bg-base-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-base-content/50" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0-11.25h-3.02m0 0c.162-.224.243-.479.243-.75a1.5 1.5 0 0 0-1.5-1.5h-2.25a1.5 1.5 0 0 0-1.5 1.5c0 .271.081.526.243.75m9.02 0h-.808m-15.5 0H6m15 0a1.5 1.5 0 0 1-1.5 1.5H9a1.5 1.5 0 0 1-1.5-1.5m12 0c0 .071-.005.142-.015.212M21 9V6a1.5 1.5 0 0 0-1.5-1.5H4.5A1.5 1.5 0 0 0 3 6v3" />
+            </svg>
+            {{ 'for_business_nav' | transloco }}
+          </a>
+        </li>
+        <li (click)="toggleMenu()">
+          <a [routerLink]="routeConstants.blog" routerLinkActive="active"
+             class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-medium transition-colors hover:bg-base-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-base-content/50" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5M3 18a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V9a6 6 0 0 0-6-6H9a6 6 0 0 0-6 6v9z" />
+            </svg>
+            {{ 'blog' | transloco }}
+          </a>
+        </li>
+
       </ul>
 
       <div class="divider my-2 opacity-20"></div>

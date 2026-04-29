@@ -1,78 +1,76 @@
 <div class="space-y-24 pb-16">
-  <!-- Hero Section -->
-  <section class="hero min-h-[50vh] pt-12">
+  <!-- Hero Section - Premium Conversion Focused -->
+  <section class="hero min-h-[60vh] pt-16">
     <div class="hero-content max-w-full flex-col lg:flex-row-reverse justify-evenly gap-12">
       <div class="flex gap-6 max-lg:flex-row max-sm:justify-center">
         <div class="hero-shape" data-aos="fade-down" data-aos-duration="1000">
-          <img
-            src="assets/dog.png"
-            alt="Pas u pet-friendly restoranu u Srbiji - Gde sa psom"
-            class="w-full h-full object-contain"
-            loading="lazy"
-          />
+          <img src="assets/dog.png" alt="Pas u pet-friendly restoranu u Srbiji - Gde sa psom"
+            class="w-full h-full object-contain" loading="lazy" />
         </div>
         <div class="hero-shape hero-shape--alt max-sm:hidden" data-aos="fade-down" data-aos-duration="1000">
-          <img
-            src="assets/cat.png"
-            alt="Mačka u pet-friendly kafiću u Beogradu"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
+          <img src="assets/cat.png" alt="Mačka u pet-friendly kafiću u Beogradu" class="w-full h-full object-cover"
+            loading="lazy" />
         </div>
       </div>
 
       <div class="max-w-xl">
-        <h1 class="font-display text-5xl max-sm:text-3xl font-bold text-base-content">
-          {{ 'hero_title' | transloco }}
+        <h1 class="font-display text-6xl max-sm:text-4xl font-bold text-base-content leading-tight">
+          {{ 'hero_headline' | transloco }}
         </h1>
-        <p class="py-6 text-xl font-medium text-base-content/70 max-sm:text-lg">
-          {{ 'hero_description' | transloco }}
+        <p class="py-8 text-lg font-medium text-base-content/70 max-sm:text-base leading-relaxed">
+          {{ 'hero_subheadline' | transloco }}
         </p>
-        <button
-          (click)="navigateTo(routeConstants.allSpots)"
-          class="btn btn-secondary btn-lg"
-        >
-          {{ 'explore_pet_spots' | transloco }}
-        </button>
+
+        <!-- Primary CTA -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-6" data-aos="fade-up" data-aos-duration="600">
+          <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg font-semibold flex-1">
+            {{ 'hero_cta_primary' | transloco }}
+          </button>
+
+          <!-- CHANGED: business instead of addSpot -->
+          <button (click)="navigateTo(routeConstants.business)" class="btn btn-outline btn-lg font-semibold flex-1">
+            {{ 'hero_cta_secondary' | transloco }}
+          </button>
+        </div>
+
+
+
 
         <!-- Quick Filters -->
-        <div class="pt-8" data-aos="fade-up" data-aos-duration="600">
-          <p class="text-sm font-medium text-base-content/50 mb-3">
+        <div class="pt-12" data-aos="fade-up" data-aos-duration="800">
+          <p class="text-sm font-semibold text-base-content/70 mb-4">
             {{ 'quick_filters_title' | transloco }}
           </p>
           <div class="flex flex-wrap gap-2">
             @for (filter of quickFilters; track filter.label) {
-              <button
-                (click)="onQuickFilter(filter)"
-                class="quick-filter-chip"
-              >
-                <span>{{ filter.icon }}</span>
-                <span>{{ filter.label | transloco }}</span>
-              </button>
+            <button (click)="onQuickFilter(filter)" class="quick-filter-chip">
+              <span>{{ filter.icon }}</span>
+              <span>{{ filter.label | transloco }}</span>
+            </button>
             }
           </div>
         </div>
 
-        <!-- Stats -->
+        <!-- Trust Stats -->
         <div class="py-16">
           <dl class="grid grid-cols-1 gap-x-8 gap-y-8 text-center lg:grid-cols-3">
             <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="600">
               <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
                 {{ spotsStore.totalResult() }}+
               </dd>
-              <dt class="text-base text-base-content/60">{{ 'pet_spots' | transloco }}</dt>
+              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_spots' | transloco }}</dt>
             </div>
             <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="800">
               <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
                 {{ vetClinicsStore.totalCount() > 0 ? vetClinicsStore.totalCount() + '+' : 0 }}
               </dd>
-              <dt class="text-base text-base-content/60">{{ 'vet_clinics' | transloco }}</dt>
+              <dt class="text-sm text-base-content/60 font-medium">{{ 'vet_clinics' | transloco }}</dt>
             </div>
             <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="1000">
               <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
                 {{ parksStore.parks().length }}+
               </dd>
-              <dt class="text-base text-base-content/60">{{ 'pet_parks' | transloco }}</dt>
+              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_parks' | transloco }}</dt>
             </div>
           </dl>
         </div>
@@ -87,19 +85,63 @@
     </h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
       @for (item of howItWorks; track $index) {
+      <div class="card bg-base-200 shadow-sm p-6 text-center relative pt-12" data-aos="fade-down"
+        [attr.data-aos-duration]="item.duration">
         <div
-          class="card bg-base-200 shadow-sm p-6 text-center relative pt-12"
-          data-aos="fade-down"
-          [attr.data-aos-duration]="item.duration"
-        >
-          <div class="w-14 h-14 rounded-full bg-secondary text-secondary-content text-xl font-bold flex items-center justify-center mx-auto absolute -top-7 left-1/2 -translate-x-1/2 shadow-md">
-            {{ item.id }}
-          </div>
-          <h3 class="font-display text-xl font-bold text-base-content">
-            {{ item.title | transloco }}
-          </h3>
+          class="w-14 h-14 rounded-full bg-secondary text-secondary-content text-xl font-bold flex items-center justify-center mx-auto absolute -top-7 left-1/2 -translate-x-1/2 shadow-md">
+          {{ item.id }}
         </div>
+        <h3 class="font-display text-lg font-bold text-base-content">
+          {{ item.title | transloco }}
+        </h3>
+      </div>
       }
+    </div>
+  </section>
+
+  <!-- Value Proposition Section -->
+  <section class="py-16" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-12 text-center">
+        {{ 'value_prop_title' | transloco }}
+      </h2>
+
+      <div class="bg-base-100 rounded-2xl p-8 md:p-12 border-2 border-base-200">
+        <p class="text-lg font-semibold text-base-content mb-8 text-center">
+          {{ 'value_prop_intro' | transloco }}
+        </p>
+
+        <div class="space-y-4 mb-10">
+          <div class="flex gap-4 items-start">
+            <span class="text-2xl">❌</span>
+            <p class="text-base-content/80 leading-relaxed">
+              {{ 'pain_point_unclear' | transloco }}
+            </p>
+          </div>
+          <div class="flex gap-4 items-start">
+            <span class="text-2xl">❌</span>
+            <p class="text-base-content/80 leading-relaxed">
+              {{ 'pain_point_awkward' | transloco }}
+            </p>
+          </div>
+          <div class="flex gap-4 items-start">
+            <span class="text-2xl">❌</span>
+            <p class="text-base-content/80 leading-relaxed">
+              {{ 'pain_point_time' | transloco }}
+            </p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="text-lg font-semibold text-secondary mb-4 text-center">
+          ✅ {{ 'value_prop_solution' | transloco }}
+        </p>
+
+        <p class="text-base-content/70 leading-relaxed text-center">
+          {{ 'value_prop_description' | transloco }}
+        </p>
+      </div>
     </div>
   </section>
 
@@ -112,41 +154,84 @@
       <p class="text-lg text-base-content/70 text-center max-w-2xl">
         {{ 'random_spot_description' | transloco }}
       </p>
-      <button
-        (click)="navigateTo(routeConstants.allSpots)"
-        class="btn btn-secondary btn-sm"
-      >
+      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-sm">
         {{ 'pet_places' | transloco }}
       </button>
     </div>
-    <app-card
-      [data]="spotsStore.random()"
-      [isLoading]="spotsStore.isLoading()"
-    ></app-card>
+    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
   </section>
 
-  <!-- Partners -->
-  <section class="text-center">
-    <h2 class="font-display text-3xl max-sm:text-2xl font-semibold mb-10">
-      {{ 'friends' | transloco }}
+  <!-- Features Highlights Section -->
+  <section class="py-16" data-aos="fade-up">
+    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-16 text-center">
+      {{ 'features_title' | transloco }}
     </h2>
-    <div
-      class="flex flex-wrap items-center justify-center gap-8"
-      data-aos="fade-right"
-      data-aos-duration="800"
-    >
-      <a href="https://eberza.rs/sr" target="_blank" rel="noopener noreferrer"
-         class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-        <img src="assets/eberza.png" alt="Eberza" class="max-h-12 w-full object-contain" width="158" height="62" loading="lazy" />
-      </a>
-      <a href="https://matice.rs/" target="_blank" rel="noopener noreferrer"
-         class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-        <img src="assets/matice.png" alt="Matice" class="max-h-12 w-full object-contain" width="158" height="62" loading="lazy" />
-      </a>
-      <a href="https://beeqos.net/" target="_blank" rel="noopener noreferrer"
-         class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-        <img src="assets/beeqos.png" alt="BeeQos" class="max-h-12 w-full object-contain" width="158" height="62" loading="lazy" />
-      </a>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+      <!-- Feature 1: Smart Filters -->
+      <div class="card bg-gradient-to-br from-secondary/10 to-primary/10 shadow-sm p-8 text-center" data-aos="fade-up"
+        data-aos-duration="600">
+        <div class="text-5xl mb-4">🔍</div>
+        <h3 class="font-display text-xl font-bold text-base-content mb-3">
+          {{ 'feature_filter_title' | transloco }}
+        </h3>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          {{ 'feature_filter_desc' | transloco }}
+        </p>
+      </div>
+
+      <!-- Feature 2: Verified Information -->
+      <div class="card bg-gradient-to-br from-accent/10 to-secondary/10 shadow-sm p-8 text-center" data-aos="fade-up"
+        data-aos-duration="700">
+        <div class="text-5xl mb-4">✅</div>
+        <h3 class="font-display text-xl font-bold text-base-content mb-3">
+          {{ 'feature_verified_title' | transloco }}
+        </h3>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          {{ 'feature_verified_desc' | transloco }}
+        </p>
+      </div>
+
+      <!-- Feature 3: Growing Community -->
+      <div class="card bg-gradient-to-br from-primary/10 to-accent/10 shadow-sm p-8 text-center" data-aos="fade-up"
+        data-aos-duration="800">
+        <div class="text-5xl mb-4">🤝</div>
+        <h3 class="font-display text-xl font-bold text-base-content mb-3">
+          {{ 'feature_community_title' | transloco }}
+        </h3>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          {{ 'feature_community_desc' | transloco }}
+        </p>
+      </div>
     </div>
   </section>
-</div>
+
+
+
+  <!-- Final CTA Section - Both User Types -->
+  <section class="py-20 text-center" data-aos="fade-up">
+    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-4 text-base-content">
+      {{ 'cta_section_title' | transloco }}
+    </h2>
+    <p class="text-lg text-base-content/70 mb-12 max-w-2xl mx-auto">
+      {{ 'cta_section_desc' | transloco }}
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto px-4">
+      <!-- CTA for Users -->
+      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg h-auto py-3 font-semibold">
+        <div class="text-center">
+          <div class="text-2xl mb-2">🐾</div>
+          <div>{{ 'cta_users' | transloco }}</div>
+        </div>
+      </button>
+
+      <!-- CTA for Business -->
+      <button (click)="navigateTo(routeConstants.business)" class="btn btn-outline btn-lg h-auto py-3 font-semibold">
+        <div class="text-center">
+          <div class="text-2xl mb-2">🏢</div>
+          <div>{{ 'cta_business' | transloco }}</div>
+        </div>
+      </button>
+    </div>
+  </section>

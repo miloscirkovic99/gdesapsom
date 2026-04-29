@@ -1,0 +1,26 @@
+// daisyUI prose class handles all content styling
+// No custom SCSS needed - all styling is handled by Tailwind utility classes
+
+/* Print styles */
+@media print {
+  .btn, .badge, .divider, .alert {
+    display: none;
+  }
+}
+:host ::ng-deep {
+.partner-card {
+  @apply border border-success border-opacity-30 rounded-xl p-5 my-4 bg-base-100;
+
+  h3 {
+    @apply text-lg font-bold mb-2;
+  }
+
+  p {
+    @apply text-sm text-gray-600 my-1;
+  }
+
+  .btn-partner {
+    @apply inline-block mt-3 text-success font-semibold text-sm hover:underline;
+  }
+}
+}
