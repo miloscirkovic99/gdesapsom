@@ -280,7 +280,7 @@
   "error_getting_directions": "Greška pri preuzimanju rute",
   "unable_to_get_location": "Nije moguće preuzeti lokaciju",
   "geolocation_not_supported": "Geolokacija nije podržana",
-  "search_near_me": "Pretraži u blizini",
+  "search_near_me": "Pretraži lokacije u blizini",
   "near_me_description": "Pronađite pet-friendly mesta u blizini vaše trenutne lokacije. Savršeno za brzu šetnju ili iznenadnu potrebu.",
   "near_me_no_location": "Nije moguće preuzeti vašu lokaciju. Molimo omogućite pristup lokaciji i pokušajte ponovo.",
   "near_me_no_results": "Nismo pronašli pet-friendly mesta u blizini. Probajte proširiti pretragu ili proverite druge delove grada.",
@@ -298,5 +298,6 @@
   "near_me_no_results_nearby": "Nismo pronašli pet-friendly mesta u blizini vaše lokacije. Probajte proširiti pretragu ili proverite druge delove grada.",
   "near_me_results_found": "Pronađeno {count} pet-friendly mesta u blizini vaše lokacije.",
   "radius_km": "radius km",
-  "location_found": "Lokacija pronađena"
+  "location_found": "Lokacija pronađena",
+  "close_sheet": "Zatvori"
 }

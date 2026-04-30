@@ -133,7 +133,7 @@ export class PetSpotsFacilitiesComponent {
 
     if (this.userLocation()) {
       const km = (v.radius ?? 0) / 1000;
-      chips.push({ key: 'location', label: `Within ${km} km` });
+      chips.push({ key: 'location', label: `${km} km` });
     }
 
     return chips;
@@ -180,6 +180,7 @@ export class PetSpotsFacilitiesComponent {
     this.form.reset();
     this.userLocation.set(null);
     this.#resetStoreData();
+    this.toggleFilters();
   }
 
   getCurrentLocation(): void {

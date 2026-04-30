@@ -13,22 +13,22 @@
             d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
             clip-rule="evenodd" />
         </svg>
-        <input type="text"  [formControl]="form.controls.word"
-          class="grow text-sm" [placeholder]="'search_name' | transloco" />
+        <input type="text" [formControl]="form.controls.word" class="grow text-sm"
+          [placeholder]="'search_name' | transloco" />
       </label>
 
       <!-- Filter toggle with active-count badge -->
       <button type="button" class="btn btn-sm btn-ghost border border-base-300 gap-1.5 relative"
         (click)="toggleFilters()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 10h12M9 15h6" />
         </svg>
         <!-- {{ 'filters' | transloco }} -->
         @if (activeFilterCount() > 0) {
-          <span class="badge badge-sm badge-secondary absolute -top-1.5 -right-1.5">
-            {{ activeFilterCount() }}
-          </span>
+        <span class="badge badge-sm badge-secondary absolute -top-1.5 -right-1.5">
+          {{ activeFilterCount() }}
+        </span>
         }
       </button>
     </div>
@@ -37,31 +37,29 @@
     <div class="flex items-center gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
 
       <!-- Near me — primary action -->
-      <button type="button"
-        class="btn btn-secondary btn-xs rounded-full shrink-0 gap-1.5"
-        (click)="getCurrentLocation()"
-        [disabled]="isLoadingLocation()">
+      <button type="button" class="btn btn-secondary btn-sm rounded-full shrink-0 gap-1.5 my-2"
+        (click)="getCurrentLocation()" [disabled]="isLoadingLocation()">
         @if (isLoadingLocation()) {
-          <span class="loading loading-spinner loading-xs"></span>
+        <span class="loading loading-spinner loading-xs"></span>
         } @else {
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 16 16">
-            <circle cx="8" cy="8" r="3"/>
-            <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-          </svg>
-          {{ 'search_near_me' | transloco }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 16 16">
+          <circle cx="8" cy="8" r="3" />
+          <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        {{ 'search_near_me' | transloco }}
         }
       </button>
 
       <!-- Active filter chips — tap to remove -->
       @for (chip of activeFilterChips(); track chip.key) {
-        <div class="badge badge-secondary gap-1 shrink-0 cursor-pointer py-3 rounded-full"
-          (click)="removeFilter(chip.key)">
-          {{ chip.label }}
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
+      <div class="badge badge-secondary gap-1 shrink-0 cursor-pointer py-3 rounded-full"
+        (click)="removeFilter(chip.key)">
+        {{ chip.label }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
       }
     </div>
   </div>
@@ -69,119 +67,110 @@
   <!-- ── Results ── -->
   <div class="flex-1 px-4 py-4 space-y-3">
 
- 
+
 
     <app-card [data]="spotsStore.spots()" />
 
-    @if (spotsStore.spots().length < spotsStore.totalResult()) {
-      <div class="pt-2 pb-6">
-        <button (click)="onSubmit()"
-          [disabled]="spotsStore.isLoading()"
-          class="btn btn-secondary btn-sm w-full">
-          @if (spotsStore.isLoading()) {
-            <span class="loading loading-spinner loading-sm"></span>
-          } @else {
-            {{ 'see_more' | transloco }}
-          }
-        </button>
-      </div>
-    }
+    @if (spotsStore.spots().length < spotsStore.totalResult()) { <div class="pt-2 pb-6">
+      <button (click)="onSubmit()" [disabled]="spotsStore.isLoading()" class="btn btn-secondary btn-sm w-full">
+        @if (spotsStore.isLoading()) {
+        <span class="loading loading-spinner loading-sm"></span>
+        } @else {
+        {{ 'see_more' | transloco }}
+        }
+      </button>
+  </div>
+  }
+</div>
+
+<!-- ── Filter bottom sheet ── -->
+@if (showFilters()) {
+<!-- Backdrop -->
+<div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" (click)="toggleFilters()"></div>
+
+<!-- Sheet -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-base-100 rounded-t-2xl shadow-xl
+                max-h-[85dvh] overflow-y-auto">
+
+  <!-- Handle -->
+  <div class="flex justify-center pt-3 pb-1">
+    <div class="w-10 h-1 rounded-full bg-base-300"></div>
   </div>
 
-  <!-- ── Filter bottom sheet ── -->
-  @if (showFilters()) {
-    <!-- Backdrop -->
-    <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-      (click)="toggleFilters()"></div>
+  <div class="px-5 pb-6 space-y-5" [formGroup]="form">
 
-    <!-- Sheet -->
-    <div class="fixed bottom-0 left-0 right-0 z-50 bg-base-100 rounded-t-2xl shadow-xl
-                max-h-[85dvh] overflow-y-auto"
-      [@slideUp]>
+    <!-- <h2 class="text-base font-semibold">{{ 'filters' | transloco }}</h2> -->
 
-      <!-- Handle -->
-      <div class="flex justify-center pt-3 pb-1">
-        <div class="w-10 h-1 rounded-full bg-base-300"></div>
-      </div>
-
-      <div class="px-5 pb-6 space-y-5" [formGroup]="form">
-
-        <!-- <h2 class="text-base font-semibold">{{ 'filters' | transloco }}</h2> -->
-
-        <!-- Radius (only when location is available) -->
-        @if (userLocation()) {
-          <mat-form-field class="w-full">
-            <mat-label>{{ 'radius_km' | transloco }}</mat-label>
-            <mat-select formControlName="radius">
-              <mat-option [value]="null">--</mat-option>
-              @for (radius of radiusOptions; track $index) {
-                <mat-option [value]="radius">{{ radius / 1000 }} km</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+    <!-- Radius (only when location is available) -->
+    @if (userLocation()) {
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'radius_km' | transloco }}</mat-label>
+      <mat-select formControlName="radius">
+        <mat-option [value]="null">--</mat-option>
+        @for (radius of radiusOptions; track $index) {
+        <mat-option [value]="radius">{{ radius / 1000 }} km</mat-option>
         }
+      </mat-select>
+    </mat-form-field>
+    }
 
-        <!-- City -->
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'select_city' | transloco }}</mat-label>
-          <mat-select formControlName="ops_id" [multiple]="true"
-            (selectionChange)="onSelectionChange('ops_id', $event)">
-            <mat-option>
-              <ngx-mat-select-search
-                [placeholderLabel]="'search' | transloco"
-                [formControl]="townshipMultiFilterCtrl">
-                <span ngxMatSelectNoEntriesFound>{{ 'no_entries' | transloco }}</span>
-              </ngx-mat-select-search>
-            </mat-option>
-            @for (township of filteredtownshipsMulti | async; track $index) {
-              <mat-option [value]="township?.id">{{ township.ime }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+    <!-- City -->
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'select_city' | transloco }}</mat-label>
+      <mat-select formControlName="ops_id" [multiple]="true" (selectionChange)="onSelectionChange('ops_id', $event)">
+        <mat-option>
+          <ngx-mat-select-search [placeholderLabel]="'search' | transloco" [formControl]="townshipMultiFilterCtrl">
+            <span ngxMatSelectNoEntriesFound>{{ 'no_entries' | transloco }}</span>
+          </ngx-mat-select-search>
+        </mat-option>
+        @for (township of filteredtownshipsMulti | async; track $index) {
+        <mat-option [value]="township?.id">{{ township.ime }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-        <!-- Dog size -->
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'dog_size' | transloco }}</mat-label>
-          <mat-select formControlName="sta_id"
-            (selectionChange)="onSelectionChange('sta_id', $event)">
-            <mat-option [value]="null">--</mat-option>
-            @for (item of spotsStore.allowed(); track $index) {
-              <mat-option [value]="item.id">
-                {{ descriptionToKeyMap[item.ime] | transloco }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+    <!-- Dog size -->
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'dog_size' | transloco }}</mat-label>
+      <mat-select formControlName="sta_id" (selectionChange)="onSelectionChange('sta_id', $event)">
+        <mat-option [value]="null">--</mat-option>
+        @for (item of spotsStore.allowed(); track $index) {
+        <mat-option [value]="item.id">
+          {{ descriptionToKeyMap[item.ime] | transloco }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-        <!-- Place type -->
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'choose_place' | transloco }}</mat-label>
-          <mat-select formControlName="ugo_id"
-            (selectionChange)="onSelectionChange('ugo_id', $event)">
-            <mat-option [value]="null">--</mat-option>
-            @for (item of sharedStore.spotTypes(); track $index) {
-              <mat-option [value]="item.id">
-                {{ descriptionToKeyMapSpot[item.ime] | transloco }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+    <!-- Place type -->
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'choose_place' | transloco }}</mat-label>
+      <mat-select formControlName="ugo_id" (selectionChange)="onSelectionChange('ugo_id', $event)">
+        <mat-option [value]="null">--</mat-option>
+        @for (item of sharedStore.spotTypes(); track $index) {
+        <mat-option [value]="item.id">
+          {{ descriptionToKeyMapSpot[item.ime] | transloco }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-        <!-- Actions -->
-        <div class="flex gap-3 pt-1">
-          <button class="btn btn-secondary flex-1"
-            (click)="applyFilters()">
-            {{ 'search' | transloco }}
-          </button>
-          <button class="btn btn-ghost flex-1"
-            (click)="clearFilters()">
-            {{ 'clear_filters' | transloco }}
-          </button>
-        </div>
-
-      </div>
+    <!-- Actions -->
+    <div class="flex gap-3 pt-1">
+      <button class="btn btn-secondary flex-1" (click)="applyFilters()">
+        {{ 'search' | transloco }}
+      </button>
+      <button class="btn btn-ghost flex-1" (click)="clearFilters()">
+        {{ 'clear_filters' | transloco }}
+      </button>
     </div>
-  }
+    <button class="btn btn-error flex-1 w-full" (click)="toggleFilters()">
+      {{ 'close_sheet' | transloco }}
+    </button>
+
+  </div>
+</div>
+}
 
 </div>
 }

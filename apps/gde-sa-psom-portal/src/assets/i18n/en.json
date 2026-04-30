@@ -280,8 +280,9 @@
   "error_getting_directions": "Error getting directions",
   "unable_to_get_location": "Unable to get location",
   "geolocation_not_supported": "Geolocation not supported",
-  "search_near_me": "Search Near Me",
+  "search_near_me": "Search locations near me",
   "radius_km": "radius km",
-  "location_found": "Location found"
+  "location_found": "Location found",
+  "close_sheet": "Close"
 
 }
