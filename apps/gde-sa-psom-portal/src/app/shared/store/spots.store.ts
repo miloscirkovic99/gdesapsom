@@ -138,14 +138,47 @@ export const SpotsStore = signalStore(
           })
         )
       ),
-
-      getSpotById(id: string, onSuccess: (spot: any) => void, onError: () => void) {
+      getNearMeSpots: rxMethod<{ latitude: number; longitude: number,radius:number }>(
+        pipe(
+          debounceTime(300),
+          switchMap((params) => {
+            const { latitude, longitude, radius } = params;
+            return http.post<SpotsSearchResponse>('pet-friendly-spots/near-me', { latitude, longitude, radius });
+          }),
+          tapResponse({
+            next: (response: SpotsSearchResponse) => {
+              patchState(store, (state) => ({
+                spotsList: response.spotsList,
+                totalResult: response.totalResults,
+                offset: 0,
+                isLoading: false,
+              }));
+              refreshAOS();
+            },
+            error: () => patchState(store, { isLoading: false }),
+          })
+        )
+      ),
+      getSpotById(iuo_id: string, onSuccess: (spot: any) => void, onError: () => void) {
+        if (!iuo_id) {
+          console.error('getSpotById: iuo_id is null or undefined', iuo_id);
+          onError();
+          return;
+        }
+        
+        console.log('getSpotById: Requesting spot with iuo_id:', iuo_id);
+        
         http
-          .post<any>(`pet-friendly-spots/all/${id}`, { iuo_id: id })
+          .post<any>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
           .pipe(takeUntil(destroyed$))
           .subscribe({
-            next: (response) => onSuccess(response?.spotsListSingle?.[0] ?? null),
-            error: () => onError(),
+            next: (response) => {
+              onSuccess(response?.spotsListSingle?.[0] ?? null);
+            },
+            error: (err) => {
+              console.error('getSpotById error:', err);
+              onError();
+            },
           });
       },
       randomSpots() {
