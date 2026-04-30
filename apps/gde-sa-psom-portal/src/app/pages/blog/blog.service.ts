@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Post } from '../../shared/models/posts';
-import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
 
 @Injectable({
   providedIn: 'root'

@@ -5,11 +5,11 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi
 import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
 import { BrowserAnimationsModule, provideAnimations, } from '@angular/platform-browser/animations';
-import { environment } from '../env/env.dev';
 import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 import { DdosProtectionInterceptor } from './core/interceptors/ddos-protection.interceptor';
 import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent';
 import { provideServiceWorker } from '@angular/service-worker';
+import { environment } from './env/env.dev';
 
 const cookieConfig:NgcCookieConsentConfig = {
   cookie: {

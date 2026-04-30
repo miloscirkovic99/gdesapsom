@@ -1,8 +1,8 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { environment } from "apps/gde-sa-psom-portal/src/env/env.dev";
 import { Observable } from "rxjs";
 import { HttpParams } from "@angular/common/http"; // Make sure to import HttpParams
+import { environment } from "../../env/env.dev";
 
 /**
  * Prefixes all requests with `environment.serverUrl`.

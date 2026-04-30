@@ -25,7 +25,7 @@ import { DialogService } from '../../core/services/dialog.service';
 import { ContactFormService } from '../components/contact-form/contact-form.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
-import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
+import { environment } from '../../env/env.dev';
 
 interface SpotsSearchResponse {
   spotsList: Record<string, unknown>[];

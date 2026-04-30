@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { environment } from 'apps/gde-sa-psom-portal/src/env/env.dev';
+import { environment } from '../../env/env.dev';
 
 declare var gtag: Function;
 
