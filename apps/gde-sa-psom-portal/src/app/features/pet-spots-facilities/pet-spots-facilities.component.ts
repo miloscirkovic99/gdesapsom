@@ -95,11 +95,14 @@ export class PetSpotsFacilitiesComponent {
 
   readonly townshipMultiFilterCtrl = new FormControl<string>('');
   readonly filteredtownshipsMulti  = new ReplaySubject<any[]>(1);
-
+readonly formValue = toSignal(
+  this.form.valueChanges,
+  { initialValue: this.form.value }
+);
   // ── Computed ──────────────────────────────────────────────────────────────
   readonly activeFilterCount = computed(() => {
     const loc = this.userLocation();
-    const v   = this.form.value;
+    const v = this.formValue();
     return [
       v.ops_id?.length,
       v.sta_id,
@@ -111,33 +114,36 @@ export class PetSpotsFacilitiesComponent {
 
   readonly hasActiveFilters = computed(() => this.activeFilterCount() > 0);
 
-  readonly activeFilterChips = computed(() => {
-    const v     = this.form.value;
-    const chips: { key: string; label: string }[] = [];
+ readonly activeFilterChips = computed(() => {
+  const v = this.formValue();
+  const loc = this.userLocation();
 
-    if (v.sta_id) {
-      const match = this.spotsStore.allowed()
-        .find((i: any) => i.id === v.sta_id);
-      if (match) chips.push({ key: 'sta_id', label: descriptionToKeyMap[match.ime] });
-    }
+  const chips: { key: string; label: string }[] = [];
 
-    if (v.ugo_id) {
-      const match = this.sharedStore.spotTypes()
-        .find((i: any) => i.id === v.ugo_id);
-      if (match) chips.push({ key: 'ugo_id', label: descriptionToKeyMapSpot[match.ime] });
-    }
+  if (v.sta_id) {
+    const match = this.spotsStore.allowed()
+      .find((i: any) => i.id === v.sta_id);
+    if (match) chips.push({ key: 'sta_id', label: descriptionToKeyMap[match.ime] });
+  }
 
-    if (v.ops_id?.length) {
-      chips.push({ key: 'ops_id', label: `${v.ops_id.length} cities` });
-    }
+  if (v.ugo_id) {
+    const match = this.sharedStore.spotTypes()
+      .find((i: any) => i.id === v.ugo_id);
+    if (match) chips.push({ key: 'ugo_id', label: descriptionToKeyMapSpot[match.ime] });
+  }
 
-    if (this.userLocation()) {
-      const km = (v.radius ?? 0) / 1000;
-      chips.push({ key: 'location', label: `${km} km` });
-    }
+  if (v.ops_id?.length) {
+    chips.push({ key: 'ops_id', label: `${v.ops_id.length} cities` });
+  }
 
-    return chips;
-  });
+  if (loc) {
+    const km = (v.radius ?? 0) / 1000;
+    chips.push({ key: 'location', label: `${km} km` });
+  }
+
+  return chips;
+});
+
 
   // ── Constructor / effects ─────────────────────────────────────────────────
   constructor() {

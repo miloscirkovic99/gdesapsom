@@ -68,7 +68,7 @@
       </div>
     </div>
 <!-- Get Directions Button -->
-<!-- <div class="mt-3">
+<div class="mt-3">
   <button (click)="openDirections()" class="btn btn-secondary btn-sm w-full gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
          stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -76,7 +76,7 @@
     </svg>
     {{ 'get_directions' | transloco }}
   </button>
-</div> -->
+</div>
 
 <!-- Inline route fallback (shown after user picks "show on map") -->
 @if (showInlineRoute()) {
@@ -137,7 +137,7 @@
             </span>
             <div class="text-left">
               <p class="text-sm font-medium">Google Maps</p>
-              <p class="text-xs text-base-content/50">Opens in app or browser</p>
+              <p class="text-xs text-base-content/50">{{ 'google_maps' | transloco }}</p>
             </div>
             <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
@@ -153,7 +153,7 @@
             </span>
             <div class="text-left">
               <p class="text-sm font-medium">Waze</p>
-              <p class="text-xs text-base-content/50">Opens in app if installed</p>
+              <p class="text-xs text-base-content/50">{{ 'waze_maps' | transloco }}</p>
             </div>
             <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
@@ -169,14 +169,14 @@
             </span>
             <div class="text-left">
               <p class="text-sm font-medium">Apple Maps</p>
-              <p class="text-xs text-base-content/50">iOS & macOS only</p>
+              <p class="text-xs text-base-content/50">{{ 'apple_maps' | transloco }}</p>
             </div>
             <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
             </svg>
           </button>
         </li>
-        <li class="border-t border-base-200">
+        <!-- <li class="border-t border-base-200">
           <button (click)="showRouteOnMap()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
             <span class="w-9 h-9 rounded-xl bg-base-200 flex items-center justify-center shrink-0">
               <svg class="w-5 h-5 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -188,7 +188,7 @@
               <p class="text-xs text-base-content/50">{{ 'enter_start_location' | transloco }}</p>
             </div>
           </button>
-        </li>
+        </li> -->
       </ul>
       <!-- Cancel -->
       <div class="p-3 mb-6 border-t border-base-200">

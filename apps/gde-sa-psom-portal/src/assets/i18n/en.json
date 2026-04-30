@@ -283,6 +283,8 @@
   "search_near_me": "Search locations near me",
   "radius_km": "radius km",
   "location_found": "Location found",
-  "close_sheet": "Close"
-
+  "close_sheet": "Close",
+  "google_maps":"Opens in app or browser",
+  "waze_maps":"Opens in app if installed",
+  "apple_maps":"iOS & macOS only"
 }
