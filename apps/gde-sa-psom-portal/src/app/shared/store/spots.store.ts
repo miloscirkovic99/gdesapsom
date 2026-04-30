@@ -98,7 +98,7 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      loadSpots: rxMethod<{ data: { ops_id: string | null; ugo_id: string | null; sta_id: string | null; word: string | null; resetOffset?: boolean } }>(
+      loadSpots: rxMethod<{ data: { ops_id: string | null; ugo_id: string | null; sta_id: string | null; word: string | null; resetOffset?: boolean; latitude: number | null; longitude: number | null,radius:number | null} }>(
         pipe(
           debounceTime(300),
           tap(() => patchState(store, { isLoading: true })),
@@ -115,6 +115,9 @@ export const SpotsStore = signalStore(
               ugo_id: params.data.ugo_id,
               sta_id: params.data.sta_id,
               word: params.data.word,
+              lat: params.data.latitude,
+              lon: params.data.longitude,
+              radius: params.data.radius,
               offset,
               limit,
             }).pipe(
@@ -138,27 +141,33 @@ export const SpotsStore = signalStore(
           })
         )
       ),
-      getNearMeSpots: rxMethod<{ latitude: number; longitude: number,radius:number }>(
-        pipe(
-          debounceTime(300),
-          switchMap((params) => {
-            const { latitude, longitude, radius } = params;
-            return http.post<SpotsSearchResponse>('pet-friendly-spots/near-me', { latitude, longitude, radius });
-          }),
-          tapResponse({
-            next: (response: SpotsSearchResponse) => {
-              patchState(store, (state) => ({
-                spotsList: response.spotsList,
-                totalResult: response.totalResults,
-                offset: 0,
-                isLoading: false,
-              }));
-              refreshAOS();
-            },
-            error: () => patchState(store, { isLoading: false }),
-          })
-        )
-      ),
+      // getNearMeSpots: rxMethod<{ latitude: number; longitude: number,radius:number }>(
+      //   pipe(
+      //     debounceTime(300),
+      //     tap(() => patchState(store, { isLoading: true })),
+      //     switchMap((params) => {
+      //       const { latitude, longitude, radius } = params;
+      //       return http.post<SpotsSearchResponse>('pet-friendly-spots/near-me', { latitude, longitude, radius }).pipe(
+      //         catchError(() => {
+      //           showError('spots_error404');
+      //           return EMPTY;
+      //         })
+      //       );
+      //     }),
+      //     tapResponse({
+      //       next: (response: SpotsSearchResponse) => {
+      //         patchState(store, (state) => ({
+      //           spotsList: response.spotsList,
+      //           totalResult: response.totalResults,
+      //           offset: 0,
+      //           isLoading: false,
+      //         }));
+      //         refreshAOS();
+      //       },
+      //       error: () => patchState(store, { isLoading: false }),
+      //     })
+      //   )
+      // ),
       getSpotById(iuo_id: string, onSuccess: (spot: any) => void, onError: () => void) {
         if (!iuo_id) {
           console.error('getSpotById: iuo_id is null or undefined', iuo_id);
@@ -169,7 +178,7 @@ export const SpotsStore = signalStore(
         console.log('getSpotById: Requesting spot with iuo_id:', iuo_id);
         
         http
-          .post<any>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
+          .get<any>(`pet-friendly-spots/all/${iuo_id}`)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
@@ -252,6 +261,10 @@ export const SpotsStore = signalStore(
           sta_id: null,
           word: null,
           resetOffset: true,
+          latitude: null,
+          longitude: null,
+          radius: null,
+        
         };
         this.loadSpots({ data });
       },

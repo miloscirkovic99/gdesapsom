@@ -25,6 +25,9 @@ export class SettingSpotsComponent {
       ugo_id: null,
       sta_id: null,
       word: word || null,
+      latitude: null,
+      longitude: null,
+      radius: null,
       resetOffset:resetOffset
     };
 

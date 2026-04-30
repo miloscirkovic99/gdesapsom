@@ -52,7 +52,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  
+
 })
 export class PetSpotsFacilitiesComponent {
   @ViewChild('multiSelect', { static: true }) multiSelect!: MatSelect;
@@ -70,6 +70,9 @@ export class PetSpotsFacilitiesComponent {
   sharedStore = inject(SharedStore);
   private route = inject(ActivatedRoute);
   form!: FormGroup;
+  userLocation: { latitude: number; longitude: number } | null = null;
+  isLoadingLocation = false;
+  radiusOptions = [1000, 2000, 3000, 5000, 7500, 10000];
 
   descriptionToKeyMap = descriptionToKeyMap;
   descriptionToKeyMapSpot = descriptionToKeyMapSpot;
@@ -80,6 +83,7 @@ export class PetSpotsFacilitiesComponent {
       sta_id: new FormControl(null), // Single select
       ugo_id: new FormControl(null), // Single select
       word: new FormControl(null),
+      radius: new FormControl(null), // Radius for near me
     });
 
     // listen for search field value changes
@@ -109,9 +113,16 @@ export class PetSpotsFacilitiesComponent {
       }
     });
 
-    this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{      
-      this.formData(true,result);
-    })
+    this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result) => {
+      this.formData(true, result);
+    });
+
+    // Listen for radius changes to automatically search
+    this.form.get('radius')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((radius) => {
+      if (this.userLocation && radius) {
+        this.formData(true);
+      }
+    });
   }
 
   protected filterTownshipsMulti() {
@@ -124,7 +135,7 @@ export class PetSpotsFacilitiesComponent {
   onSubmit(resetOffset: boolean = false) {
     this.formData(resetOffset);
   }
-  formData(resetOffset: boolean = false,word=null) {
+  formData(resetOffset: boolean = false, word = null) {
     const data = {
       ops_id: this.form.value.ops_id?.length
         ? this.form.value.ops_id?.join(',')
@@ -132,9 +143,12 @@ export class PetSpotsFacilitiesComponent {
       ugo_id: this.form.value.ugo_id || null,
       sta_id: this.form.value.sta_id || null,
       word: word || null,
+      latitude: this.userLocation?.latitude || null,
+      longitude: this.userLocation?.longitude || null,
+      radius: this.form.value.radius || null,
       resetOffset: this.form.value.word || resetOffset ? true : false,
     };
-   
+
     this.spotsStore.loadSpots({ data });
   }
   resetData() {
@@ -143,6 +157,9 @@ export class PetSpotsFacilitiesComponent {
       ugo_id: null,
       sta_id: null,
       word: null,
+      latitude: null,
+      longitude: null,
+      radius: null,
       resetOffset: true,
     };
     this.spotsStore.loadSpots({ data });
@@ -171,6 +188,59 @@ export class PetSpotsFacilitiesComponent {
       return true;
     }
     return false;
+  }
+
+  getCurrentLocation(): void {
+    this.isLoadingLocation = true;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.userLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          this.isLoadingLocation = false;
+          console.log('User location:', this.userLocation);
+
+          // Set default radius and automatically search
+          const defaultRadius = 5000; // 5 km default
+          this.form.patchValue({ radius: defaultRadius });
+
+          // Call formData to search with default radius
+          this.formData(true);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          this.isLoadingLocation = false;
+          alert('Unable to get your location. Please enable location services.');
+        }
+      );
+    } else {
+      this.isLoadingLocation = false;
+      alert('Geolocation is not supported by your browser.');
+    }
+  }
+
+  searchNearMe(): void {
+    if (!this.userLocation) {
+      alert('Please get your location first.');
+      return;
+    }
+
+    const radius = this.form.get('radius')?.value;
+    if (!radius) {
+      alert('Please select a radius.');
+      return;
+    }
+
+    // Call formData to search with selected radius
+    this.formData(true);
+  }
+
+  clearNearMeSearch(): void {
+    this.userLocation = null;
+    this.form.get('radius')?.reset();
+    this.resetData();
   }
   ngOnDestroy() {
     this.destroyed$.next(true);

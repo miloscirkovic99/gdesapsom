@@ -18,6 +18,54 @@
       <p class="text-base font-medium text-center text-base-content/60">{{ 'or_filters' | transloco }}</p>
 
       <div class="flex flex-wrap items-start gap-4 justify-center max-sm:flex-col max-sm:w-full">
+        <!-- Get Location Button -->
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          (click)="getCurrentLocation()"
+          [disabled]="isLoadingLocation"
+        >
+          @if (isLoadingLocation) {
+            <span class="loading loading-spinner loading-sm"></span>
+          } @else {
+            📍 {{ userLocation ? 'Location Found' : 'Get My Location' }}
+          }
+        </button>
+
+        <!-- Radius Selector -->
+        @if (userLocation) {
+          <mat-form-field>
+            <mat-label>{{ 'radius_km' | transloco }}</mat-label>
+            <mat-select formControlName="radius">
+              <mat-option [value]="null">--</mat-option>
+              @for (radius of radiusOptions; track $index) {
+                <mat-option [value]="radius">
+                  {{ radius / 1000 }} km
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Search Near Me Button -->
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            (click)="searchNearMe()"
+            [disabled]="!form.get('radius')?.value"
+          >
+            {{ 'search_near_me' | transloco }}
+          </button>
+
+          <!-- Clear Near Me Search -->
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            (click)="clearNearMeSearch()"
+          >
+            {{ 'clear' | transloco }}
+          </button>
+        }
+
         <mat-form-field>
           <mat-label>{{ 'select_city' | transloco }}</mat-label>
           <mat-select
