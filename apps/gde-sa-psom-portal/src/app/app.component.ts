@@ -16,6 +16,7 @@ import { GoogleAnalyticsService } from './core/services/google-analytics.service
 import { PushNotificationService } from './core/services/push-notification.service';
 import { VersionUpdateService } from './core/services/version-update.service';
 import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/pwa-install-dialog.component';
+import { BottomNavigationComponent } from './shared/components/bottom-navigation/bottom-navigation.component';
 @Component({
   imports: [
     RouterModule,
@@ -23,7 +24,8 @@ import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/p
     FooterComponent,
     ContactFormComponent,
     CommonModule,
-    PwaInstallDialogComponent
+    PwaInstallDialogComponent,
+    BottomNavigationComponent
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

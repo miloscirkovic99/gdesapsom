@@ -1,0 +1,51 @@
+<!-- MOBILE ONLY -->
+<nav class="btm-nav md:hidden bg-base-100 border-t border-base-200 relative">
+
+  <!-- LEFT -->
+  @for (item of leftItems(); track item.id) {
+    <button
+      class="nav-btn"
+      [class.nav-btn-active]="isActive(item.route)"
+      [routerLink]="item.route"
+    >
+      <app-nav-icon [icon]="item.icon" />
+
+      <span class="btm-nav-label">
+        {{ item.label }}
+      </span>
+
+      <span class="active-indicator"></span>
+    </button>
+  }
+
+  <!-- CENTER FAB SLOT -->
+  <div class="fab-slot">
+    <button
+      class="fab"
+      [routerLink]="fabItem().route"
+      [attr.aria-label]="fabItem().ariaLabel"
+    >
+      <app-nav-icon [icon]="fabItem().icon" size="lg" />
+
+      <span class="fab-glow"></span>
+    </button>
+  </div>
+
+  <!-- RIGHT -->
+  @for (item of rightItems(); track item.id) {
+    <button
+      class="nav-btn"
+      [class.nav-btn-active]="isActive(item.route)"
+      [routerLink]="item.route"
+    >
+      <app-nav-icon [icon]="item.icon" />
+
+      <span class="btm-nav-label">
+        {{ item.label }}
+      </span>
+
+      <span class="active-indicator"></span>
+    </button>
+  }
+
+</nav>

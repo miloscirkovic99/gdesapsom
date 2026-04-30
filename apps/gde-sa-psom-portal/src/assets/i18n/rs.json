@@ -301,7 +301,7 @@
   "location_found": "Lokacija pronađena",
   "close_sheet": "Zatvori",
   "google_maps":"Otvori u aplikaciji ili browseru",
-  "waze":"Otvori u Waze ako je instaliran, inače u browseru",
+  "waze_maps":"Otvori u Waze app ako je instaliran, inače u browseru",
   "apple_maps":"Otvori u Apple Maps ako je na iOS-u, inače u browseru"
 
 }

@@ -1,0 +1,82 @@
+// .btm-nav {
+//   backdrop-filter: blur(14px);
+// }
+
+// /* base button */
+// .nav-btn {
+//   position: relative;
+//   transition: all 0.25s ease;
+//   color: #94a3b8;
+
+//   display: flex;
+//   flex-direction: column;
+//   gap: 2px;
+// }
+
+// /* hover micro interaction */
+// .nav-btn:active {
+//   transform: scale(0.92);
+// }
+
+// /* active state */
+// .nav-btn-active {
+//   color: #10b981;
+// }
+
+// /* smooth indicator (important UX detail) */
+// .active-indicator {
+//   position: absolute;
+//   bottom: 6px;
+//   width: 4px;
+//   height: 4px;
+//   border-radius: 999px;
+//   background: #10b981;
+//   opacity: 0;
+//   transform: translateY(6px);
+//   transition: all 0.25s ease;
+// }
+
+// .nav-btn-active .active-indicator {
+//   opacity: 1;
+//   transform: translateY(0);
+// }
+
+// /* CENTER FAB */
+// .fab-slot {
+//   position: relative;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+
+// .fab {
+//   position: absolute;
+//   top: -22px;
+//   width: 56px;
+//   height: 56px;
+
+//   border-radius: 999px;
+//   background: #10b981;
+//   color: white;
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   box-shadow: 0 10px 30px rgba(16, 185, 129, 0.35);
+//   transition: all 0.25s ease;
+// }
+
+// .fab:active {
+//   transform: scale(0.92);
+// }
+
+// /* glow pulse */
+// .fab-glow {
+//   position: absolute;
+//   inset: 0;
+//   border-radius: 999px;
+//   background: #10b981;
+//   opacity: 0.25;
+//   filter: blur(10px);
+// }
