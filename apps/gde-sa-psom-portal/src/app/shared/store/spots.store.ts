@@ -174,11 +174,9 @@ export const SpotsStore = signalStore(
           onError();
           return;
         }
-        
-        console.log('getSpotById: Requesting spot with iuo_id:', iuo_id);
-        
+                
         http
-          .get<any>(`pet-friendly-spots/all/${iuo_id}`)
+           .post<any>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {

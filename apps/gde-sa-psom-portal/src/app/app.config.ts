@@ -4,7 +4,7 @@ import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { provideTransloco, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { TranslocoHttpLoader } from './transloco/transloco-loader';
-import { BrowserAnimationsModule, } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, provideAnimations, } from '@angular/platform-browser/animations';
 import { environment } from '../env/env.dev';
 import { ApiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 import { DdosProtectionInterceptor } from './core/interceptors/ddos-protection.interceptor';
@@ -38,6 +38,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
+    provideAnimations(),
     provideRouter(appRoutes,  withInMemoryScrolling({
       scrollPositionRestoration: 'top',
     }),),

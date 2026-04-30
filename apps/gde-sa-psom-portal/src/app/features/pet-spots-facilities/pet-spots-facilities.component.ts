@@ -1,14 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  DestroyRef,
   effect,
-  ElementRef,
   inject,
-  ViewChild,
+  signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import {
   FormBuilder,
   FormControl,
@@ -17,15 +18,7 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import {
-  debounceTime,
-  delay,
-  fromEvent,
-  map,
-  ReplaySubject,
-  Subscription,
-  takeUntil,
-} from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -36,11 +29,30 @@ import {
 import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
 import { ActivatedRoute } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+
+interface SearchPayload {
+  ops_id: string | null;
+  ugo_id: string | null;
+  sta_id: string | null;
+  word: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  radius: number | null;
+  resetOffset: boolean | null;
+}
+type PetSpotsForm = {
+  ops_id: FormControl<number[] | null>;
+  sta_id: FormControl<number | null>;
+  ugo_id: FormControl<number | null>;
+  word:   FormControl<string | null>;
+  radius: FormControl<number | null>;
+};
+
 
 @Component({
   selector: 'app-pet-spots-facilities',
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
@@ -48,203 +60,235 @@ import { ActivatedRoute } from '@angular/router';
     CardComponent,
     NgxMatSelectSearchModule,
     TranslocoModule,
+    AsyncPipe
   ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-
 })
 export class PetSpotsFacilitiesComponent {
-  @ViewChild('multiSelect', { static: true }) multiSelect!: MatSelect;
-  private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  // ── DI ────────────────────────────────────────────────────────────────────
+  readonly spotsStore   = inject(SpotsStore);
+  readonly sharedStore  = inject(SharedStore);
+  private  readonly fb          = inject(FormBuilder);
+  private  readonly route       = inject(ActivatedRoute);
+  private  readonly destroyRef  = inject(DestroyRef);
 
-  /** control for the MatSelect filter keyword multi-selection */
-  public townshipMultiFilterCtrl = new FormControl<string>('');
+  // ── Maps ──────────────────────────────────────────────────────────────────
+  readonly descriptionToKeyMap     = descriptionToKeyMap;
+  readonly descriptionToKeyMapSpot = descriptionToKeyMapSpot;
+  readonly radiusOptions           = [1000, 2000, 3000, 5000, 7500, 10000] as const;
 
-  /** list of tonwhips filtered by search keyword */
-  public filteredtownshipsMulti: ReplaySubject<any[]> = new ReplaySubject<
-    any[]
-  >(1);
+  // ── UI state (signals) ────────────────────────────────────────────────────
+  readonly showFilters       = signal(false);
+  readonly isLoadingLocation = signal(false);
+  readonly userLocation      = signal<{ latitude: number; longitude: number } | null>(null);
 
-  spotsStore = inject(SpotsStore);
-  sharedStore = inject(SharedStore);
-  private route = inject(ActivatedRoute);
-  form!: FormGroup;
-  userLocation: { latitude: number; longitude: number } | null = null;
-  isLoadingLocation = false;
-  radiusOptions = [1000, 2000, 3000, 5000, 7500, 10000];
+  // ── Form ──────────────────────────────────────────────────────────────────
+ readonly form: FormGroup<PetSpotsForm> = this.fb.group({
+  ops_id: new FormControl<number[] | null>(null),
+  sta_id: new FormControl<number | null>(null),
+  ugo_id: new FormControl<number | null>(null),
+  word:   new FormControl<string | null>(null),
+  radius: new FormControl<number | null>(null),
+});
 
-  descriptionToKeyMap = descriptionToKeyMap;
-  descriptionToKeyMapSpot = descriptionToKeyMapSpot;
+  readonly townshipMultiFilterCtrl = new FormControl<string>('');
+  readonly filteredtownshipsMulti  = new ReplaySubject<any[]>(1);
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      ops_id: new FormControl(null), // Multiple select
-      sta_id: new FormControl(null), // Single select
-      ugo_id: new FormControl(null), // Single select
-      word: new FormControl(null),
-      radius: new FormControl(null), // Radius for near me
-    });
+  // ── Computed ──────────────────────────────────────────────────────────────
+  readonly activeFilterCount = computed(() => {
+    const loc = this.userLocation();
+    const v   = this.form.value;
+    return [
+      v.ops_id?.length,
+      v.sta_id,
+      v.ugo_id,
+      v.radius,
+      loc?.latitude,
+    ].filter(Boolean).length;
+  });
 
-    // listen for search field value changes
-    this.townshipMultiFilterCtrl.valueChanges
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        this.filterTownshipsMulti();
-      });
-    effect(() => {
-      if (this.sharedStore.townships().length) {
-        this.filteredtownshipsMulti.next(this.sharedStore.townships().slice());
-      }
-    });
+  readonly hasActiveFilters = computed(() => this.activeFilterCount() > 0);
 
-    // Auto-apply spotType filter from query params (e.g. from landing page quick filters)
-    effect(() => {
-      const spotTypes = this.sharedStore.spotTypes();
-      if (spotTypes?.length) {
-        const spotTypeName = this.route.snapshot.queryParamMap.get('spotType');
-        if (spotTypeName) {
-          const match = spotTypes.find((t: any) => t.ime === spotTypeName);
-          if (match) {
-            this.form.patchValue({ ugo_id: match.id });
-            this.onSubmit(true);
-          }
-        }
-      }
-    });
+  readonly activeFilterChips = computed(() => {
+    const v     = this.form.value;
+    const chips: { key: string; label: string }[] = [];
 
-    this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result) => {
-      this.formData(true, result);
-    });
+    if (v.sta_id) {
+      const match = this.spotsStore.allowed()
+        .find((i: any) => i.id === v.sta_id);
+      if (match) chips.push({ key: 'sta_id', label: descriptionToKeyMap[match.ime] });
+    }
 
-    // Listen for radius changes to automatically search
-    this.form.get('radius')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((radius) => {
-      if (this.userLocation && radius) {
-        this.formData(true);
-      }
-    });
+    if (v.ugo_id) {
+      const match = this.sharedStore.spotTypes()
+        .find((i: any) => i.id === v.ugo_id);
+      if (match) chips.push({ key: 'ugo_id', label: descriptionToKeyMapSpot[match.ime] });
+    }
+
+    if (v.ops_id?.length) {
+      chips.push({ key: 'ops_id', label: `${v.ops_id.length} cities` });
+    }
+
+    if (this.userLocation()) {
+      const km = (v.radius ?? 0) / 1000;
+      chips.push({ key: 'location', label: `Within ${km} km` });
+    }
+
+    return chips;
+  });
+
+  // ── Constructor / effects ─────────────────────────────────────────────────
+  constructor() {
+    this.#initFormSubscriptions();
+    this.#initTownshipEffect();
+    this.#initQueryParamEffect();
   }
 
-  protected filterTownshipsMulti() {
-    const search: any = this.townshipMultiFilterCtrl.value;
-    const filteredTownships = filterTownshipsMulti(this.sharedStore, search);
-
-    this.filteredtownshipsMulti.next(filteredTownships);
+  // ── Public API ────────────────────────────────────────────────────────────
+  onSubmit(resetOffset = false): void {
+    this.spotsStore.loadSpots({ data: this.#buildPayload(resetOffset) });
   }
 
-  onSubmit(resetOffset: boolean = false) {
-    this.formData(resetOffset);
+  onSelectionChange(controlName: string, event: { value: any }): void {
+    if (event.value === null && !this.hasActiveFilters()) {
+      this.#resetStoreData();
+    }
   }
-  formData(resetOffset: boolean = false, word = null) {
-    const data = {
-      ops_id: this.form.value.ops_id?.length
-        ? this.form.value.ops_id?.join(',')
-        : null,
-      ugo_id: this.form.value.ugo_id || null,
-      sta_id: this.form.value.sta_id || null,
-      word: word || null,
-      latitude: this.userLocation?.latitude || null,
-      longitude: this.userLocation?.longitude || null,
-      radius: this.form.value.radius || null,
-      resetOffset: this.form.value.word || resetOffset ? true : false,
-    };
 
-    this.spotsStore.loadSpots({ data });
+  toggleFilters(): void {
+    this.showFilters.update(v => !v);
   }
-  resetData() {
-    const data = {
-      ops_id: null,
-      ugo_id: null,
-      sta_id: null,
-      word: null,
-      latitude: null,
-      longitude: null,
-      radius: null,
-      resetOffset: true,
-    };
-    this.spotsStore.loadSpots({ data });
+
+  applyFilters(): void {
+    this.onSubmit(true);
+    this.showFilters.set(false);
   }
-  clearFilters() {
+
+  removeFilter(key: string): void {
+    if (key === 'location') {
+      this.userLocation.set(null);
+      this.form.patchValue({ radius: null });
+    } else {
+      this.form.patchValue({ [key]: null });
+    }
+    this.onSubmit(true);
+  }
+
+  clearFilters(): void {
     this.form.reset();
-    this.resetData();
-  }
-  onSelectionChange(controlName: string, event: any) {
-    const value = event.value;
-    const isFormDisabled = this.disableForm();
-
-    if (value === null && isFormDisabled) {
-      this.resetData();
-    }
-  }
-
-
-  disableForm(): boolean {
-    if (
-      !this.form.get('sta_id')?.value &&
-      !this.form.get('ugo_id')?.value &&
-      !this.form.get('ops_id')?.value &&
-      !this.form.get('word')?.value
-    ) {
-      return true;
-    }
-    return false;
+    this.userLocation.set(null);
+    this.#resetStoreData();
   }
 
   getCurrentLocation(): void {
-    this.isLoadingLocation = true;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.userLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          this.isLoadingLocation = false;
-          console.log('User location:', this.userLocation);
-
-          // Set default radius and automatically search
-          const defaultRadius = 5000; // 5 km default
-          this.form.patchValue({ radius: defaultRadius });
-
-          // Call formData to search with default radius
-          this.formData(true);
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          this.isLoadingLocation = false;
-          alert('Unable to get your location. Please enable location services.');
-        }
-      );
-    } else {
-      this.isLoadingLocation = false;
+    if (!navigator.geolocation) {
       alert('Geolocation is not supported by your browser.');
-    }
-  }
-
-  searchNearMe(): void {
-    if (!this.userLocation) {
-      alert('Please get your location first.');
       return;
     }
 
-    const radius = this.form.get('radius')?.value;
-    if (!radius) {
-      alert('Please select a radius.');
-      return;
-    }
+    this.isLoadingLocation.set(true);
 
-    // Call formData to search with selected radius
-    this.formData(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        this.userLocation.set({
+          latitude:  coords.latitude,
+          longitude: coords.longitude,
+        });
+        this.isLoadingLocation.set(false);
+        this.form.patchValue({ radius: 5000 });
+        this.onSubmit(true);
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        this.isLoadingLocation.set(false);
+        alert('Unable to get your location. Please enable location services.');
+      },
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
+    );
   }
 
-  clearNearMeSearch(): void {
-    this.userLocation = null;
-    this.form.get('radius')?.reset();
-    this.resetData();
+  // ── Private helpers ───────────────────────────────────────────────────────
+  #initFormSubscriptions(): void {
+    const ref = { destroyRef: this.destroyRef };
+
+    this.form.get('word')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(word => this.spotsStore.loadSpots({
+        data: { ...this.#buildPayload(true), word: word ?? null },
+      }));
+
+    this.form.get('radius')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(radius => {
+        if (this.userLocation() && radius) {
+          this.onSubmit(true);
+        }
+      });
+
+    this.townshipMultiFilterCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.#filterTownships());
   }
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
-    this.resetData();
+
+  #initTownshipEffect(): void {
+    effect(() => {
+      const townships = this.sharedStore.townships();
+      if (townships.length) {
+        this.filteredtownshipsMulti.next(townships.slice());
+      }
+    });
+  }
+
+  #initQueryParamEffect(): void {
+    effect(() => {
+      const spotTypes   = this.sharedStore.spotTypes();
+      const spotTypeName = this.route.snapshot.queryParamMap.get('spotType');
+
+      if (spotTypes?.length && spotTypeName) {
+        const match = spotTypes.find((t: any) => t.ime === spotTypeName);
+        if (match) {
+          this.form.patchValue({ ugo_id: match.id });
+          this.onSubmit(true);
+        }
+      }
+    });
+  }
+
+  #filterTownships(): void {
+    const search = this.townshipMultiFilterCtrl.value ?? '';
+    this.filteredtownshipsMulti.next(
+      filterTownshipsMulti(this.sharedStore, search),
+    );
+  }
+
+  #buildPayload(resetOffset = false): any {
+    const v   = this.form.value;
+    const loc = this.userLocation();
+
+    return {
+      ops_id:      v.ops_id?.length ? v.ops_id.join(',') : null,
+      ugo_id:      v.ugo_id  ?? null,
+      sta_id:      v.sta_id  ?? null,
+      word:        v.word    ?? null,
+      latitude:    loc?.latitude  ?? null,
+      longitude:   loc?.longitude ?? null,
+      radius:      v.radius  ?? null,
+      resetOffset: !!(v.word || resetOffset),
+    };
+  }
+
+  #resetStoreData(): void {
+    this.spotsStore.loadSpots({
+      data: {
+        ops_id: null, ugo_id: null, sta_id: null, word: null,
+        latitude: null, longitude: null, radius: null, resetOffset: true,
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.#resetStoreData();
   }
 }
