@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import AOS from 'aos';
@@ -14,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { GoogleAnalyticsService } from './core/services/google-analytics.service';
 import { PushNotificationService } from './core/services/push-notification.service';
+import { SeoService } from './core/services/seo.service';
 import { VersionUpdateService } from './core/services/version-update.service';
 import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/pwa-install-dialog.component';
 import { BottomNavigationComponent } from './shared/components/bottom-navigation/bottom-navigation.component';
@@ -38,6 +39,8 @@ export class AppComponent {
   private readonly googleAnalyticsService=inject(GoogleAnalyticsService)
   private readonly pushNotificationService = inject(PushNotificationService);
   private readonly versionUpdateService = inject(VersionUpdateService);
+  private readonly seoService = inject(SeoService);
+  private readonly activatedRoute = inject(ActivatedRoute);
   isAdminMode = signal(false);
   private destroyRef = inject(DestroyRef);
   private statusChangeSubscription!: Subscription;
@@ -63,12 +66,32 @@ export class AppComponent {
         if (result.url.includes('admin')) {
           this.isAdminMode.set(true);
         }
+        this.updateSeo(result.urlAfterRedirects);
         setTimeout(() => {
           AOS.refresh();
-        }, 500); 
+        }, 500);
       });
     this.setupCookie();
     this.checkAndEnableAnalytics(); 
+  }
+
+  /**
+   * Gives every route a self-referencing canonical plus its own title and
+   * description. Detail pages (blog post, spot) call SeoService again with the
+   * real content once their data arrives, which overwrites these defaults.
+   */
+  private updateSeo(url: string): void {
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    const snapshot = route.snapshot;
+    this.seoService.update({
+      title: snapshot.title,
+      description: snapshot.data?.['description'],
+      path: url,
+    });
   }
 
   private checkAndEnableAnalytics(): void {

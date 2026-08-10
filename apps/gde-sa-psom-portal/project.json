@@ -121,6 +121,22 @@
         "jestConfig": "apps/gde-sa-psom-portal/jest.config.ts"
       }
     },
+    "generate-sitemap": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": ["node tools/generate-sitemap.mjs"],
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "check-sitemap": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": ["node tools/generate-sitemap.mjs --check"],
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "options": {

@@ -9,6 +9,7 @@ import {
 } from '../../shared/helpers/map.helpers';
 import { RouteConstants } from '../../shared/constants/route.constant';
 import { SnackbarService } from '../../core/services/snackbar.service';
+import { SeoService } from '../../core/services/seo.service';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
@@ -29,6 +30,7 @@ export class SpotDetailPageComponent {
   private document = inject(DOCUMENT);
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
+  private seoService = inject(SeoService);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
 
@@ -61,6 +63,7 @@ export class SpotDetailPageComponent {
         if (response) {
           this.spot.set(response);
           this.isLoading.set(false);
+          this.updateSeo(response, id);
           setTimeout(() => {
             this.initializeMap();
             this.geocodeAddress(`${response.iuo_adressa},${response.grd_ime}`);
@@ -75,6 +78,41 @@ export class SpotDetailPageComponent {
         this.router.navigate(['/' + RouteConstants.allSpots]);
       }
     );
+  }
+
+  /**
+   * Without this the page keeps the generic route title and the site-wide
+   * description, so all 127 spot pages look identical to a crawler.
+   * The spot photo is a base64 blob rather than a URL, so no og:image is passed.
+   */
+  private updateSeo(spot: any, id: string): void {
+    const name = spot?.iuo_ime?.trim();
+    if (!name) return;
+
+    const city = spot?.grd_ime?.trim();
+    const type = spot?.ugo_ime?.trim();
+    const address = spot?.iuo_adressa?.trim();
+    const allowed = spot?.sta_ime?.trim();
+
+    const title = [name, type && city ? `${type} u ${city}` : type || city]
+      .filter(Boolean)
+      .join(' - ');
+
+    const description =
+      spot?.iuo_opis?.trim() ||
+      [
+        `${name} je pet-friendly ${(type || 'objekat').toLowerCase()}`,
+        [address, city].filter(Boolean).join(', '),
+        allowed ? `Dozvoljeni ljubimci: ${allowed}.` : '',
+      ]
+        .filter(Boolean)
+        .join(' - ');
+
+    this.seoService.update({
+      title: `${title} | Gde sa psom`,
+      description,
+      path: `/spots/${id}`,
+    });
   }
 
   ngAfterViewInit(): void {

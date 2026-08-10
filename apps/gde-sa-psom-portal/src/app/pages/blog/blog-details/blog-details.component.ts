@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BlogService } from '../blog.service';
 import { Post } from '../../../shared/models/posts';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-blog-details',
@@ -15,6 +16,7 @@ export class BlogDetailsComponent implements OnInit {
   private blogService = inject(BlogService);
   private route       = inject(ActivatedRoute);
   private router      = inject(Router);
+  private seoService  = inject(SeoService);
 
   post       = signal<Post | null>(null);
   ucitavanje = signal(false);
@@ -46,7 +48,13 @@ export class BlogDetailsComponent implements OnInit {
         this.ucitavanje.set(false);
 
         if (postData?.naslov) {
-          document.title = postData.naslov + ' - Gde sa psom Blog';
+          this.seoService.update({
+            title: `${postData.naslov} - Gde sa psom Blog`,
+            description: postData.sadrzaj,
+            path: `/blog/${postData.slug ?? slug}`,
+            image: postData.slika_naslovna,
+            type: 'article',
+          });
         }
       },
       error: (err) => {

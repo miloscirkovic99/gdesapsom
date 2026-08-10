@@ -48,10 +48,16 @@
     <meta name="application-name" content="Gde sa psom" />
     <meta name="geo.region" content="RS" />
     <meta name="geo.placename" content="Serbia" />
-    <link rel="canonical" href="https://www.gdesapsom.com" />
-    <link rel="alternate" hreflang="sr" href="https://www.gdesapsom.com" />
-    <link rel="alternate" hreflang="en" href="https://www.gdesapsom.com" />
-    <link rel="alternate" hreflang="x-default" href="https://www.gdesapsom.com" />
+    <!--
+      No canonical or hreflang here on purpose.
+      A hardcoded canonical would tell Google that every route - /blog/<slug>,
+      /spots/<id> - is really the homepage, so none of them would be indexed.
+      SeoService (core/services/seo.service.ts) injects a per-route canonical on
+      every navigation; until it runs, no canonical means each URL
+      self-canonicalises, which is the correct default.
+      hreflang is gone because Transloco switches language in place: there is one
+      URL per page, so there is no alternate language URL to point at.
+    -->
     <!-- Open Graph Tags (Social Media) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.gdesapsom.com/" />

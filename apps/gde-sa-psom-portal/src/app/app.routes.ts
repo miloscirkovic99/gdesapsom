@@ -10,7 +10,10 @@ export const appRoutes: Route[] = [
         (m) => m.LandingPageComponent
       );
     },
-    title:'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji'
+    title:'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji',
+    data:{
+      description:'Pronađite gde su psi dobrodošli u Srbiji! Pretražite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije.'
+    }
 
   },
   {
@@ -20,8 +23,10 @@ export const appRoutes: Route[] = [
         (m) => m.PetSpotsFacilitiesComponent
       );
     },
-    data:["User"],
-    title:'Pet-Friendly Restorani i Kafići u Srbiji - Gde sa psom'
+    title:'Pet-Friendly Restorani i Kafići u Srbiji - Gde sa psom',
+    data:{
+      description:'Kompletna lista pet-friendly objekata u Srbiji. Pretražite restorane, kafiće, hotele i barove u koje možete sa psom - po gradu, tipu objekta ili u vašoj blizini.'
+    }
 
   },
   {
@@ -31,7 +36,10 @@ export const appRoutes: Route[] = [
         (m) => m.VeterinaryClinicsComponent
       );
     },
-    title:'Veterinarske Klinike i Ambulante u Srbiji - Gde sa psom'
+    title:'Veterinarske Klinike i Ambulante u Srbiji - Gde sa psom',
+    data:{
+      description:'Pronađite veterinarske klinike i ambulante u Srbiji. Adrese, kontakti i lokacije veterinara u Beogradu, Novom Sadu, Nišu i drugim gradovima.'
+    }
 
   },
   {
@@ -41,7 +49,10 @@ export const appRoutes: Route[] = [
         (m) => m.PetParksComponent
       );
     },
-    title:'Parkovi za Pse u Beogradu i Srbiji - Gde sa psom'
+    title:'Parkovi za Pse u Beogradu i Srbiji - Gde sa psom',
+    data:{
+      description:'Parkovi i ograđeni prostori za pse u Srbiji. Pronađite najbliži park za šetnju i trčanje sa vašim ljubimcem u Beogradu, Novom Sadu i širom zemlje.'
+    }
   },
   {
     path:RouteConstants.about,
@@ -50,8 +61,11 @@ export const appRoutes: Route[] = [
         (m) => m.AboutUsComponent
       );
     },
-    title:'O nama - Gde sa psom | Platforma za Vlasnike Ljubimaca'
-  
+    title:'O nama - Gde sa psom | Platforma za Vlasnike Ljubimaca',
+    data:{
+      description:'Gde sa psom je besplatna platforma koja povezuje vlasnike ljubimaca sa pet-friendly objektima u Srbiji. Saznajte ko smo i zašto smo pokrenuli ovu zajednicu.'
+    }
+
   },
   {
     path:RouteConstants.business,
@@ -60,7 +74,10 @@ export const appRoutes: Route[] = [
         (m) => m.BusinessPageComponent
       );
     },
-    title:'Za Biznise - Listaj Svoju Lokaciju na Gde sa psom'
+    title:'Za Biznise - Listaj Svoju Lokaciju na Gde sa psom',
+    data:{
+      description:'Vlasnik ste kafića, restorana ili hotela? Dodajte svoj objekat na Gde sa psom potpuno besplatno i dođite do novih gostiju koji putuju sa ljubimcima.'
+    }
   },
   {
   path:RouteConstants.blog,
@@ -69,7 +86,10 @@ export const appRoutes: Route[] = [
         (m) => m.BlogListComponent
       );
     },
-    title:'Blog - Saveti, Priče i Vesti za Vlasnike Pasa - Gde sa psom'
+    title:'Blog - Saveti, Priče i Vesti za Vlasnike Pasa - Gde sa psom',
+    data:{
+      description:'Saveti o nezi, ishrani i obuci pasa, vodiči za putovanja sa ljubimcem i vesti iz sveta pet-friendly Srbije. Blog platforme Gde sa psom.'
+    }
   },
   {
     path:RouteConstants.blogDetails,
@@ -78,7 +98,11 @@ export const appRoutes: Route[] = [
         (m) => m.BlogDetailsComponent
       );
     },
-    title:'Blog članak - Gde sa psom'
+    title:'Blog članak - Gde sa psom',
+    // BlogDetailsComponent overwrites the title and description once the post loads.
+    data:{
+      description:'Saveti, priče i vesti za vlasnike pasa na blogu platforme Gde sa psom.'
+    }
   },
   {
     path:RouteConstants.cookiesPolicy,
@@ -87,7 +111,10 @@ export const appRoutes: Route[] = [
         (m) => m.CookiePageComponent
       );
     },
-    title:'Politika Kolačića - Gde sa psom'
+    title:'Politika Kolačića - Gde sa psom',
+    data:{
+      description:'Politika kolačića platforme Gde sa psom - koje kolačiće koristimo, zašto ih koristimo i kako možete da upravljate svojim izborom.'
+    }
   },
   {
     path: RouteConstants.addSpot,
@@ -96,7 +123,10 @@ export const appRoutes: Route[] = [
         (m) => m.AddSpotPageComponent
       );
     },
-    title: 'Dodaj Pet-Friendly Objekat - Gde sa psom'
+    title: 'Dodaj Pet-Friendly Objekat - Gde sa psom',
+    data:{
+      description:'Predložite novi pet-friendly objekat i pomozite drugim vlasnicima ljubimaca da ga pronađu. Dodavanje je besplatno.'
+    }
   },
   {
     path: RouteConstants.addPark,
@@ -105,7 +135,10 @@ export const appRoutes: Route[] = [
         (m) => m.AddParkPageComponent
       );
     },
-    title: 'Dodaj Park za Ljubimce - Gde sa psom'
+    title: 'Dodaj Park za Ljubimce - Gde sa psom',
+    data:{
+      description:'Predložite park ili ograđeni prostor za pse i pomozite drugim vlasnicima ljubimaca da ga pronađu. Dodavanje je besplatno.'
+    }
   },
   {
     path: RouteConstants.spotDetail,
@@ -114,7 +147,11 @@ export const appRoutes: Route[] = [
         (m) => m.SpotDetailPageComponent
       );
     },
-    title: 'Gde sa psom - Spot Details'
+    title: 'Gde sa psom - Spot Details',
+    // SpotDetailPageComponent overwrites the title and description once the spot loads.
+    data:{
+      description:'Detalji pet-friendly objekta - adresa, kontakt, tip objekta i koji ljubimci su dobrodošli.'
+    }
   },
   {
    path:RouteConstants.admin,
