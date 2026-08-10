@@ -1,237 +1,243 @@
-<div class="space-y-24 pb-16">
-  <!-- Hero Section - Premium Conversion Focused -->
-  <section class="hero min-h-[60vh] pt-16">
-    <div class="hero-content max-w-full flex-col lg:flex-row-reverse justify-evenly gap-12">
-      <div class="flex gap-6 max-lg:flex-row max-sm:justify-center">
-        <div class="hero-shape" data-aos="fade-down" data-aos-duration="1000">
-          <img src="assets/dog.png" alt="Pas u pet-friendly restoranu u Srbiji - Gde sa psom"
-            class="w-full h-full object-contain" loading="lazy" />
-        </div>
-        <div class="hero-shape hero-shape--alt max-sm:hidden" data-aos="fade-down" data-aos-duration="1000">
-          <img src="assets/cat.png" alt="Mačka u pet-friendly kafiću u Beogradu" class="w-full h-full object-cover"
-            loading="lazy" />
-        </div>
+<div class="lp">
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <section id="top" class="lp-hero">
+    <div class="lp-hero__glow" aria-hidden="true"></div>
+
+    <div class="lp-hero__inner">
+      <div class="lp-badge">
+        <span class="lp-badge__dot" aria-hidden="true"></span>
+        {{ 'lp_hero_badge' | transloco: { count: spotsStore.totalResult() } }}
       </div>
 
-      <div class="max-w-xl">
-        <h1 class="font-display text-6xl max-sm:text-4xl font-bold text-base-content leading-tight">
-          {{ 'hero_headline' | transloco }}
-        </h1>
-        <p class="py-8 text-lg font-medium text-base-content/70 max-sm:text-base leading-relaxed">
-          {{ 'hero_subheadline' | transloco }}
-        </p>
+      <h1 class="lp-hero__title">{{ 'lp_hero_title' | transloco }}</h1>
+      <p class="lp-hero__subtitle">{{ 'lp_hero_subtitle' | transloco }}</p>
 
-        <!-- Primary CTA -->
-        <div class="flex flex-col sm:flex-row gap-3 mb-6" data-aos="fade-up" data-aos-duration="600">
-          <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg font-semibold flex-1">
-            {{ 'hero_cta_primary' | transloco }}
-          </button>
-
-          <!-- CHANGED: business instead of addSpot -->
-          <button (click)="navigateTo(routeConstants.addSpot)" class="btn btn-outline btn-lg font-semibold flex-1">
-            {{ 'hero_cta_secondary' | transloco }}
-          </button>
-        </div>
-
-
-
-
-        <!-- Quick Filters -->
-        <div class="pt-12" data-aos="fade-up" data-aos-duration="800">
-          <p class="text-sm font-semibold text-base-content/70 mb-4">
-            {{ 'quick_filters_title' | transloco }}
-          </p>
-          <div class="flex flex-wrap gap-2">
-            @for (filter of quickFilters; track filter.label) {
-            <button (click)="onQuickFilter(filter)" class="quick-filter-chip">
-              <span>{{ filter.icon }}</span>
-              <span>{{ filter.label | transloco }}</span>
-            </button>
-            }
+      <!-- Search -->
+      <div class="lp-search">
+        <form class="lp-search__bar" (ngSubmit)="onSearch()">
+          <div class="lp-search__field">
+            <span class="lp-search__icon" aria-hidden="true">🔍</span>
+            <input
+              type="text"
+              [ngModel]="query()"
+              (ngModelChange)="query.set($event)"
+              name="query"
+              [attr.aria-label]="'lp_search_query_placeholder' | transloco"
+              [placeholder]="'lp_search_query_placeholder' | transloco"
+            />
           </div>
-        </div>
+          <div class="lp-search__field lp-search__field--township">
+            <span class="lp-search__icon" aria-hidden="true">📍</span>
+            <input
+              type="text"
+              [ngModel]="township()"
+              (ngModelChange)="township.set($event)"
+              name="township"
+              [attr.aria-label]="'lp_search_township_placeholder' | transloco"
+              [placeholder]="'lp_search_township_placeholder' | transloco"
+            />
+          </div>
+          <button type="submit" class="lp-btn lp-btn--primary lp-search__submit">
+            {{ 'lp_search_submit' | transloco }}
+          </button>
+        </form>
 
-        <!-- Trust Stats -->
-        <div class="py-16">
-          <dl class="grid grid-cols-1 gap-x-8 gap-y-8 text-center lg:grid-cols-3">
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="600">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ spotsStore.totalResult() }}+
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_spots' | transloco }}</dt>
-            </div>
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="800">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ vetClinicsStore.totalCount() > 0 ? vetClinicsStore.totalCount() + '+' : 0 }}
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'vet_clinics' | transloco }}</dt>
-            </div>
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="1000">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ parksStore.parks().length }}+
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_parks' | transloco }}</dt>
-            </div>
-          </dl>
+        <div class="lp-chips">
+          @for (category of categories; track category.label) {
+            <button
+              type="button"
+              class="lp-chip"
+              [class.lp-chip--active]="activeCategory() === category.label"
+              (click)="onCategory(category)"
+            >
+              {{ category.label | transloco }}
+            </button>
+          }
         </div>
+      </div>
+    </div>
+
+    <!-- Featured places. Hidden entirely when there is nothing to show, so the
+         hero does not leave a gap before the stats band. -->
+    @if (featured().length || spotsStore.isLoading()) {
+    <div id="lokacije" class="lp-featured">
+      @if (spotsStore.isLoading() && !featured().length) {
+        @for (i of [1, 2, 3]; track i) {
+          <div class="lp-card lp-card--skeleton" aria-hidden="true">
+            <div class="lp-card__media"></div>
+            <div class="lp-card__body">
+              <span class="lp-skeleton lp-skeleton--sm"></span>
+              <span class="lp-skeleton lp-skeleton--lg"></span>
+              <span class="lp-skeleton"></span>
+            </div>
+          </div>
+        }
+      } @else {
+        @for (spot of featured(); track $index) {
+          <button type="button" class="lp-card" (click)="openSpot(spot)">
+            <span class="lp-card__media">
+              <img [src]="spotImage(spot)" [alt]="spotName(spot)" loading="lazy" />
+            </span>
+            <span class="lp-card__body">
+              <span class="lp-card__meta">
+                @if (spot?.ugo_ime) {
+                  <span class="lp-card__kind">{{ descriptionToKeyMapSpot[spot.ugo_ime] | transloco }}</span>
+                }
+                @if (spotCity(spot)) {
+                  <span class="lp-card__city">· {{ spotCity(spot) }}</span>
+                }
+              </span>
+              <span class="lp-card__title">{{ spotName(spot) }}</span>
+              <span class="lp-card__note">{{ spotAddress(spot) }}</span>
+              <span class="lp-card__tags">
+                @if (spot?.sta_ime) {
+                  <span class="lp-tag">{{ descriptionToKeyMap[spot.sta_ime] | transloco }}</span>
+                }
+                @if (spot?.bas_naziv) {
+                  <span class="lp-tag">{{ descriptionToKeyMapGarden[spot.bas_naziv] | transloco }}</span>
+                }
+              </span>
+            </span>
+          </button>
+        }
+      }
+    </div>
+    }
+  </section>
+
+  <!-- ── Stats ────────────────────────────────────────────────────────── -->
+  <section class="lp-section">
+    <div class="lp-stats">
+      <div class="lp-stat">
+        <span class="lp-stat__value">{{ spotsStore.totalResult() }}+</span>
+        <span class="lp-stat__label">{{ 'pet_spots' | transloco }}</span>
+      </div>
+      <div class="lp-stat">
+        <span class="lp-stat__value">
+          {{ vetClinicsStore.totalCount() > 0 ? vetClinicsStore.totalCount() + '+' : 0 }}
+        </span>
+        <span class="lp-stat__label">{{ 'vet_clinics' | transloco }}</span>
+      </div>
+      <div class="lp-stat">
+        <span class="lp-stat__value">{{ parksStore.parks().length }}+</span>
+        <span class="lp-stat__label">{{ 'pet_parks' | transloco }}</span>
+      </div>
+      <div class="lp-stat">
+        <span class="lp-stat__value">{{ 'lp_stat_free_value' | transloco }}</span>
+        <span class="lp-stat__label">{{ 'lp_stat_free_label' | transloco }}</span>
       </div>
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section class="text-center">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-16">
-      {{ 'how_it_works' | transloco }}
-    </h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-      @for (item of howItWorks; track $index) {
-      <div class="card bg-base-200 shadow-sm p-6 text-center relative pt-12" data-aos="fade-down"
-        [attr.data-aos-duration]="item.duration">
-        <div
-          class="w-14 h-14 rounded-full bg-secondary text-secondary-content text-xl font-bold flex items-center justify-center mx-auto absolute -top-7 left-1/2 -translate-x-1/2 shadow-md">
-          {{ item.id }}
+  <!-- ── How it works ─────────────────────────────────────────────────── -->
+  <section id="kako" class="lp-section">
+    <div class="lp-section__head">
+      <span class="lp-eyebrow">{{ 'lp_how_eyebrow' | transloco }}</span>
+      <h2 class="lp-heading">{{ 'lp_how_title' | transloco }}</h2>
+    </div>
+    <div class="lp-grid lp-grid--3">
+      @for (step of steps; track step.n) {
+        <div class="lp-panel">
+          <span class="lp-step__number">{{ step.n }}</span>
+          <h3 class="lp-panel__title">{{ step.title | transloco }}</h3>
+          <p class="lp-panel__text">{{ step.text | transloco }}</p>
         </div>
-        <h3 class="font-display text-lg font-bold text-base-content">
-          {{ item.title | transloco }}
-        </h3>
-      </div>
       }
     </div>
   </section>
 
-  <!-- Value Proposition Section -->
-  <section class="py-16" data-aos="fade-up">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-12 text-center">
-        {{ 'value_prop_title' | transloco }}
-      </h2>
+  <!-- ── Problem / solution ───────────────────────────────────────────── -->
+  <section id="zasto" class="lp-section">
+    <div class="lp-split">
+      <div class="lp-panel lp-panel--lg">
+        <span class="lp-eyebrow lp-eyebrow--muted">{{ 'lp_problem_eyebrow' | transloco }}</span>
+        <h2 class="lp-heading lp-heading--sm">{{ 'lp_problem_title' | transloco }}</h2>
+        <ul class="lp-list">
+          @for (pain of painPoints; track pain) {
+            <li class="lp-list__item">
+              <span class="lp-list__marker lp-list__marker--no" aria-hidden="true">✕</span>
+              <p class="lp-panel__text">{{ pain | transloco }}</p>
+            </li>
+          }
+        </ul>
+      </div>
 
-      <div class="bg-base-100 rounded-2xl p-8 md:p-12 border-2 border-base-200">
-        <p class="text-lg font-semibold text-base-content mb-8 text-center">
-          {{ 'value_prop_intro' | transloco }}
-        </p>
-
-        <div class="space-y-4 mb-10">
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_unclear' | transloco }}
-            </p>
-          </div>
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_awkward' | transloco }}
-            </p>
-          </div>
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_time' | transloco }}
-            </p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <p class="text-lg font-semibold text-secondary mb-4 text-center">
-          ✅ {{ 'value_prop_solution' | transloco }}
-        </p>
-
-        <p class="text-base-content/70 leading-relaxed text-center">
-          {{ 'value_prop_description' | transloco }}
-        </p>
+      <div class="lp-panel lp-panel--lg lp-panel--accent">
+        <span class="lp-eyebrow">{{ 'lp_solution_eyebrow' | transloco }}</span>
+        <h2 class="lp-heading lp-heading--sm">{{ 'lp_solution_title' | transloco }}</h2>
+        <ul class="lp-list">
+          @for (solution of solutions; track solution.lead) {
+            <li class="lp-list__item">
+              <span class="lp-list__marker lp-list__marker--yes" aria-hidden="true">✓</span>
+              <p class="lp-panel__text lp-panel__text--strong">
+                <strong>{{ solution.lead | transloco }}</strong> {{ solution.text | transloco }}
+              </p>
+            </li>
+          }
+        </ul>
+        <button
+          type="button"
+          class="lp-btn lp-btn--contrast lp-panel__cta"
+          (click)="navigateTo(routeConstants.allSpots)"
+        >
+          {{ 'lp_solution_cta' | transloco }}
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Featured Spots -->
-  <section>
-    <div class="flex flex-col items-center gap-4 mb-8">
-      <h2 class="font-display text-4xl font-bold max-sm:text-3xl text-center">
-        {{ 'random_spot_title' | transloco }}
-      </h2>
-      <p class="text-lg text-base-content/70 text-center max-w-2xl">
-        {{ 'random_spot_description' | transloco }}
-      </p>
-      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-sm">
-        {{ 'pet_places' | transloco }}
-      </button>
-    </div>
-    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
-  </section>
-
-  <!-- Features Highlights Section -->
-  <section class="py-16" data-aos="fade-up">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-16 text-center">
-      {{ 'features_title' | transloco }}
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-      <!-- Feature 1: Smart Filters -->
-      <div class="card bg-gradient-to-br from-secondary/10 to-primary/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="600">
-        <div class="text-5xl mb-4">🔍</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_filter_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_filter_desc' | transloco }}
-        </p>
+  <!-- ── Add a place / for business ───────────────────────────────────── -->
+  <section id="dodaj" class="lp-section">
+    <div class="lp-split">
+      <div class="lp-panel lp-panel--lg">
+        <span class="lp-panel__emoji" aria-hidden="true">🐾</span>
+        <h3 class="lp-heading lp-heading--xs">{{ 'lp_add_title' | transloco }}</h3>
+        <p class="lp-panel__text">{{ 'lp_add_text' | transloco }}</p>
+        <button
+          type="button"
+          class="lp-btn lp-btn--primary lp-panel__cta"
+          (click)="navigateTo(routeConstants.addSpot)"
+        >
+          {{ 'lp_add_cta' | transloco }}
+        </button>
       </div>
 
-      <!-- Feature 2: Verified Information -->
-      <div class="card bg-gradient-to-br from-accent/10 to-secondary/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="700">
-        <div class="text-5xl mb-4">✅</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_verified_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_verified_desc' | transloco }}
-        </p>
-      </div>
-
-      <!-- Feature 3: Growing Community -->
-      <div class="card bg-gradient-to-br from-primary/10 to-accent/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="800">
-        <div class="text-5xl mb-4">🤝</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_community_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_community_desc' | transloco }}
-        </p>
+      <div id="biznis" class="lp-panel lp-panel--lg lp-panel--sunken">
+        <span class="lp-panel__emoji" aria-hidden="true">🏠</span>
+        <h3 class="lp-heading lp-heading--xs">{{ 'lp_business_title' | transloco }}</h3>
+        <p class="lp-panel__text">{{ 'lp_business_text' | transloco }}</p>
+        <button
+          type="button"
+          class="lp-btn lp-btn--outline lp-panel__cta"
+          (click)="navigateTo(routeConstants.business)"
+        >
+          {{ 'lp_business_cta' | transloco }}
+        </button>
       </div>
     </div>
   </section>
 
-
-
-  <!-- Final CTA Section - Both User Types -->
-  <section class="py-20 text-center" data-aos="fade-up">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-4 text-base-content">
-      {{ 'cta_section_title' | transloco }}
-    </h2>
-    <p class="text-lg text-base-content/70 mb-12 max-w-2xl mx-auto">
-      {{ 'cta_section_desc' | transloco }}
-    </p>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto px-4">
-      <!-- CTA for Users -->
-      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg h-auto py-3 font-semibold">
-        <div class="text-center">
-          <div class="text-2xl mb-2">🐾</div>
-          <div>{{ 'cta_users' | transloco }}</div>
-        </div>
-      </button>
-
-      <!-- CTA for Business -->
-      <button (click)="navigateTo(routeConstants.business)" class="btn btn-outline btn-lg h-auto py-3 font-semibold">
-        <div class="text-center">
-          <div class="text-2xl mb-2">🏢</div>
-          <div>{{ 'cta_business' | transloco }}</div>
-        </div>
-      </button>
+  <!-- ── Newsletter ───────────────────────────────────────────────────── -->
+  <section id="newsletter" class="lp-section lp-section--last">
+    <div class="lp-newsletter">
+      <div class="lp-newsletter__copy">
+        <h3 class="lp-heading lp-heading--xs">{{ 'lp_newsletter_title' | transloco }}</h3>
+        <p class="lp-panel__text">{{ 'lp_newsletter_text' | transloco }}</p>
+      </div>
+      <form class="lp-newsletter__form" (ngSubmit)="onSubscribe()">
+        <input
+          type="email"
+          required
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          name="email"
+          [attr.aria-label]="'lp_newsletter_placeholder' | transloco"
+          [placeholder]="'lp_newsletter_placeholder' | transloco"
+        />
+        <button type="submit" class="lp-btn lp-btn--primary">
+          {{ (subscribed() ? 'lp_newsletter_done' : 'lp_newsletter_cta') | transloco }}
+        </button>
+      </form>
     </div>
   </section>
+</div>

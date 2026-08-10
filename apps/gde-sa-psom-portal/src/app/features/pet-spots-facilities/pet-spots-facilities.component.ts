@@ -84,6 +84,9 @@ export class PetSpotsFacilitiesComponent {
   readonly isLoadingLocation = signal(false);
   readonly userLocation      = signal<{ latitude: number; longitude: number } | null>(null);
 
+  /** Guards the one-shot ?township= hand-off from the landing page hero. */
+  #townshipParamApplied = false;
+
   // ── Form ──────────────────────────────────────────────────────────────────
  readonly form: FormGroup<PetSpotsForm> = this.fb.group({
   ops_id: new FormControl<number[] | null>(null),
@@ -249,6 +252,14 @@ readonly formValue = toSignal(
   }
 
   #initQueryParamEffect(): void {
+    // Free-text search handed over from the landing page hero (?word=...).
+    // Patched once, outside the effect: the `word` valueChanges subscription
+    // set up in #initFormSubscriptions() turns this into a search on its own.
+    const word = this.route.snapshot.queryParamMap.get('word');
+    if (word) {
+      this.form.patchValue({ word });
+    }
+
     effect(() => {
       const spotTypes   = this.sharedStore.spotTypes();
       const spotTypeName = this.route.snapshot.queryParamMap.get('spotType');
@@ -259,6 +270,28 @@ readonly formValue = toSignal(
           this.form.patchValue({ ugo_id: match.id });
           this.onSubmit(true);
         }
+      }
+    });
+
+    // Municipality handed over from the landing page hero (?township=...).
+    // Townships arrive asynchronously, so this waits for them; an unknown name
+    // is simply ignored and the free-text search still applies.
+    effect(() => {
+      const townships    = this.sharedStore.townships();
+      const townshipName = this.route.snapshot.queryParamMap.get('township');
+
+      if (this.#townshipParamApplied || !townships?.length || !townshipName) return;
+
+      const normalize = (value: string) =>
+        value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const match = townships.find(
+        (t: any) => normalize(t.ime ?? '') === normalize(townshipName),
+      );
+
+      this.#townshipParamApplied = true;
+      if (match) {
+        this.form.patchValue({ ops_id: [match.id] });
+        this.onSubmit(true);
       }
     });
   }
