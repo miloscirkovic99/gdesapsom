@@ -88,3 +88,8 @@ logs/
 *.temp
 *~
 .cache/
+
+# Izuzeci: shema baze i dokumentacija feature-a se verzionisu
+!db/**/*.sql
+!db/**/*.md
+!docs/**/*.md
