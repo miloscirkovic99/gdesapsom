@@ -13,12 +13,17 @@ SET NAMES utf8mb4;
 
 
 -- --- tip hrane ---------------------------------------------------------------
+-- `cooked` je dodat zbog kuvanih obroka (vidi 05_seed_dog_food_pseca_kasika.sql):
+-- `wet` je konzerva, `raw` je suprotnost, pa nijedan nije mogao da ga pokrije.
+-- Zbog njega su raw/treat/supplement pomereni za jedan -- sort_order je samo
+-- redosled prikaza, `code` se nije menjao, pa deep linkovi ostaju isti.
 INSERT INTO food_type (code, name_sr, name_en, sort_order) VALUES
-  ('dry',        'Suva hrana',    'Dry food',   1),
-  ('wet',        'Vlazna hrana',  'Wet food',   2),
-  ('raw',        'Sirova hrana',  'Raw food',   3),
-  ('treat',      'Poslastice',    'Treats',     4),
-  ('supplement', 'Dodaci ishrani','Supplements',5)
+  ('dry',        'Suva hrana',     'Dry food',    1),
+  ('wet',        'Vlazna hrana',   'Wet food',    2),
+  ('cooked',     'Kuvana hrana',   'Cooked food', 3),
+  ('raw',        'Sirova hrana',   'Raw food',    4),
+  ('treat',      'Poslastice',     'Treats',      5),
+  ('supplement', 'Dodaci ishrani', 'Supplements', 6)
 ON DUPLICATE KEY UPDATE
   name_sr = VALUES(name_sr), name_en = VALUES(name_en), sort_order = VALUES(sort_order);
 

@@ -7,6 +7,8 @@ browser DB manager, pa su ovo fajlovi koje lepiš i pokrećeš **ručno, redom**
 01_schema.sql        tabele
 02_seed_lookups.sql  lookup vrednosti + početni brendovi
 03_indexes.sql       indeksi
+04_seed_pet_shops.sql  prve prodavnice (opciono; radi i kroz admin)
+05_seed_dog_food_pseca_kasika.sql  katalog Pseće Kašike + cene
 ```
 
 **Napravi backup pre pokretanja.** Nema `down` skripte.
