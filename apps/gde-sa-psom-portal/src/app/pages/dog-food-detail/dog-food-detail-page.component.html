@@ -1,0 +1,234 @@
+@if (store.isLoadingDetail()) {
+  <div class="max-w-5xl mx-auto py-6 sm:py-10 animate-pulse" aria-busy="true">
+    <div class="h-4 w-48 rounded bg-base-300 mb-8"></div>
+    <div class="grid gap-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
+      <div class="aspect-square rounded-2xl bg-base-200"></div>
+      <div class="space-y-4">
+        <div class="h-4 w-24 rounded bg-base-300"></div>
+        <div class="h-8 w-3/4 rounded bg-base-300"></div>
+        <div class="h-4 w-full rounded bg-base-300"></div>
+        <div class="h-4 w-2/3 rounded bg-base-300"></div>
+        <div class="h-28 w-full rounded-2xl bg-base-200"></div>
+      </div>
+    </div>
+    <span class="sr-only">{{ 'loading' | transloco }}</span>
+  </div>
+} @else if (store.detailError()) {
+  <div class="max-w-xl mx-auto py-16 sm:py-24 text-center space-y-4">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-16 h-16 mx-auto text-base-content/40" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 11.25h18a9 9 0 0 1-18 0Z" />
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 11.25V8.5a3.75 3.75 0 0 1 7.5 0v2.75" />
+    </svg>
+    <h1 class="font-display text-2xl font-bold">
+      {{ (store.detailError() === 'not-found' ? 'product_not_found' : 'catalog_error_title') | transloco }}
+    </h1>
+    <p class="text-base-content/70">
+      {{ (store.detailError() === 'not-found' ? 'product_not_found_text' : 'catalog_error') | transloco }}
+    </p>
+    <a [routerLink]="'/' + routes.dogFood" class="btn btn-secondary btn-sm">{{ 'back_to_catalog' | transloco }}</a>
+  </div>
+} @else {
+  @if (product(); as p) {
+  <article class="max-w-5xl mx-auto py-6 sm:py-10 space-y-8 sm:space-y-10">
+    <!-- ── Breadcrumb ── -->
+    <nav [attr.aria-label]="'breadcrumb' | transloco" class="text-sm text-base-content/60">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a [routerLink]="'/' + routes.dogFood" class="link link-hover">{{ 'dog_food_title' | transloco }}</a></li>
+        <li aria-hidden="true">/</li>
+        <li>
+          <a [routerLink]="'/' + routes.dogFood" [queryParams]="{ type: p.foodType.code }" class="link link-hover">
+            {{ p.foodType | localName: lang() }}
+          </a>
+        </li>
+        <li aria-hidden="true">/</li>
+        <li class="text-base-content/80 truncate max-w-[60vw] sm:max-w-none" aria-current="page">{{ p.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="grid gap-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
+      <!-- ── Gallery ── -->
+      <div class="space-y-3">
+        <figure class="aspect-square rounded-2xl bg-base-200 overflow-hidden border border-base-300/50">
+          @if (currentImage(); as image) {
+            <img
+              [src]="image.image"
+              [alt]="image.altText || p.brand.name + ' ' + p.name"
+              class="w-full h-full object-cover"
+            />
+          } @else {
+            <div class="w-full h-full flex items-center justify-center text-base-content/20">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" class="w-32 h-32" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 11.25h18a9 9 0 0 1-18 0Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 11.25V8.5a3.75 3.75 0 0 1 7.5 0v2.75" />
+              </svg>
+            </div>
+          }
+        </figure>
+
+        @if (images().length > 1) {
+          <div class="flex gap-2 overflow-x-auto scrollbar-none" role="group" [attr.aria-label]="'images' | transloco">
+            @for (image of images(); track image.id; let i = $index) {
+              <button
+                type="button"
+                class="w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 bg-base-200"
+                [class.border-secondary]="i === activeImage()"
+                [class.border-transparent]="i !== activeImage()"
+                [attr.aria-pressed]="i === activeImage()"
+                [attr.aria-label]="'image_n' | transloco: { n: i + 1 }"
+                (click)="selectImage(i)"
+              >
+                <img [src]="image.thumbnail || image.image" alt="" class="w-full h-full object-cover" loading="lazy" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- ── Summary ── -->
+      <div class="space-y-5">
+        <div>
+          @if (p.brand.websiteUrl; as website) {
+            <a [href]="website" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-base-content/60 link link-hover">
+              {{ p.brand.name }}
+            </a>
+          } @else {
+            <p class="text-sm font-medium text-base-content/60">{{ p.brand.name }}</p>
+          }
+          <h1 class="font-display text-2xl sm:text-3xl font-bold leading-tight mt-1">{{ p.name }}</h1>
+        </div>
+
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+          <div>
+            <dt class="text-base-content/60">{{ 'food_type' | transloco }}</dt>
+            <dd class="font-medium">{{ p.foodType | localName: lang() }}</dd>
+          </div>
+          <div>
+            <dt class="text-base-content/60">{{ 'life_stage' | transloco }}</dt>
+            <dd class="font-medium">{{ p.lifeStage | localName: lang() }}</dd>
+          </div>
+          <div>
+            <dt class="text-base-content/60">{{ 'breed_size' | transloco }}</dt>
+            <dd class="font-medium">{{ p.breedSize | localName: lang() }}</dd>
+          </div>
+          @if (p.packageWeightG) {
+            <div>
+              <dt class="text-base-content/60">{{ 'package_weight' | transloco }}</dt>
+              <dd class="font-medium">{{ p.packageWeightG | packageWeight: lang() }}</dd>
+            </div>
+          }
+          @if (p.isGrainFree) {
+            <div>
+              <dt class="text-base-content/60">{{ 'grain_free' | transloco }}</dt>
+              <dd class="font-medium">{{ 'yes' | transloco }}</dd>
+            </div>
+          }
+        </dl>
+
+        <div class="rounded-2xl bg-base-200 p-4 sm:p-5">
+          @if (p.minPrice !== null) {
+            <p class="flex items-baseline gap-2">
+              <span class="text-sm text-base-content/60">{{ 'price_from_label' | transloco }}</span>
+              <span class="font-display text-3xl font-bold text-secondary tabular-nums">{{ p.minPrice | rsdPrice: lang() }}</span>
+            </p>
+            <p class="text-sm text-base-content/70 mt-1">
+              <span>{{ offerCountKey() | transloco: { count: p.aggregate.offerCount } }}</span>@if (p.aggregate.highPrice !== null && p.aggregate.highPrice !== p.aggregate.lowPrice) {<span>, {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}</span>}
+            </p>
+          } @else if (inStockOffers() > 0) {
+            <p class="font-medium">{{ 'price_unknown' | transloco }}</p>
+            <p class="text-sm text-base-content/70 mt-1">{{ 'price_unknown_hint' | transloco }}</p>
+          } @else {
+            <p class="font-medium">{{ 'no_offers' | transloco }}</p>
+            <p class="text-sm text-base-content/70 mt-1">{{ 'no_offers_hint' | transloco }}</p>
+          }
+
+          <div class="flex flex-wrap gap-2 mt-4">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="scrollToOffers()">
+              {{ 'available_at' | transloco }}
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm border border-base-300 gap-1.5" (click)="copyLink()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+              </svg>
+              {{ 'copy_link' | transloco }}
+            </button>
+          </div>
+        </div>
+
+        @if (p.description; as description) {
+          <p class="text-base leading-relaxed text-base-content/80">{{ description }}</p>
+        }
+      </div>
+    </div>
+
+    <!-- ── Where to buy ── -->
+    <section id="where-to-buy" class="space-y-4 scroll-mt-24">
+      <div>
+        <h2 class="font-display text-xl sm:text-2xl font-bold">{{ 'available_at' | transloco }}</h2>
+        <p class="text-sm text-base-content/70 mt-1">{{ 'available_at_desc' | transloco }}</p>
+      </div>
+      <app-offer-list [offers]="p.offers" [lang]="lang()" />
+    </section>
+
+    <!-- ── Ingredients ── -->
+    @if (p.ingredients; as ingredients) {
+      <section class="space-y-2">
+        <h2 class="font-display text-xl sm:text-2xl font-bold">{{ 'ingredients' | transloco }}</h2>
+        <p class="text-sm leading-relaxed text-base-content/80" [class.line-clamp-3]="canClampIngredients() && !showFullIngredients()">
+          {{ ingredients }}
+        </p>
+        @if (canClampIngredients()) {
+          <button
+            type="button"
+            class="btn btn-link btn-sm px-0 text-secondary no-underline hover:underline"
+            (click)="toggleIngredients()"
+            [attr.aria-expanded]="showFullIngredients()"
+          >
+            {{ (showFullIngredients() ? 'show_less' : 'show_more') | transloco }}
+          </button>
+        }
+      </section>
+    }
+
+    <!-- ── Related products ── -->
+    @if (p.related.length) {
+      <section class="space-y-4">
+        <h2 class="font-display text-xl sm:text-2xl font-bold">{{ 'related_products' | transloco }}</h2>
+        <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          @for (item of p.related; track item.id) {
+            <li>
+              <a
+                [routerLink]="['/' + routes.dogFood, item.slug]"
+                class="card bg-base-100 border border-base-300/50 shadow-sm h-full overflow-hidden hover:border-secondary/40 transition-colors"
+              >
+                <figure class="aspect-square bg-base-200 overflow-hidden">
+                  @if (item.thumbnail; as thumbnail) {
+                    <img [src]="thumbnail" [alt]="item.brandName + ' ' + item.name" class="w-full h-full object-cover" loading="lazy" />
+                  } @else {
+                    <div class="w-full h-full flex items-center justify-center text-base-content/20">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-10 h-10" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 11.25h18a9 9 0 0 1-18 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 11.25V8.5a3.75 3.75 0 0 1 7.5 0v2.75" />
+                      </svg>
+                    </div>
+                  }
+                </figure>
+                <div class="p-3 space-y-1">
+                  <p class="text-[11px] text-base-content/60">{{ item.brandName }}</p>
+                  <p class="text-sm font-medium leading-snug line-clamp-2">{{ item.name }}</p>
+                  @if (item.minPrice !== null) {
+                    <p class="font-display text-base font-bold text-secondary tabular-nums">{{ item.minPrice | rsdPrice: lang() }}</p>
+                  }
+                </div>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <div class="pt-2">
+      <button type="button" (click)="goBack()" class="btn btn-ghost btn-sm border border-base-300">{{ 'back' | transloco }}</button>
+    </div>
+  </article>
+  }
+}

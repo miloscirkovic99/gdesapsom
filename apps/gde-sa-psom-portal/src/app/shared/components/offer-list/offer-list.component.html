@@ -1,0 +1,78 @@
+@if (offers().length) {
+  <ol class="rounded-2xl border border-base-300/60 bg-base-100 divide-y divide-base-300/60 overflow-hidden">
+    @for (offer of offers(); track offer.id) {
+      <li
+        class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 border-l-4"
+        [class]="showBest() && offer.id === bestOfferId() ? 'border-l-secondary bg-secondary/5' : 'border-l-transparent'"
+      >
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <a
+              [routerLink]="[shopsRoute, offer.shop.slug]"
+              class="font-display text-base font-semibold hover:text-secondary transition-colors"
+            >
+              {{ offer.shop.name }}
+            </a>
+            @if (showBest() && offer.id === bestOfferId()) {
+              <span class="badge badge-secondary badge-sm">{{ 'best_price' | transloco }}</span>
+            }
+          </div>
+          <p class="text-sm text-base-content/70 truncate">{{ locationOf(offer) }}</p>
+          <p
+            class="mt-1 inline-flex items-center gap-1 text-xs font-medium"
+            [class.text-success]="offer.isInStock"
+            [class.text-warning]="!offer.isInStock"
+          >
+            @if (offer.isInStock) {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              {{ 'in_stock' | transloco }}
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              {{ 'out_of_stock' | transloco }}
+            }
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+          @if (offer.price !== null) {
+            <p
+              class="font-display text-2xl font-bold tabular-nums whitespace-nowrap"
+              [class.opacity-50]="!offer.isInStock"
+            >
+              {{ offer.price | rsdPrice: lang() }}
+            </p>
+          } @else {
+            <p class="text-sm font-medium text-base-content/60">{{ 'price_unknown' | transloco }}</p>
+          }
+
+          <div class="flex items-center gap-1.5">
+            <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" size="xs" />
+            @if (directionsUrl(offer); as url) {
+              <a
+                [href]="url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-ghost btn-xs border border-base-300 gap-1"
+                [attr.aria-label]="('get_directions' | transloco) + ': ' + offer.shop.name"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                <span class="hidden md:inline">{{ 'get_directions' | transloco }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      </li>
+    }
+  </ol>
+} @else {
+  <div class="rounded-2xl border border-dashed border-base-300 p-6 text-center">
+    <p class="text-sm text-base-content/70">{{ 'no_shops_for_product' | transloco }}</p>
+  </div>
+}

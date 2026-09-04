@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+// Same silhouette as the landing page quick-filter chips.
+.chip {
+  @apply inline-flex items-center whitespace-nowrap shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium
+    bg-base-200 text-base-content border border-base-300 cursor-pointer
+    transition-colors duration-200 hover:bg-base-300;
+}
+
+.chip-active {
+  @apply bg-secondary text-secondary-content border-secondary hover:bg-secondary;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

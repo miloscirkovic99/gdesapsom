@@ -47,6 +47,8 @@ export class LandingPageComponent {
     { label: 'filter_hotels', icon: '🏨', type: 'spot', spotType: 'Hotel' },
     { label: 'filter_parks', icon: '🌳', type: 'parks' },
     { label: 'filter_vet', icon: '🐾', type: 'vet' },
+    { label: 'filter_dog_food', icon: '🦴', type: 'food' },
+    { label: 'filter_pet_shops', icon: '🛍️', type: 'shops' },
   ];
 
   navigateTo(route: any) {
@@ -62,6 +64,10 @@ export class LandingPageComponent {
       this.router.navigate([`/${RouteConstants.petParks}`]);
     } else if (filter.type === 'vet') {
       this.router.navigate([`/${RouteConstants.vet_clinics}`]);
+    } else if (filter.type === 'food') {
+      this.router.navigate([`/${RouteConstants.dogFood}`]);
+    } else if (filter.type === 'shops') {
+      this.router.navigate([`/${RouteConstants.petShops}`]);
     }
   }
 }

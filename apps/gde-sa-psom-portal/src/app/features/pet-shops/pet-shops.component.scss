@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+::ng-deep {
+  .mat-select-search-input {
+    @apply bg-base-100 #{!important};
+  }
+  .mat-select-search-clear {
+    @apply top-1 #{!important};
+  }
+  .mat-mdc-form-field-subscript-wrapper {
+    @apply hidden;
+  }
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

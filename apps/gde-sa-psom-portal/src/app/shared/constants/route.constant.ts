@@ -14,5 +14,9 @@ export class RouteConstants {
     static readonly spotDetail = 'spots/:id';
     static readonly blog = 'blog';
     static readonly blogDetails = 'blog/:slug';
+    static readonly dogFood = 'dog-food';
+    static readonly dogFoodDetail = 'dog-food/:slug';
+    static readonly petShops = 'pet-shops';
+    static readonly petShopDetail = 'pet-shops/:slug';
 
 }

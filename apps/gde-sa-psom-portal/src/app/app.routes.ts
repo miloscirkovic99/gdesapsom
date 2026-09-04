@@ -154,6 +154,56 @@ export const appRoutes: Route[] = [
     }
   },
   {
+    path: RouteConstants.dogFood,
+    loadComponent: () => {
+      return import('./features/dog-food/dog-food-catalog.component').then(
+        (m) => m.DogFoodCatalogComponent
+      );
+    },
+    title: 'Hrana za Pse - Uporedite Cene i Pronađite Prodavnicu - Gde sa psom',
+    data:{
+      description:'Katalog hrane za pse u Srbiji. Filtrirajte po brendu, tipu hrane, uzrastu i veličini rase, uporedite cene i pronađite prodavnicu u kojoj možete da kupite hranu za svog psa.'
+    }
+  },
+  {
+    path: RouteConstants.dogFoodDetail,
+    loadComponent: () => {
+      return import('./pages/dog-food-detail/dog-food-detail-page.component').then(
+        (m) => m.DogFoodDetailPageComponent
+      );
+    },
+    title: 'Hrana za pse - Gde sa psom',
+    // DogFoodDetailPageComponent overwrites the title and description once the product loads.
+    data:{
+      description:'Detalji proizvoda - sastav, pakovanje, cene i prodavnice u kojima je hrana za pse dostupna.'
+    }
+  },
+  {
+    path: RouteConstants.petShops,
+    loadComponent: () => {
+      return import('./features/pet-shops/pet-shops.component').then(
+        (m) => m.PetShopsComponent
+      );
+    },
+    title: 'Prodavnice za Ljubimce u Srbiji - Pet Shop u Blizini - Gde sa psom',
+    data:{
+      description:'Pronađite pet shop u blizini. Adrese, kontakti, dostava preko Wolta i Glova i asortiman hrane za pse u prodavnicama za ljubimce širom Srbije.'
+    }
+  },
+  {
+    path: RouteConstants.petShopDetail,
+    loadComponent: () => {
+      return import('./pages/pet-shop-detail/pet-shop-detail-page.component').then(
+        (m) => m.PetShopDetailPageComponent
+      );
+    },
+    title: 'Prodavnica za ljubimce - Gde sa psom',
+    // PetShopDetailPageComponent overwrites the title and description once the shop loads.
+    data:{
+      description:'Detalji prodavnice za ljubimce - adresa, kontakt, dostava i asortiman hrane za pse.'
+    }
+  },
+  {
    path:RouteConstants.admin,
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)

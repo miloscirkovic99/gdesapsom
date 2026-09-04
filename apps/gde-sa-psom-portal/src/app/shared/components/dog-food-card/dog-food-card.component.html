@@ -1,0 +1,64 @@
+<article
+  class="card bg-base-100 shadow-sm border border-base-300/50 overflow-hidden h-full"
+  data-aos="fade-up"
+  data-aos-duration="600"
+>
+  <a [routerLink]="link()" class="block" tabindex="-1" aria-hidden="true">
+    <figure class="aspect-square bg-base-200 overflow-hidden">
+      @if (item().thumbnail; as thumbnail) {
+        <img
+          [src]="thumbnail"
+          [alt]="item().brand.name + ' ' + item().name"
+          class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
+      } @else {
+        <div class="w-full h-full flex items-center justify-center text-base-content/20">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-16 h-16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 11.25h18a9 9 0 0 1-18 0Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 11.25V8.5a3.75 3.75 0 0 1 7.5 0v2.75" />
+          </svg>
+        </div>
+      }
+    </figure>
+  </a>
+
+  <div class="card-body p-4 gap-2">
+    <p class="text-xs font-medium text-base-content/60">{{ item().brand.name }}</p>
+
+    <h3 class="font-display text-base font-semibold leading-snug line-clamp-2">
+      <a [routerLink]="link()" class="hover:text-secondary transition-colors">{{ item().name }}</a>
+    </h3>
+
+    <ul class="flex flex-wrap gap-1.5" [attr.aria-label]="'product_details' | transloco">
+      <li class="badge badge-ghost badge-sm">{{ item().foodType | localName: lang() }}</li>
+      @if (item().packageWeightG) {
+        <li class="badge badge-ghost badge-sm">{{ item().packageWeightG | packageWeight: lang() }}</li>
+      }
+      @if (item().isGrainFree) {
+        <li class="badge badge-ghost badge-sm">{{ 'grain_free' | transloco }}</li>
+      }
+    </ul>
+
+    <div class="mt-auto pt-2">
+      @if (item().minPrice !== null) {
+        <p class="flex items-baseline gap-1">
+          <span class="text-xs text-base-content/60">{{ 'price_from_label' | transloco }}</span>
+          <span class="font-display text-xl font-bold text-secondary tabular-nums">
+            {{ item().minPrice | rsdPrice: lang() }}
+          </span>
+        </p>
+        <p class="text-xs text-base-content/60">
+          {{ offerCountKey() | transloco: { count: item().offerCount } }}
+        </p>
+      } @else if (item().offerCount > 0) {
+        <p class="text-sm font-medium text-base-content/70">{{ 'price_unknown' | transloco }}</p>
+        <p class="text-xs text-base-content/60">
+          {{ offerCountKey() | transloco: { count: item().offerCount } }}
+        </p>
+      } @else {
+        <p class="text-sm font-medium text-base-content/50">{{ 'no_offers' | transloco }}</p>
+      }
+    </div>
+  </div>
+</article>

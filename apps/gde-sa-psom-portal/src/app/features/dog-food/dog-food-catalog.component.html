@@ -1,0 +1,304 @@
+<div class="py-6 sm:py-10 space-y-6" [formGroup]="form">
+  <!-- ── Page header ── -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div class="max-w-2xl">
+      <h1 class="font-display text-3xl sm:text-4xl font-bold leading-tight">{{ 'dog_food_title' | transloco }}</h1>
+      <p class="mt-2 text-base text-base-content/70">{{ 'dog_food_intro' | transloco }}</p>
+    </div>
+    <app-catalog-nav />
+  </header>
+
+  <!-- ── Search + food type chips (sticky on small screens) ── -->
+  <div class="sticky top-[56px] sm:top-[64px] z-30 -mx-4 px-4 py-3 bg-base-100/95 backdrop-blur border-b border-base-200 lg:static lg:mx-0 lg:p-0 lg:bg-transparent lg:backdrop-blur-0 lg:border-0">
+    <div class="flex items-center gap-2">
+      <label class="input input-bordered flex items-center gap-2 flex-1 h-11">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-40 shrink-0" aria-hidden="true">
+          <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+        </svg>
+        <input
+          type="search"
+          formControlName="word"
+          class="grow"
+          autocomplete="off"
+          [placeholder]="'search_food_placeholder' | transloco"
+          [attr.aria-label]="'search_food_placeholder' | transloco"
+        />
+      </label>
+
+      <button
+        type="button"
+        class="btn btn-ghost border border-base-300 gap-1.5 relative h-11 lg:hidden"
+        (click)="toggleFilters()"
+        [attr.aria-expanded]="showFilters()"
+        aria-controls="dog-food-filter-sheet"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 10h12M9 15h6" />
+        </svg>
+        <span class="hidden sm:inline">{{ 'open_filters' | transloco }}</span>
+        @if (store.activeFilterCount() > 0) {
+          <span class="badge badge-sm badge-secondary absolute -top-1.5 -right-1.5">{{ store.activeFilterCount() }}</span>
+        }
+      </button>
+    </div>
+
+    @if (store.lookups(); as lookups) {
+      <div
+        class="flex gap-2 overflow-x-auto scrollbar-none pt-3 -mx-4 px-4 lg:mx-0 lg:px-0 lg:flex-wrap"
+        role="group"
+        [attr.aria-label]="'filter_food_type' | transloco"
+      >
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="!formValue().foodType"
+          [attr.aria-pressed]="!formValue().foodType"
+          (click)="selectFoodType(null)"
+        >
+          {{ 'filter_all' | transloco }}
+        </button>
+        @for (type of lookups.foodTypes; track type.code) {
+          <button
+            type="button"
+            class="chip"
+            [class.chip-active]="formValue().foodType === type.code"
+            [attr.aria-pressed]="formValue().foodType === type.code"
+            (click)="selectFoodType(type.code)"
+          >
+            {{ type | localName: lang() }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8 xl:gap-12">
+    <!-- ── Filters sidebar (desktop) ── -->
+    <aside class="hidden lg:block" [attr.aria-label]="'open_filters' | transloco">
+      <div class="sticky top-24 space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="font-display text-lg font-semibold">{{ 'open_filters' | transloco }}</h2>
+          @if (hasAnyFilter()) {
+            <button type="button" class="btn btn-ghost btn-xs" (click)="clearFilters()">
+              {{ 'clear_filters' | transloco }}
+            </button>
+          }
+        </div>
+        <ng-container *ngTemplateOutlet="filterForm" />
+      </div>
+    </aside>
+
+    <!-- ── Results ── -->
+    <section [attr.aria-label]="'dog_food_title' | transloco">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <p class="text-sm text-base-content/70 mr-auto min-h-5" aria-live="polite">
+          @if (store.total() !== null && !store.isLoading()) {
+            {{ totalCountKey() | transloco: { count: store.total() } }}
+          }
+        </p>
+        <label class="flex items-center gap-2 text-sm">
+          <span class="text-base-content/70">{{ 'sort_label' | transloco }}</span>
+          <select formControlName="sort" class="select select-bordered select-sm">
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value">{{ option.key | transloco }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (activeChips().length) {
+        <ul class="flex flex-wrap gap-2 mb-4" [attr.aria-label]="'active_filters' | transloco">
+          @for (chip of activeChips(); track chip.key) {
+            <li>
+              <button type="button" class="badge badge-secondary gap-1 py-3 rounded-full" (click)="removeChip(chip.key)">
+                {{ chip.label ?? ((chip.labelKey ?? '') | transloco) }}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span class="sr-only">{{ 'remove_filter' | transloco }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (listStatus(); as status) {
+        <app-list-state
+          [status]="status"
+          skeleton="food"
+          gridClass="grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+          [skeletonCount]="8"
+          emptyTitleKey="no_food_results_title"
+          emptyTextKey="no_food_results"
+          [canClear]="hasAnyFilter()"
+          (retry)="retry()"
+          (clear)="clearFilters()"
+        />
+      } @else {
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+          @for (item of store.items(); track item.id) {
+            <app-dog-food-card [item]="item" [lang]="lang()" />
+          }
+        </div>
+
+        @if (store.hasMore()) {
+          <div class="flex justify-center pt-8">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm min-w-40"
+              (click)="store.loadMore()"
+              [disabled]="store.isLoadingMore()"
+            >
+              @if (store.isLoadingMore()) {
+                <span class="loading loading-spinner loading-sm"></span>
+              } @else {
+                {{ 'see_more' | transloco }}
+              }
+            </button>
+          </div>
+        }
+      }
+    </section>
+  </div>
+
+  <!-- ── Filter controls (rendered in the sidebar and in the mobile sheet) ── -->
+  <ng-template #filterForm>
+    <div class="space-y-6">
+      @if (store.lookups(); as lookups) {
+        <fieldset>
+          <legend class="text-sm font-semibold mb-2">{{ 'filter_life_stage' | transloco }}</legend>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input type="radio" class="radio radio-sm radio-secondary" formControlName="lifeStage" [value]="null" />
+              {{ 'filter_all' | transloco }}
+            </label>
+            @for (stage of lookups.lifeStages; track stage.code) {
+              <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                <input type="radio" class="radio radio-sm radio-secondary" formControlName="lifeStage" [value]="stage.code" />
+                {{ stage | localName: lang() }}
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="text-sm font-semibold mb-2">{{ 'filter_breed_size' | transloco }}</legend>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input type="radio" class="radio radio-sm radio-secondary" formControlName="breedSize" [value]="null" />
+              {{ 'filter_all' | transloco }}
+            </label>
+            @for (size of lookups.breedSizes; track size.code) {
+              <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                <input type="radio" class="radio radio-sm radio-secondary" formControlName="breedSize" [value]="size.code" />
+                {{ size | localName: lang() }}
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        @if (lookups.brands.length) {
+          <fieldset>
+            <legend class="text-sm font-semibold mb-2">{{ 'filter_brand' | transloco }}</legend>
+            <div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              @for (brand of lookups.brands; track brand.slug) {
+                <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="checkbox checkbox-sm checkbox-secondary"
+                    [checked]="isBrandSelected(brand.slug)"
+                    (change)="toggleBrand(brand.slug, $any($event.target).checked)"
+                  />
+                  {{ brand.name }}
+                </label>
+              }
+            </div>
+          </fieldset>
+        }
+
+        <fieldset>
+          <legend class="text-sm font-semibold mb-2">{{ 'filter_price' | transloco }}</legend>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              formControlName="minPrice"
+              class="input input-bordered input-sm w-full"
+              [placeholder]="'filter_price_from' | transloco"
+              [attr.aria-label]="'filter_price_from' | transloco"
+            />
+            <span class="text-base-content/40" aria-hidden="true">-</span>
+            <input
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              formControlName="maxPrice"
+              class="input input-bordered input-sm w-full"
+              [placeholder]="'filter_price_to' | transloco"
+              [attr.aria-label]="'filter_price_to' | transloco"
+            />
+          </div>
+          @if (lookups.priceRange.minPrice !== null && lookups.priceRange.maxPrice !== null) {
+            <p class="text-xs text-base-content/50 mt-1.5">
+              {{ 'price_range_hint' | transloco: { min: (lookups.priceRange.minPrice | rsdPrice: lang()), max: (lookups.priceRange.maxPrice | rsdPrice: lang()) } }}
+            </p>
+          }
+        </fieldset>
+
+        <label class="flex items-center justify-between gap-3 text-sm cursor-pointer">
+          <span class="font-semibold">{{ 'filter_grain_free' | transloco }}</span>
+          <input type="checkbox" class="toggle toggle-secondary toggle-sm" formControlName="grainFree" />
+        </label>
+      } @else {
+        <div class="space-y-3 animate-pulse" aria-busy="true">
+          <div class="h-4 w-1/2 rounded bg-base-300"></div>
+          <div class="h-4 w-2/3 rounded bg-base-300"></div>
+          <div class="h-4 w-1/3 rounded bg-base-300"></div>
+          <div class="h-4 w-3/5 rounded bg-base-300"></div>
+        </div>
+      }
+    </div>
+  </ng-template>
+
+  <!-- ── Filter bottom sheet (small screens) ── -->
+  @if (showFilters()) {
+    <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden" (click)="toggleFilters()" aria-hidden="true"></div>
+
+    <div
+      id="dog-food-filter-sheet"
+      class="fixed bottom-0 left-0 right-0 z-50 bg-base-100 rounded-t-2xl shadow-xl max-h-[85dvh] overflow-y-auto lg:hidden"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'open_filters' | transloco"
+    >
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-10 h-1 rounded-full bg-base-300"></div>
+      </div>
+
+      <div class="px-5 pb-6 space-y-5">
+        <div class="flex items-center justify-between">
+          <h2 class="font-display text-lg font-semibold">{{ 'open_filters' | transloco }}</h2>
+          <button type="button" class="btn btn-ghost btn-sm btn-circle" (click)="toggleFilters()" [attr.aria-label]="'close_sheet' | transloco">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <ng-container *ngTemplateOutlet="filterForm" />
+
+        <div class="flex gap-3 pt-1">
+          <button type="button" class="btn btn-secondary flex-1" (click)="applyFilters()">
+            {{ 'apply_filters' | transloco }}
+          </button>
+          <button type="button" class="btn btn-ghost flex-1" (click)="clearFilters()">
+            {{ 'clear_filters' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

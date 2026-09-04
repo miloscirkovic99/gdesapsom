@@ -62,6 +62,33 @@ export class SeoService {
     this.setCanonical(url);
   }
 
+  /**
+   * Adds or replaces a JSON-LD block identified by `id` (schema.org Product,
+   * PetStore, ...). Detail pages call it once their data arrives and
+   * `clearStructuredData` on destroy so the block never outlives the page.
+   */
+  setStructuredData(id: string, data: Record<string, unknown>): void {
+    const head = this.document.head;
+    let script = head.querySelector<HTMLScriptElement>(
+      `script[type="application/ld+json"][data-seo-id="${id}"]`,
+    );
+
+    if (!script) {
+      script = this.document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-seo-id', id);
+      head.appendChild(script);
+    }
+
+    script.textContent = JSON.stringify(data);
+  }
+
+  clearStructuredData(id: string): void {
+    this.document.head
+      .querySelector(`script[type="application/ld+json"][data-seo-id="${id}"]`)
+      ?.remove();
+  }
+
   /** Strips HTML, collapses whitespace, and truncates on a word boundary. */
   private toDescription(value: string | null | undefined): string {
     if (!value) return '';
