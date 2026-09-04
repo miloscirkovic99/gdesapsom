@@ -13,6 +13,20 @@ import { SeoService } from '../../core/services/seo.service';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
+import { ItemRef } from '../../core/analytics/analytics.events';
+import {
+  ContentType,
+  DestinationType,
+  DirectionsProvider,
+  MapType,
+  PageType,
+  ShareMethod,
+  toItemCategory,
+} from '../../core/analytics/analytics.taxonomy';
+
+/** The listing identity every business-action event on this page carries. */
+type SpotRef = ItemRef;
 
 @Component({
   selector: 'app-spot-detail-page',
@@ -31,8 +45,10 @@ export class SpotDetailPageComponent {
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
   private seoService = inject(SeoService);
+  private analytics = inject(AnalyticsService);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
+  private mapOpenTracked = false;
 
   @ViewChild('startLocationInput') startLocationInput!: ElementRef<HTMLInputElement>;
 
@@ -64,6 +80,10 @@ export class SpotDetailPageComponent {
           this.spot.set(response);
           this.isLoading.set(false);
           this.updateSeo(response, id);
+          this.analytics.trackViewItem({
+            ...this.spotRef(),
+            item_name: response?.iuo_ime ?? null,
+          });
           setTimeout(() => {
             this.initializeMap();
             this.geocodeAddress(`${response.iuo_adressa},${response.grd_ime}`);
@@ -136,24 +156,39 @@ export class SpotDetailPageComponent {
     return this.document.location.href;
   }
 
+  onWebsiteClick(): void {
+    this.analytics.trackOutboundClick({
+      ...this.spotRef(),
+      destination_type: DestinationType.website,
+    });
+  }
+
+  onPhoneClick(): void {
+    this.analytics.trackClickToCall(this.spotRef());
+  }
+
   shareOnFacebook(): void {
+    this.trackShare(ShareMethod.facebook);
     const url = encodeURIComponent(this.spotUrl);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
   }
 
   shareOnViber(): void {
+    this.trackShare(ShareMethod.viber);
     const url = encodeURIComponent(this.spotUrl);
     const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
     window.open(`viber://forward?text=${text}%20${url}`, '_self');
   }
 
   shareOnWhatsApp(): void {
+    this.trackShare(ShareMethod.whatsapp);
     const url = encodeURIComponent(this.spotUrl);
     const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
     window.open(`https://wa.me/?text=${text}%20${url}`, '_blank', 'noopener,noreferrer');
   }
 
   shareOnTelegram(): void {
+    this.trackShare(ShareMethod.telegram);
     const url = encodeURIComponent(this.spotUrl);
     const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
     window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank', 'noopener,noreferrer');
@@ -161,9 +196,27 @@ export class SpotDetailPageComponent {
 
   copyLink(): void {
     navigator.clipboard.writeText(this.spotUrl).then(() => {
+      this.trackShare(ShareMethod.copyLink);
       const msg = this.translocoService.translate('link_copied');
       const btn = this.translocoService.translate('close');
       this.snackbarService.openSnackbar(msg, btn, 'success-snackbar');
+    });
+  }
+
+  private spotRef(): SpotRef {
+    const spot = this.spot();
+    return {
+      item_id: String(spot?.iuo_id ?? this.route.snapshot.paramMap.get('id') ?? ''),
+      item_category: toItemCategory(spot?.ugo_ime),
+      city: spot?.grd_ime ?? null,
+    };
+  }
+
+  private trackShare(method: ShareMethod): void {
+    this.analytics.trackShare({
+      content_type: ContentType.spot,
+      item_id: this.spotRef().item_id,
+      method,
     });
   }
 
@@ -177,6 +230,11 @@ export class SpotDetailPageComponent {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
+
+    if (!this.mapOpenTracked) {
+      this.mapOpenTracked = true;
+      this.analytics.trackMapOpen({ map_type: MapType.leaflet, page_type: PageType.spotDetail });
+    }
   }
 
   private geocodeAddress(address: string): void {
@@ -210,6 +268,8 @@ export class SpotDetailPageComponent {
         )
         .openPopup();
 
+      marker.on('click', () => this.analytics.trackMapMarkerClick(this.spotRef()));
+
       // Ensure marker is centered and visible
       this.map.flyTo([lat, lon], 18, {
         duration: 1,
@@ -228,6 +288,7 @@ export class SpotDetailPageComponent {
   openInGoogleMaps(): void {
     const data = this.spot();
     if (!data?.latitude || !data?.longitude) return;
+    this.trackGetDirections(DirectionsProvider.googleMaps);
     window.open(
       `https://www.google.com/maps/dir/?api=1&destination=${data.latitude},${data.longitude}`,
       '_blank', 'noopener,noreferrer'
@@ -238,6 +299,7 @@ export class SpotDetailPageComponent {
   openInWaze(): void {
     const data = this.spot();
     if (!data?.latitude || !data?.longitude) return;
+    this.trackGetDirections(DirectionsProvider.waze);
     window.open(
       `https://waze.com/ul?ll=${data.latitude},${data.longitude}&navigate=yes`,
       '_blank', 'noopener,noreferrer'
@@ -248,11 +310,16 @@ export class SpotDetailPageComponent {
   openInAppleMaps(): void {
     const data = this.spot();
     if (!data?.latitude || !data?.longitude) return;
+    this.trackGetDirections(DirectionsProvider.appleMaps);
     window.open(
       `https://maps.apple.com/?daddr=${data.latitude},${data.longitude}`,
       '_blank', 'noopener,noreferrer'
     );
     this.closeDirectionsModal();
+  }
+
+  private trackGetDirections(provider: DirectionsProvider): void {
+    this.analytics.trackGetDirections({ ...this.spotRef(), provider });
   }
 
   showRouteOnMap(): void {

@@ -127,7 +127,7 @@
   "cookie_message": "Ovaj sajt koristi kolačiće za bolje korisničko iskustvo.",
   "cookie_header": "Politika kolačića",
   "cookie_header_description": "Kako koristimo kolačiće na ovom sajtu.",
-  "cookie_description": "Ovaj sajt koristi kolačiće za poboljšanje vašeg iskustva analizom posećenosti. Korišćenjem sajta prihvatate našu politiku kolačića.",
+  "cookie_description": "Ovaj sajt koristi kolačiće za poboljšanje vašeg iskustva analizom posećenosti. Analitički kolačići se učitavaju samo ako ih prihvatite u baneru; svoj izbor možete promeniti u svakom trenutku na ovoj stranici.",
   "what_is_cookie_header": "Šta su kolačići?",
   "what_is_cookie_description": "Kolačići su mali tekstualni fajlovi koji se čuvaju na vašem uređaju kada posetite sajt. Čuvaju vaše postavke kako bi se sajt prilagodio vašim potrebama.",
   "cookie_used_header": "Koje kolačiće koristimo?",
@@ -302,6 +302,10 @@
   "close_sheet": "Zatvori",
   "google_maps":"Otvori u aplikaciji ili browseru",
   "waze_maps":"Otvori u Waze app ako je instaliran, inače u browseru",
-  "apple_maps":"Otvori u Apple Maps ako je na iOS-u, inače u browseru"
-
+  "apple_maps":"Otvori u Apple Maps ako je na iOS-u, inače u browseru",
+  "cookie_current_choice": "Vaš trenutni izbor",
+  "cookie_choice_none": "još niste odlučili (analitika je isključena)",
+  "cookie_choice_allowed": "analitički kolačići su prihvaćeni",
+  "cookie_choice_denied": "analitički kolačići su odbijeni",
+  "cookie_manage": "Promeni izbor"
 }

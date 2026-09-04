@@ -216,10 +216,10 @@
             <p>{{ 'township' | transloco }}: <span class="font-medium text-base-content">{{ data?.ops_ime }}</span></p>
           </div>
           <p>{{ 'address' | transloco }}: <span class="font-medium text-base-content">{{ data?.iuo_adressa }}</span></p>
-          <p class="break-all">{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener noreferrer" class="link link-secondary link-hover">{{ data?.iuo_link_web }}</a></p>
+          <p class="break-all">{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener noreferrer" class="link link-secondary link-hover" (click)="onWebsiteClick()">{{ data?.iuo_link_web }}</a></p>
            <p>{{ 'phone' | transloco }}: 
             @if (data?.iuo_telefon) {
-              <a [href]="'tel:' + data.iuo_telefon" class="link link-secondary font-medium">{{ data.iuo_telefon }}</a>
+              <a [href]="'tel:' + data.iuo_telefon" class="link link-secondary font-medium" (click)="onPhoneClick()">{{ data.iuo_telefon }}</a>
             } @else {
               <span class="font-medium text-base-content">/</span>
             }

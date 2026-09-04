@@ -15,6 +15,20 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SharedStore } from '../../shared/store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
+import { SearchContext } from '../../core/analytics/analytics.events';
+import {
+  DirectionsProvider,
+  ItemCategory,
+  SearchCategory,
+  SearchType,
+} from '../../core/analytics/analytics.taxonomy';
+
+/** A `search` event waiting for its results so it can carry the real `results_count`. */
+interface PendingSearch {
+  params: SearchContext;
+  loadingSeen: boolean;
+}
 
 @Component({
   selector: 'app-veterinary-clinics',
@@ -29,15 +43,17 @@ import { filterTownshipsMulti } from '../../shared/utils/township.util';
   templateUrl: './veterinary-clinics.component.html',
   styleUrl: './veterinary-clinics.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-  
+
 })
 export class VeterinaryClinicsComponent {
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   vetClinics = signal<any>([]);
   private http = inject(HttpClient);
+  private analytics = inject(AnalyticsService);
   vetClinicsStore = inject(VetClinicsStore);
   sharedStore=inject(SharedStore)
   form!: FormGroup;
+  private pendingSearch: PendingSearch | null = null;
 
     /** control for the MatSelect filter keyword multi-selection */
     public townshipMultiFilterCtrl = new FormControl<string>('');
@@ -64,6 +80,24 @@ export class VeterinaryClinicsComponent {
       if (this.sharedStore.townshipsByCity().length) {
         this.filteredtownshipsMulti.next(this.sharedStore.townshipsByCity().slice());
       }
+    });
+    // Send the queued `search` once results are in, with the real total.
+    effect(() => {
+      const isLoading = this.vetClinicsStore.isLoading();
+      const pending = this.pendingSearch;
+      if (!pending) return;
+
+      if (isLoading) {
+        pending.loadingSeen = true;
+        return;
+      }
+      if (!pending.loadingSeen) return;
+
+      this.pendingSearch = null;
+      this.analytics.trackSearch({
+        ...pending.params,
+        results_count: this.vetClinicsStore.totalResult(),
+      });
     });
     this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{
       this.formData(true,result);
@@ -102,6 +136,34 @@ export class VeterinaryClinicsComponent {
     };
 
     this.vetClinicsStore.loadVetclinics({ data });
+    this.queueSearchTracking(data);
+  }
+
+  /** Only a new search counts - "see more" pagination and clearing the filters do not. */
+  private queueSearchTracking(data: {
+    ops_id: string | null;
+    grd_id: number | null;
+    word: string | null;
+    resetOffset: boolean;
+  }): void {
+    if (!data.resetOffset || (!data.word && !data.grd_id && !data.ops_id)) {
+      this.pendingSearch = null;
+      return;
+    }
+
+    const city = data.grd_id
+      ? this.sharedStore.city().find((c: any) => c.grd_id === data.grd_id)?.grd_ime
+      : null;
+
+    this.pendingSearch = {
+      loadingSeen: false,
+      params: {
+        search_term: data.word,
+        search_category: SearchCategory.veterinary,
+        search_type: data.word ? SearchType.text : SearchType.filter,
+        city: city ?? null,
+      },
+    };
   }
 
   resetData() {
@@ -111,6 +173,7 @@ export class VeterinaryClinicsComponent {
       word: null,
       resetOffset: true,
     };
+    this.pendingSearch = null;
     this.vetClinicsStore.loadVetclinics({ data });
   }
   clearFilters() {
@@ -123,6 +186,12 @@ export class VeterinaryClinicsComponent {
 
     // Check if location exists
     if (location) {
+      this.analytics.trackGetDirections({
+        item_id: String(item?.vetc_id ?? ''),
+        item_category: ItemCategory.veterinary,
+        city: item?.grd_ime ?? null,
+        provider: DirectionsProvider.googleMaps,
+      });
       const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(
         location
       )}`;

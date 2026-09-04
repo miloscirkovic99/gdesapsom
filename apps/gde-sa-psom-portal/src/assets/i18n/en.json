@@ -127,7 +127,7 @@
   "cookie_message": "This site uses cookies to improve your experience.",
   "cookie_header": "Cookie Policy",
   "cookie_header_description": "How we use cookies on this site.",
-  "cookie_description": "This site uses cookies to improve your experience by analyzing site traffic. By using this site, you agree to our cookie policy.",
+  "cookie_description": "This site uses cookies to improve your experience by analyzing site traffic. Analytics cookies are only loaded if you accept them in the banner; you can change your choice at any time on this page.",
   "what_is_cookie_header": "What Are Cookies?",
   "what_is_cookie_description": "Cookies are small text files stored on your device when you visit a site. They save your preferences over time so the site can adapt to your needs.",
   "cookie_used_header": "Which Cookies Do We Use?",
@@ -286,5 +286,10 @@
   "close_sheet": "Close",
   "google_maps":"Opens in app or browser",
   "waze_maps":"Opens in app if installed",
-  "apple_maps":"iOS & macOS only"
+  "apple_maps":"iOS & macOS only",
+  "cookie_current_choice": "Your current choice",
+  "cookie_choice_none": "not decided yet (analytics is off)",
+  "cookie_choice_allowed": "analytics cookies accepted",
+  "cookie_choice_denied": "analytics cookies declined",
+  "cookie_manage": "Change choice"
 }

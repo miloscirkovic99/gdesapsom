@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { RouteConstants } from '../../../shared/constants/route.constant';
 import { AuthService } from '../auth.service';
+import { AnalyticsService } from '../../../core/analytics/analytics.service';
+import { AuthMethod } from '../../../core/analytics/analytics.taxonomy';
 
 @Component({
   selector: 'app-sign-in',
@@ -17,6 +19,7 @@ export class SignInComponent {
   signinForm!: FormGroup;
   protected authService=inject(AuthService);
   private router=inject(Router)
+  private analytics = inject(AnalyticsService);
   constructor() {
     // Initializing the form with controls and validators
     this.signinForm = new FormGroup({
@@ -29,6 +32,8 @@ export class SignInComponent {
       next:(result)=>{
       localStorage.setItem('sid',result?.sid);
       this.authService.setToken(result.sid);
+      // Only the method is reported - never the email or the session id.
+      this.analytics.trackLogin({ method: AuthMethod.password });
       this.router.navigate([`${RouteConstants.admin}`])
       }
     })

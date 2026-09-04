@@ -30,11 +30,18 @@ import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
+import { SearchContext } from '../../core/analytics/analytics.events';
+import {
+  ListName,
+  SearchType,
+  toSearchCategory,
+} from '../../core/analytics/analytics.taxonomy';
 
 interface SearchPayload {
   ops_id: string | null;
-  ugo_id: string | null;
-  sta_id: string | null;
+  ugo_id: string | number | null;
+  sta_id: string | number | null;
   word: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -48,6 +55,13 @@ type PetSpotsForm = {
   word:   FormControl<string | null>;
   radius: FormControl<number | null>;
 };
+
+/** A `search` event waiting for its results so it can carry the real `results_count`. */
+interface PendingSearch {
+  params: SearchContext;
+  /** The store sets isLoading after a 300 ms debounce; ignore the "not loading" state before that. */
+  loadingSeen: boolean;
+}
 
 
 @Component({
@@ -73,16 +87,20 @@ export class PetSpotsFacilitiesComponent {
   private  readonly fb          = inject(FormBuilder);
   private  readonly route       = inject(ActivatedRoute);
   private  readonly destroyRef  = inject(DestroyRef);
+  private  readonly analytics   = inject(AnalyticsService);
 
   // ── Maps ──────────────────────────────────────────────────────────────────
   readonly descriptionToKeyMap     = descriptionToKeyMap;
   readonly descriptionToKeyMapSpot = descriptionToKeyMapSpot;
   readonly radiusOptions           = [1000, 2000, 3000, 5000, 7500, 10000] as const;
+  readonly listNames               = ListName;
 
   // ── UI state (signals) ────────────────────────────────────────────────────
   readonly showFilters       = signal(false);
   readonly isLoadingLocation = signal(false);
   readonly userLocation      = signal<{ latitude: number; longitude: number } | null>(null);
+
+  #pendingSearch: PendingSearch | null = null;
 
   // ── Form ──────────────────────────────────────────────────────────────────
  readonly form: FormGroup<PetSpotsForm> = this.fb.group({
@@ -150,11 +168,12 @@ readonly formValue = toSignal(
     this.#initFormSubscriptions();
     this.#initTownshipEffect();
     this.#initQueryParamEffect();
+    this.#initSearchTrackingEffect();
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
   onSubmit(resetOffset = false): void {
-    this.spotsStore.loadSpots({ data: this.#buildPayload(resetOffset) });
+    this.#search(this.#buildPayload(resetOffset), this.userLocation() ? SearchType.nearMe : SearchType.filter);
   }
 
   onSelectionChange(controlName: string, event: { value: any }): void {
@@ -218,13 +237,12 @@ readonly formValue = toSignal(
 
   // ── Private helpers ───────────────────────────────────────────────────────
   #initFormSubscriptions(): void {
-    const ref = { destroyRef: this.destroyRef };
-
     this.form.get('word')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(word => this.spotsStore.loadSpots({
-        data: { ...this.#buildPayload(true), word: word ?? null },
-      }));
+      .subscribe(word => this.#search(
+        { ...this.#buildPayload(true), word: word ?? null },
+        SearchType.text,
+      ));
 
     this.form.get('radius')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -263,6 +281,65 @@ readonly formValue = toSignal(
     });
   }
 
+  /**
+   * Sends the queued `search` once the store has finished loading, so the
+   * event carries the real total instead of a guess.
+   */
+  #initSearchTrackingEffect(): void {
+    effect(() => {
+      const isLoading = this.spotsStore.isLoading();
+      const pending = this.#pendingSearch;
+      if (!pending) return;
+
+      if (isLoading) {
+        pending.loadingSeen = true;
+        return;
+      }
+      if (!pending.loadingSeen) return;
+
+      this.#pendingSearch = null;
+      this.analytics.trackSearch({
+        ...pending.params,
+        results_count: this.spotsStore.totalResult(),
+      });
+    });
+  }
+
+  #search(payload: SearchPayload, searchType: SearchType): void {
+    this.spotsStore.loadSpots({ data: payload });
+    this.#queueSearchTracking(payload, searchType);
+  }
+
+  /** Only a new search counts - "see more" pagination and clearing to the full list do not. */
+  #queueSearchTracking(payload: SearchPayload, searchType: SearchType): void {
+    if (!payload.resetOffset) return;
+
+    const hasCriteria =
+      !!payload.word || !!payload.ugo_id || !!payload.sta_id || !!payload.ops_id || !!payload.latitude;
+    if (!hasCriteria) {
+      this.#pendingSearch = null;
+      return;
+    }
+
+    const v = this.form.value;
+    const spotType = v.ugo_id
+      ? this.sharedStore.spotTypes().find((t: any) => t.id === v.ugo_id)?.ime
+      : null;
+    const township = v.ops_id?.length === 1
+      ? this.sharedStore.townships().find((t: any) => t.id === v.ops_id![0])?.ime
+      : null;
+
+    this.#pendingSearch = {
+      loadingSeen: false,
+      params: {
+        search_term: payload.word,
+        search_category: toSearchCategory(spotType),
+        search_type: searchType,
+        city: township ?? null,
+      },
+    };
+  }
+
   #filterTownships(): void {
     const search = this.townshipMultiFilterCtrl.value ?? '';
     this.filteredtownshipsMulti.next(
@@ -270,7 +347,7 @@ readonly formValue = toSignal(
     );
   }
 
-  #buildPayload(resetOffset = false): any {
+  #buildPayload(resetOffset = false): SearchPayload {
     const v   = this.form.value;
     const loc = this.userLocation();
 
@@ -287,6 +364,7 @@ readonly formValue = toSignal(
   }
 
   #resetStoreData(): void {
+    this.#pendingSearch = null;
     this.spotsStore.loadSpots({
       data: {
         ops_id: null, ugo_id: null, sta_id: null, word: null,

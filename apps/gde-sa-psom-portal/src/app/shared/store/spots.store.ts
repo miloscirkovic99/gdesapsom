@@ -98,7 +98,7 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      loadSpots: rxMethod<{ data: { ops_id: string | null; ugo_id: string | null; sta_id: string | null; word: string | null; resetOffset?: boolean; latitude: number | null; longitude: number | null,radius:number | null} }>(
+      loadSpots: rxMethod<{ data: { ops_id: string | null; ugo_id: string | number | null; sta_id: string | number | null; word: string | null; resetOffset?: boolean | null; latitude: number | null; longitude: number | null,radius:number | null} }>(
         pipe(
           debounceTime(300),
           tap(() => patchState(store, { isLoading: true })),

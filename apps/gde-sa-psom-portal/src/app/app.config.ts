@@ -11,28 +11,38 @@ import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../env/env.dev';
 
-const cookieConfig:NgcCookieConsentConfig = {
+/**
+ * Opt-in cookie banner. Google Analytics is loaded only after "Prihvatam";
+ * "Odbijam" is stored as a real answer so the banner does not nag on every
+ * visit. `ConsentService` reads the answer, `AnalyticsService` acts on it.
+ * The choice can be changed from the cookie policy page.
+ */
+const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
-    domain: `${environment.cookieDomain}`
+    domain: `${environment.cookieDomain}`,
+    expiryDays: 365,
   },
-  position: "bottom",
-  theme:'classic',
+  position: 'bottom',
+  theme: 'classic',
   palette: {
     popup: {
-      background: '#000'
+      background: '#000',
     },
     button: {
-      background: '#44cd88'
-    }
+      background: '#44cd88',
+    },
   },
-  type: 'info',
+  type: 'opt-in',
+  revokable: false,
   content: {
-    "message": "This website uses cookies to ensure you get the best experience on our website.",
-    "link": "Learn more",
-    "href": `${environment.baseUrl}${'/cookies-policy'}`,
-    "policy": "Cookie Policy",
-
-  }
+    message:
+      'Koristimo analitičke kolačiće (Google Analytics) da bismo razumeli kako se sajt koristi. Učitavaju se samo uz vašu saglasnost.',
+    allow: 'Prihvatam',
+    deny: 'Odbijam',
+    link: 'Saznaj više',
+    href: `${environment.baseUrl}/cookies-policy`,
+    policy: 'Politika kolačića',
+  },
 };
 export const appConfig: ApplicationConfig = {
   providers: [

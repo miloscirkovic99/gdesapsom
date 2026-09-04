@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ParksStore } from '../../shared/store/parks.store';
 import { VetClinicsStore } from '../../shared/store/vetclinics.store';
+import { ListName } from '../../core/analytics/analytics.taxonomy';
 
 @Component({
   selector: 'app-landing-page',
@@ -22,6 +23,7 @@ export class LandingPageComponent {
   parksStore=inject(ParksStore)
   vetClinicsStore = inject(VetClinicsStore);
   routeConstants = RouteConstants;
+  listNames = ListName;
   private router = inject(Router);
   howItWorks = [
     {

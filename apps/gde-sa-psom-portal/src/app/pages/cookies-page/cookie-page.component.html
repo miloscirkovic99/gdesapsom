@@ -56,6 +56,24 @@
         [innerHTML]="sanitizedCookieControlDescription"
       ></p>
 
+      <div class="flex flex-wrap items-center gap-4 mb-10 p-4 rounded-xl bg-base-200">
+        <p class="text-lg m-0">
+          {{ 'cookie_current_choice' | transloco }}:
+          <strong>
+            @if (!consent.hasAnswered()) {
+              {{ 'cookie_choice_none' | transloco }}
+            } @else if (consent.analyticsGranted()) {
+              {{ 'cookie_choice_allowed' | transloco }}
+            } @else {
+              {{ 'cookie_choice_denied' | transloco }}
+            }
+          </strong>
+        </p>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="manageCookies()">
+          {{ 'cookie_manage' | transloco }}
+        </button>
+      </div>
+
       <h3 class="text-xl font-semibold mb-4">
         {{ 'cookie_policy_change_header' | transloco }}
       </h3>

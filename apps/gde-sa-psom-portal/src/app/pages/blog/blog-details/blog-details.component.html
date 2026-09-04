@@ -21,7 +21,7 @@
     </div>
     <button class="btn btn-s mt-4" (click)="goBack()">Nazad na blog</button>
     } @else if (post()) {
-    <article class="prose prose-lg max-w-4xl mx-auto dark:prose-invert">
+    <article class="prose prose-lg max-w-4xl mx-auto dark:prose-invert" [appScrollDepth]="contentId()">
         <!-- Article Header -->
         <header class="mb-8 pb-6 border-b-2 border-base-200">
             <div class="flex items-center gap-3 mb-4">
@@ -60,7 +60,7 @@
         }
 
         <!-- Article Body -->
-        <div class="prose prose-lg max-w-4xl dark:prose-invert" [innerHTML]="post()?.sadrzaj"></div>
+        <div class="prose prose-lg max-w-4xl dark:prose-invert" [innerHTML]="post()?.sadrzaj" (click)="onArticleClick($event)"></div>
 
         <!-- Tags -->
    @if (tagovi().length > 0) {

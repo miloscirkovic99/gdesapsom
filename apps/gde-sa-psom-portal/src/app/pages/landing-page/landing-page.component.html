@@ -158,7 +158,7 @@
         {{ 'pet_places' | transloco }}
       </button>
     </div>
-    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
+    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()" [listName]="listNames.featuredSpots"></app-card>
   </section>
 
   <!-- Features Highlights Section -->
