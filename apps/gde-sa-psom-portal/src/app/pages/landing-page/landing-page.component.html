@@ -1,237 +1,259 @@
-<div class="space-y-24 pb-16">
-  <!-- Hero Section - Premium Conversion Focused -->
-  <section class="hero min-h-[60vh] pt-16">
-    <div class="hero-content max-w-full flex-col lg:flex-row-reverse justify-evenly gap-12">
-      <div class="flex gap-6 max-lg:flex-row max-sm:justify-center">
-        <div class="hero-shape" data-aos="fade-down" data-aos-duration="1000">
-          <img src="assets/dog.png" alt="Pas u pet-friendly restoranu u Srbiji - Gde sa psom"
-            class="w-full h-full object-contain" loading="lazy" />
-        </div>
-        <div class="hero-shape hero-shape--alt max-sm:hidden" data-aos="fade-down" data-aos-duration="1000">
-          <img src="assets/cat.png" alt="Mačka u pet-friendly kafiću u Beogradu" class="w-full h-full object-cover"
-            loading="lazy" />
-        </div>
+<div class="lp">
+  <!-- ── Hero: message + live product preview ── -->
+  <section class="lp-hero" aria-labelledby="lp-hero-title">
+    <div class="lp-hero__copy">
+      <h1 id="lp-hero-title" class="lp-h1 lp-rise" style="--d: 0">
+        {{ 'lp_hero_title' | transloco }}
+      </h1>
+      <p class="lp-lead lp-rise" style="--d: 1">
+        {{ 'lp_hero_lead' | transloco }}
+      </p>
+      <div class="lp-hero__actions lp-rise" style="--d: 2">
+        <a [routerLink]="['/', routeConstants.allSpots]" class="btn btn-secondary lp-btn">
+          {{ 'lp_hero_cta' | transloco }}
+        </a>
+        <a [routerLink]="['/', routeConstants.addSpot]" class="btn btn-ghost lp-btn lp-btn--quiet">
+          {{ 'lp_hero_secondary' | transloco }}
+        </a>
+      </div>
+      <p class="lp-hero__trust lp-rise" style="--d: 3">
+        @if (counts().spots > 0) {
+          {{ 'lp_trust_line' | transloco: counts() }}
+        } @else {
+          {{ 'lp_hero_note' | transloco }}
+        }
+      </p>
+    </div>
+
+    <div class="lp-panel lp-rise" style="--d: 2">
+      <form class="lp-panel__search" role="search" (ngSubmit)="submitSearch()">
+        <label for="lp-search" class="sr-only">{{ 'lp_search_label' | transloco }}</label>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="lp-panel__search-icon" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" />
+          <path stroke-linecap="round" d="m20 20-4.2-4.2" />
+        </svg>
+        <input
+          id="lp-search"
+          type="search"
+          [formControl]="searchControl"
+          [placeholder]="'lp_search_placeholder' | transloco"
+          autocomplete="off"
+          enterkeyhint="search"
+        />
+        <button type="submit" class="btn btn-secondary btn-sm lp-panel__submit">
+          {{ 'lp_search_button' | transloco }}
+        </button>
+      </form>
+
+      <div class="lp-panel__head">
+        <span>{{ 'lp_panel_title' | transloco }}</span>
+        <a [routerLink]="['/', routeConstants.allSpots]" class="lp-link">{{ 'lp_panel_all' | transloco }}</a>
       </div>
 
-      <div class="max-w-xl">
-        <h1 class="font-display text-6xl max-sm:text-4xl font-bold text-base-content leading-tight">
-          {{ 'hero_headline' | transloco }}
-        </h1>
-        <p class="py-8 text-lg font-medium text-base-content/70 max-sm:text-base leading-relaxed">
-          {{ 'hero_subheadline' | transloco }}
-        </p>
-
-        <!-- Primary CTA -->
-        <div class="flex flex-col sm:flex-row gap-3 mb-6" data-aos="fade-up" data-aos-duration="600">
-          <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg font-semibold flex-1">
-            {{ 'hero_cta_primary' | transloco }}
-          </button>
-
-          <!-- CHANGED: business instead of addSpot -->
-          <button (click)="navigateTo(routeConstants.addSpot)" class="btn btn-outline btn-lg font-semibold flex-1">
-            {{ 'hero_cta_secondary' | transloco }}
-          </button>
-        </div>
-
-
-
-
-        <!-- Quick Filters -->
-        <div class="pt-12" data-aos="fade-up" data-aos-duration="800">
-          <p class="text-sm font-semibold text-base-content/70 mb-4">
-            {{ 'quick_filters_title' | transloco }}
-          </p>
-          <div class="flex flex-wrap gap-2">
-            @for (filter of quickFilters; track filter.label) {
-            <button (click)="onQuickFilter(filter)" class="quick-filter-chip">
-              <span>{{ filter.icon }}</span>
-              <span>{{ filter.label | transloco }}</span>
-            </button>
-            }
-          </div>
-        </div>
-
-        <!-- Trust Stats -->
-        <div class="py-16">
-          <dl class="grid grid-cols-1 gap-x-8 gap-y-8 text-center lg:grid-cols-3">
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="600">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ spotsStore.totalResult() }}+
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_spots' | transloco }}</dt>
-            </div>
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="800">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ vetClinicsStore.totalCount() > 0 ? vetClinicsStore.totalCount() + '+' : 0 }}
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'vet_clinics' | transloco }}</dt>
-            </div>
-            <div class="flex flex-col gap-y-2" data-aos="fade-up" data-aos-duration="1000">
-              <dd class="order-first font-display text-4xl font-bold text-secondary sm:text-5xl">
-                {{ parksStore.parks().length }}+
-              </dd>
-              <dt class="text-sm text-base-content/60 font-medium">{{ 'pet_parks' | transloco }}</dt>
-            </div>
-          </dl>
-        </div>
-      </div>
+      <ul class="lp-panel__list">
+        @if (isLoadingRandom()) {
+          @for (i of [0, 1, 2]; track i) {
+            <li class="lp-row lp-row--skeleton" aria-hidden="true">
+              <div class="lp-row__img"></div>
+              <div class="lp-row__body">
+                <div class="lp-skel w-2/3"></div>
+                <div class="lp-skel w-1/2"></div>
+                <div class="lp-skel w-1/3"></div>
+              </div>
+            </li>
+          }
+        } @else {
+          @for (spot of previewSpots(); track spot.iuo_id; let i = $index) {
+            <li class="lp-row-wrap" [style.--d]="i">
+              <a class="lp-row" [routerLink]="['/spots', spot.iuo_id]" [state]="{ spot: spot }">
+                <img [src]="spotImage(spot)" alt="" class="lp-row__img" width="72" height="72" />
+                <div class="lp-row__body">
+                  <div class="lp-row__top">
+                    <span class="lp-row__name">{{ spot.iuo_ime }}</span>
+                    <span class="lp-tag">{{ typeKey[spot.ugo_ime] | transloco }}</span>
+                  </div>
+                  <div class="lp-row__meta">{{ spot.ops_ime }}, {{ spot.grd_ime }}</div>
+                  <div class="lp-row__facts">
+                    <span class="lp-fact">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="lp-fact__check" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
+                      </svg>
+                      {{ dogsKey[spot.sta_ime] | transloco }}
+                    </span>
+                    <span class="lp-fact">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="lp-fact__check" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
+                      </svg>
+                      {{ gardenKey[spot.bas_naziv] | transloco }}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </li>
+          }
+        }
+      </ul>
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section class="text-center">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-16">
-      {{ 'how_it_works' | transloco }}
-    </h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-      @for (item of howItWorks; track $index) {
-      <div class="card bg-base-200 shadow-sm p-6 text-center relative pt-12" data-aos="fade-down"
-        [attr.data-aos-duration]="item.duration">
-        <div
-          class="w-14 h-14 rounded-full bg-secondary text-secondary-content text-xl font-bold flex items-center justify-center mx-auto absolute -top-7 left-1/2 -translate-x-1/2 shadow-md">
-          {{ item.id }}
+  <!-- ── Browse by category ── -->
+  <nav class="lp-cats" [attr.aria-label]="'lp_cats_title' | transloco">
+    <h2 class="lp-cats__title">{{ 'lp_cats_title' | transloco }}</h2>
+    <ul class="lp-cats__list">
+      @for (cat of categories; track cat.label) {
+        <li>
+          <a class="lp-cat" [routerLink]="cat.link" [queryParams]="cat.queryParams">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lp-cat__icon" aria-hidden="true">
+              @switch (cat.icon) {
+                @case ('restaurant') { <path d="M6 3v6a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.6 1.6-2.5 4-2.5 7H17v11" /> }
+                @case ('cafe') { <path d="M4 8h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8ZM16 9.5h1.5a2.5 2.5 0 0 1 0 5H16M5 21h10" /> }
+                @case ('hotel') { <path d="M3 18V8M3 13h18v5M3 16.5h18M7 13V9.5h4V13M21 18v-5" /> }
+                @case ('park') { <path d="m12 3 5 7h-3l4 5H6l4-5H7l5-7ZM12 15v6" /> }
+                @case ('vet') { <circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /> }
+                @case ('food') { <path d="M4 12h16l-1 5a3 3 0 0 1-3 2H8a3 3 0 0 1-3-2l-1-5ZM8 12a4 4 0 0 1 8 0" /> }
+                @case ('shop') { <path d="M6 8h12l1 12H5L6 8ZM9 8V6a3 3 0 0 1 6 0v2" /> }
+              }
+            </svg>
+            <span>{{ cat.label | transloco }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- ── The question every dog owner asks ── -->
+  <section class="lp-section lp-problem" aria-labelledby="lp-problem-title">
+    <h2 id="lp-problem-title" class="lp-problem__q">{{ 'lp_problem_title' | transloco }}</h2>
+    <p class="lp-lead">{{ 'lp_problem_lead' | transloco }}</p>
+    <ul class="lp-problem__list">
+      @for (p of problems; track p) {
+        <li class="lp-problem__item">{{ p | transloco }}</li>
+      }
+    </ul>
+  </section>
+
+  <!-- ── What every listing answers ── -->
+  <section class="lp-section lp-answer" aria-labelledby="lp-answer-title">
+    <div class="lp-answer__copy">
+      <h2 id="lp-answer-title" class="lp-h2">{{ 'lp_answer_title' | transloco }}</h2>
+      <p class="lp-lead">{{ 'lp_answer_lead' | transloco }}</p>
+      <ul class="lp-facts">
+        @for (fact of facts; track fact.title) {
+          <li class="lp-facts__item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lp-facts__icon" aria-hidden="true">
+              @switch (fact.icon) {
+                @case ('type') { <path d="M4 8h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8ZM16 9.5h1.5a2.5 2.5 0 0 1 0 5H16M5 21h10" /> }
+                @case ('dogs') { <circle cx="8.5" cy="7" r="1.7" /><circle cx="15.5" cy="7" r="1.7" /><circle cx="5" cy="11.5" r="1.6" /><circle cx="19" cy="11.5" r="1.6" /><path d="M12 11.5c-3 0-5.5 2.6-5.5 5.2a2.8 2.8 0 0 0 2.8 2.8c1 0 1.8-.5 2.7-.5s1.7.5 2.7.5a2.8 2.8 0 0 0 2.8-2.8c0-2.6-2.5-5.2-5.5-5.2Z" /> }
+                @case ('garden') { <path d="M12 21v-8M12 13c-4 0-7-3-7-7 4 0 7 3 7 7ZM12 13c4 0 7-3 7-7-4 0-7 3-7 7Z" /> }
+              }
+            </svg>
+            <div>
+              <h3 class="lp-h3">{{ fact.title | transloco }}</h3>
+              <p class="lp-body">{{ fact.desc | transloco }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="lp-answer__example">
+      @if (exampleSpot(); as ex) {
+        <figure class="lp-example">
+          <img [src]="spotImage(ex)" [alt]="ex.iuo_ime" class="lp-example__img" loading="lazy" />
+          <figcaption class="lp-example__body">
+            <div class="lp-row__top">
+              <span class="lp-example__name">{{ ex.iuo_ime }}</span>
+              <span class="lp-tag">{{ typeKey[ex.ugo_ime] | transloco }}</span>
+            </div>
+            <div class="lp-example__addr">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4 shrink-0" aria-hidden="true">
+                <path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11Z" /><circle cx="12" cy="10" r="2" />
+              </svg>
+              <span class="truncate">{{ ex.iuo_adressa }}, {{ ex.ops_ime }}</span>
+            </div>
+            <dl class="lp-example__facts">
+              <div>
+                <dt>{{ 'lp_example_dogs' | transloco }}</dt>
+                <dd>{{ dogsKey[ex.sta_ime] | transloco }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'lp_example_garden' | transloco }}</dt>
+                <dd>{{ gardenKey[ex.bas_naziv] | transloco }}</dd>
+              </div>
+            </dl>
+          </figcaption>
+        </figure>
+        <p class="lp-example__caption">{{ 'lp_example_caption' | transloco }}</p>
+      } @else {
+        <div class="lp-example lp-example--skeleton" aria-hidden="true">
+          <div class="lp-example__img"></div>
+          <div class="lp-example__body">
+            <div class="lp-skel w-1/2"></div>
+            <div class="lp-skel w-2/3"></div>
+            <div class="lp-skel w-1/3"></div>
+          </div>
         </div>
-        <h3 class="font-display text-lg font-bold text-base-content">
-          {{ item.title | transloco }}
-        </h3>
-      </div>
       }
     </div>
   </section>
 
-  <!-- Value Proposition Section -->
-  <section class="py-16" data-aos="fade-up">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-12 text-center">
-        {{ 'value_prop_title' | transloco }}
-      </h2>
-
-      <div class="bg-base-100 rounded-2xl p-8 md:p-12 border-2 border-base-200">
-        <p class="text-lg font-semibold text-base-content mb-8 text-center">
-          {{ 'value_prop_intro' | transloco }}
-        </p>
-
-        <div class="space-y-4 mb-10">
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_unclear' | transloco }}
-            </p>
-          </div>
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_awkward' | transloco }}
-            </p>
-          </div>
-          <div class="flex gap-4 items-start">
-            <span class="text-2xl">❌</span>
-            <p class="text-base-content/80 leading-relaxed">
-              {{ 'pain_point_time' | transloco }}
-            </p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <p class="text-lg font-semibold text-secondary mb-4 text-center">
-          ✅ {{ 'value_prop_solution' | transloco }}
-        </p>
-
-        <p class="text-base-content/70 leading-relaxed text-center">
-          {{ 'value_prop_description' | transloco }}
-        </p>
-      </div>
-    </div>
+  <!-- ── How it works ── -->
+  <section class="lp-section" aria-labelledby="lp-how-title">
+    <h2 id="lp-how-title" class="lp-h2 lp-section__title">{{ 'lp_how_title' | transloco }}</h2>
+    <ol class="lp-steps">
+      @for (step of steps; track step.title; let i = $index) {
+        <li class="lp-step">
+          <span class="lp-step__n" aria-hidden="true">{{ i + 1 }}</span>
+          <h3 class="lp-h3">{{ step.title | transloco }}</h3>
+          <p class="lp-body">{{ step.desc | transloco }}</p>
+        </li>
+      }
+    </ol>
   </section>
 
-  <!-- Featured Spots -->
-  <section>
-    <div class="flex flex-col items-center gap-4 mb-8">
-      <h2 class="font-display text-4xl font-bold max-sm:text-3xl text-center">
-        {{ 'random_spot_title' | transloco }}
-      </h2>
-      <p class="text-lg text-base-content/70 text-center max-w-2xl">
-        {{ 'random_spot_description' | transloco }}
-      </p>
-      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-sm">
+  <!-- ── Featured spots (live data) ── -->
+  <section class="lp-section" aria-labelledby="lp-featured-title">
+    <div class="lp-section__head">
+      <div>
+        <h2 id="lp-featured-title" class="lp-h2">{{ 'random_spot_title' | transloco }}</h2>
+        <p class="lp-lead">{{ 'lp_featured_lead' | transloco }}</p>
+      </div>
+      <a [routerLink]="['/', routeConstants.allSpots]" class="btn btn-outline lp-btn lp-btn--sm">
         {{ 'pet_places' | transloco }}
-      </button>
+      </a>
     </div>
-    <app-card [data]="spotsStore.random()" [isLoading]="spotsStore.isLoading()"></app-card>
+    <app-card [data]="featuredSpots()" [isLoading]="isLoadingRandom()"></app-card>
   </section>
 
-  <!-- Features Highlights Section -->
-  <section class="py-16" data-aos="fade-up">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-16 text-center">
-      {{ 'features_title' | transloco }}
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-      <!-- Feature 1: Smart Filters -->
-      <div class="card bg-gradient-to-br from-secondary/10 to-primary/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="600">
-        <div class="text-5xl mb-4">🔍</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_filter_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_filter_desc' | transloco }}
-        </p>
-      </div>
-
-      <!-- Feature 2: Verified Information -->
-      <div class="card bg-gradient-to-br from-accent/10 to-secondary/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="700">
-        <div class="text-5xl mb-4">✅</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_verified_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_verified_desc' | transloco }}
-        </p>
-      </div>
-
-      <!-- Feature 3: Growing Community -->
-      <div class="card bg-gradient-to-br from-primary/10 to-accent/10 shadow-sm p-8 text-center" data-aos="fade-up"
-        data-aos-duration="800">
-        <div class="text-5xl mb-4">🤝</div>
-        <h3 class="font-display text-xl font-bold text-base-content mb-3">
-          {{ 'feature_community_title' | transloco }}
-        </h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ 'feature_community_desc' | transloco }}
-        </p>
-      </div>
+  <!-- ── Community: add a place / for businesses ── -->
+  <section class="lp-section lp-community" [attr.aria-label]="'lp_community_label' | transloco">
+    <div class="lp-community__panel lp-community__panel--tint">
+      <h2 class="lp-h2 lp-h2--sm">{{ 'lp_add_title' | transloco }}</h2>
+      <p class="lp-body">{{ 'lp_add_lead' | transloco }}</p>
+      <a [routerLink]="['/', routeConstants.addSpot]" class="btn btn-outline lp-btn lp-btn--sm lp-community__cta">
+        {{ 'lp_add_cta' | transloco }}
+      </a>
+    </div>
+    <div class="lp-community__panel">
+      <h2 class="lp-h2 lp-h2--sm">{{ 'lp_business_title' | transloco }}</h2>
+      <p class="lp-body">{{ 'lp_business_lead' | transloco }}</p>
+      <a [routerLink]="['/', routeConstants.business]" class="lp-link lp-link--lg lp-community__cta">
+        {{ 'lp_business_cta' | transloco }}
+      </a>
     </div>
   </section>
 
-
-
-  <!-- Final CTA Section - Both User Types -->
-  <section class="py-20 text-center" data-aos="fade-up">
-    <h2 class="font-display text-4xl font-bold max-sm:text-3xl mb-4 text-base-content">
-      {{ 'cta_section_title' | transloco }}
-    </h2>
-    <p class="text-lg text-base-content/70 mb-12 max-w-2xl mx-auto">
-      {{ 'cta_section_desc' | transloco }}
-    </p>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto px-4">
-      <!-- CTA for Users -->
-      <button (click)="navigateTo(routeConstants.allSpots)" class="btn btn-secondary btn-lg h-auto py-3 font-semibold">
-        <div class="text-center">
-          <div class="text-2xl mb-2">🐾</div>
-          <div>{{ 'cta_users' | transloco }}</div>
-        </div>
-      </button>
-
-      <!-- CTA for Business -->
-      <button (click)="navigateTo(routeConstants.business)" class="btn btn-outline btn-lg h-auto py-3 font-semibold">
-        <div class="text-center">
-          <div class="text-2xl mb-2">🏢</div>
-          <div>{{ 'cta_business' | transloco }}</div>
-        </div>
-      </button>
+  <!-- ── Final call to action ── -->
+  <section class="lp-final" aria-labelledby="lp-final-title">
+    <div class="lp-final__copy">
+      <h2 id="lp-final-title" class="lp-h2">{{ 'lp_final_title' | transloco }}</h2>
+      <div class="lp-final__actions">
+        <a [routerLink]="['/', routeConstants.allSpots]" class="btn btn-secondary lp-btn">
+          {{ 'lp_hero_cta' | transloco }}
+        </a>
+        <span class="lp-final__note">{{ 'lp_final_note' | transloco }}</span>
+      </div>
     </div>
+    <img src="assets/dog.png" alt="" class="lp-final__dog" width="208" height="292" loading="lazy" />
   </section>
+</div>

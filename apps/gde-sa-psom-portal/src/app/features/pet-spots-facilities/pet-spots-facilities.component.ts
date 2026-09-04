@@ -249,6 +249,12 @@ readonly formValue = toSignal(
   }
 
   #initQueryParamEffect(): void {
+    // Free-text search handed over from the landing page hero (?word=...)
+    const word = this.route.snapshot.queryParamMap.get('word');
+    if (word) {
+      this.form.patchValue({ word });
+    }
+
     effect(() => {
       const spotTypes   = this.sharedStore.spotTypes();
       const spotTypeName = this.route.snapshot.queryParamMap.get('spotType');
