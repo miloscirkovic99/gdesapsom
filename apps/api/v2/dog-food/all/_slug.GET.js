@@ -65,7 +65,21 @@ if (!productRows || productRows.length === 0) {
     exit();
 }
 
-let product = productRows[0];
+// Red iz baze je Mars `IRow` i ne prima nove kolone (`product.images = ...`
+// pada sa "Column 'images' not exists"), pa se prepisuje u obican objekat.
+// Lista kljuceva mora da prati SELECT iznad.
+let productRow = productRows[0];
+let product = {};
+for (let key of [
+    'id', 'name', 'slug', 'description', 'ingredients', 'packageWeightG',
+    'isGrainFree', 'minPrice', 'createdAt', 'updatedAt',
+    'brandId', 'brandName', 'brandSlug', 'brandLogoUrl', 'brandWebsiteUrl',
+    'foodTypeId', 'foodTypeCode', 'foodTypeNameSr', 'foodTypeNameEn',
+    'lifeStageId', 'lifeStageCode', 'lifeStageNameSr', 'lifeStageNameEn',
+    'breedSizeId', 'breedSizeCode', 'breedSizeNameSr', 'breedSizeNameEn'
+]) {
+    product[key] = productRow[key];
+}
 
 // --- 2. galerija -------------------------------------------------------------
 let imagesSql = `
@@ -131,7 +145,12 @@ let aggregateSql = `
 `;
 
 let aggregateRows = db.query(aggregateSql, product.id);
-let aggregate = aggregateRows[0] || { lowPrice: null, highPrice: null, offerCount: 0 };
+let aggregateRow  = aggregateRows[0];
+let aggregate = {
+    lowPrice:   aggregateRow ? aggregateRow.lowPrice   : null,
+    highPrice:  aggregateRow ? aggregateRow.highPrice  : null,
+    offerCount: aggregateRow ? aggregateRow.offerCount : 0
+};
 
 // --- 5. slicni proizvodi -----------------------------------------------------
 // Isti tip + uzrast, bez tekuceg. Thumbnail, nikad puna slika.
@@ -158,11 +177,12 @@ let related = db.query(relatedSql, {
     lifeStageId: product.lifeStageId
 });
 
-product.images    = images;
-product.offers    = offers;
-product.aggregate = aggregate;
-product.related   = related;
-
-write('data', product);
+// Kolekcije idu kao zasebni kljucevi pored `data` (isti obrazac kao
+// `{ data, total, cursor }` kod liste); frontend ih sklapa u jedan objekat.
+write('data',      product);
+write('images',    images);
+write('offers',    offers);
+write('aggregate', aggregate);
+write('related',   related);
 }
 }

@@ -4,8 +4,12 @@ Ogledalo strukture iz Mars browser editora. Fajlovi ovde su izvor istine za
 verzionisanje; sadržaj se lepi u Mars.
 
 Putanja fajla je ruta: `apps/api/v2/dog-food/search-query.POST.js` →
-`POST ${apiUrl}api/v2/dog-food/search-query`. Folder sa `_` prefiksom je
-parametar rute — `blog/getAll/_slug.GET.js` čita `param('slug')`.
+`POST ${apiUrl}api/v2/dog-food/search-query`. Parametar rute se na Marsu
+imenuje sa dvotačkom: fajl `all/:slug` (ili folder `pending/:id`) puni
+`param('slug')` / `param('id')`. U repou je isti fajl `_slug.GET.js` /
+`_id/`, jer Windows ne dozvoljava `:` u imenu fajla — pri lepljenju u Mars
+zameni `_` sa `:`. Fajl nazvan samo `slug` je bukvalna ruta `all/slug` i
+parametar ostaje prazan („Parameter slug is required").
 
 Frontend ne zove ove putanje direktno: `ApiPrefixInterceptor` prefiksuje bilo
 koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
@@ -22,7 +26,7 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 |---|---|---|
 | POST | `dog-food/search-query` | `{ data, total, cursor }` — filteri, keyset paginacija |
 | GET | `dog-food/all` | `{ data, total }` — plitka lista; `?fields=sitemap` |
-| GET | `dog-food/all/:slug` | `{ data }` — proizvod + slike + ponude + agregat + slično |
+| GET | `dog-food/all/:slug` | `{ data, images, offers, aggregate, related }` — proizvod + slike + ponude + agregat + slično |
 | GET | `dog-food/random` | `{ data }` — nasumični proizvodi za landing |
 | GET | `dog-food/lookups` | `{ brands, foodTypes, lifeStages, breedSizes, priceRange }` |
 | POST | `dog-food/create` | admin — nov proizvod |
@@ -48,7 +52,7 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 |---|---|---|
 | POST | `pet-shops/search-query` | `{ data, total, cursor }` — filteri + geo |
 | GET | `pet-shops/all` | `{ data, total }`; `?fields=sitemap` \| `?fields=map` |
-| GET | `pet-shops/all/:slug` | `{ data }` — prodavnica + asortiman + sažetak |
+| GET | `pet-shops/all/:slug` | `{ data, offers, summary, nearby }` — prodavnica + asortiman + sažetak |
 | POST | `pet-shops/near-me` | `{ data, radius, total }`; opciono `dogFoodId` |
 | POST | `pet-shops/create` | admin |
 | PUT | `pet-shops/update` | admin — **puna zamena** |
@@ -90,6 +94,16 @@ Novi endpointi vraćaju čist envelope:
 - `cursor` je `null` kad nema više rezultata. Frontend ga vraća nazad kakav
   jeste i ne mora da zna koja je grana u igri (geo grana nosi `{ offset }`).
 
+**Red iz baze ne prima nove kolone.** `db.query` vraća Mars `IRow` objekte;
+`shop.offers = offers` pada sa `Column 'offers' not exists`. Zato detalji
+(`dog-food/all/:slug`, `pet-shops/all/:slug`, `dog-food/pending/:id`) vraćaju
+kolekcije kao zasebne ključeve pored `data` (`{ data, offers, summary, nearby }`),
+a `data` je običan objekat prepisan iz reda po eksplicitnoj listi ključeva —
+ta lista mora da prati `SELECT`. `bySlug` u `shared/data-access/catalog`
+sklapa envelope nazad u jedan red pre mapera. Dokazano radi: `write(key, rows)`
+(niz redova), `write(key, { ...skalari iz reda })`; neproveren je nested niz
+redova unutar običnog objekta, zato ključevi idu na vrh.
+
 Stari endpointi (`{ spotsList, totalResults }`, `{ spotsListSingle: [...] }`)
 ostaju netaknuti; mapper sloj u `shared/data-access` normalizuje oba oblika.
 
@@ -127,14 +141,15 @@ admina od obične sesije — koristi se samo za trajno brisanje.
 
 ## Pretpostavke koje treba potvrditi u tvojoj Mars instanci
 
-MARS docs (`docs.marsengine.net`) nisu bili dostupni, pa je sve izvedeno iz
-postojećih handlera. Tri stvari nisu potvrđene:
+Handleri su izvedeni iz postojećih fajlova; MARS docs
+(`docs.marsengine.net/docs/api-reference/database`) ne opisuju oblik reda
+(`IRow`) ni imenovanje parametara rute. Tri stvari nisu potvrđene u praksi:
 
-1. **`SELECT LAST_INSERT_ID() AS id` posle INSERT-a.** Povratni oblik
-   `db.query` za INSERT nije vidljiv ni u jednom postojećem fajlu
-   (`create.POST.js` ignoriše rezultat). `LAST_INSERT_ID()` je per-konekcija i
-   siguran je pod paralelnim upisima, ali ako Mars vraća `insertId` direktno,
-   taj dodatni upit je višak.
+1. **`SELECT LAST_INSERT_ID() AS id` posle INSERT-a.** Docs kažu da svaki
+   INSERT/UPDATE kroz `db.query` vraća niz ID-eva upisanih redova, pa je
+   dodatni upit verovatno višak. `LAST_INSERT_ID()` je per-konekcija i
+   siguran je pod paralelnim upisima; zameni ga povratnom vrednošću tek kad
+   `create.POST.js` prođe na Marsu i oblik niza bude viđen.
 
 2. **`response.setCache('1Y')`** — zakomentarisano u `dog-food/images/_id.GET.js`.
    Poziv postoji u `search-query/_id/avatar.GET.js`, takođe zakomentarisan.

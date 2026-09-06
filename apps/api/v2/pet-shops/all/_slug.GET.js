@@ -52,7 +52,18 @@ if (!shopRows || shopRows.length === 0) {
     exit();
 }
 
-let shop = shopRows[0];
+// Red iz baze je Mars `IRow` i ne prima nove kolone (`shop.offers = ...` pada
+// sa "Column 'offers' not exists"), pa se prepisuje u obican objekat.
+// Lista kljuceva mora da prati SELECT iznad.
+let shopRow = shopRows[0];
+let shop = {};
+for (let key of [
+    'id', 'name', 'slug', 'address', 'phone', 'description', 'websiteUrl',
+    'latitude', 'longitude', 'woltUrl', 'glovoUrl', 'logo', 'createdAt', 'updatedAt',
+    'townshipId', 'townshipName', 'cityId', 'cityName'
+]) {
+    shop[key] = shopRow[key];
+}
 
 // --- 2. asortiman ------------------------------------------------------------
 // Thumbnail, nikad image_base64 -- ovo je lista unutar detalja, i dalje lista.
@@ -120,10 +131,19 @@ let nearbySql = `
 
 let nearby = db.query(nearbySql, { townshipId: shop.townshipId, id: shop.id });
 
-shop.offers  = offers;
-shop.summary = summaryRows[0] || { offerCount: 0, brandCount: 0, lowPrice: null, highPrice: null };
-shop.nearby  = nearby;
+// Kolekcije idu kao zasebni kljucevi pored `data` (isti obrazac kao
+// `{ data, total, cursor }` kod liste); frontend ih sklapa u jedan objekat.
+// Sazetak se prepisuje iz reda u obican objekat iz istog razloga kao `shop`.
+let summaryRow = summaryRows[0];
 
-write('data', shop);
+write('data',    shop);
+write('offers',  offers);
+write('summary', {
+    offerCount: summaryRow ? summaryRow.offerCount : 0,
+    brandCount: summaryRow ? summaryRow.brandCount : 0,
+    lowPrice:   summaryRow ? summaryRow.lowPrice   : null,
+    highPrice:  summaryRow ? summaryRow.highPrice  : null
+});
+write('nearby',  nearby);
 }
 }

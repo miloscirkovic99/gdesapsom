@@ -82,10 +82,30 @@ export class DogFoodHttpApi extends DogFoodApi {
   }
 
   bySlug(slug: string): Observable<DogFoodDetail> {
+    // The handler cannot attach collections to a DB row (a Mars `IRow` rejects
+    // new columns), so they arrive next to `data`; fold them back into one row.
     return this.http
-      .get<{ data: RawRow }>(`dog-food/all/${encodeURIComponent(slug)}`)
-      .pipe(map((response) => toDogFoodDetail(response.data)));
+      .get<DetailEnvelope>(`dog-food/all/${encodeURIComponent(slug)}`)
+      .pipe(
+        map((response) =>
+          toDogFoodDetail({
+            ...response.data,
+            images: response.images ?? [],
+            offers: response.offers ?? [],
+            aggregate: response.aggregate ?? {},
+            related: response.related ?? [],
+          }),
+        ),
+      );
   }
+}
+
+interface DetailEnvelope {
+  data: RawRow;
+  images?: RawRow[];
+  offers?: RawRow[];
+  aggregate?: RawRow;
+  related?: RawRow[];
 }
 
 const MOCK_LATENCY_MS = 350;

@@ -73,17 +73,21 @@ let pending = rows[0];
 // --- pomoc admin formi: pogodi brend iz slobodnog teksta ---------------------
 // Korisnik kuca "royal canin", baza ima "Royal Canin". Ako predlog nema
 // brand_id, ponudi kandidata umesto da admin rucno pretrazuje dropdown.
+//
+// Red iz baze je Mars `IRow` i ne prima nove kolone, pa predlozi idu kao
+// zaseban kljuc pored `data`, ne kao `pending.brandSuggestions`.
+let brandSuggestions = [];
+
 if (!pending.brandId && pending.brandName) {
-    let guessRows = db.query(`
+    brandSuggestions = db.query(`
         SELECT id, name, slug FROM brand
         WHERE is_active = 1 AND name LIKE ?
         ORDER BY CHAR_LENGTH(name)
         LIMIT 3
     `, '%' + pending.brandName + '%');
-
-    pending.brandSuggestions = guessRows;
 }
 
 write('data', pending);
+write('brandSuggestions', brandSuggestions);
 }
 }

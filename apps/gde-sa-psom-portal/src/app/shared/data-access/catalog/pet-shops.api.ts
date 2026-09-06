@@ -79,10 +79,28 @@ export class PetShopsHttpApi extends PetShopsApi {
   }
 
   bySlug(slug: string): Observable<PetShopDetail> {
+    // The handler cannot attach collections to a DB row (a Mars `IRow` rejects
+    // new columns), so they arrive next to `data`; fold them back into one row.
     return this.http
-      .get<{ data: RawRow }>(`pet-shops/all/${encodeURIComponent(slug)}`)
-      .pipe(map((response) => toPetShopDetail(response.data)));
+      .get<DetailEnvelope>(`pet-shops/all/${encodeURIComponent(slug)}`)
+      .pipe(
+        map((response) =>
+          toPetShopDetail({
+            ...response.data,
+            offers: response.offers ?? [],
+            summary: response.summary ?? {},
+            nearby: response.nearby ?? [],
+          }),
+        ),
+      );
   }
+}
+
+interface DetailEnvelope {
+  data: RawRow;
+  offers?: RawRow[];
+  summary?: RawRow;
+  nearby?: RawRow[];
 }
 
 const MOCK_LATENCY_MS = 350;
