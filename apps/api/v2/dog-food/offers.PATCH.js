@@ -127,7 +127,18 @@ let resultRows = db.query(`
     WHERE o.id = ?
 `, offer.id);
 
+// IRow -> obican objekat (vidi README "Envelope").
+let saved = resultRows[0];
+
 write('message', 'Ponuda je izmenjena.');
-write('data', resultRows[0] || null);
+write('data', saved ? {
+    id:        saved.id,
+    price:     saved.price,
+    isInStock: saved.isInStock,
+    woltUrl:   saved.woltUrl,
+    glovoUrl:  saved.glovoUrl,
+    updatedAt: saved.updatedAt,
+    minPrice:  saved.minPrice
+} : null);
 }
 }

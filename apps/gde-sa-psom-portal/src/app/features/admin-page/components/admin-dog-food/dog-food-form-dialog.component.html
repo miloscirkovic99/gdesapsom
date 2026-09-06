@@ -1,0 +1,162 @@
+<h1 class="admin-dialog-title">
+  {{ (isEdit ? 'admin_edit_product' : 'admin_add_product') | transloco }}
+  <button type="button" class="btn btn-ghost btn-sm btn-square" (click)="dialogRef.close(false)" [attr.aria-label]="'admin_close' | transloco">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+</h1>
+
+<mat-dialog-content>
+  @if (isLoading()) {
+    <div class="flex justify-center p-10">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()" class="grid gap-4 md:grid-cols-2 px-1 pb-2">
+      <p class="md:col-span-2 admin-hint">{{ 'admin_required_hint' | transloco }}</p>
+
+      <!-- Brand + inline "new brand" -->
+      <div class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_brand' | transloco }} *</span>
+        <div class="flex gap-2">
+          <select formControlName="brandId" class="select select-bordered w-full" [class.select-error]="showError('brandId')">
+            <option [ngValue]="null">{{ 'admin_select' | transloco }}</option>
+            @for (brand of store.brands(); track brand.id) {
+              <option [ngValue]="brand.id">{{ brand.name }}</option>
+            }
+          </select>
+          <button type="button" class="btn btn-outline btn-sm h-12" (click)="toggleBrandForm()">
+            {{ 'admin_new_brand' | transloco }}
+          </button>
+        </div>
+        @if (showBrandForm()) {
+          <div class="card bg-base-200/60 border border-base-300/40 mt-2" [formGroup]="brandForm">
+            <div class="card-body p-3 gap-2">
+              <input type="text" formControlName="name" class="input input-bordered input-sm w-full" [placeholder]="'admin_brand_name' | transloco" />
+              <input type="url" formControlName="websiteUrl" class="input input-bordered input-sm w-full" [placeholder]="'admin_brand_website' | transloco" />
+              <div class="flex justify-end gap-2">
+                <button type="button" class="btn btn-ghost btn-xs" (click)="toggleBrandForm()">{{ 'admin_cancel' | transloco }}</button>
+                <button type="button" class="btn btn-secondary btn-xs" (click)="createBrand()" [disabled]="brandForm.invalid || isCreatingBrand()">
+                  @if (isCreatingBrand()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                  }
+                  {{ 'add' | transloco }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_name' | transloco }} *</span>
+        <input type="text" formControlName="name" class="input input-bordered w-full" [class.input-error]="showError('name')" />
+      </label>
+
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_food_type' | transloco }} *</span>
+        <select formControlName="foodTypeId" class="select select-bordered w-full" [class.select-error]="showError('foodTypeId')">
+          <option [ngValue]="null">{{ 'admin_select' | transloco }}</option>
+          @for (item of dogFoodStore.lookups()?.foodTypes ?? []; track item.id) {
+            <option [ngValue]="item.id">{{ item | localName: lang() }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_life_stage' | transloco }} *</span>
+        <select formControlName="lifeStageId" class="select select-bordered w-full" [class.select-error]="showError('lifeStageId')">
+          <option [ngValue]="null">{{ 'admin_select' | transloco }}</option>
+          @for (item of dogFoodStore.lookups()?.lifeStages ?? []; track item.id) {
+            <option [ngValue]="item.id">{{ item | localName: lang() }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_breed_size' | transloco }} *</span>
+        <select formControlName="breedSizeId" class="select select-bordered w-full" [class.select-error]="showError('breedSizeId')">
+          <option [ngValue]="null">{{ 'admin_select' | transloco }}</option>
+          @for (item of dogFoodStore.lookups()?.breedSizes ?? []; track item.id) {
+            <option [ngValue]="item.id">{{ item | localName: lang() }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_field_weight' | transloco }}</span>
+        <input type="number" min="1" step="1" formControlName="packageWeightG" class="input input-bordered w-full" [class.input-error]="showError('packageWeightG')" />
+      </label>
+
+      <div class="admin-form-field justify-end">
+        <label class="flex items-center gap-3 cursor-pointer py-2">
+          <input type="checkbox" class="toggle toggle-secondary" formControlName="isGrainFree" />
+          <span class="text-sm font-medium">{{ 'admin_field_grain_free' | transloco }}</span>
+        </label>
+      </div>
+
+      <div class="admin-form-field justify-end">
+        <label class="flex items-center gap-3 cursor-pointer py-2">
+          <input type="checkbox" class="toggle toggle-secondary" formControlName="isActive" />
+          <span class="text-sm font-medium">{{ 'admin_field_visible' | transloco }}</span>
+        </label>
+      </div>
+
+      <label class="admin-form-field md:col-span-2">
+        <span class="admin-label">{{ 'admin_field_description' | transloco }}</span>
+        <textarea formControlName="description" rows="3" class="textarea textarea-bordered w-full"></textarea>
+      </label>
+
+      <label class="admin-form-field md:col-span-2">
+        <span class="admin-label">{{ 'admin_field_ingredients' | transloco }}</span>
+        <textarea formControlName="ingredients" rows="3" class="textarea textarea-bordered w-full"></textarea>
+      </label>
+
+      <!-- Main image: only on create; the gallery dialog owns it afterwards -->
+      <div class="admin-form-field md:col-span-2">
+        <span class="admin-label">{{ 'admin_field_main_image' | transloco }}</span>
+        @if (isEdit) {
+          <span class="admin-hint">{{ 'admin_images_edit_hint' | transloco }}</span>
+        } @else {
+          @if (image(); as prepared) {
+            <div class="flex items-center gap-3">
+              <img [src]="prepared.thumbnail" alt="" class="w-20 h-20 rounded-xl object-cover bg-base-100 border border-base-300" />
+              <button type="button" class="btn btn-ghost btn-xs" (click)="removeImage()">{{ 'admin_remove' | transloco }}</button>
+            </div>
+          } @else {
+            <input
+              type="file"
+              accept="image/*"
+              class="file-input file-input-bordered file-input-sm w-full"
+              (change)="onImageSelected($event)"
+              [disabled]="isPreparingImage()"
+            />
+            <span class="admin-hint">{{ 'admin_image_hint' | transloco }}</span>
+          }
+        }
+        @if (imageError(); as errorKey) {
+          <p class="text-error text-xs">{{ errorKey | transloco }}</p>
+        }
+      </div>
+
+      @if (isEdit) {
+        <label class="admin-form-field md:col-span-2">
+          <span class="admin-label">{{ 'admin_field_slug' | transloco }}</span>
+          <input type="text" formControlName="slug" class="input input-bordered w-full" placeholder="npr. royal-canin-medium-adult-15kg" />
+          <span class="admin-hint">{{ 'admin_slug_hint' | transloco }}</span>
+        </label>
+      }
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions class="admin-dialog-actions">
+  <button type="button" class="btn btn-ghost btn-sm" (click)="dialogRef.close(false)">{{ 'admin_cancel' | transloco }}</button>
+  <button type="button" class="btn btn-secondary btn-sm min-w-32" (click)="save()" [disabled]="isSaving() || isLoading() || isPreparingImage()">
+    @if (isSaving()) {
+      <span class="loading loading-spinner loading-xs"></span>
+    }
+    {{ (isSaving() ? 'admin_saving' : 'admin_save') | transloco }}
+  </button>
+</mat-dialog-actions>

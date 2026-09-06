@@ -25,7 +25,10 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 | Metod | Putanja | Vraća |
 |---|---|---|
 | POST | `dog-food/search-query` | `{ data, total, cursor }` — filteri, keyset paginacija |
-| GET | `dog-food/all` | `{ data, total }` — plitka lista; `?fields=sitemap` |
+| GET | `dog-food/all` | `{ data, total }` — plitka lista; `?fields=sitemap`; `?fields=admin` (sesija, i ugašeni, + `&id=` za jedan sa opisom i sastavom) |
+| GET | `dog-food/brands` | `{ data, total }` — svi aktivni brendovi, i bez proizvoda (lookups ih preskače) |
+| POST | `dog-food/brands` | admin — nov brend; 409 ako ime već postoji |
+| GET | `dog-food/images` | admin — `?dogFoodId=` galerija sa thumbnail-ima, bez punih slika |
 | GET | `dog-food/all/:slug` | `{ data, images, offers, aggregate, related }` — proizvod + slike + ponude + agregat + slično |
 | GET | `dog-food/random` | `{ data }` — nasumični proizvodi za landing |
 | GET | `dog-food/lookups` | `{ brands, foodTypes, lifeStages, breedSizes, priceRange }` |
@@ -51,7 +54,7 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 | Metod | Putanja | Vraća |
 |---|---|---|
 | POST | `pet-shops/search-query` | `{ data, total, cursor }` — filteri + geo |
-| GET | `pet-shops/all` | `{ data, total }`; `?fields=sitemap` \| `?fields=map` |
+| GET | `pet-shops/all` | `{ data, total }`; `?fields=sitemap` \| `?fields=map` \| `?fields=admin` (sesija, i ugašene, + `&id=` za jednu sa opisom i logom) |
 | GET | `pet-shops/all/:slug` | `{ data, offers, summary, nearby }` — prodavnica + asortiman + sažetak |
 | POST | `pet-shops/near-me` | `{ data, radius, total }`; opciono `dogFoodId` |
 | POST | `pet-shops/create` | admin |
@@ -60,6 +63,27 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 | POST | `pet-shops/delete` | admin — meko brisanje (`hard=1` za trajno) |
 
 ---
+
+## Admin panel
+
+Frontend: `/admin/pet-shops` i `/admin/dog-food`
+(`features/admin-page/components/admin-pet-shops`, `admin-dog-food`,
+`catalog-offers`), preko `shared/data-access/catalog/catalog-admin.api.ts` i
+`shared/store/catalog-admin.store.ts`. Koristi:
+
+- liste: `pet-shops/all?fields=admin`, `dog-food/all?fields=admin` (i ugašene,
+  sa brojačima ponuda i slika); jedan entitet za formu: `...&id=`
+- upis: `create` (POST) i `update` (PUT, puna zamena) za obe tabele;
+  `update` (PATCH) samo za `isActive`; `delete` (POST, `hard=1` za trajno)
+- galerija: `dog-food/images` GET/POST/PATCH/DELETE — slika i thumbnail se
+  skaliraju u pregledaču (`shared/utils/image-resize.ts`) pre slanja
+- ponude: `dog-food/offers` GET (oba smera, sa sirovim `offerWoltUrl` /
+  `offerGlovoUrl` pored efektivnih), POST upsert, PATCH, DELETE
+- brendovi: `dog-food/brands` GET/POST
+
+DELETE zahtevi nose parametre u query stringu (`dog-food/images?id=5`), ne u
+telu. Svi query stringovi se pišu u sam URL, jer `ApiPrefixInterceptor`
+zamenjuje `HttpParams` sa `sid`.
 
 ## PUT vs PATCH
 

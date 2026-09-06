@@ -23,29 +23,31 @@ import {
  */
 export type RawRow = Record<string, unknown>;
 
-const str = (value: unknown): string =>
+// The coercers are exported for catalog-admin.api.ts, which maps the admin
+// envelopes with the same rules.
+export const str = (value: unknown): string =>
   value === null || value === undefined ? '' : String(value);
 
-const strOrNull = (value: unknown): string | null => {
+export const strOrNull = (value: unknown): string | null => {
   const text = str(value).trim();
   return text ? text : null;
 };
 
-const num = (value: unknown, fallback = 0): number => {
+export const num = (value: unknown, fallback = 0): number => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
-const numOrNull = (value: unknown): number | null => {
+export const numOrNull = (value: unknown): number | null => {
   if (value === null || value === undefined || value === '') return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-const bool = (value: unknown): boolean =>
+export const bool = (value: unknown): boolean =>
   value === true || value === 1 || value === '1' || value === 'true';
 
-const lookupRef = (row: RawRow, prefix: string): LookupRef => ({
+export const lookupRef = (row: RawRow, prefix: string): LookupRef => ({
   code: str(row[`${prefix}Code`]),
   nameSr: str(row[`${prefix}NameSr`]),
   nameEn: str(row[`${prefix}NameEn`]),
@@ -66,7 +68,7 @@ const brand = (row: RawRow): Brand => ({
   websiteUrl: strOrNull(row['website_url'] ?? row['websiteUrl']),
 });
 
-const rows = (value: unknown): RawRow[] => (Array.isArray(value) ? (value as RawRow[]) : []);
+export const rows = (value: unknown): RawRow[] => (Array.isArray(value) ? (value as RawRow[]) : []);
 
 export function toLookups(raw: RawRow): CatalogLookups {
   const priceRange = (raw['priceRange'] ?? {}) as RawRow;

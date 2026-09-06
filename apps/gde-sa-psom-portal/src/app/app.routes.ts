@@ -243,6 +243,22 @@ export const appRoutes: Route[] = [
         );
       },
     },
+    {
+      path:RouteConstants.adminPetShops,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-pet-shops/admin-pet-shops.component').then(
+          (m) => m.AdminPetShopsComponent
+        );
+      },
+    },
+    {
+      path:RouteConstants.adminDogFood,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-dog-food/admin-dog-food.component').then(
+          (m) => m.AdminDogFoodComponent
+        );
+      },
+    },
    ]
   },
   {

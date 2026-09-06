@@ -19,7 +19,15 @@ export class SidebarService {
       route:'admin/townships',
       title:'Settings townships'
     },
-    
+    {
+      route:'admin/pet-shops',
+      title:'Pet shops'
+    },
+    {
+      route:'admin/dog-food',
+      title:'Dog food'
+    },
+
   ]
   openSideBar() {
     this.isOpened.set(true);

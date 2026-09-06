@@ -1,0 +1,145 @@
+<div class="space-y-6">
+  <!-- Header + filters -->
+  <div class="card bg-base-200/50 shadow-sm border border-base-300/30">
+    <div class="card-body">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-secondary/15 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-secondary" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+        </div>
+        <h2 class="font-display text-xl font-bold">{{ 'admin_dog_food' | transloco }}</h2>
+        <span class="badge badge-ghost">{{ store.products().length }}</span>
+        <button type="button" class="btn btn-secondary btn-sm ml-auto" (click)="add()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          {{ 'admin_add_product' | transloco }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <label class="input input-bordered input-sm flex items-center gap-2 grow max-w-md">
+          <input
+            type="text"
+            class="grow"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            [placeholder]="'admin_search_products' | transloco"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+          </svg>
+        </label>
+        <select class="select select-bordered select-sm w-48" [ngModel]="brandFilter()" (ngModelChange)="brandFilter.set($event)">
+          <option [ngValue]="null">{{ 'admin_all_brands' | transloco }}</option>
+          @for (brand of brandOptions(); track brand.id) {
+            <option [ngValue]="brand.id">{{ brand.name }}</option>
+          }
+        </select>
+        <label class="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            class="toggle toggle-secondary toggle-sm"
+            [ngModel]="showInactive()"
+            (ngModelChange)="showInactive.set($event)"
+          />
+          {{ 'admin_show_inactive' | transloco }}
+          @if (inactiveCount() > 0) {
+            <span class="badge badge-ghost badge-sm">{{ inactiveCount() }}</span>
+          }
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card bg-base-200/50 shadow-sm border border-base-300/30">
+    <div class="card-body p-2 sm:p-4">
+      @if (store.isLoadingProducts() && store.products().length === 0) {
+        <div class="flex justify-center p-10">
+          <span class="loading loading-spinner loading-md"></span>
+        </div>
+      } @else if (filtered().length === 0) {
+        <p class="text-center text-base-content/60 p-10">{{ 'admin_no_products' | transloco }}</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>{{ 'admin_col_name' | transloco }}</th>
+                <th>{{ 'admin_col_type' | transloco }}</th>
+                <th>{{ 'admin_col_package' | transloco }}</th>
+                <th class="text-right">{{ 'admin_col_min_price' | transloco }}</th>
+                <th class="text-right">{{ 'admin_col_offers' | transloco }}</th>
+                <th class="text-right">{{ 'admin_col_images' | transloco }}</th>
+                <th>{{ 'admin_col_status' | transloco }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of filtered(); track product.id) {
+                <tr [class.opacity-60]="!product.isActive">
+                  <td>
+                    <div class="text-xs text-base-content/60">{{ product.brandName }}</div>
+                    <div class="font-semibold">{{ product.name }}</div>
+                    <div class="text-xs text-base-content/50">/dog-food/{{ product.slug }}</div>
+                  </td>
+                  <td>
+                    <div>{{ product.foodType | localName: lang() }}</div>
+                    <div class="text-xs text-base-content/60">
+                      {{ product.lifeStage | localName: lang() }} · {{ product.breedSize | localName: lang() }}
+                    </div>
+                    @if (product.isGrainFree) {
+                      <span class="badge badge-outline badge-xs mt-1">{{ 'grain_free' | transloco }}</span>
+                    }
+                  </td>
+                  <td>{{ product.packageWeightG | packageWeight: lang() }}</td>
+                  <td class="text-right tabular-nums">
+                    @if (product.minPrice !== null) {
+                      {{ product.minPrice | rsdPrice: lang() }}
+                    } @else {
+                      <span class="text-base-content/40">—</span>
+                    }
+                  </td>
+                  <td class="text-right tabular-nums">{{ product.offerCount }}</td>
+                  <td class="text-right tabular-nums">
+                    @if (product.imageCount === 0) {
+                      <span class="badge badge-warning badge-xs">0</span>
+                    } @else {
+                      {{ product.imageCount }}
+                    }
+                  </td>
+                  <td>
+                    <span class="badge badge-sm" [class.badge-success]="product.isActive" [class.badge-ghost]="!product.isActive">
+                      {{ (product.isActive ? 'admin_active' : 'admin_inactive') | transloco }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="flex flex-wrap justify-end gap-1">
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="edit(product)">
+                        {{ 'admin_edit' | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="images(product)">
+                        {{ 'admin_manage_images' | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="offers(product)">
+                        {{ 'admin_manage_offers' | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="toggleActive(product)">
+                        {{ (product.isActive ? 'admin_deactivate' : 'admin_activate') | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs text-error" (click)="remove(product)">
+                        {{ 'admin_delete_permanently' | transloco }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

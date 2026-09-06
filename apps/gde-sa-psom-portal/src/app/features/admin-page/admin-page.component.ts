@@ -36,6 +36,16 @@ export class AdminPageComponent {
       title: 'townships',
       icon: 'townships',
     },
+    {
+      route: '/admin/pet-shops',
+      title: 'admin_pet_shops',
+      icon: 'shops',
+    },
+    {
+      route: '/admin/dog-food',
+      title: 'admin_dog_food',
+      icon: 'food',
+    },
   ];
 
   toggleSidebar(): void {

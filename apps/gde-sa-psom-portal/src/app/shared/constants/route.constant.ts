@@ -18,5 +18,8 @@ export class RouteConstants {
     static readonly dogFoodDetail = 'dog-food/:slug';
     static readonly petShops = 'pet-shops';
     static readonly petShopDetail = 'pet-shops/:slug';
+    /** Admin children: /admin/pet-shops, /admin/dog-food */
+    static readonly adminPetShops = 'pet-shops';
+    static readonly adminDogFood = 'dog-food';
 
 }

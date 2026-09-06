@@ -126,7 +126,17 @@ let resultRows = db.query(`
     WHERE o.dog_food_id = ? AND o.pet_shop_id = ?
 `, dogFoodId, petShopId);
 
+// IRow -> obican objekat (vidi README "Envelope").
+let saved = resultRows[0];
+
 write('message', 'Ponuda je sacuvana.');
-write('data', resultRows[0] || null);
+write('data', saved ? {
+    id:        saved.id,
+    price:     saved.price,
+    isInStock: saved.isInStock,
+    woltUrl:   saved.woltUrl,
+    glovoUrl:  saved.glovoUrl,
+    minPrice:  saved.minPrice
+} : null);
 }
 }
