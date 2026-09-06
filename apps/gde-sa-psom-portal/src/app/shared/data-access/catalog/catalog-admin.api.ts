@@ -227,39 +227,39 @@ export class CatalogAdminApi {
 
   listPetShops(): Observable<AdminPetShop[]> {
     return this.#http
-      .get<ListEnvelope>('pet-shops/all?fields=admin')
+      .get<ListEnvelope>('pet-shops/shops?fields=admin')
       .pipe(map((response) => rows(response.data).map(toAdminPetShop)));
   }
 
   getPetShop(id: number): Observable<AdminPetShopDetail> {
     return this.#http
-      .get<ItemEnvelope>(`pet-shops/all?fields=admin&id=${id}`)
+      .get<ItemEnvelope>(`pet-shops/shops?fields=admin&id=${id}`)
       .pipe(map((response) => toAdminPetShopDetail(response.data)));
   }
 
   createPetShop(payload: AdminPetShopPayload): Observable<SavedRef> {
     return this.#http
-      .post<ItemEnvelope>('pet-shops/create', shopBody(payload))
+      .post<ItemEnvelope>('pet-shops/shops', shopBody(payload))
       .pipe(map((response) => toSavedRef(response.data)));
   }
 
   /** Full replace (PUT): every optional field not sent becomes NULL. */
   updatePetShop(id: number, payload: AdminPetShopPayload): Observable<SavedRef> {
     return this.#http
-      .put<ItemEnvelope>('pet-shops/update', { id, ...shopBody(payload) })
+      .put<ItemEnvelope>('pet-shops/shops', { id, ...shopBody(payload) })
       .pipe(map((response) => toSavedRef(response.data)));
   }
 
   setPetShopActive(id: number, isActive: boolean): Observable<void> {
     return this.#http
-      .patch<ItemEnvelope>('pet-shops/update', { id, isActive: flag(isActive) })
+      .patch<ItemEnvelope>('pet-shops/shops', { id, isActive: flag(isActive) })
       .pipe(map(() => undefined));
   }
 
   /** Soft delete by default; `hard` removes the row and its offers for good. */
   deletePetShop(id: number, hard = false): Observable<void> {
     return this.#http
-      .post<ItemEnvelope>('pet-shops/delete', { id, hard: flag(hard) })
+      .post<ItemEnvelope>('pet-shops/shops', { id, hard: flag(hard) })
       .pipe(map(() => undefined));
   }
 
@@ -279,26 +279,26 @@ export class CatalogAdminApi {
 
   createDogFood(payload: AdminDogFoodPayload): Observable<SavedRef> {
     return this.#http
-      .post<ItemEnvelope>('dog-food/create', productBody(payload))
+      .post<ItemEnvelope>('dog-food/food', productBody(payload))
       .pipe(map((response) => toSavedRef(response.data)));
   }
 
   /** Full replace (PUT): every optional field not sent becomes NULL. */
   updateDogFood(id: number, payload: AdminDogFoodPayload): Observable<SavedRef> {
     return this.#http
-      .put<ItemEnvelope>('dog-food/update', { id, ...productBody(payload) })
+      .put<ItemEnvelope>('dog-food/food', { id, ...productBody(payload) })
       .pipe(map((response) => toSavedRef(response.data)));
   }
 
   setDogFoodActive(id: number, isActive: boolean): Observable<void> {
     return this.#http
-      .patch<ItemEnvelope>('dog-food/update', { id, isActive: flag(isActive) })
+      .patch<ItemEnvelope>('dog-food/food', { id, isActive: flag(isActive) })
       .pipe(map(() => undefined));
   }
 
   deleteDogFood(id: number, hard = false): Observable<void> {
     return this.#http
-      .post<ItemEnvelope>('dog-food/delete', { id, hard: flag(hard) })
+      .post<ItemEnvelope>('dog-food/food', { id, hard: flag(hard) })
       .pipe(map(() => undefined));
   }
 
