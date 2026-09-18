@@ -16,6 +16,12 @@ import { SharedStore } from '../../shared/store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
 
+/** The clinic fields the contact links need; the list rows themselves are untyped. */
+interface VetClinicPlace {
+  vetc_id?: number;
+  vetc_adresa?: string | null;
+}
+
 @Component({
   selector: 'app-veterinary-clinics',
   imports: [
@@ -118,16 +124,15 @@ export class VeterinaryClinicsComponent {
     this.resetData();
   }
 
-  navigateToGoogleMaps(item: any) {
-    const location = item.vetc_adresa;
+  googleMapsUrl(item: VetClinicPlace): string | null {
+    return item?.vetc_adresa
+      ? `https://www.google.com/maps?q=${encodeURIComponent(item.vetc_adresa)}`
+      : null;
+  }
 
-    // Check if location exists
-    if (location) {
-      const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(
-        location
-      )}`;
-      window.open(googleMapsUrl, '_blank'); // Open in a new tab
-    }
+  /** `vet-<id>` names the clinic in GA4 (`venue_slug`); clinics have no slug. */
+  venueSlug(item: VetClinicPlace): string | null {
+    return item?.vetc_id ? `vet-${item.vetc_id}` : null;
   }
 
   disableForm(): boolean {

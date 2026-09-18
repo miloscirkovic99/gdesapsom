@@ -18,6 +18,7 @@ import 'leaflet-control-geocoder'; // Import geocoder control if using
 import { TranslocoModule } from '@ngneat/transloco';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
+import { venueLinkType } from '../../utils/link-type';
 @Component({
   selector: 'app-spot-details',
   imports: [
@@ -38,6 +39,9 @@ export class SpotDetailsComponent {
   private map: L.Map | undefined;
   readonly dialogRef = inject(MatDialogRef<SpotDetailsComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
+  /** For outbound click tracking of the "site or social network" link. */
+  readonly websiteLinkType = venueLinkType(this.data?.iuo_link_web);
+  readonly venueSlug: string | null = this.data?.iuo_id ? `spot-${this.data.iuo_id}` : null;
   currentSlide = 1;
   descriptionToKeyMap= descriptionToKeyMap;
   descriptionToKeyMapSpot=descriptionToKeyMapSpot;

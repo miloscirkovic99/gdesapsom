@@ -5,6 +5,14 @@ import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
 
+/** The park fields the address link needs; the card data itself is untyped. */
+interface CardPlace {
+  par_id?: number;
+  par_lokacija?: string | null;
+  ops_ime?: string | null;
+  grd_ime?: string | null;
+}
+
 @Component({
   selector: 'app-card',
   imports: [CommonModule,TranslocoModule],
@@ -44,13 +52,15 @@ export class CardComponent {
     
     this.onActionClick.emit(actions)
   }
-  navigateToGoogleMaps(item:any) {
-    const location = item.par_lokacija? (item?.par_lokacija + ' ' + item?.ops_ime + ' ' + item?.grd_ime):item.iuo_adressa  ;
-  
-    // Check if location exists
-    if (location) {
-      const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(location)}`;
-      window.open(googleMapsUrl, '_blank'); // Open in a new tab
-    }
+  /** Parks link their address to Google Maps; spots open the detail page instead. */
+  googleMapsUrl(item: CardPlace): string | null {
+    if (!item?.par_lokacija) return null;
+    const location = [item.par_lokacija, item.ops_ime, item.grd_ime].filter(Boolean).join(' ');
+    return `https://www.google.com/maps?q=${encodeURIComponent(location)}`;
+  }
+
+  /** `park-<id>` names the park in GA4 (`venue_slug`); parks have no slug. */
+  venueSlug(item: CardPlace): string | null {
+    return item?.par_id ? `park-${item.par_id}` : null;
   }
 }

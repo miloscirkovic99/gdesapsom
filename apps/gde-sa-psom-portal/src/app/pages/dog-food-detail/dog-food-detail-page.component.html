@@ -88,7 +88,7 @@
       <div class="space-y-5">
         <div>
           @if (p.brand.websiteUrl; as website) {
-            <a [href]="website" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-base-content/60 link link-hover">
+            <a [href]="website" target="_blank" rel="noopener" data-link-type="other" class="text-sm font-medium text-base-content/60 link link-hover">
               {{ p.brand.name }}
             </a>
           } @else {

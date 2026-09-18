@@ -1,6 +1,7 @@
-import { Component, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import {
   descriptionToKeyMap,
@@ -11,6 +12,7 @@ import { RouteConstants } from '../../shared/constants/route.constant';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SeoService } from '../../core/services/seo.service';
 import { SpotsStore } from '../../shared/store/spots.store';
+import { venueLinkType } from '../../shared/utils/link-type';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
 
@@ -31,6 +33,7 @@ export class SpotDetailPageComponent {
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
   private seoService = inject(SeoService);
+  private sanitizer = inject(DomSanitizer);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
 
@@ -42,6 +45,62 @@ export class SpotDetailPageComponent {
   readonly isLoading = signal(false);
   readonly isLoadingDirections = signal(false);
   readonly isGettingLocation = signal(false);
+
+  /** Spots have no slug, so `spot-<id>` names the venue in GA4 (`venue_slug`). */
+  readonly venueSlug = computed<string | null>(() => {
+    const id = this.spot()?.iuo_id;
+    return id ? `spot-${id}` : null;
+  });
+
+  /** "Sajt ili društvena mreža" holds either a website or an Instagram/Facebook page. */
+  readonly websiteLinkType = computed(() => venueLinkType(this.spot()?.iuo_link_web));
+
+  /** "lat,lon" for the map apps; null when the spot has no coordinates. */
+  private readonly coordinates = computed<string | null>(() => {
+    const data = this.spot();
+    return data?.latitude && data?.longitude ? `${data.latitude},${data.longitude}` : null;
+  });
+
+  readonly googleMapsUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://www.google.com/maps/dir/?api=1&destination=${at}` : null;
+  });
+
+  readonly wazeUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://waze.com/ul?ll=${at}&navigate=yes` : null;
+  });
+
+  readonly appleMapsUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://maps.apple.com/?daddr=${at}` : null;
+  });
+
+  private readonly shareText = computed(() => encodeURIComponent(this.spot()?.iuo_ime ?? ''));
+
+  /**
+   * Share targets are real links rather than window.open() calls, so the
+   * outbound click tracker sees them and middle-click / Ctrl+click work.
+   */
+  readonly facebookShareUrl = computed(
+    () => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.spotUrl)}`,
+  );
+
+  readonly whatsAppShareUrl = computed(
+    () => `https://wa.me/?text=${this.shareText()}%20${encodeURIComponent(this.spotUrl)}`,
+  );
+
+  readonly telegramShareUrl = computed(
+    () => `https://t.me/share/url?url=${encodeURIComponent(this.spotUrl)}&text=${this.shareText()}`,
+  );
+
+  /** viber: is not on Angular's safe-URL list, so the value has to be trusted explicitly. */
+  readonly viberShareUrl = computed(() =>
+    this.sanitizer.bypassSecurityTrustUrl(
+      `viber://forward?text=${this.shareText()}%20${encodeURIComponent(this.spotUrl)}`,
+    ),
+  );
+
   currentSlide = 1;
 
   descriptionToKeyMap = descriptionToKeyMap;
@@ -136,29 +195,6 @@ export class SpotDetailPageComponent {
     return this.document.location.href;
   }
 
-  shareOnFacebook(): void {
-    const url = encodeURIComponent(this.spotUrl);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
-  }
-
-  shareOnViber(): void {
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`viber://forward?text=${text}%20${url}`, '_self');
-  }
-
-  shareOnWhatsApp(): void {
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`https://wa.me/?text=${text}%20${url}`, '_blank', 'noopener,noreferrer');
-  }
-
-  shareOnTelegram(): void {
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank', 'noopener,noreferrer');
-  }
-
   copyLink(): void {
     navigator.clipboard.writeText(this.spotUrl).then(() => {
       const msg = this.translocoService.translate('link_copied');
@@ -223,36 +259,6 @@ export class SpotDetailPageComponent {
   closeDirectionsModal(): void {
     this.showDirectionsModal.set(false);
     // this.showInlineRoute.set(false);
-  }
-
-  openInGoogleMaps(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${data.latitude},${data.longitude}`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
-  }
-
-  openInWaze(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    window.open(
-      `https://waze.com/ul?ll=${data.latitude},${data.longitude}&navigate=yes`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
-  }
-
-  openInAppleMaps(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    window.open(
-      `https://maps.apple.com/?daddr=${data.latitude},${data.longitude}`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
   }
 
   showRouteOnMap(): void {

@@ -77,7 +77,7 @@
           <p>{{ 'township' | transloco }}: <span class="font-medium text-base-content">{{ data?.ops_ime }}</span></p>
           <p>{{ 'spot_type' | transloco }}: <span class="font-medium text-base-content">{{ descriptionToKeyMapSpot[data?.ugo_ime] | transloco }}</span></p>
           <p>{{ 'garden' | transloco }}: <span class="font-medium text-base-content">{{ descriptionToKeyMapGarden[data?.bas_naziv] | transloco }}</span></p>
-          <p>{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener noreferrer" class="link link-secondary link-hover">{{ data?.iuo_link_web }}</a></p>
+          <p>{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener" [attr.data-link-type]="websiteLinkType" [attr.data-venue-slug]="venueSlug" class="link link-secondary link-hover">{{ data?.iuo_link_web }}</a></p>
           <p>{{ 'phone' | transloco }}: <span class="font-medium text-base-content">{{ data?.iuo_telefon ?? '/' }}</span></p>
           <p>{{ 'short_description' | transloco }}: <span class="font-medium text-base-content">{{ data?.iuo_opis ?? '/' }}</span></p>
         </div>

@@ -4,6 +4,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 /**
  * Wolt / Glovo buttons for a shop or a single offer. Renders nothing when
  * neither link exists, so callers can drop it in unconditionally.
+ *
+ * The links are tagged `affiliate_booking` for outbound click tracking and
+ * carry the shop slug as `venue_slug` when the caller passes it.
  */
 @Component({
   selector: 'app-delivery-links',
@@ -13,7 +16,9 @@ import { TranslocoModule } from '@ngneat/transloco';
       <a
         [href]="wolt"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener sponsored"
+        data-link-type="affiliate_booking"
+        [attr.data-venue-slug]="venueSlug()"
         class="btn btn-outline gap-1.5"
         [class.btn-xs]="size() === 'xs'"
         [class.btn-sm]="size() === 'sm'"
@@ -29,7 +34,9 @@ import { TranslocoModule } from '@ngneat/transloco';
       <a
         [href]="glovo"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener sponsored"
+        data-link-type="affiliate_booking"
+        [attr.data-venue-slug]="venueSlug()"
         class="btn btn-outline gap-1.5"
         [class.btn-xs]="size() === 'xs'"
         [class.btn-sm]="size() === 'sm'"
@@ -48,5 +55,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 export class DeliveryLinksComponent {
   readonly woltUrl = input<string | null>(null);
   readonly glovoUrl = input<string | null>(null);
+  /** Slug of the shop the links belong to; sent as `venue_slug` with the click. */
+  readonly venueSlug = input<string | null>(null);
   readonly size = input<'xs' | 'sm'>('sm');
 }

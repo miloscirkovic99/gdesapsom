@@ -12,6 +12,7 @@ import {
 } from 'ngx-cookieconsent';
 
 import { CommonModule } from '@angular/common';
+import { AnalyticsService } from './core/services/analytics.service';
 import { GoogleAnalyticsService } from './core/services/google-analytics.service';
 import { PushNotificationService } from './core/services/push-notification.service';
 import { SeoService } from './core/services/seo.service';
@@ -37,6 +38,7 @@ export class AppComponent {
   title = 'gde-sa-psom-portal';
   router = inject(Router);
   private readonly googleAnalyticsService=inject(GoogleAnalyticsService)
+  private readonly analyticsService = inject(AnalyticsService);
   private readonly pushNotificationService = inject(PushNotificationService);
   private readonly versionUpdateService = inject(VersionUpdateService);
   private readonly seoService = inject(SeoService);
@@ -73,6 +75,7 @@ export class AppComponent {
       });
     this.setupCookie();
     this.checkAndEnableAnalytics(); 
+    this.analyticsService.initOutboundTracking();
   }
 
   /**

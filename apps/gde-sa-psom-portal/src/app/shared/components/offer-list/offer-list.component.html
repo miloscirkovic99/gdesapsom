@@ -50,12 +50,14 @@
           }
 
           <div class="flex items-center gap-1.5">
-            <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" size="xs" />
+            <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" [venueSlug]="offer.shop.slug" size="xs" />
             @if (directionsUrl(offer); as url) {
               <a
                 [href]="url"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
+                data-link-type="venue_maps"
+                [attr.data-venue-slug]="offer.shop.slug"
                 class="btn btn-ghost btn-xs border border-base-300 gap-1"
                 [attr.aria-label]="('get_directions' | transloco) + ': ' + offer.shop.name"
               >

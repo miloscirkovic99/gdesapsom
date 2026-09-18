@@ -67,7 +67,8 @@
         <div id="map" class="h-48 sm:h-64 rounded-xl"></div>
       </div>
     </div>
-<!-- Get Directions Button -->
+<!-- Get Directions Button (the map apps need coordinates) -->
+@if (googleMapsUrl()) {
 <div class="mt-3">
   <button (click)="openDirections()" class="btn btn-secondary btn-sm w-full gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -77,6 +78,7 @@
     {{ 'get_directions' | transloco }}
   </button>
 </div>
+}
 
 <!-- Inline route fallback (shown after user picks "show on map") -->
 @if (showInlineRoute()) {
@@ -128,54 +130,60 @@
       </div>
       <!-- Options -->
       <ul class="menu p-0">
-        <li>
-          <button (click)="openInGoogleMaps()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
-            <span class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#34A853">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        @if (googleMapsUrl(); as url) {
+          <li>
+            <a [href]="url" target="_blank" rel="noopener" data-link-type="venue_maps" [attr.data-venue-slug]="venueSlug()" (click)="closeDirectionsModal()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
+              <span class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#34A853">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+              </span>
+              <div class="text-left">
+                <p class="text-sm font-medium">Google Maps</p>
+                <p class="text-xs text-base-content/50">{{ 'google_maps' | transloco }}</p>
+              </div>
+              <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
               </svg>
-            </span>
-            <div class="text-left">
-              <p class="text-sm font-medium">Google Maps</p>
-              <p class="text-xs text-base-content/50">{{ 'google_maps' | transloco }}</p>
-            </div>
-            <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        </li>
-        <li>
-          <button (click)="openInWaze()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
-            <span class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#1976D2">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+            </a>
+          </li>
+        }
+        @if (wazeUrl(); as url) {
+          <li>
+            <a [href]="url" target="_blank" rel="noopener" data-link-type="venue_maps" [attr.data-venue-slug]="venueSlug()" (click)="closeDirectionsModal()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
+              <span class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#1976D2">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                </svg>
+              </span>
+              <div class="text-left">
+                <p class="text-sm font-medium">Waze</p>
+                <p class="text-xs text-base-content/50">{{ 'waze_maps' | transloco }}</p>
+              </div>
+              <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
               </svg>
-            </span>
-            <div class="text-left">
-              <p class="text-sm font-medium">Waze</p>
-              <p class="text-xs text-base-content/50">{{ 'waze_maps' | transloco }}</p>
-            </div>
-            <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        </li>
-        <li>
-          <button (click)="openInAppleMaps()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
-            <span class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#7B1FA2" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+            </a>
+          </li>
+        }
+        @if (appleMapsUrl(); as url) {
+          <li>
+            <a [href]="url" target="_blank" rel="noopener" data-link-type="venue_maps" [attr.data-venue-slug]="venueSlug()" (click)="closeDirectionsModal()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
+              <span class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#7B1FA2" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                </svg>
+              </span>
+              <div class="text-left">
+                <p class="text-sm font-medium">Apple Maps</p>
+                <p class="text-xs text-base-content/50">{{ 'apple_maps' | transloco }}</p>
+              </div>
+              <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
               </svg>
-            </span>
-            <div class="text-left">
-              <p class="text-sm font-medium">Apple Maps</p>
-              <p class="text-xs text-base-content/50">{{ 'apple_maps' | transloco }}</p>
-            </div>
-            <svg class="w-4 h-4 text-base-content/30 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        </li>
+            </a>
+          </li>
+        }
         <!-- <li class="border-t border-base-200">
           <button (click)="showRouteOnMap()" class="flex items-center gap-4 px-5 py-3.5 rounded-none">
             <span class="w-9 h-9 rounded-xl bg-base-200 flex items-center justify-center shrink-0">
@@ -216,10 +224,10 @@
             <p>{{ 'township' | transloco }}: <span class="font-medium text-base-content">{{ data?.ops_ime }}</span></p>
           </div>
           <p>{{ 'address' | transloco }}: <span class="font-medium text-base-content">{{ data?.iuo_adressa }}</span></p>
-          <p class="break-all">{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener noreferrer" class="link link-secondary link-hover">{{ data?.iuo_link_web }}</a></p>
+          <p class="break-all">{{ 'site_network' | transloco }}: <a [href]="data?.iuo_link_web" target="_blank" rel="noopener" [attr.data-link-type]="websiteLinkType()" [attr.data-venue-slug]="venueSlug()" class="link link-secondary link-hover">{{ data?.iuo_link_web }}</a></p>
            <p>{{ 'phone' | transloco }}: 
             @if (data?.iuo_telefon) {
-              <a [href]="'tel:' + data.iuo_telefon" class="link link-secondary font-medium">{{ data.iuo_telefon }}</a>
+              <a [href]="'tel:' + data.iuo_telefon" data-link-type="venue_phone" [attr.data-venue-slug]="venueSlug()" class="link link-secondary font-medium">{{ data.iuo_telefon }}</a>
             } @else {
               <span class="font-medium text-base-content">/</span>
             }
@@ -240,25 +248,25 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <!-- Facebook -->
-          <button (click)="shareOnFacebook()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Facebook">
+          <a [href]="facebookShareUrl()" target="_blank" rel="noopener" data-link-type="social" [attr.data-venue-slug]="venueSlug()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Facebook">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
             Facebook
-          </button>
+          </a>
           <!-- WhatsApp -->
-          <button (click)="shareOnWhatsApp()" class="btn btn-sm btn-outline gap-2" aria-label="Share on WhatsApp">
+          <a [href]="whatsAppShareUrl()" target="_blank" rel="noopener" data-link-type="social" [attr.data-venue-slug]="venueSlug()" class="btn btn-sm btn-outline gap-2" aria-label="Share on WhatsApp">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
             WhatsApp
-          </button>
+          </a>
           <!-- Viber -->
-          <button (click)="shareOnViber()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Viber">
+          <a [href]="viberShareUrl()" data-link-type="social" [attr.data-venue-slug]="venueSlug()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Viber">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11.398.002C9.473.028 5.331.344 3.014 2.467 1.294 4.177.59 6.702.5 9.837c-.09 3.135-.2 9.014 5.528 10.608h.005l-.003 2.424s-.037.98.61 1.178c.778.24 1.236-.502 1.98-1.304.408-.44.971-1.086 1.397-1.58 3.85.322 6.813-.416 7.15-.528.778-.258 5.183-.816 5.9-6.659.74-6.025-.36-9.83-2.34-11.552-.586-.556-2.96-2.267-8.188-2.396 0 0-.534-.03-1.14-.024zm.12 1.71c.508-.005.94.02.94.02 4.357.108 6.397 1.345 6.88 1.79 1.65 1.436 2.573 4.77 1.94 9.862-.6 4.893-4.205 5.2-4.867 5.42-.28.094-2.86.718-6.157.56 0 0-2.438 2.94-3.2 3.705-.12.12-.26.166-.353.145-.13-.03-.166-.174-.164-.384l.024-4.022c-4.79-1.334-4.504-6.27-4.432-8.895.072-2.625.627-4.717 2.067-6.14 1.933-1.768 5.56-2.035 7.322-2.06zm.34 2.88a.363.363 0 0 0-.367.36c0 .2.163.362.364.362 1.08 0 2.07.382 2.862 1.108.77.71 1.227 1.67 1.32 2.776a.363.363 0 0 0 .396.328.363.363 0 0 0 .327-.396c-.11-1.308-.66-2.446-1.572-3.288a5.085 5.085 0 0 0-3.328-1.25zm-3.39 1.862c-.24-.005-.488.09-.733.313l-.001.002c-.38.36-.72.79-1.004 1.16a1.591 1.591 0 0 0-.2 1.548c.498 1.31 1.263 2.52 2.16 3.6l.022.03c1.34 1.554 2.963 2.793 4.776 3.614l.025.012c.54.252 1.243.547 1.87.467.42-.056.8-.33 1.115-.672.218-.236.412-.5.512-.796.16-.476-.066-.99-.506-1.233l-1.658-.923c-.434-.243-.967-.16-1.308.178l-.51.507c-.174.165-.447.19-.68.076 0 0-.968-.444-1.958-1.38-.99-.934-1.497-1.87-1.497-1.87-.12-.228-.1-.5.068-.676l.49-.527c.32-.353.39-.89.135-1.328l-1.003-1.623c-.177-.287-.427-.455-.703-.477a.753.753 0 0 0-.11-.003zm4.635.428a.363.363 0 0 0-.02.726c1.29.065 2.328 1.023 2.328 2.15a.363.363 0 1 0 .727 0c0-1.58-1.39-2.855-3.035-2.876zm.3 1.172a.363.363 0 0 0-.03.726c.57.046.996.47.996.988a.363.363 0 1 0 .726 0c0-.865-.743-1.614-1.69-1.714z"/></svg>
             Viber
-          </button>
+          </a>
           <!-- Telegram -->
-          <button (click)="shareOnTelegram()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Telegram">
+          <a [href]="telegramShareUrl()" target="_blank" rel="noopener" data-link-type="social" [attr.data-venue-slug]="venueSlug()" class="btn btn-sm btn-outline gap-2" aria-label="Share on Telegram">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 1 0 24 12.056A12.01 12.01 0 0 0 11.944 0Zm5.573 7.26-1.97 9.28c-.146.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.334-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.13.832.94Z"/></svg>
             Telegram
-          </button>
+          </a>
           <!-- Copy Link -->
           <button (click)="copyLink()" class="btn btn-sm btn-outline gap-2" aria-label="Copy link">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" /></svg>

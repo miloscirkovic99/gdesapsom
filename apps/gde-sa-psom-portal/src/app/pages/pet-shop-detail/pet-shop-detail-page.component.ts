@@ -29,6 +29,7 @@ import { PackageWeightPipe } from '../../shared/pipes/package-weight.pipe';
 import { RsdPricePipe } from '../../shared/pipes/rsd-price.pipe';
 import { PetShopsStore } from '../../shared/store/pet-shops.store';
 import { injectActiveLang } from '../../shared/utils/active-lang';
+import { venueLinkType } from '../../shared/utils/link-type';
 import { pluralKey } from '../../shared/utils/plural';
 
 const STRUCTURED_DATA_ID = 'pet-shop';
@@ -72,6 +73,9 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
     if (!shop) return '';
     return [...new Set([shop.townshipName, shop.cityName].filter((v): v is string => !!v))].join(', ');
   });
+
+  /** `websiteUrl` may hold an Instagram/Facebook page; tags the link for outbound tracking. */
+  readonly websiteLinkType = computed(() => venueLinkType(this.shop()?.websiteUrl));
 
   readonly itemCountKey = computed(() =>
     pluralKey('item_count', this.shop()?.summary.offerCount ?? 0, this.lang()),
