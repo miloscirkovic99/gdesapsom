@@ -18,7 +18,7 @@ import {
 } from '@angular/forms';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { ReplaySubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -30,6 +30,10 @@ import { SharedStore } from '../../shared/store/shared.store';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
+import {
+  AnalyticsService,
+  SEARCH_TRACKING_DEBOUNCE_MS,
+} from '../../core/services/analytics.service';
 
 interface SearchPayload {
   ops_id: string | null;
@@ -73,6 +77,7 @@ export class PetSpotsFacilitiesComponent {
   private  readonly fb          = inject(FormBuilder);
   private  readonly route       = inject(ActivatedRoute);
   private  readonly destroyRef  = inject(DestroyRef);
+  private  readonly analytics   = inject(AnalyticsService);
 
   // ── Maps ──────────────────────────────────────────────────────────────────
   readonly descriptionToKeyMap     = descriptionToKeyMap;
@@ -168,6 +173,7 @@ readonly formValue = toSignal(
   }
 
   applyFilters(): void {
+    this.analytics.trackFilterApplied('spots', this.activeFilterChips().map(c => c.key));
     this.onSubmit(true);
     this.showFilters.set(false);
   }
@@ -205,6 +211,7 @@ readonly formValue = toSignal(
         });
         this.isLoadingLocation.set(false);
         this.form.patchValue({ radius: 5000 });
+        this.analytics.trackNearMe('spots');
         this.onSubmit(true);
       },
       (error) => {
@@ -225,6 +232,14 @@ readonly formValue = toSignal(
       .subscribe(word => this.spotsStore.loadSpots({
         data: { ...this.#buildPayload(true), word: word ?? null },
       }));
+
+    this.form.controls.word.valueChanges
+      .pipe(
+        debounceTime(SEARCH_TRACKING_DEBOUNCE_MS),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(word => this.analytics.trackSearch('spots', word));
 
     this.form.get('radius')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

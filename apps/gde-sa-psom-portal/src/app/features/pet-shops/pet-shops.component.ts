@@ -18,6 +18,7 @@ import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ReplaySubject } from 'rxjs';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
@@ -81,6 +82,7 @@ export class PetShopsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly snackbarService = inject(SnackbarService);
   private readonly translocoService = inject(TranslocoService);
+  private readonly analytics = inject(AnalyticsService);
 
   // ── Static options ────────────────────────────────────────────────────────
   readonly radiusOptions = [1000, 2000, 3000, 5000, 7500, 10000] as const;
@@ -183,6 +185,7 @@ export class PetShopsComponent implements OnInit {
       ({ coords }) => {
         this.userLocation.set({ lat: coords.latitude, lon: coords.longitude });
         this.isLoadingLocation.set(false);
+        this.analytics.trackNearMe('pet_shops');
         this.#runSearch();
       },
       () => {

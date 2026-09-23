@@ -333,6 +333,38 @@
   "unable_to_get_location": "Unable to get location",
   "geolocation_not_supported": "Geolocation not supported",
   "search_near_me": "Search locations near me",
+
+  "near_me_description": "Find pet-friendly places near your current location. Perfect for a quick walk or a sudden need.",
+
+  "near_me_no_location": "We could not get your location. Please allow location access and try again.",
+
+  "near_me_no_results": "We did not find any pet-friendly places nearby. Try widening the search or check other parts of the city.",
+
+  "near_me_error": "Something went wrong while getting your location. Please try again.",
+
+  "near_me_radius": "Search radius (meters)",
+
+  "near_me_radius_desc": "Set the search radius in meters. A larger number shows more places, but may include some that are farther from your current location.",
+
+  "near_me_search": "Search nearby",
+
+  "near_me_clear": "Clear nearby search",
+
+  "near_me_searching": "Searching nearby, just a moment...",
+
+  "near_me_no_geolocation": "Geolocation is not supported by your browser.",
+
+  "near_me_permission_denied": "Location access was denied. Please allow location access and try again.",
+
+  "near_me_position_unavailable": "We could not get your location. Please try again.",
+
+  "near_me_timeout": "Getting your location timed out. Please try again.",
+
+  "near_me_unknown_error": "An unknown error occurred while getting your location. Please try again.",
+
+  "near_me_no_results_nearby": "We did not find any pet-friendly places near your location. Try widening the search or check other parts of the city.",
+
+  "near_me_results_found": "Found {count} pet-friendly places near your location.",
   "radius_km": "radius km",
   "location_found": "Location found",
   "close_sheet": "Close",
@@ -431,6 +463,10 @@
   "catalog_error": "We could not load the data. Check your connection and try again.",
   "try_again": "Try again",
   "no_results_title": "No results",
+
+  "no_parks_title": "No parks yet",
+
+  "no_parks": "There are no dog parks listed yet. Know one? Suggest it!",
   "no_food_results_title": "No products found",
   "no_food_results": "No product matches your search. Try different keywords or remove a filter.",
   "no_shop_results_title": "No shops found",

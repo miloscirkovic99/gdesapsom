@@ -447,6 +447,10 @@
   "catalog_error": "Nismo uspeli da učitamo podatke. Proverite internet vezu i pokušajte ponovo.",
   "try_again": "Pokušaj ponovo",
   "no_results_title": "Nema rezultata",
+
+  "no_parks_title": "Još nema parkova",
+
+  "no_parks": "Trenutno nema dodatih parkova za pse. Znate neki? Predložite ga!",
   "no_food_results_title": "Nema proizvoda",
   "no_food_results": "Nijedan proizvod ne odgovara pretrazi. Probajte druge ključne reči ili uklonite neki od filtera.",
   "no_shop_results_title": "Nema prodavnica",

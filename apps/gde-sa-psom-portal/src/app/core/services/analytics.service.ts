@@ -14,8 +14,20 @@ export type LinkType =
   | 'social'
   | 'other';
 
+/** Which list a search, filter or near-me event came from (`search_scope`). */
+export type SearchScope = 'spots' | 'vet_clinics' | 'pet_shops';
+
+/** What the visitor suggested through a public form (`content_type`). */
+export type SubmissionType = 'spot' | 'park';
+
 /** GA4 truncates event parameter values at 100 characters anyway. */
 export const MAX_LINK_TEXT_LENGTH = 100;
+
+/**
+ * Free-text search boxes fire on every keystroke; callers debounce by this
+ * much before calling `trackSearch` so only the settled term is reported.
+ */
+export const SEARCH_TRACKING_DEBOUNCE_MS = 1500;
 
 /** Links that open a contact app rather than a web page. */
 const CONTACT_PROTOCOLS: ReadonlySet<string> = new Set(['mailto:', 'tel:', 'sms:']);
@@ -52,6 +64,47 @@ export class AnalyticsService {
 
   event(name: string, params: Record<string, unknown>): void {
     this.document.defaultView?.gtag?.('event', name, params);
+  }
+
+  /** GA4 recommended `search` event. Terms shorter than 2 characters are ignored. */
+  trackSearch(scope: SearchScope, term: string | null | undefined): void {
+    const searchTerm = term?.trim();
+    if (!searchTerm || searchTerm.length < 2) return;
+    this.event('search', {
+      search_term: searchTerm.slice(0, MAX_LINK_TEXT_LENGTH),
+      search_scope: scope,
+    });
+  }
+
+  /** `filters` lists the active filter keys, e.g. "ops_id,ugo_id". */
+  trackFilterApplied(scope: SearchScope, filters: readonly string[]): void {
+    this.event('filter_applied', { search_scope: scope, filters: filters.join(',') });
+  }
+
+  /** Sent once the browser has returned a position, not when the button is pressed. */
+  trackNearMe(scope: SearchScope): void {
+    this.event('near_me_used', { search_scope: scope });
+  }
+
+  trackSubmission(type: SubmissionType): void {
+    this.event('generate_lead', { content_type: type });
+  }
+
+  /**
+   * GA4 recommended `share` event. Share links to social apps are already
+   * reported as `outbound_click` with `link_type: social`; this covers the
+   * shares that never leave the page, such as copying the link.
+   */
+  trackShare(method: string, contentType: string, itemId: string | null): void {
+    this.event('share', { method, content_type: contentType, item_id: itemId ?? undefined });
+  }
+
+  trackLanguageSwitch(language: string): void {
+    this.event('language_switch', { language });
+  }
+
+  trackPwaInstall(outcome: string): void {
+    this.event('pwa_install', { outcome });
   }
 
   /**

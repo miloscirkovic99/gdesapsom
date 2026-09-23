@@ -25,6 +25,7 @@ import { SharedStore } from '../../shared/store/shared.store';
 import { fileSizeValidator } from '../../core/validators/file-size-valdiator';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
 import { RouteConstants } from '../../shared/constants/route.constant';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -52,6 +53,7 @@ export class AddSpotPageComponent {
 
   readonly spotsStore = inject(SpotsStore);
   readonly sharedStore = inject(SharedStore);
+  private readonly analytics = inject(AnalyticsService);
 
   townshipMultiFilterCtrl = new FormControl<string>('');
   filteredtownshipsMulti = new ReplaySubject<any[]>(1);
@@ -156,6 +158,7 @@ export class AddSpotPageComponent {
       };
       this.spotsStore.suggestSpot(formData, () => {
         this.submitting.set(false);
+        this.analytics.trackSubmission('spot');
         this.router.navigate(['/' + RouteConstants.allSpots]);
       }, () => {
         this.submitting.set(false);

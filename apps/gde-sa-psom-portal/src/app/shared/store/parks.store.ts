@@ -19,12 +19,15 @@ import { ContactFormService } from '../components/contact-form/contact-form.serv
 type ParksState = {
   parks: any[];
   pendingParks: any[];
+  /** Load state of the public (accepted) list; the admin pending list is not tracked. */
+  parksStatus: 'idle' | 'loading' | 'loaded' | 'error';
 };
 
 // Create the signal state
 const initialParksState = signalState<ParksState>({
   parks: [],
   pendingParks: [],
+  parksStatus: 'idle',
 });
 const destroyed$ = new Subject<void>();
 // Create the SignalStore with `withStorageSync`
@@ -53,6 +56,8 @@ export const ParksStore = signalStore(
     };
     return {
       petParks(par_accepted = 1) {
+        const isPublicList = par_accepted == 1;
+        if (isPublicList) patchState(store, { parksStatus: 'loading' });
         http
           .post<any>('pet-friendly-parks/list', { par_accepted: par_accepted })
           .pipe(takeUntil(destroyed$))
@@ -61,6 +66,7 @@ export const ParksStore = signalStore(
               patchState(store, (state) => ({
                 parks: [...state.parks, ...response.petFriendlyParks],
               }));
+              if (isPublicList) patchState(store, { parksStatus: 'loaded' });
 
               if (par_accepted == 0) {
                 patchState(store, (state) => ({
@@ -71,7 +77,10 @@ export const ParksStore = signalStore(
                 }));
               }
             },
-            error: handleError,
+            error: (error) => {
+              if (isPublicList) patchState(store, { parksStatus: 'error' });
+              handleError(error);
+            },
           });
       },
       updatePark(form: any) {

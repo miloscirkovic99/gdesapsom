@@ -11,6 +11,7 @@ import {
 import { RouteConstants } from '../../shared/constants/route.constant';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SeoService } from '../../core/services/seo.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { venueLinkType } from '../../shared/utils/link-type';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -34,6 +35,7 @@ export class SpotDetailPageComponent {
   private translocoService = inject(TranslocoService);
   private seoService = inject(SeoService);
   private sanitizer = inject(DomSanitizer);
+  private analytics = inject(AnalyticsService);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
 
@@ -197,6 +199,7 @@ export class SpotDetailPageComponent {
 
   copyLink(): void {
     navigator.clipboard.writeText(this.spotUrl).then(() => {
+      this.analytics.trackShare('copy_link', 'spot', this.venueSlug());
       const msg = this.translocoService.translate('link_copied');
       const btn = this.translocoService.translate('close');
       this.snackbarService.openSnackbar(msg, btn, 'success-snackbar');

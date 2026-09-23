@@ -13,6 +13,7 @@ import { Router, RouterModule } from '@angular/router';
 import { RouteConstants } from '../../constants/route.constant';
 import { TranslocoModule } from '@ngneat/transloco';
 import { LanguageService } from '../../../core/services/language.service';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../../features/auth/auth.service';
 
@@ -40,6 +41,7 @@ export class NavbarComponent {
   @ViewChild('suggestDropdown') suggestDropdown: ElementRef | undefined;
   private languageService = inject(LanguageService);
   private router = inject(Router);
+  private analytics = inject(AnalyticsService);
 
   authService=inject(AuthService)
   ngOnInit() {
@@ -78,6 +80,7 @@ export class NavbarComponent {
   }
   switchLanguage(language: string) {
     localStorage.setItem('language', language);
+    this.analytics.trackLanguageSwitch(language);
 
     this.languageService.switchLanguage(language);
   }

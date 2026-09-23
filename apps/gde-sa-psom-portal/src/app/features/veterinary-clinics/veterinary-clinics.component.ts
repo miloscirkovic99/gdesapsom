@@ -13,8 +13,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SharedStore } from '../../shared/store/shared.store';
-import { ReplaySubject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rxjs';
 import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import {
+  AnalyticsService,
+  SEARCH_TRACKING_DEBOUNCE_MS,
+} from '../../core/services/analytics.service';
 
 /** The clinic fields the contact links need; the list rows themselves are untyped. */
 interface VetClinicPlace {
@@ -43,6 +47,7 @@ export class VeterinaryClinicsComponent {
   private http = inject(HttpClient);
   vetClinicsStore = inject(VetClinicsStore);
   sharedStore=inject(SharedStore)
+  private analytics = inject(AnalyticsService);
   form!: FormGroup;
 
     /** control for the MatSelect filter keyword multi-selection */
@@ -74,6 +79,9 @@ export class VeterinaryClinicsComponent {
     this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{
       this.formData(true,result);
     })
+    this.form.get('word')?.valueChanges
+      .pipe(debounceTime(SEARCH_TRACKING_DEBOUNCE_MS), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((word) => this.analytics.trackSearch('vet_clinics', word));
   }
 
   onSelectionChange(event: any) {
@@ -95,6 +103,14 @@ export class VeterinaryClinicsComponent {
     this.filteredtownshipsMulti.next(filteredTownships);
   }
   onSubmit(resetOffset: boolean = false) {
+    // resetOffset is only true for the Apply button; "see more" pages without it.
+    if (resetOffset) {
+      const { ops_id, grd_id } = this.form.value;
+      this.analytics.trackFilterApplied('vet_clinics', [
+        ...(ops_id?.length ? ['ops_id'] : []),
+        ...(grd_id ? ['grd_id'] : []),
+      ]);
+    }
     this.formData(resetOffset);
   }
   formData(resetOffset: boolean = false, word = null) {
