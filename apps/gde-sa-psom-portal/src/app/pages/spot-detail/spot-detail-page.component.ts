@@ -1,4 +1,14 @@
-import { Component, computed, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -10,12 +20,16 @@ import {
 } from '../../shared/helpers/map.helpers';
 import { RouteConstants } from '../../shared/constants/route.constant';
 import { SnackbarService } from '../../core/services/snackbar.service';
-import { SeoService } from '../../core/services/seo.service';
+import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { venueLinkType } from '../../shared/utils/link-type';
+import { cleanApiText } from '../../shared/utils/api-text';
+import { spotStructuredData } from '../../shared/utils/structured-data';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
+
+const STRUCTURED_DATA_ID = 'spot';
 
 @Component({
   selector: 'app-spot-detail-page',
@@ -25,7 +39,7 @@ import * as L from 'leaflet';
   styleUrl: './spot-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpotDetailPageComponent {
+export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
@@ -56,6 +70,9 @@ export class SpotDetailPageComponent {
 
   /** "Sajt ili društvena mreža" holds either a website or an Instagram/Facebook page. */
   readonly websiteLinkType = computed(() => venueLinkType(this.spot()?.iuo_link_web));
+
+  /** Null for spots saved with the literal description "null". */
+  readonly spotDescription = computed(() => cleanApiText(this.spot()?.iuo_opis));
 
   /** "lat,lon" for the map apps; null when the spot has no coordinates. */
   private readonly coordinates = computed<string | null>(() => {
@@ -143,24 +160,26 @@ export class SpotDetailPageComponent {
 
   /**
    * Without this the page keeps the generic route title and the site-wide
-   * description, so all 127 spot pages look identical to a crawler.
+   * description, so all 127 spot pages look identical to a crawler. Also
+   * publishes the spot as schema.org LocalBusiness, removed in ngOnDestroy.
    * The spot photo is a base64 blob rather than a URL, so no og:image is passed.
    */
   private updateSeo(spot: any, id: string): void {
-    const name = spot?.iuo_ime?.trim();
+    const name = cleanApiText(spot?.iuo_ime);
     if (!name) return;
 
-    const city = spot?.grd_ime?.trim();
-    const type = spot?.ugo_ime?.trim();
-    const address = spot?.iuo_adressa?.trim();
-    const allowed = spot?.sta_ime?.trim();
+    const city = cleanApiText(spot?.grd_ime);
+    const type = cleanApiText(spot?.ugo_ime);
+    const address = cleanApiText(spot?.iuo_adressa);
+    const allowed = cleanApiText(spot?.sta_ime);
+    const path = `/spots/${id}`;
 
     const title = [name, type && city ? `${type} u ${city}` : type || city]
       .filter(Boolean)
       .join(' - ');
 
     const description =
-      spot?.iuo_opis?.trim() ||
+      cleanApiText(spot?.iuo_opis) ||
       [
         `${name} je pet-friendly ${(type || 'objekat').toLowerCase()}`,
         [address, city].filter(Boolean).join(', '),
@@ -172,8 +191,11 @@ export class SpotDetailPageComponent {
     this.seoService.update({
       title: `${title} | Gde sa psom`,
       description,
-      path: `/spots/${id}`,
+      path,
     });
+
+    const structuredData = spotStructuredData(spot, { url: `${SITE_ORIGIN}${path}`, description });
+    if (structuredData) this.seoService.setStructuredData(STRUCTURED_DATA_ID, structuredData);
   }
 
   ngAfterViewInit(): void {
@@ -182,6 +204,10 @@ export class SpotDetailPageComponent {
       this.initializeMap();
       this.geocodeAddress(`${data.iuo_adressa},${data.grd_ime}`);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
   }
 
   goToSlide(event: Event, slide: number): void {

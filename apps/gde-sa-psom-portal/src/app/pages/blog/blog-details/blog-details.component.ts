@@ -1,9 +1,12 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BlogService } from '../blog.service';
 import { Post } from '../../../shared/models/posts';
-import { SeoService } from '../../../core/services/seo.service';
+import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
+import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
+
+const STRUCTURED_DATA_ID = 'blog-post';
 
 @Component({
   selector: 'app-blog-details',
@@ -12,7 +15,7 @@ import { SeoService } from '../../../core/services/seo.service';
   templateUrl: './blog-details.component.html',
   styleUrl: './blog-details.component.scss',
 })
-export class BlogDetailsComponent implements OnInit {
+export class BlogDetailsComponent implements OnInit, OnDestroy {
   private blogService = inject(BlogService);
   private route       = inject(ActivatedRoute);
   private router      = inject(Router);
@@ -48,16 +51,30 @@ export class BlogDetailsComponent implements OnInit {
         this.ucitavanje.set(false);
 
         if (postData?.naslov) {
+          const path = `/blog/${postData.slug ?? slug}`;
+          // The template loads the cover from /assets/slike/, and so must crawlers.
+          const image = postData.slika_naslovna
+            ? `${SITE_ORIGIN}/assets/slike/${postData.slika_naslovna}`
+            : null;
+
           this.seoService.update({
             title: `${postData.naslov} - Gde sa psom Blog`,
             description: postData.sadrzaj,
-            path: `/blog/${postData.slug ?? slug}`,
-            image: postData.slika_naslovna,
+            path,
+            image,
             type: 'article',
           });
+
+          const structuredData = blogPostingStructuredData(postData, {
+            url: `${SITE_ORIGIN}${path}`,
+            image,
+            tags: this.tagovi(),
+          });
+          if (structuredData) this.seoService.setStructuredData(STRUCTURED_DATA_ID, structuredData);
         }
       },
       error: (err) => {
+        this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
         this.greska.set('Članak nije pronađen ili je došlo do greške. Vrati se na blog.');
         this.ucitavanje.set(false);
         console.error('Blog post loading error:', err);
@@ -75,5 +92,9 @@ export class BlogDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/blog']);
+  }
+
+  ngOnDestroy() {
+    this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
   }
 }

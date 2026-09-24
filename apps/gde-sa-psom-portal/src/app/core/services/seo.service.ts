@@ -9,7 +9,9 @@ const DEFAULT_TITLE =
   'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji';
 const DEFAULT_DESCRIPTION =
   'Pronađite gde su psi dobrodošli u Srbiji! Pretražite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Beogradu, Novom Sadu, Nišu i širom Srbije.';
-const DEFAULT_IMAGE = `${SITE_ORIGIN}/assets/logo-big.png`;
+/** Default share image, and the publisher logo in JSON-LD. */
+export const SITE_LOGO = `${SITE_ORIGIN}/assets/logo-big.png`;
+const DEFAULT_IMAGE = SITE_LOGO;
 
 const MAX_DESCRIPTION_LENGTH = 160;
 
