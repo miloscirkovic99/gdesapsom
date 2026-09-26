@@ -590,5 +590,12 @@
   "admin_manage_images": "Images",
   "admin_manage_offers": "Offers",
   "admin_manage_assortment": "Assortment",
-  "admin_all_partners_added": "Every available option already has an offer."
+  "admin_all_partners_added": "Every available option already has an offer.",
+  "mobile_tab_places": "Places",
+  "mobile_tab_vets": "Vets",
+  "mobile_tab_catalog": "Shopping",
+  "mobile_tab_more": "More",
+  "mobile_settings": "Settings",
+  "mobile_dark_theme": "Dark theme",
+  "mobile_app_version": "Version"
 }

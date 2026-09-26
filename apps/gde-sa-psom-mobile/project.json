@@ -1,0 +1,170 @@
+{
+  "name": "gde-sa-psom-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/gde-sa-psom-mobile/src",
+  "tags": [
+    "scope:mobile",
+    "type:app"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/apps/gde-sa-psom-mobile",
+        "index": "apps/gde-sa-psom-mobile/src/index.html",
+        "browser": "apps/gde-sa-psom-mobile/src/main.ts",
+        "polyfills": [
+          "zone.js"
+        ],
+        "tsConfig": "apps/gde-sa-psom-mobile/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/gde-sa-psom-mobile/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/shared/util/src/i18n/",
+            "output": "/assets/i18n/"
+          },
+          {
+            "glob": "*.png",
+            "input": "node_modules/leaflet/dist/images/",
+            "output": "/assets/leaflet/"
+          }
+        ],
+        "styles": [
+          "node_modules/leaflet/dist/leaflet.css",
+          "apps/gde-sa-psom-mobile/src/styles.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1.5mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "12kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/gde-sa-psom-mobile/src/env/env.dev.ts",
+              "with": "apps/gde-sa-psom-mobile/src/env/env.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "uat": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1.5mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "12kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/gde-sa-psom-mobile/src/env/env.dev.ts",
+              "with": "apps/gde-sa-psom-mobile/src/env/env.qa.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4300
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "gde-sa-psom-mobile:build:production"
+        },
+        "uat": {
+          "buildTarget": "gde-sa-psom-mobile:build:uat"
+        },
+        "development": {
+          "buildTarget": "gde-sa-psom-mobile:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "apps/gde-sa-psom-mobile/jest.config.ts"
+      }
+    },
+    "cap-sync": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false,
+      "options": {
+        "cwd": "apps/gde-sa-psom-mobile",
+        "command": "npx cap sync android"
+      },
+      "configurations": {
+        "production": {},
+        "uat": {},
+        "development": {}
+      }
+    },
+    "cap-run-android": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "cap-sync"
+      ],
+      "cache": false,
+      "options": {
+        "cwd": "apps/gde-sa-psom-mobile",
+        "command": "npx cap run android"
+      },
+      "configurations": {
+        "production": {},
+        "uat": {},
+        "development": {}
+      }
+    },
+    "cap-open-android": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "apps/gde-sa-psom-mobile",
+        "command": "npx cap open android"
+      }
+    }
+  }
+}

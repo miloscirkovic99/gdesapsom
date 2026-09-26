@@ -574,5 +574,12 @@
   "admin_manage_images": "Slike",
   "admin_manage_offers": "Ponude",
   "admin_manage_assortment": "Asortiman",
-  "admin_all_partners_added": "Sve dostupne opcije već imaju ponudu."
+  "admin_all_partners_added": "Sve dostupne opcije već imaju ponudu.",
+  "mobile_tab_places": "Mesta",
+  "mobile_tab_vets": "Veterinari",
+  "mobile_tab_catalog": "Kupovina",
+  "mobile_tab_more": "Više",
+  "mobile_settings": "Podešavanja",
+  "mobile_dark_theme": "Tamna tema",
+  "mobile_app_version": "Verzija"
 }

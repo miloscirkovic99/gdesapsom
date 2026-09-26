@@ -1,0 +1,3 @@
+# Capacitor native projects: not source for any Nx project, and they hold a copy of the built web app.
+apps/gde-sa-psom-mobile/android
+apps/gde-sa-psom-mobile/ios

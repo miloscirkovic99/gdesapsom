@@ -93,3 +93,11 @@ logs/
 !db/**/*.sql
 !db/**/*.md
 !docs/**/*.md
+
+# Mobile app signing (apps/gde-sa-psom-mobile). Upload keys never go in the repo.
+*.jks
+*.keystore
+keystore.properties
+apps/gde-sa-psom-mobile/android/app/release/
+**/google-services.json
+**/GoogleService-Info.plist
