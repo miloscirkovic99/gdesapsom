@@ -611,5 +611,6 @@
   "mobile_cancel": "Cancel",
   "mobile_done": "Done",
   "mobile_spot_not_found": "Place not found.",
-  "mobile_city": "City"
+  "mobile_city": "City",
+  "mobile_not_found": "Not found."
 }

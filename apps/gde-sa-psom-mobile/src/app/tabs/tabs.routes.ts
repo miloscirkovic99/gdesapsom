@@ -18,6 +18,14 @@ export const TAB_ROUTES: Routes = [
       { path: 'places/spots/:id', loadComponent: spotDetail },
       { path: 'vets', loadComponent: () => import('../features/vets/vets.page').then((m) => m.VetsPage) },
       { path: 'catalog', loadComponent: () => import('../features/catalog/catalog.page').then((m) => m.CatalogPage) },
+      {
+        path: 'catalog/food/:slug',
+        loadComponent: () => import('../features/catalog/dog-food-detail.page').then((m) => m.DogFoodDetailPage),
+      },
+      {
+        path: 'catalog/shops/:slug',
+        loadComponent: () => import('../features/catalog/pet-shop-detail.page').then((m) => m.PetShopDetailPage),
+      },
       { path: 'more', loadComponent: () => import('../features/more/more.page').then((m) => m.MorePage) },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],

@@ -1,0 +1,64 @@
+.count {
+  margin: 12px 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+}
+
+.state {
+  text-align: center;
+  color: var(--ion-color-medium);
+  padding-top: 48px;
+}
+
+.filter-button {
+  position: relative;
+}
+
+.filter-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.65rem;
+}
+
+ion-thumbnail {
+  --size: 64px;
+  --border-radius: 8px;
+
+  img {
+    object-fit: contain;
+    background: #fff;
+  }
+}
+
+.brand {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+
+  small {
+    color: var(--ion-color-medium);
+  }
+
+  strong {
+    color: var(--ion-color-primary);
+    white-space: nowrap;
+  }
+}
+
+.chips ion-chip {
+  margin-inline-start: 0;
+  height: 26px;
+  font-size: 0.8rem;
+}
+
+.apply {
+  margin-top: 24px;
+}

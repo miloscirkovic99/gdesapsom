@@ -65,7 +65,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
         />
       </ion-toolbar>
       <ion-toolbar>
-        <ion-select
+        <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
           class="city"
           [label]="'mobile_city' | transloco"
           interface="action-sheet"

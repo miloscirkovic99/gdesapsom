@@ -1,0 +1,131 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/catalog" text="" />
+    </ion-buttons>
+    <ion-title>{{ product()?.name }}</ion-title>
+    @if (product()) {
+      <ion-buttons slot="end">
+        <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
+          <ion-icon slot="icon-only" name="share-social-outline" />
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (product(); as p) {
+    @if (p.images.length) {
+      <div class="photos" [class.single]="p.images.length === 1">
+        @for (img of p.images; track img.id) {
+          <img [src]="img.image" [alt]="img.altText ?? ''" />
+        }
+      </div>
+    }
+
+    <section class="ion-padding">
+      <p class="brand">{{ p.brand.name }}</p>
+      <h1>{{ p.name }}</h1>
+      <div class="chips">
+        <ion-chip color="primary"><ion-label>{{ p.foodType | localName: lang() }}</ion-label></ion-chip>
+        <ion-chip><ion-label>{{ p.lifeStage | localName: lang() }}</ion-label></ion-chip>
+        <ion-chip><ion-label>{{ p.breedSize | localName: lang() }}</ion-label></ion-chip>
+        @if (p.isGrainFree) {
+          <ion-chip><ion-label>{{ 'grain_free' | transloco }}</ion-label></ion-chip>
+        }
+      </div>
+      <p class="facts">
+        @if (p.packageWeightG) {
+          {{ 'package_weight' | transloco }}: <strong>{{ p.packageWeightG | packageWeight: lang() }}</strong>
+        }
+      </p>
+      <p class="price">
+        @if (p.aggregate.lowPrice !== null) {
+          {{ 'price_from' | transloco: { price: (p.aggregate.lowPrice | rsdPrice: lang()) } }}
+          @if (p.aggregate.highPrice !== null && p.aggregate.highPrice !== p.aggregate.lowPrice) {
+            · {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}
+          }
+        } @else {
+          {{ 'price_unknown' | transloco }}
+        }
+      </p>
+      @if (description(); as d) {
+        <p class="text">{{ d }}</p>
+      }
+    </section>
+
+    <section>
+      <h2 class="ion-padding-horizontal">{{ 'available_at' | transloco }}</h2>
+      @if (p.offers.length) {
+        <ion-list lines="full">
+          @for (offer of p.offers; track offer.id) {
+            <ion-item [routerLink]="['/tabs/catalog/shops', offer.shop.slug]" detail="true" lines="none">
+              <ion-label class="ion-text-wrap">
+                <h3>
+                  {{ offer.shop.name }}
+                  @if (offer.id === bestOfferId()) {
+                    <ion-badge color="success">{{ 'best_price' | transloco }}</ion-badge>
+                  }
+                </h3>
+                <p>{{ locationOf(offer) }}</p>
+                <p>
+                  <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
+                  ·
+                  <span [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
+                    {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
+                  </span>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item class="offer-actions">
+              <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" />
+              @if (directionsUrl(offer); as url) {
+                <ion-button slot="end" size="small" fill="clear" [href]="url" target="_blank" rel="noopener">
+                  <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
+                  {{ 'get_directions' | transloco }}
+                </ion-button>
+              }
+            </ion-item>
+          }
+        </ion-list>
+      } @else {
+        <p class="ion-padding-horizontal muted">{{ 'no_offers_hint' | transloco }}</p>
+      }
+    </section>
+
+    @if (ingredients(); as i) {
+      <section class="ion-padding">
+        <h2>{{ 'ingredients' | transloco }}</h2>
+        <p class="text">{{ i }}</p>
+      </section>
+    }
+
+    @if (p.related.length) {
+      <section>
+        <h2 class="ion-padding-horizontal">{{ 'related_products' | transloco }}</h2>
+        <ion-list>
+          @for (r of p.related; track r.id) {
+            <ion-item [routerLink]="['/tabs/catalog/food', r.slug]" detail="true">
+              <ion-thumbnail slot="start">
+                <img [src]="r.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
+              </ion-thumbnail>
+              <ion-label class="ion-text-wrap">
+                <p>{{ r.brandName }}</p>
+                <h3>{{ r.name }}</h3>
+                <p>{{ r.minPrice !== null ? (r.minPrice | rsdPrice: lang()) : ('price_unknown' | transloco) }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </section>
+    }
+  } @else if (food.detailError()) {
+    <div class="state ion-padding">
+      <h3>{{ 'mobile_not_found' | transloco }}</h3>
+      <ion-button fill="outline" (click)="reload()">{{ 'try_again' | transloco }}</ion-button>
+    </div>
+  } @else {
+    <div class="state"><ion-spinner /></div>
+  }
+</ion-content>

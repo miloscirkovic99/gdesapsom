@@ -595,5 +595,6 @@
   "mobile_cancel": "Otkaži",
   "mobile_done": "Gotovo",
   "mobile_spot_not_found": "Objekat nije pronađen.",
-  "mobile_city": "Grad"
+  "mobile_city": "Grad",
+  "mobile_not_found": "Nije pronađeno."
 }

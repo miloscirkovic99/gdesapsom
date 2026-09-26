@@ -101,7 +101,7 @@
       <ion-content class="ion-padding">
         <ion-list>
           <ion-item>
-            <ion-select
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
               [label]="'spot_type' | transloco"
               labelPlacement="stacked"
               interface="action-sheet"
@@ -118,7 +118,7 @@
           </ion-item>
 
           <ion-item>
-            <ion-select
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
               [label]="'pet_size' | transloco"
               labelPlacement="stacked"
               interface="action-sheet"
@@ -156,7 +156,7 @@
 
           @if (draft().near) {
             <ion-item>
-              <ion-select
+              <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
                 [label]="'radius_km' | transloco"
                 labelPlacement="stacked"
                 interface="action-sheet"
