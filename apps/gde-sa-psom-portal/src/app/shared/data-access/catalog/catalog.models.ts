@@ -5,12 +5,11 @@
  * camelCase rows aliased in SQL. `catalog.mappers.ts` folds them into the
  * nested shapes below so templates never depend on column aliases.
  */
-export type DogFoodSort = 'name' | 'price' | 'new';
+import { LocalizedName } from '@gde/shared/util';
 
-export interface LocalizedName {
-  nameSr: string;
-  nameEn: string;
-}
+export type { LocalizedName };
+
+export type DogFoodSort = 'name' | 'price' | 'new';
 
 /** Lookup row as served by `dog-food/lookups` (`code` is the stable key). */
 export interface LookupItem extends LocalizedName {

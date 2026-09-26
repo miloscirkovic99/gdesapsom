@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
-import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 
 /** The park fields the address link needs; the card data itself is untyped. */
 interface CardPlace {

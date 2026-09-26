@@ -17,20 +17,15 @@ import * as L from 'leaflet';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { DeliveryLinksComponent } from '../../shared/components/delivery-links/delivery-links.component';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import {
   LookupRef,
   PetShopDetail,
   PetShopOffer,
 } from '../../shared/data-access/catalog/catalog.models';
 import { normalizeSearchText } from '../../shared/data-access/catalog/dog-food.api';
-import { LocalNamePipe } from '../../shared/pipes/local-name.pipe';
-import { PackageWeightPipe } from '../../shared/pipes/package-weight.pipe';
-import { RsdPricePipe } from '../../shared/pipes/rsd-price.pipe';
 import { PetShopsStore } from '../../shared/store/pet-shops.store';
-import { injectActiveLang } from '../../shared/utils/active-lang';
 import { venueLinkType } from '../../shared/utils/link-type';
-import { pluralKey } from '../../shared/utils/plural';
 
 const STRUCTURED_DATA_ID = 'pet-shop';
 const MAP_ELEMENT_ID = 'shop-map';

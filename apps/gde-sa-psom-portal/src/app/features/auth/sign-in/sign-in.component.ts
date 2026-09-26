@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
-import { RouteConstants } from '../../../shared/constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 import { AuthService } from '../auth.service';
 
 @Component({

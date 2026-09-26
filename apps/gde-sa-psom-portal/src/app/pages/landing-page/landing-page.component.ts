@@ -6,12 +6,7 @@ import { CardComponent } from '../../shared/components/card/card.component';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { ParksStore } from '../../shared/store/parks.store';
 import { VetClinicsStore } from '../../shared/store/vetclinics.store';
-import { RouteConstants } from '../../shared/constants/route.constant';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapGarden,
-  descriptionToKeyMapSpot,
-} from '../../shared/helpers/map.helpers';
+import { RouteConstants, descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 
 type CategoryIcon = 'restaurant' | 'cafe' | 'hotel' | 'park' | 'vet' | 'food' | 'shop';
 

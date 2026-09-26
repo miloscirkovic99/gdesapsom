@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SharedStore } from '../../shared/store/shared.store';
 import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rxjs';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import { filterTownshipsMulti } from '@gde/shared/util';
 import {
   AnalyticsService,
   SEARCH_TRACKING_DEBOUNCE_MS,

@@ -10,9 +10,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { RouteConstants } from '../../constants/route.constant';
+import { RouteConstants, LanguageService } from '@gde/shared/util';
 import { TranslocoModule } from '@ngneat/transloco';
-import { LanguageService } from '../../../core/services/language.service';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../../features/auth/auth.service';

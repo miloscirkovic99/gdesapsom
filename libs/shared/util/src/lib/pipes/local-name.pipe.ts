@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { LocalizedName } from '../data-access/catalog/catalog.models';
+import { LocalizedName } from '../models/localized-name';
 
 /**
  * Picks `nameSr` or `nameEn` from a catalog lookup for the given language.

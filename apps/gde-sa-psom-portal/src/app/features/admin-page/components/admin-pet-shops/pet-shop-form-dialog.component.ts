@@ -36,7 +36,7 @@ import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store'
 import { SharedStore } from '../../../../shared/store/shared.store';
 import { geocodeAddress, GeocodeHit } from '../../../../shared/utils/geocode';
 import { isImageFile, MAX_UPLOAD_BYTES, prepareLogo } from '../../../../shared/utils/image-resize';
-import { filterTownshipsMulti } from '../../../../shared/utils/township.util';
+import { filterTownshipsMulti } from '@gde/shared/util';
 
 export interface PetShopFormDialogData {
   /** null = create */

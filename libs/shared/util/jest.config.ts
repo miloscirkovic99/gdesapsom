@@ -1,9 +1,8 @@
-/* eslint-disable */
 export default {
-  displayName: 'gde-sa-psom-portal',
-  preset: '../../jest.preset.js',
+  displayName: 'shared-util',
+  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/apps/gde-sa-psom-portal',
+  coverageDirectory: '../../../coverage/libs/shared/util',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

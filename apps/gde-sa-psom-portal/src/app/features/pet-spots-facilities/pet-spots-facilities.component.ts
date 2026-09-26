@@ -22,12 +22,8 @@ import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapSpot,
-} from '../../shared/helpers/map.helpers';
+import { descriptionToKeyMap, descriptionToKeyMapSpot, filterTownshipsMulti } from '@gde/shared/util';
 import { SharedStore } from '../../shared/store/shared.store';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import {

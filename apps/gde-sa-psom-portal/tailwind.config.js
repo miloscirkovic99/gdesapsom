@@ -4,7 +4,9 @@ import daisyui from 'daisyui';
 
 export default Config = {
   content: [
-    './apps/**/*.{html,ts}',
+    // Only the portal: apps/gde-sa-psom-mobile (Ionic) and its android/ folder
+    // must not be scanned or they bloat the CSS and slow every build.
+    './apps/gde-sa-psom-portal/**/*.{html,ts}',
     './libs/**/*.{html,ts}',
   ],
   darkMode: 'class',

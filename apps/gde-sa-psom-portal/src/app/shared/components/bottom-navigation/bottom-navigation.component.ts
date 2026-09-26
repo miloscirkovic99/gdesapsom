@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouteConstants } from '../../constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 import { AppNavIconComponent } from '../bottom-navigation-icon/app-nav-bottom-icon';
 
 export interface NavItem {

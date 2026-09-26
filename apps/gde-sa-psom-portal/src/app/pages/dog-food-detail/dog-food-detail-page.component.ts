@@ -16,14 +16,9 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { OfferListComponent } from '../../shared/components/offer-list/offer-list.component';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { DogFoodDetail } from '../../shared/data-access/catalog/catalog.models';
-import { LocalNamePipe } from '../../shared/pipes/local-name.pipe';
-import { PackageWeightPipe } from '../../shared/pipes/package-weight.pipe';
-import { RsdPricePipe } from '../../shared/pipes/rsd-price.pipe';
 import { DogFoodStore } from '../../shared/store/dog-food.store';
-import { injectActiveLang } from '../../shared/utils/active-lang';
-import { pluralKey } from '../../shared/utils/plural';
 
 const STRUCTURED_DATA_ID = 'dog-food-product';
 const INGREDIENTS_CLAMP_LENGTH = 220;

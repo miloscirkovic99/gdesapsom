@@ -17,8 +17,7 @@ import { Router } from '@angular/router';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { SharedStore } from '../../shared/store/shared.store';
 import { ParksStore } from '../../shared/store/parks.store';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { filterTownshipsMulti, RouteConstants } from '@gde/shared/util';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 

@@ -21,11 +21,8 @@ import {
   DogFoodSort,
   LookupItem,
 } from '../../shared/data-access/catalog/catalog.models';
-import { LocalNamePipe } from '../../shared/pipes/local-name.pipe';
-import { RsdPricePipe } from '../../shared/pipes/rsd-price.pipe';
+import { LocalNamePipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { DogFoodStore } from '../../shared/store/dog-food.store';
-import { injectActiveLang } from '../../shared/utils/active-lang';
-import { pluralKey } from '../../shared/utils/plural';
 
 type CatalogForm = {
   word: FormControl<string | null>;

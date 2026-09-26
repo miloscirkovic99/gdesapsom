@@ -26,9 +26,7 @@ import { PetShopCardComponent } from '../../shared/components/pet-shop-card/pet-
 import { PetShopFilters } from '../../shared/data-access/catalog/catalog.models';
 import { PetShopsStore } from '../../shared/store/pet-shops.store';
 import { SharedStore } from '../../shared/store/shared.store';
-import { injectActiveLang } from '../../shared/utils/active-lang';
-import { pluralKey } from '../../shared/utils/plural';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
+import { injectActiveLang, pluralKey, filterTownshipsMulti } from '@gde/shared/util';
 
 type ShopsForm = {
   word: FormControl<string | null>;

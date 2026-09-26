@@ -13,18 +13,12 @@ import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapGarden,
-  descriptionToKeyMapSpot,
-} from '../../shared/helpers/map.helpers';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, RouteConstants, cleanApiText } from '@gde/shared/util';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { SpotsStore } from '../../shared/store/spots.store';
 import { venueLinkType } from '../../shared/utils/link-type';
-import { cleanApiText } from '../../shared/utils/api-text';
 import { spotStructuredData } from '../../shared/utils/structured-data';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';

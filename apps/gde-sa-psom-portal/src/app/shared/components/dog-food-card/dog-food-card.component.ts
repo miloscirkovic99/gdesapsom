@@ -1,12 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { RouteConstants } from '../../constants/route.constant';
+import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, pluralKey } from '@gde/shared/util';
 import { DogFoodListItem } from '../../data-access/catalog/catalog.models';
-import { LocalNamePipe } from '../../pipes/local-name.pipe';
-import { PackageWeightPipe } from '../../pipes/package-weight.pipe';
-import { RsdPricePipe } from '../../pipes/rsd-price.pipe';
-import { pluralKey } from '../../utils/plural';
 
 /** Product tile for catalog grids and "related products" strips. */
 @Component({

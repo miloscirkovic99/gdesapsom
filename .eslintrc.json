@@ -13,8 +13,49 @@
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "type:app",
+                "onlyDependOnLibsWithTags": ["type:data-access", "type:util"]
+              },
+              {
+                "sourceTag": "type:data-access",
+                "onlyDependOnLibsWithTags": ["type:data-access", "type:util"]
+              },
+              {
+                "sourceTag": "type:util",
+                "onlyDependOnLibsWithTags": ["type:util"]
+              },
+              {
+                "sourceTag": "scope:web",
+                "onlyDependOnLibsWithTags": ["scope:web", "scope:shared"],
+                "bannedExternalImports": ["@ionic/*", "@capacitor/*"]
+              },
+              {
+                "sourceTag": "scope:mobile",
+                "onlyDependOnLibsWithTags": ["scope:mobile", "scope:shared"],
+                "bannedExternalImports": [
+                  "@angular/material*",
+                  "@angular/cdk*",
+                  "@angular/service-worker",
+                  "aos",
+                  "ngx-cookieconsent",
+                  "cookieconsent",
+                  "ngx-mat-select-search"
+                ]
+              },
+              {
+                "sourceTag": "scope:shared",
+                "onlyDependOnLibsWithTags": ["scope:shared"],
+                "bannedExternalImports": [
+                  "@angular/material*",
+                  "@angular/cdk*",
+                  "@angular/service-worker",
+                  "aos",
+                  "leaflet",
+                  "ngx-cookieconsent",
+                  "cookieconsent",
+                  "@ionic/*",
+                  "@capacitor/*"
+                ]
               }
             ]
           }

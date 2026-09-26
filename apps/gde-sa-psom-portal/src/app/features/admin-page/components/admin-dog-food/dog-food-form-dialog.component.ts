@@ -8,10 +8,9 @@ import {
   AdminDogFoodDetail,
   AdminDogFoodPayload,
 } from '../../../../shared/data-access/catalog/catalog-admin.models';
-import { LocalNamePipe } from '../../../../shared/pipes/local-name.pipe';
+import { LocalNamePipe, injectActiveLang } from '@gde/shared/util';
 import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
 import { DogFoodStore } from '../../../../shared/store/dog-food.store';
-import { injectActiveLang } from '../../../../shared/utils/active-lang';
 import {
   isImageFile,
   MAX_UPLOAD_BYTES,

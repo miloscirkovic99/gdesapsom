@@ -1,5 +1,5 @@
 module.exports = {
-  rootTranslationsPath: 'apps/gde-sa-psom-portal/assets/i18n/',
+  rootTranslationsPath: 'libs/shared/util/src/i18n/',
   langs: ['en', 'rs'],
   keysManager: {}
 };

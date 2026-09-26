@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { RouteConstants } from '../../constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 
 /** Segmented switch between the two catalog lists, shown on both list pages. */
 @Component({

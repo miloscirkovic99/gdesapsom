@@ -6,9 +6,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { CatalogAdminApi } from '../../../../shared/data-access/catalog/catalog-admin.api';
 import { AdminOfferRow, OfferMode } from '../../../../shared/data-access/catalog/catalog-admin.models';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
-import { RsdPricePipe } from '../../../../shared/pipes/rsd-price.pipe';
+import { RsdPricePipe, injectActiveLang } from '@gde/shared/util';
 import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
-import { injectActiveLang } from '../../../../shared/utils/active-lang';
 
 export interface CatalogOffersDialogData {
   /** 'food' edits the offers of one product; 'shop' edits the assortment of one shop. */

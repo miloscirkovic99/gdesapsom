@@ -21,17 +21,12 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapGarden,
-  descriptionToKeyMapSpot,
-} from '../../helpers/map.helpers';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, filterTownshipsMulti } from '@gde/shared/util';
 import { SpotsStore } from '../../store/spots.store';
 import { SharedStore } from '../../store/shared.store';
 import { ReplaySubject, takeUntil } from 'rxjs';
 import { MatRadioModule } from '@angular/material/radio';
 import { fileSizeValidator } from '../../../core/validators/file-size-valdiator';
-import { filterTownshipsMulti } from '../../utils/township.util';
 
 @Component({
   selector: 'app-add-spot',

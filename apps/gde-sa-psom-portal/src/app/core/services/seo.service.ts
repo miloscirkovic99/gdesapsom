@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { SITE_ORIGIN } from '@gde/shared/util';
 
-/** Canonical host. Must match robots.txt, the sitemap, and the .htaccess redirect. */
-export const SITE_ORIGIN = 'https://www.gdesapsom.com';
+export { SITE_ORIGIN };
 
 const DEFAULT_TITLE =
   'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji';
