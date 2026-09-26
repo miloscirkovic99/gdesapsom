@@ -16,13 +16,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { DogFoodCardComponent } from '../../shared/components/dog-food-card/dog-food-card.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
-import {
-  DogFoodFilters,
-  DogFoodSort,
-  LookupItem,
-} from '../../shared/data-access/catalog/catalog.models';
+import { DogFoodFilters, DogFoodSort, LookupItem, DogFoodStore } from '@gde/shared/data-access';
 import { LocalNamePipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
-import { DogFoodStore } from '../../shared/store/dog-food.store';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 type CatalogForm = {

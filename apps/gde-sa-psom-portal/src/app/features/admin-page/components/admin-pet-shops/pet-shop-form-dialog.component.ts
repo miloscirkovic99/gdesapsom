@@ -27,13 +27,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import * as L from 'leaflet';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { debounceTime, ReplaySubject } from 'rxjs';
-import { CatalogAdminApi } from '../../../../shared/data-access/catalog/catalog-admin.api';
-import {
-  AdminPetShopDetail,
-  AdminPetShopPayload,
-} from '../../../../shared/data-access/catalog/catalog-admin.models';
-import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
-import { SharedStore } from '../../../../shared/store/shared.store';
+import { CatalogAdminApi, AdminPetShopDetail, AdminPetShopPayload, CatalogAdminStore, SharedStore } from '@gde/shared/data-access';
 import { geocodeAddress, GeocodeHit } from '../../../../shared/utils/geocode';
 import { isImageFile, MAX_UPLOAD_BYTES, prepareLogo } from '../../../../shared/utils/image-resize';
 import { filterTownshipsMulti } from '@gde/shared/util';

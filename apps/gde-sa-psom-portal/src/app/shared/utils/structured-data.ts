@@ -1,6 +1,6 @@
 import { SITE_LOGO, SITE_ORIGIN } from '../../core/services/seo.service';
 import { spotTypeToSchemaType, cleanApiText } from '@gde/shared/util';
-import { Post } from '../models/posts';
+import { Post } from '@gde/shared/data-access';
 
 /** The schema.org types under LodgingBusiness, the only ones that define `petsAllowed`. */
 const LODGING_TYPES: ReadonlySet<string> = new Set(['Hotel', 'Motel', 'LodgingBusiness']);

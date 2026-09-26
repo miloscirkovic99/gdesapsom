@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { VetClinicsStore } from '../../shared/store/vetclinics.store';
+import { VetClinicsStore, SharedStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import {
   FormBuilder,
@@ -12,7 +12,6 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { SharedStore } from '../../shared/store/shared.store';
 import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rxjs';
 import { filterTownshipsMulti } from '@gde/shared/util';
 import {

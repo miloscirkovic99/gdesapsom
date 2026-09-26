@@ -5,8 +5,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { DialogService } from '../../../../core/services/dialog.service';
 import { AddSpotComponent } from '../../../../shared/dialogs/add-location/add-location.component';
-import { SpotsStore } from '../../../../shared/store/spots.store';
-import { ParksStore } from '../../../../shared/store/parks.store';
+import { SpotsStore, ParksStore } from '@gde/shared/data-access';
 
 @Component({
   selector: 'app-pending-spots',

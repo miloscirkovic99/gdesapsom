@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../../../../shared/components/card/card.component';
-import { SpotsStore } from '../../../../shared/store/spots.store';
+import { SpotsStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import { DialogService } from '../../../../core/services/dialog.service';
 import { AddSpotComponent } from '../../../../shared/dialogs/add-location/add-location.component';

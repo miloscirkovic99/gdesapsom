@@ -19,11 +19,11 @@ import {
   EMPTY,
 } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
-import { ContactFormService } from '../data-access/contact/contact-form.service';
+import { ContactFormService } from '../contact/contact-form.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
-import { APP_CONFIG } from '../data-access/config/app-config';
-import { Notifier } from '../data-access/platform/notifier';
+import { APP_CONFIG } from '../config/app-config';
+import { Notifier } from '../platform/notifier';
 
 interface SpotsSearchResponse {
   spotsList: Record<string, unknown>[];

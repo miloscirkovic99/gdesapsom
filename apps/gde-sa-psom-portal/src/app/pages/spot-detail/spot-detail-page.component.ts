@@ -17,7 +17,7 @@ import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
-import { SpotsStore } from '../../shared/store/spots.store';
+import { SpotsStore } from '@gde/shared/data-access';
 import { venueLinkType } from '../../shared/utils/link-type';
 import { spotStructuredData } from '../../shared/utils/structured-data';
 import { ChangeDetectionStrategy } from '@angular/core';

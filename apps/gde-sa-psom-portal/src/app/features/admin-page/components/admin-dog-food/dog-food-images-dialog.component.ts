@@ -3,10 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoModule } from '@ngneat/transloco';
 import { firstValueFrom } from 'rxjs';
-import { CatalogAdminApi } from '../../../../shared/data-access/catalog/catalog-admin.api';
-import { AdminImage } from '../../../../shared/data-access/catalog/catalog-admin.models';
+import { CatalogAdminApi, AdminImage, CatalogAdminStore } from '@gde/shared/data-access';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
-import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
 import { isImageFile, MAX_UPLOAD_BYTES, prepareProductImage } from '../../../../shared/utils/image-resize';
 
 export interface DogFoodImagesDialogData {

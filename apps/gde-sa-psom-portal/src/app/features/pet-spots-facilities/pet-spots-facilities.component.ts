@@ -16,14 +16,13 @@ import {
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { SpotsStore } from '../../shared/store/spots.store';
+import { SpotsStore, SharedStore } from '@gde/shared/data-access';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
 import { descriptionToKeyMap, descriptionToKeyMapSpot, filterTownshipsMulti } from '@gde/shared/util';
-import { SharedStore } from '../../shared/store/shared.store';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import {

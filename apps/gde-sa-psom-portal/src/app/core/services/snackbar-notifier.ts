@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { NoticeKind, Notifier } from '../../shared/data-access/platform/notifier';
+import { NoticeKind, Notifier } from '@gde/shared/data-access/core';
 import { SnackbarService } from './snackbar.service';
 
 /** Portal implementation of `Notifier`: the Material snackbar with the app's success/error styling. */

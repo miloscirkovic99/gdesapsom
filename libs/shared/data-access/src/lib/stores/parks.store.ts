@@ -1,18 +1,16 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   patchState,
-  signalState,
   signalStore,
-  withComputed,
   withHooks,
   withMethods,
   withState,
 } from '@ngrx/signals';
 import { Subject, take, takeUntil } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
-import { ContactFormService } from '../data-access/contact/contact-form.service';
-import { Notifier } from '../data-access/platform/notifier';
+import { ContactFormService } from '../contact/contact-form.service';
+import { Notifier } from '../platform/notifier';
 
 // Define the initial state type
 type ParksState = {
@@ -23,20 +21,16 @@ type ParksState = {
 };
 
 // Create the signal state
-const initialParksState = signalState<ParksState>({
+const initialParksState: ParksState = {
   parks: [],
   pendingParks: [],
   parksStatus: 'idle',
-});
+};
 const destroyed$ = new Subject<void>();
 // Create the SignalStore with `withStorageSync`
 export const ParksStore = signalStore(
   { providedIn: 'root' },
   withState(initialParksState),
-  withComputed((store) => ({
-    parks: computed(() => store.parks()),
-    pendingParks: computed(() => store.pendingParks()),
-  })),
   withMethods((store) => {
     const http = inject(HttpClient);
     const translocoService = inject(TranslocoService);

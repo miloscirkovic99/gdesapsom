@@ -12,8 +12,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { debounceTime, pipe, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { DogFoodApi } from '../data-access/catalog/dog-food.api';
-import { Notifier } from '../data-access/platform/notifier';
+import { DogFoodApi } from '../catalog/dog-food.api';
+import { Notifier } from '../platform/notifier';
 import {
   CatalogLookups,
   DOG_FOOD_PAGE_SIZE,
@@ -22,7 +22,7 @@ import {
   DogFoodFilters,
   DogFoodListItem,
   EMPTY_DOG_FOOD_FILTERS,
-} from '../data-access/catalog/catalog.models';
+} from '../catalog/catalog.models';
 
 export type CatalogDetailError = 'not-found' | 'failed';
 

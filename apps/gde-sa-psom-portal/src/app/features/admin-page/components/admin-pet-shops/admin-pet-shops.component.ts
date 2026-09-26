@@ -5,10 +5,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { TranslocoModule } from '@ngneat/transloco';
 import { map, Observable } from 'rxjs';
 import { DeliveryLinksComponent } from '../../../../shared/components/delivery-links/delivery-links.component';
-import { normalizeSearchText } from '../../../../shared/data-access/catalog/dog-food.api';
-import { AdminPetShop } from '../../../../shared/data-access/catalog/catalog-admin.models';
+import { normalizeSearchText, AdminPetShop, CatalogAdminStore } from '@gde/shared/data-access';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
-import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
 import { CatalogOffersDialogComponent, CatalogOffersDialogData } from '../catalog-offers/catalog-offers-dialog.component';
 import { PetShopFormDialogComponent, PetShopFormDialogData } from './pet-shop-form-dialog.component';
 

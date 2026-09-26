@@ -1,9 +1,7 @@
-import { computed, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   patchState,
-  signalState,
   signalStore,
-  withComputed,
   withHooks,
   withMethods,
   withState,
@@ -20,7 +18,7 @@ import {
 } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { TranslocoService } from '@ngneat/transloco';
-import { Notifier } from '../data-access/platform/notifier';
+import { Notifier } from '../platform/notifier';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 
@@ -34,23 +32,20 @@ type vetClinics = {
   isLoading: boolean;
 };
 // Create the signal state
-const initialVetState = signalState<vetClinics>({
+const initialVetState: vetClinics = {
   vetClinicsList: [],
   totalResult: 0,
   totalCount:0,
   limit: 10,
   offset: 0,
   isLoading: false,
-});
+};
 
 const destroyed$ = new Subject<void>();
 // Create the SignalStore with `withStorageSync`
 export const VetClinicsStore = signalStore(
   { providedIn: 'root' },
   withState(initialVetState),
-  withComputed((store) => ({
-    vetClinicsList: computed(() => store.vetClinicsList()),
-  })),
   withMethods((store) => {
     const http = inject(HttpClient);
     const notifier = inject(Notifier);

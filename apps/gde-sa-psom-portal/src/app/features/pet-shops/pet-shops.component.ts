@@ -23,9 +23,7 @@ import { SnackbarService } from '../../core/services/snackbar.service';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
 import { PetShopCardComponent } from '../../shared/components/pet-shop-card/pet-shop-card.component';
-import { PetShopFilters } from '../../shared/data-access/catalog/catalog.models';
-import { PetShopsStore } from '../../shared/store/pet-shops.store';
-import { SharedStore } from '../../shared/store/shared.store';
+import { PetShopFilters, PetShopsStore, SharedStore } from '@gde/shared/data-access';
 import { injectActiveLang, pluralKey, filterTownshipsMulti } from '@gde/shared/util';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 

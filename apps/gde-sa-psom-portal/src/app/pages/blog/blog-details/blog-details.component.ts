@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { BlogService } from '../blog.service';
-import { Post } from '../../../shared/models/posts';
+import { BlogService, Post } from '@gde/shared/data-access';
 import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
 import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
 

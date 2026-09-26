@@ -13,7 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { ReplaySubject, takeUntil } from 'rxjs';
-import { SharedStore } from '../../../../shared/store/shared.store';
+import { SharedStore } from '@gde/shared/data-access';
 
 @Component({
   selector: 'app-setting-township',

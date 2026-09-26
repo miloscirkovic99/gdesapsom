@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RouteConstants, pluralKey } from '@gde/shared/util';
-import { PetShopListItem } from '../../data-access/catalog/catalog.models';
+import { PetShopListItem } from '@gde/shared/data-access';
 import { DeliveryLinksComponent } from '../delivery-links/delivery-links.component';
 
 /** Shop tile for the pet shop list. */

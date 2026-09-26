@@ -12,8 +12,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { debounceTime, pipe, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { PetShopsApi } from '../data-access/catalog/pet-shops.api';
-import { Notifier } from '../data-access/platform/notifier';
+import { PetShopsApi } from '../catalog/pet-shops.api';
+import { Notifier } from '../platform/notifier';
 import {
   EMPTY_PET_SHOP_FILTERS,
   PET_SHOP_PAGE_SIZE,
@@ -21,7 +21,7 @@ import {
   PetShopDetail,
   PetShopFilters,
   PetShopListItem,
-} from '../data-access/catalog/catalog.models';
+} from '../catalog/catalog.models';
 import { CatalogDetailError } from './dog-food.store';
 
 interface PetShopsState {

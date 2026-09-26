@@ -2,9 +2,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@ngneat/transloco';
-import { APP_CONFIG } from '../data-access/config/app-config';
-import { ContactFormService } from '../data-access/contact/contact-form.service';
-import { Notifier } from '../data-access/platform/notifier';
+import { APP_CONFIG } from '../config/app-config';
+import { ContactFormService } from '../contact/contact-form.service';
+import { Notifier } from '../platform/notifier';
 import { SpotsStore } from './spots.store';
 
 function setup({ production }: { production: boolean }) {

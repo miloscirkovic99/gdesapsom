@@ -1,7 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlogService } from '../blog.service';
-import { Post } from '../../../shared/models/posts';
+import { BlogService, Post } from '@gde/shared/data-access';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 

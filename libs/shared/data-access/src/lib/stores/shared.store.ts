@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject } from '@angular/core';
 import {
   patchState,
-  signalState,
   signalStore,
   withComputed,
   withHooks,
@@ -10,7 +9,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Subject, take, takeUntil } from 'rxjs';
-import { Notifier } from '../data-access/platform/notifier';
+import { Notifier } from '../platform/notifier';
 
 // Define the initial state type
 type SharedState = {
@@ -23,27 +22,21 @@ type SharedState = {
 };
 
 // Create the signal state
-const initialSharedState = signalState<SharedState>({
+const initialSharedState: SharedState = {
   townships: [],
   gardenTypes: [],
   spotTypes: [],
   city:[],
   state:[],
   townshipsByCity:[]
-});
+};
 const destroyed$ = new Subject<void>();
 
 export const SharedStore = signalStore(
   { providedIn: 'root' },
   withState(initialSharedState),
   withComputed((store) => ({
-    townships: computed(() => store.townships()),
-    spotTypes: computed(() => store.spotTypes()),
     gardens: computed(() => store.gardenTypes()),
-    city:computed(() => store.city()),
-    state:computed(() => store.state()),
-    townshipsByCity:computed(()=>store.townshipsByCity())
-
   })),
   withMethods((store) => {
     const http = inject(HttpClient);

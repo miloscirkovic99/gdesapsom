@@ -3,8 +3,8 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { TranslocoService } from '@ngneat/transloco';
 import { catchError, Observable, take, tap, throwError } from 'rxjs';
-import { CatalogAdminApi } from '../data-access/catalog/catalog-admin.api';
-import { Notifier } from '../data-access/platform/notifier';
+import { CatalogAdminApi } from '../catalog/catalog-admin.api';
+import { Notifier } from '../platform/notifier';
 import {
   AdminBrand,
   AdminBrandPayload,
@@ -13,7 +13,7 @@ import {
   AdminPetShop,
   AdminPetShopPayload,
   SavedRef,
-} from '../data-access/catalog/catalog-admin.models';
+} from '../catalog/catalog-admin.models';
 
 interface CatalogAdminState {
   shops: AdminPetShop[];

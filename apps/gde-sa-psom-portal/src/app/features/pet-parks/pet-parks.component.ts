@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { ParksStore } from '../../shared/store/parks.store';
+import { ParksStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
 

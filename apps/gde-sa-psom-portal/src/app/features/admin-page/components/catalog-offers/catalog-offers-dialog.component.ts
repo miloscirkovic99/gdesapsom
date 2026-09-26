@@ -3,11 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoModule } from '@ngneat/transloco';
-import { CatalogAdminApi } from '../../../../shared/data-access/catalog/catalog-admin.api';
-import { AdminOfferRow, OfferMode } from '../../../../shared/data-access/catalog/catalog-admin.models';
+import { CatalogAdminApi, AdminOfferRow, OfferMode, CatalogAdminStore } from '@gde/shared/data-access';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { RsdPricePipe, injectActiveLang } from '@gde/shared/util';
-import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
 
 export interface CatalogOffersDialogData {
   /** 'food' edits the offers of one product; 'shop' edits the assortment of one shop. */

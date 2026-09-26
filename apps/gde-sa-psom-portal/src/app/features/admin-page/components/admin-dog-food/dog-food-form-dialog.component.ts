@@ -3,14 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoModule } from '@ngneat/transloco';
-import { CatalogAdminApi } from '../../../../shared/data-access/catalog/catalog-admin.api';
-import {
-  AdminDogFoodDetail,
-  AdminDogFoodPayload,
-} from '../../../../shared/data-access/catalog/catalog-admin.models';
+import { CatalogAdminApi, AdminDogFoodDetail, AdminDogFoodPayload, CatalogAdminStore, DogFoodStore } from '@gde/shared/data-access';
 import { LocalNamePipe, injectActiveLang } from '@gde/shared/util';
-import { CatalogAdminStore } from '../../../../shared/store/catalog-admin.store';
-import { DogFoodStore } from '../../../../shared/store/dog-food.store';
 import {
   isImageFile,
   MAX_UPLOAD_BYTES,

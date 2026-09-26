@@ -1,4 +1,4 @@
-import { Post } from '../models/posts';
+import { Post } from '@gde/shared/data-access';
 import { blogPostingStructuredData, SpotSchemaSource, spotStructuredData } from './structured-data';
 
 const SPOT_PAGE = { url: 'https://www.gdesapsom.com/spots/56', description: 'Opis lokala' };

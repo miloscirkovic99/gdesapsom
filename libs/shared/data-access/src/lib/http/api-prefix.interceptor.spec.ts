@@ -1,8 +1,8 @@
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { APP_CONFIG } from '../../shared/data-access/config/app-config';
-import { SessionStore } from '../../shared/data-access/platform/session-store';
+import { APP_CONFIG } from '../config/app-config';
+import { SessionStore } from '../platform/session-store';
 import { ApiPrefixInterceptor } from './api-prefix.interceptor';
 
 describe('ApiPrefixInterceptor', () => {

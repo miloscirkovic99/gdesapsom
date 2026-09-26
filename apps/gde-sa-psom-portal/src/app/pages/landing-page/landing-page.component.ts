@@ -3,9 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { CardComponent } from '../../shared/components/card/card.component';
-import { SpotsStore } from '../../shared/store/spots.store';
-import { ParksStore } from '../../shared/store/parks.store';
-import { VetClinicsStore } from '../../shared/store/vetclinics.store';
+import { SpotsStore, ParksStore, VetClinicsStore } from '@gde/shared/data-access';
 import { RouteConstants, descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 
 type CategoryIcon = 'restaurant' | 'cafe' | 'hotel' | 'park' | 'vet' | 'food' | 'shop';

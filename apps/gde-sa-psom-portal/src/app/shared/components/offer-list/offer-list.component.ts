@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RouteConstants, RsdPricePipe } from '@gde/shared/util';
-import { DogFoodOffer } from '../../data-access/catalog/catalog.models';
+import { DogFoodOffer } from '@gde/shared/data-access';
 import { DeliveryLinksComponent } from '../delivery-links/delivery-links.component';
 
 /**

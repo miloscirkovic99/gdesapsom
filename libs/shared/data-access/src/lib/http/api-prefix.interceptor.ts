@@ -1,8 +1,8 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { APP_CONFIG } from "../../shared/data-access/config/app-config";
-import { SessionStore } from "../../shared/data-access/platform/session-store";
+import { APP_CONFIG } from "../config/app-config";
+import { SessionStore } from "../platform/session-store";
 
 /**
  * Prefixes every request except static assets with `${apiUrl}api/v2/` and
