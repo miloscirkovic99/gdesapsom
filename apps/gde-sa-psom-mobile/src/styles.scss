@@ -12,28 +12,260 @@
 /* Dark palette, switched by the `ion-palette-dark` class on <html> (AppSettingsService). */
 @import '@ionic/angular/css/palettes/dark.class.css';
 
-/* Brand: the manifest's theme colour #0D542B. */
+/*
+ * Bundled with the app, so they work offline. Both cover latin-ext (č ć đ š ž).
+ * Bricolage carries the optical-size axis: headlines get its display cut on their own.
+ */
+@import '@fontsource-variable/bricolage-grotesque/opsz.css';
+@import '@fontsource-variable/figtree/wght.css';
+
+/*
+ * App tokens. Colours come from the logo: its mint pin (#7ECBBD) and the brand's
+ * deep green, pulled towards teal so the two sit together. The tennis-ball yellow
+ * is kept for the one call to venue owners.
+ */
 :root {
-  --ion-color-primary: #0d542b;
-  --ion-color-primary-rgb: 13, 84, 43;
+  --app-font-display: 'Bricolage Grotesque Variable', 'Figtree Variable', system-ui, sans-serif;
+  --app-font-body: 'Figtree Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --app-bg: #f3f6f4;
+  --app-surface: #ffffff;
+  --app-surface-2: #e6eee9;
+  --app-ink: #12241d;
+  --app-ink-2: #55675f;
+  --app-line: rgba(18, 36, 29, 0.09);
+  --app-pine: #0f5a48;
+  --app-on-pine: #ffffff;
+  --app-mint: #7ecbbd;
+  --app-mint-soft: #d9f0ea;
+  --app-ball: #ddee5f;
+  --app-on-ball: #1d2a06;
+  --app-shadow: 0 10px 30px -12px rgba(15, 90, 72, 0.35);
+
+  --ion-font-family: var(--app-font-body);
+  --ion-background-color: var(--app-bg);
+  --ion-background-color-rgb: 243, 246, 244;
+  --ion-text-color: var(--app-ink);
+  --ion-text-color-rgb: 18, 36, 29;
+  --ion-toolbar-background: var(--app-bg);
+  --ion-toolbar-color: var(--app-ink);
+  --ion-toolbar-border-color: transparent;
+  --ion-tab-bar-background: var(--app-surface);
+  --ion-tab-bar-border-color: var(--app-line);
+  --ion-tab-bar-color: var(--app-ink-2);
+  --ion-tab-bar-color-selected: var(--app-pine);
+  --ion-item-background: transparent;
+  --ion-card-background: var(--app-surface);
+  --ion-border-color: var(--app-line);
+
+  --ion-color-primary: #0f5a48;
+  --ion-color-primary-rgb: 15, 90, 72;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0b4a26;
-  --ion-color-primary-tint: #256540;
+  --ion-color-primary-shade: #0d4f3f;
+  --ion-color-primary-tint: #276b5a;
 }
 
-/* The brand green is too dark to read on a dark background. */
+/* The deep green is too dark to read on a dark background: the mint takes over. */
 :root.ion-palette-dark {
-  --ion-color-primary: #5fbf8a;
-  --ion-color-primary-rgb: 95, 191, 138;
-  --ion-color-primary-contrast: #000000;
-  --ion-color-primary-contrast-rgb: 0, 0, 0;
-  --ion-color-primary-shade: #54a879;
-  --ion-color-primary-tint: #6fc596;
+  --app-bg: #0c1411;
+  --app-surface: #141e1a;
+  --app-surface-2: #1e2b26;
+  --app-ink: #e6f0eb;
+  --app-ink-2: #9cb0a7;
+  --app-line: rgba(230, 240, 235, 0.09);
+  --app-pine: #7ecbbd;
+  --app-on-pine: #06231b;
+  --app-mint-soft: #173229;
+  --app-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+
+  --ion-color-primary: #7ecbbd;
+  --ion-color-primary-rgb: 126, 203, 189;
+  --ion-color-primary-contrast: #06231b;
+  --ion-color-primary-contrast-rgb: 6, 35, 27;
+  --ion-color-primary-shade: #6fb3a6;
+  --ion-color-primary-tint: #8bd0c4;
+}
+
+/* Beats the dark palette's own `.ion-palette-dark.md` surface colours. */
+:root.ion-palette-dark.md,
+:root.ion-palette-dark.ios {
+  --ion-background-color: var(--app-bg);
+  --ion-background-color-rgb: 12, 20, 17;
+  --ion-text-color: var(--app-ink);
+  --ion-text-color-rgb: 230, 240, 235;
+  --ion-toolbar-background: var(--app-bg);
+  --ion-toolbar-color: var(--app-ink);
+  --ion-toolbar-border-color: transparent;
+  --ion-tab-bar-background: var(--app-surface);
+  --ion-tab-bar-border-color: var(--app-line);
+  --ion-tab-bar-color: var(--app-ink-2);
+  --ion-tab-bar-color-selected: var(--app-pine);
+  --ion-item-background: transparent;
+  --ion-card-background: var(--app-surface);
+  --ion-border-color: var(--app-line);
+  --ion-overlay-background-color: var(--app-surface);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--app-font-display);
+  letter-spacing: -0.01em;
+}
+
+/* ── Top bars: the page's own colour, no shadow (Material 3), display titles ── */
+ion-header.header-md {
+  box-shadow: none;
+}
+
+ion-toolbar {
+  --border-width: 0;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+ion-title {
+  font-family: var(--app-font-display);
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+/* A tab's root screen: big title, left aligned. */
+ion-toolbar.page-toolbar {
+  --min-height: 64px;
+  --padding-start: 0;
+}
+
+ion-title.page-title {
+  font-size: 1.75rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+/*
+ * ── Search: a rounded field with a hairline, no drop shadow ──
+ * The searchbar is a scoped (not shadow) component whose own defaults sit on a
+ * class selector, hence the mode class here.
+ */
+ion-searchbar.md,
+ion-searchbar.ios {
+  --background: var(--app-surface);
+  --border-radius: 999px;
+  --box-shadow: 0 0 0 1px var(--app-line);
+  --color: var(--app-ink);
+  --icon-color: var(--app-ink-2);
+  --placeholder-color: var(--app-ink-2);
+  --placeholder-opacity: 1;
+  --clear-button-color: var(--app-ink-2);
+
+  .searchbar-input {
+    font-size: 1rem;
+  }
+}
+
+/* ── Segmented control (templates set mode="ios" for the pill look) ── */
+ion-segment {
+  --background: var(--app-surface-2);
+  margin: 4px 16px 8px;
+  width: auto;
+  border-radius: 999px;
+  padding: 3px;
+}
+
+ion-segment-button {
+  --indicator-color: var(--app-surface);
+  --indicator-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  --color: var(--app-ink-2);
+  --color-checked: var(--app-ink);
+  --border-radius: 999px;
+  min-height: 38px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Buttons ── */
+ion-button {
+  --border-radius: 14px;
+  --box-shadow: none;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+ion-button[expand='block'] {
+  height: 52px;
+  font-size: 1rem;
+}
+
+/* ── Chips, cards, lists ── */
+ion-chip {
+  --background: var(--app-surface-2);
+  --color: var(--app-ink);
+  font-weight: 550;
+}
+
+ion-card {
+  border-radius: 22px;
+  box-shadow: none;
+  border: 1px solid var(--app-line);
+}
+
+/* Scoped component: its own inset radius sits on .list-md.list-inset. */
+ion-list.list-inset.list-md,
+ion-list.list-inset.list-ios {
+  --ion-item-background: var(--app-surface);
+  border-radius: 20px;
+  border: 1px solid var(--app-line);
+}
+
+ion-item > ion-icon[slot='start'] {
+  color: var(--app-pine);
+}
+
+ion-list-header {
+  font-family: var(--app-font-display);
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+ion-thumbnail {
+  --border-radius: 14px;
+}
+
+/* ── Form fields ── */
+ion-input,
+ion-textarea,
+ion-select {
+  --border-radius: 14px;
+  --highlight-color-focused: var(--app-pine);
+}
+
+/* ── Bottom sheets ── */
+ion-modal {
+  --border-radius: 24px;
 }
 
 /* Leaflet sits inside ion-content; keep its controls under Ionic overlays. */
 .leaflet-container {
   z-index: 0;
   font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

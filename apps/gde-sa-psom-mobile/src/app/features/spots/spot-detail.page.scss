@@ -7,47 +7,104 @@
 /* Outside and inside photo, swiped sideways. */
 .photos {
   display: flex;
+  gap: 8px;
+  padding: 4px 16px 0;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
   scrollbar-width: none;
 
   img {
     flex: 0 0 88%;
-    height: 240px;
+    height: 260px;
+    border-radius: 24px;
     object-fit: cover;
     scroll-snap-align: start;
-    margin-right: 6px;
+    background: var(--app-surface-2);
   }
 
   &.single img {
     flex-basis: 100%;
-    margin-right: 0;
   }
 }
 
+.intro {
+  padding: 20px 16px 4px;
+}
+
 h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 12px;
+  font-size: 1.85rem;
+  font-weight: 750;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
 }
 
 h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
 
-.chips ion-chip:first-child {
-  margin-inline-start: 0;
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--app-surface-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tag.type {
+  background: var(--app-pine);
+  color: var(--app-on-pine);
+}
+
+.tag.dogs {
+  background: var(--app-mint-soft);
+  color: var(--app-pine);
+}
+
+.facts {
+  margin-top: 16px;
+
+  ion-icon[slot='start'] {
+    color: var(--app-pine);
+  }
+
+  h3 {
+    font-family: var(--app-font-body);
+    font-weight: 600;
+  }
 }
 
 .description {
   white-space: pre-line;
-  line-height: 1.5;
+  line-height: 1.55;
+  margin: 0;
+}
+
+app-map-view {
+  display: block;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .directions {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 12px;
+
+  ion-button {
+    margin: 0;
+  }
 }

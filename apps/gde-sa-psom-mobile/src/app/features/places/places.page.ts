@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { IonBadge } from '@ionic/angular/ion-badge';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
@@ -14,6 +14,7 @@ import { IonLabel } from '@ionic/angular/ion-label';
 import { IonList } from '@ionic/angular/ion-list';
 import { IonModal } from '@ionic/angular/ion-modal';
 import { IonRefresher } from '@ionic/angular/ion-refresher';
+import { IonRouterLink } from '@ionic/angular/ion-router-link';
 import { IonRefresherContent } from '@ionic/angular/ion-refresher-content';
 import { IonSearchbar } from '@ionic/angular/ion-searchbar';
 import { IonSegment } from '@ionic/angular/ion-segment';
@@ -29,7 +30,7 @@ import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { optionsOutline } from 'ionicons/icons';
+import { add, optionsOutline, pawOutline } from 'ionicons/icons';
 import { Park, ParksStore, SharedStore, SpotsStore, Township } from '@gde/shared/data-access';
 import {
   descriptionToKeyMap,
@@ -76,6 +77,8 @@ interface Completable {
     IonSelect,
     IonSelectOption,
     IonToggle,
+    RouterLink,
+    IonRouterLink,
     TranslocoPipe,
     SpotCardComponent,
   ],
@@ -126,7 +129,7 @@ export class PlacesPage {
   #pendingParks: Completable | null = null;
 
   constructor() {
-    addIcons({ optionsOutline });
+    addIcons({ add, optionsOutline, pawOutline });
 
     // Finish pull-to-refresh / infinite scroll once the store is done.
     effect(() => {
@@ -260,6 +263,11 @@ export class PlacesPage {
     const segment = params.get('segment');
     if (segment === 'venues' || segment === 'parks') this.segment.set(segment);
 
+    if (params.get('near') === '1') {
+      void this.#searchNearMe();
+      return;
+    }
+
     const word = params.get('word');
     const spotType = params.get('spotType');
     if (word === null && spotType === null) return;
@@ -270,6 +278,16 @@ export class PlacesPage {
     } else {
       this.search();
     }
+  }
+
+  /** "Near me" from Home: venues around the phone, other filters cleared. */
+  async #searchNearMe(): Promise<void> {
+    this.locating.set(true);
+    const near = await this.geolocation.current();
+    this.locating.set(false);
+    if (!near) return;
+    this.filters.set({ ...NO_SPOT_FILTERS, near });
+    this.search();
   }
 }
 

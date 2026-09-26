@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  @if (sent()) {
+    <app-sent-view (home)="goHome()" (another)="addAnother()" />
+  } @else {
   <p class="lead">{{ 'lp_add_lead' | transloco }}</p>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
@@ -132,4 +135,5 @@
       }
     </ion-button>
   </form>
+  }
 </ion-content>

@@ -29,6 +29,8 @@
     "@capacitor/share": "^8",
     "@capacitor/splash-screen": "^8",
     "@capacitor/status-bar": "^8",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/figtree": "5.3.0",
     "@ionic/angular": "^9.0.5",
     "@ngneat/transloco": "^6.0.4",
     "@ngrx/operators": "^19.0.1",

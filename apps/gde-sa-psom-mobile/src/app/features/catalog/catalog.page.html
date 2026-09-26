@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ 'mobile_tab_catalog' | transloco }}</ion-title>
+  <ion-toolbar class="page-toolbar">
+    <ion-title class="page-title">{{ 'mobile_tab_catalog' | transloco }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment [value]="segment()" (ionChange)="setSegment($event.detail.value)">
+    <ion-segment mode="ios" [value]="segment()" (ionChange)="setSegment($event.detail.value)">
       <ion-segment-button value="food">
         <ion-label>{{ 'dog_food_title' | transloco }}</ion-label>
       </ion-segment-button>

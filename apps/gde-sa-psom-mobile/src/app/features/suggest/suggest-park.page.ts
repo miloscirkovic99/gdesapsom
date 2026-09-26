@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
@@ -19,6 +19,7 @@ import { NavController } from '@ionic/angular/nav-controller';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ParksStore, SharedStore, SuggestParkPayload } from '@gde/shared/data-access';
 import { requiredValue } from '../../shared/forms';
+import { SentViewComponent } from '../../shared/ui/sent-view.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
 
 @Component({
@@ -39,6 +40,7 @@ import { TownshipPickerComponent } from '../../shared/ui/township-picker.compone
     IonButton,
     IonSpinner,
     TranslocoPipe,
+    SentViewComponent,
   ],
   template: `
     <ion-header>
@@ -51,6 +53,9 @@ import { TownshipPickerComponent } from '../../shared/ui/township-picker.compone
     </ion-header>
 
     <ion-content class="ion-padding">
+      @if (sent()) {
+        <app-sent-view (home)="goHome()" (another)="addAnother()" />
+      } @else {
       <p class="lead">{{ 'lp_add_lead' | transloco }}</p>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <ion-input
@@ -102,6 +107,7 @@ import { TownshipPickerComponent } from '../../shared/ui/township-picker.compone
           }
         </ion-button>
       </form>
+      }
     </ion-content>
   `,
   styleUrl: './suggest.scss',
@@ -122,6 +128,9 @@ export class SuggestParkPage {
   });
   readonly submitted = signal(false);
   readonly submitting = signal(false);
+  /** The park went through: the thank-you view replaces the form. */
+  readonly sent = signal(false);
+  private readonly content = viewChild(IonContent);
 
   private readonly townshipId = toSignal(this.form.controls.ops_id.valueChanges, { initialValue: null });
   readonly townshipName = computed(() => {
@@ -172,9 +181,20 @@ export class SuggestParkPage {
         this.submitting.set(false);
         this.form.reset();
         this.submitted.set(false);
-        void this.nav.navigateBack('/tabs/more');
+        this.sent.set(true);
+        void this.content()?.scrollToTop(300);
       },
       () => this.submitting.set(false),
     );
+  }
+
+  /** Leave the form (off the More stack) and show Home. */
+  async goHome(): Promise<void> {
+    await this.nav.navigateBack('/tabs/more');
+    void this.nav.navigateRoot('/tabs/home', { animated: false });
+  }
+
+  addAnother(): void {
+    this.sent.set(false);
   }
 }

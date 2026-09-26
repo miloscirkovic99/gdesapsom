@@ -1,36 +1,41 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { IonButton } from '@ionic/angular/ion-button';
-import { IonCard } from '@ionic/angular/ion-card';
-import { IonCardContent } from '@ionic/angular/ion-card-content';
-import { IonCardHeader } from '@ionic/angular/ion-card-header';
-import { IonCardTitle } from '@ionic/angular/ion-card-title';
-import { IonChip } from '@ionic/angular/ion-chip';
 import { IonContent } from '@ionic/angular/ion-content';
-import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
-import { IonLabel } from '@ionic/angular/ion-label';
 import { IonRefresher } from '@ionic/angular/ion-refresher';
 import { IonRefresherContent } from '@ionic/angular/ion-refresher-content';
 import { IonSearchbar } from '@ionic/angular/ion-searchbar';
 import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
-import { IonTitle } from '@ionic/angular/ion-title';
-import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
 import {
-  addCircleOutline,
+  add,
   basketOutline,
   bedOutline,
   cafeOutline,
   leafOutline,
   medkitOutline,
+  navigateOutline,
   restaurantOutline,
+  shuffle,
   storefrontOutline,
+  timeOutline,
 } from 'ionicons/icons';
 import { SpotsStore } from '@gde/shared/data-access';
-import { injectActiveLang } from '@gde/shared/util';
+import { descriptionToKeyMapSpot, injectActiveLang } from '@gde/shared/util';
+import { RecentActivityService } from '../../core/recent/recent-activity.service';
+import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
 import { SpotCardComponent } from '../../shared/ui/spot-card.component';
 
 interface Category {
@@ -40,121 +45,55 @@ interface Category {
   queryParams?: Record<string, string>;
 }
 
+/** One print of the trail across the hero, in % of the hero box. */
+interface PawPrint {
+  x: number;
+  y: number;
+  delay: number;
+}
+
 @Component({
   selector: 'app-home',
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonRefresher,
     IonRefresherContent,
     IonSearchbar,
-    IonChip,
-    IonIcon,
-    IonLabel,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonButton,
+    IonIcon,
     IonSkeletonText,
     TranslocoPipe,
     SpotCardComponent,
+    OwnerCardComponent,
   ],
-  template: `
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Gde sa psom</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content>
-      <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
-        <ion-refresher-content />
-      </ion-refresher>
-
-      <section class="hero ion-padding">
-        <h1>{{ 'lp_hero_title' | transloco }}</h1>
-        <ion-searchbar
-          #searchbar
-          [placeholder]="'lp_search_placeholder' | transloco"
-          enterkeyhint="search"
-          (keyup.enter)="search(searchbar.value)"
-        />
-      </section>
-
-      <h2 class="section-title ion-padding-horizontal">{{ 'lp_cats_title' | transloco }}</h2>
-      <div class="chips ion-padding-horizontal">
-        @for (c of categories; track c.label) {
-          <ion-chip (click)="open(c)">
-            <ion-icon [name]="c.icon" aria-hidden="true" />
-            <ion-label>{{ c.label | transloco }}</ion-label>
-          </ion-chip>
-        }
-      </div>
-
-      <h2 class="section-title ion-padding-horizontal">{{ 'random_spot_title' | transloco }}</h2>
-      @for (spot of spots.random(); track spot.iuo_id) {
-        <app-spot-card [spot]="spot" [link]="['/tabs/home/spots', '' + spot.iuo_id]" [lang]="lang()" />
-      } @empty {
-        @for (i of [1, 2]; track i) {
-          <ion-card>
-            <ion-skeleton-text [animated]="true" style="height: 180px; margin: 0" />
-            <ion-card-content>
-              <ion-skeleton-text [animated]="true" style="width: 60%" />
-              <ion-skeleton-text [animated]="true" style="width: 80%" />
-            </ion-card-content>
-          </ion-card>
-        }
-      }
-
-      <ion-card class="add-card">
-        <ion-card-header>
-          <ion-card-title>{{ 'lp_add_title' | transloco }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>{{ 'lp_add_lead' | transloco }}</p>
-          <ion-button expand="block" (click)="suggest()">
-            <ion-icon slot="start" name="add-circle-outline" aria-hidden="true" />
-            {{ 'lp_add_cta' | transloco }}
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </ion-content>
-  `,
-  styles: `
-    .hero h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin: 8px 4px 12px;
-    }
-    .hero ion-searchbar {
-      padding: 0;
-    }
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin: 16px 0 8px;
-    }
-    .chips {
-      display: flex;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .chips ion-chip {
-      flex: 0 0 auto;
-    }
-    .add-card {
-      margin-bottom: 24px;
-    }
-  `,
+  templateUrl: './home.page.html',
+  styleUrl: './home.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
   readonly spots = inject(SpotsStore);
+  readonly recent = inject(RecentActivityService);
   readonly lang = injectActiveLang();
   private readonly router = inject(Router);
+
+  private readonly rail = viewChild<ElementRef<HTMLElement>>('rail');
+
+  readonly spotTypeKey = descriptionToKeyMapSpot;
+  readonly greeting = greetingKey(new Date().getHours());
+  /** True from a tap on "Shuffle" until the new set arrives. */
+  readonly shuffling = signal(false);
+
+  /**
+   * A dog walking up the right edge of the hero, left and right paws in turn,
+   * between the brand row and the search field and clear of the headline.
+   */
+  readonly trail: PawPrint[] = [
+    { x: 88, y: 62 },
+    { x: 79, y: 52 },
+    { x: 88, y: 42 },
+    { x: 79, y: 32 },
+    { x: 88, y: 22 },
+  ].map((p, i) => ({ ...p, delay: 250 + i * 170 }));
 
   readonly categories: Category[] = [
     { label: 'lp_cat_restaurants', icon: 'restaurant-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Restoran' } },
@@ -164,10 +103,12 @@ export class HomePage {
     { label: 'lp_cat_vets', icon: 'medkit-outline', commands: ['/tabs/vets'] },
     { label: 'lp_cat_food', icon: 'basket-outline', commands: ['/tabs/catalog'], queryParams: { segment: 'food' } },
     { label: 'lp_cat_shops', icon: 'storefront-outline', commands: ['/tabs/catalog'], queryParams: { segment: 'shops' } },
+    { label: 'mobile_near_me', icon: 'navigate-outline', commands: ['/tabs/places'], queryParams: { segment: 'venues', near: '1' } },
   ];
 
   constructor() {
     addIcons({
+      add,
       restaurantOutline,
       cafeOutline,
       bedOutline,
@@ -175,12 +116,25 @@ export class HomePage {
       medkitOutline,
       basketOutline,
       storefrontOutline,
-      addCircleOutline,
+      navigateOutline,
+      shuffle,
+      timeOutline,
+    });
+
+    // A new random set has arrived: stop the shuffle icon, show the set from its start.
+    effect(() => {
+      this.spots.random();
+      untracked(() => {
+        if (!this.shuffling()) return;
+        this.shuffling.set(false);
+        this.rail()?.nativeElement.scrollTo({ left: 0, behavior: 'smooth' });
+      });
     });
   }
 
   search(value: string | null | undefined): void {
     const word = (value ?? '').trim();
+    if (word) this.recent.addSearch(word);
     void this.router.navigate(['/tabs/places'], { queryParams: { segment: 'venues', word: word || null } });
   }
 
@@ -188,12 +142,30 @@ export class HomePage {
     void this.router.navigate(category.commands, { queryParams: category.queryParams ?? {} });
   }
 
+  openRecent(id: number): void {
+    void this.router.navigate(['/tabs/home/spots', String(id)]);
+  }
+
   suggest(): void {
     void this.router.navigate(['/tabs/more/suggest-spot']);
+  }
+
+  shuffleSpots(): void {
+    if (this.shuffling()) return;
+    this.shuffling.set(true);
+    this.spots.randomSpots();
+    // The store reports no failure for this call; never spin forever.
+    setTimeout(() => this.shuffling.set(false), 8000);
   }
 
   refresh(event: RefresherCustomEvent): void {
     this.spots.randomSpots();
     setTimeout(() => event.target.complete(), 800);
   }
+}
+
+function greetingKey(hour: number): string {
+  if (hour >= 5 && hour < 11) return 'mobile_greeting_morning';
+  if (hour >= 11 && hour < 18) return 'mobile_greeting_day';
+  return 'mobile_greeting_evening';
 }

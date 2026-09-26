@@ -52,8 +52,8 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
   ],
   template: `
     <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ 'vet_clinics' | transloco }}</ion-title>
+      <ion-toolbar class="page-toolbar">
+        <ion-title class="page-title">{{ 'mobile_tab_vets' | transloco }}</ion-title>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar
@@ -138,6 +138,9 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
   styles: `
     .city {
       padding-inline: 16px;
+    }
+    ion-item ion-buttons ion-button {
+      --color: var(--app-pine);
     }
     .state {
       text-align: center;

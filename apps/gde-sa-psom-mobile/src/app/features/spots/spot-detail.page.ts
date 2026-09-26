@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
-import { IonChip } from '@ionic/angular/ion-chip';
 import { IonContent } from '@ionic/angular/ion-content';
 import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
@@ -14,7 +13,7 @@ import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { callOutline, globeOutline, locationOutline, navigateOutline, shareSocialOutline } from 'ionicons/icons';
+import { callOutline, globeOutline, leafOutline, locationOutline, navigateOutline, paw, shareSocialOutline } from 'ionicons/icons';
 import { Spot, SpotsStore } from '@gde/shared/data-access';
 import {
   cleanApiText,
@@ -28,6 +27,7 @@ import {
 } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
+import { RecentActivityService } from '../../core/recent/recent-activity.service';
 import { MapViewComponent } from '../../shared/ui/map-view.component';
 
 type LoadStatus = 'loading' | 'loaded' | 'error';
@@ -44,7 +44,6 @@ type LoadStatus = 'loading' | 'loaded' | 'error';
     IonTitle,
     IonContent,
     IonSpinner,
-    IonChip,
     IonLabel,
     IonList,
     IonItem,
@@ -62,6 +61,7 @@ export class SpotDetailPage {
   private readonly spots = inject(SpotsStore);
   private readonly links = inject(ExternalLinkService);
   private readonly sharing = inject(ShareService);
+  private readonly recent = inject(RecentActivityService);
 
   readonly spot = signal<Spot | null>(null);
   readonly status = signal<LoadStatus>('loading');
@@ -94,7 +94,7 @@ export class SpotDetailPage {
   });
 
   constructor() {
-    addIcons({ callOutline, globeOutline, locationOutline, navigateOutline, shareSocialOutline });
+    addIcons({ callOutline, globeOutline, leafOutline, locationOutline, navigateOutline, paw, shareSocialOutline });
     effect(() => {
       const id = this.id();
       untracked(() => this.load(id));
@@ -107,6 +107,7 @@ export class SpotDetailPage {
       id,
       (spot) => {
         this.spot.set(spot);
+        if (spot) void this.recent.addSpot(spot);
         this.status.set(spot ? 'loaded' : 'error');
       },
       () => this.status.set('error'),

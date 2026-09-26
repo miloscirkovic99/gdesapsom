@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ 'mobile_tab_places' | transloco }}</ion-title>
+  <ion-toolbar class="page-toolbar">
+    <ion-title class="page-title">{{ 'mobile_tab_places' | transloco }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment [value]="segment()" (ionChange)="setSegment($event.detail.value)">
+    <ion-segment mode="ios" [value]="segment()" (ionChange)="setSegment($event.detail.value)">
       <ion-segment-button value="venues">
         <ion-label>{{ 'mobile_venues' | transloco }}</ion-label>
       </ion-segment-button>
@@ -39,26 +39,44 @@
   </ion-refresher>
 
   @if (segment() === 'venues') {
+    @if (locating()) {
+      <div class="locating"><ion-spinner name="dots" /></div>
+    }
     @if (spots.spotsList().length) {
-      <p class="count ion-padding-horizontal">{{ 'mobile_results' | transloco }}: {{ spots.totalResult() }}</p>
+      <p class="count">{{ 'mobile_results' | transloco }}: {{ spots.totalResult() }}</p>
     }
-    @for (spot of spots.spotsList(); track spot.iuo_id) {
-      <app-spot-card [spot]="spot" [link]="['/tabs/places/spots', '' + spot.iuo_id]" [lang]="lang()" />
-    } @empty {
-      <div class="state ion-padding">
-        @if (spots.isLoading()) {
-          <ion-spinner />
-        } @else {
-          <h3>{{ 'no_results_title' | transloco }}</h3>
-          <p>{{ 'spots_error404' | transloco }}</p>
-        }
-      </div>
-    }
+    <div class="cards">
+      @for (spot of spots.spotsList(); track spot.iuo_id) {
+        <app-spot-card [spot]="spot" [link]="['/tabs/places/spots', '' + spot.iuo_id]" [lang]="lang()" />
+      } @empty {
+        <div class="state">
+          @if (spots.isLoading()) {
+            <ion-spinner />
+          } @else {
+            <ion-icon class="state-icon" name="paw-outline" aria-hidden="true" />
+            <h3>{{ 'no_results_title' | transloco }}</h3>
+            <p>{{ 'spots_error404' | transloco }}</p>
+          }
+        </div>
+      }
+    </div>
     <ion-infinite-scroll [disabled]="!canLoadMore()" (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content />
     </ion-infinite-scroll>
+
+    <!-- Once the list has ended (or came back empty): invite the user to add what is missing. -->
+    @if (!spots.isLoading() && !canLoadMore()) {
+      <section class="missing">
+        <h2>{{ 'lp_add_title' | transloco }}</h2>
+        <p>{{ 'lp_add_lead' | transloco }}</p>
+        <ion-button fill="outline" [routerLink]="['/tabs/more/suggest-spot']">
+          <ion-icon slot="start" name="add" aria-hidden="true" />
+          {{ 'lp_add_cta' | transloco }}
+        </ion-button>
+      </section>
+    }
   } @else {
-    <ion-list>
+    <ion-list class="parks">
       @for (park of parks.parks(); track park.par_id) {
         <ion-item [href]="parkMapUrl(park)" target="_blank" rel="noopener" detail="true">
           <ion-thumbnail slot="start">

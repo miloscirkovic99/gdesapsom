@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
@@ -23,6 +23,7 @@ import { SharedStore, SpotsStore, SuggestSpotPayload } from '@gde/shared/data-ac
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 import { PhotoFieldComponent } from '../../shared/ui/photo-field.component';
 import { requiredValue } from '../../shared/forms';
+import { SentViewComponent } from '../../shared/ui/sent-view.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
 
 @Component({
@@ -45,6 +46,7 @@ import { TownshipPickerComponent } from '../../shared/ui/township-picker.compone
     IonButton,
     IonSpinner,
     TranslocoPipe,
+    SentViewComponent,
     PhotoFieldComponent,
   ],
   templateUrl: './suggest-spot.page.html',
@@ -78,6 +80,9 @@ export class SuggestSpotPage {
   readonly photoInside = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly submitting = signal(false);
+  /** The place went through: the thank-you view replaces the form. */
+  readonly sent = signal(false);
+  private readonly content = viewChild(IonContent);
 
   private readonly townshipId = toSignal(this.form.controls.ops_id.valueChanges, { initialValue: null });
   readonly townshipName = computed(() => {
@@ -138,10 +143,21 @@ export class SuggestSpotPage {
       () => {
         this.submitting.set(false);
         this.#reset();
-        void this.nav.navigateBack('/tabs/more');
+        this.sent.set(true);
+        void this.content()?.scrollToTop(300);
       },
       () => this.submitting.set(false),
     );
+  }
+
+  /** Leave the form (off the More stack) and show Home. */
+  async goHome(): Promise<void> {
+    await this.nav.navigateBack('/tabs/more');
+    void this.nav.navigateRoot('/tabs/home', { animated: false });
+  }
+
+  addAnother(): void {
+    this.sent.set(false);
   }
 
   #reset(): void {

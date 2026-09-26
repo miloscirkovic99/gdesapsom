@@ -31,6 +31,7 @@ import {
 import { SITE_ORIGIN } from '@gde/shared/util';
 import { AppSettingsService } from '../../core/platform/app-settings.service';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
+import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
 
 @Component({
   selector: 'app-more',
@@ -51,15 +52,17 @@ import { ExternalLinkService } from '../../core/platform/external-link.service';
     IonSelectOption,
     IonToggle,
     TranslocoPipe,
+    OwnerCardComponent,
   ],
   template: `
     <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ 'mobile_tab_more' | transloco }}</ion-title>
+      <ion-toolbar class="page-toolbar">
+        <ion-title class="page-title">{{ 'mobile_tab_more' | transloco }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-list>
+      <app-owner-card class="owner" />
+      <ion-list [inset]="true">
         <ion-list-header>
           <ion-label>{{ 'mobile_suggest' | transloco }}</ion-label>
         </ion-list-header>
@@ -73,7 +76,7 @@ import { ExternalLinkService } from '../../core/platform/external-link.service';
         </ion-item>
       </ion-list>
 
-      <ion-list>
+      <ion-list [inset]="true">
         <ion-list-header>
           <ion-label>{{ 'mobile_read' | transloco }}</ion-label>
         </ion-list-header>
@@ -91,7 +94,7 @@ import { ExternalLinkService } from '../../core/platform/external-link.service';
         </ion-item>
       </ion-list>
 
-      <ion-list>
+      <ion-list [inset]="true">
         <ion-list-header>
           <ion-label>{{ 'mobile_settings' | transloco }}</ion-label>
         </ion-list-header>
@@ -119,7 +122,7 @@ import { ExternalLinkService } from '../../core/platform/external-link.service';
         </ion-item>
       </ion-list>
 
-      <ion-list>
+      <ion-list [inset]="true">
         <ion-item button detail="true" (click)="openPolicy()">
           <ion-icon slot="start" name="document-text-outline" aria-hidden="true" />
           <ion-label>{{ 'mobile_privacy' | transloco }}</ion-label>
@@ -130,6 +133,11 @@ import { ExternalLinkService } from '../../core/platform/external-link.service';
         </ion-item>
       </ion-list>
     </ion-content>
+  `,
+  styles: `
+    .owner {
+      margin: 8px 0 8px;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

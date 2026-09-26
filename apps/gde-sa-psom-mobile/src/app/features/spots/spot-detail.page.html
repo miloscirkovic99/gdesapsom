@@ -35,22 +35,20 @@
         </div>
       }
 
-      <section class="ion-padding">
+      <section class="intro">
         <h1>{{ s.iuo_ime }}</h1>
-        <div class="chips">
-          <ion-chip color="primary">
-            <ion-label>{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</ion-label>
-          </ion-chip>
+        <div class="tags">
+          <span class="tag type">{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</span>
           @if (dogsKey()) {
-            <ion-chip><ion-label>{{ dogsKey()! | transloco }}</ion-label></ion-chip>
+            <span class="tag dogs"><ion-icon name="paw" aria-hidden="true" />{{ dogsKey()! | transloco }}</span>
           }
           @if (gardenKey()) {
-            <ion-chip><ion-label>{{ gardenKey()! | transloco }}</ion-label></ion-chip>
+            <span class="tag"><ion-icon name="leaf-outline" aria-hidden="true" />{{ gardenKey()! | transloco }}</span>
           }
         </div>
       </section>
 
-      <ion-list lines="full">
+      <ion-list [inset]="true" lines="full" class="facts">
         <ion-item [href]="addressUrl()" target="_blank" rel="noopener" detail="true">
           <ion-icon slot="start" name="location-outline" aria-hidden="true" />
           <ion-label class="ion-text-wrap">
