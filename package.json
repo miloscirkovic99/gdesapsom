@@ -49,7 +49,7 @@
     "@nx/angular": "20.3.0",
     "@nx/eslint": "20.3.0",
     "@nx/eslint-plugin": "20.3.0",
-    "@nx/jest": "17.2.8",
+    "@nx/jest": "20.3.0",
     "@nx/js": "20.3.0",
     "@nx/web": "20.3.0",
     "@nx/workspace": "20.3.0",
