@@ -4,8 +4,23 @@ import { TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@ngneat/transloco';
 import { APP_CONFIG } from '../config/app-config';
 import { ContactFormService } from '../contact/contact-form.service';
+import { SuggestSpotPayload } from '../models/places.models';
 import { Notifier } from '../platform/notifier';
 import { SpotsStore } from './spots.store';
+
+const suggestion = (iuo_ime: string): SuggestSpotPayload => ({
+  iuo_ime,
+  iuo_adressa: 'Knez Mihailova 1',
+  iuo_link_web: '',
+  iuo_slika: null,
+  iuo_slika_unutra: null,
+  iuo_telefon: '',
+  ops_id: 1,
+  ugo_id: 1,
+  sta_id: 1,
+  bas_id: 1,
+  iuo_opis: '',
+});
 
 function setup({ production }: { production: boolean }) {
   const notifier = { notify: jest.fn() };
@@ -33,7 +48,7 @@ describe('SpotsStore', () => {
       const { store, httpMock, notifier, contactForm } = setup({ production: true });
       const onSuccess = jest.fn();
 
-      store.suggestSpot({ iuo_ime: 'Kafić Test' }, onSuccess);
+      store.suggestSpot(suggestion('Kafić Test'), onSuccess);
       httpMock.expectOne({ method: 'POST', url: 'pet-friendly-spots/pending' }).flush({});
 
       expect(notifier.notify).toHaveBeenCalledWith('success_add', 'success', 'close');
@@ -46,7 +61,7 @@ describe('SpotsStore', () => {
     it('does not email outside production', () => {
       const { store, httpMock, contactForm } = setup({ production: false });
 
-      store.suggestSpot({ iuo_ime: 'Kafić Test' });
+      store.suggestSpot(suggestion('Kafić Test'));
       httpMock.expectOne({ method: 'POST', url: 'pet-friendly-spots/pending' }).flush({});
 
       expect(contactForm.sendEmail).not.toHaveBeenCalled();
@@ -56,7 +71,7 @@ describe('SpotsStore', () => {
       const { store, httpMock, notifier } = setup({ production: true });
       const onError = jest.fn();
 
-      store.suggestSpot({ iuo_ime: 'X' }, undefined, onError);
+      store.suggestSpot(suggestion('X'), undefined, onError);
       httpMock
         .expectOne({ method: 'POST', url: 'pet-friendly-spots/pending' })
         .flush('boom', { status: 500, statusText: 'Server Error' });

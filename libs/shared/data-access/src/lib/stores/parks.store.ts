@@ -11,11 +11,12 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
 import { ContactFormService } from '../contact/contact-form.service';
 import { Notifier } from '../platform/notifier';
+import { Park, SuggestParkPayload } from '../models/places.models';
 
 // Define the initial state type
 type ParksState = {
-  parks: any[];
-  pendingParks: any[];
+  parks: Park[];
+  pendingParks: Park[];
   /** Load state of the public (accepted) list; the admin pending list is not tracked. */
   parksStatus: 'idle' | 'loading' | 'loaded' | 'error';
 };
@@ -51,22 +52,17 @@ export const ParksStore = signalStore(
         const isPublicList = par_accepted == 1;
         if (isPublicList) patchState(store, { parksStatus: 'loading' });
         http
-          .post<any>('pet-friendly-parks/list', { par_accepted: par_accepted })
+          .post<{ petFriendlyParks: Park[] }>('pet-friendly-parks/list', { par_accepted: par_accepted })
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
-              patchState(store, (state) => ({
-                parks: [...state.parks, ...response.petFriendlyParks],
-              }));
-              if (isPublicList) patchState(store, { parksStatus: 'loaded' });
-
-              if (par_accepted == 0) {
-                patchState(store, (state) => ({
-                  pendingParks: [
-                    ...state.pendingParks,
-                    ...response.petFriendlyParks,
-                  ],
-                }));
+              // Each call returns the whole list, so it replaces what is there:
+              // reloading (retry, pull-to-refresh, revisiting the admin page)
+              // must not duplicate rows, and pending parks never belong in `parks`.
+              if (isPublicList) {
+                patchState(store, { parks: response.petFriendlyParks, parksStatus: 'loaded' });
+              } else {
+                patchState(store, { pendingParks: response.petFriendlyParks });
               }
             },
             error: (error) => {
@@ -75,7 +71,8 @@ export const ParksStore = signalStore(
             },
           });
       },
-      updatePark(form: any) {
+      /** Admin: accept or decline a suggested park. */
+      updatePark(form: { par_id: number; par_accepted: 0 | 1; par_declined?: 0 | 1 }) {
 
         http
           .put('pet-friendly-parks/create', form)
@@ -86,9 +83,9 @@ export const ParksStore = signalStore(
             error: handleError,
           });
       },
-      addPark(form: any) {
+      addPark(form: SuggestParkPayload) {
         http
-          .post<any>('pet-friendly-parks/create', form)
+          .post<unknown>('pet-friendly-parks/create', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {

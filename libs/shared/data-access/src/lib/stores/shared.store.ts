@@ -10,15 +10,17 @@ import {
 } from '@ngrx/signals';
 import { Subject, take, takeUntil } from 'rxjs';
 import { Notifier } from '../platform/notifier';
+import { City, Country, GardenType, SpotType, Township } from '../models/places.models';
 
 // Define the initial state type
 type SharedState = {
-  townships: any[];
-  spotTypes: any;
-  gardenTypes: any;
-  city:any;
-  state:any;
-  townshipsByCity:any;
+  townships: Township[];
+  spotTypes: SpotType[];
+  gardenTypes: GardenType[];
+  city: City[];
+  /** Countries (`drz`), from `countryandcities`. */
+  state: Country[];
+  townshipsByCity: Township[];
 };
 
 // Create the signal state
@@ -52,7 +54,7 @@ export const SharedStore = signalStore(
     return {
       getSpotTypes() {
         http
-          .get<any>('pet-friendly-spots-types/list')
+          .get<{ spotTypes: SpotType[] }>('pet-friendly-spots-types/list')
           .pipe(take(1), takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
@@ -66,7 +68,7 @@ export const SharedStore = signalStore(
 
       getTownships() {
         http
-          .get<any>('township')
+          .get<{ township: Township[] }>('township')
           .pipe(take(1), takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
@@ -77,10 +79,10 @@ export const SharedStore = signalStore(
             error: handleError,
           });
       },
-      getTownshipsByCity(id: any) {
+      getTownshipsByCity(id: number | string) {
         const url = `township/${id}`;
         http
-          .post<any>(url, { grd_id: id })
+          .post<{ township_by_city: Township[] }>(url, { grd_id: id })
           .pipe( takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
@@ -93,7 +95,7 @@ export const SharedStore = signalStore(
       },
       getCityandState(){
         http
-        .get<any>('countryandcities')
+        .get<{ city: City[]; state: Country[] }>('countryandcities')
         .pipe(take(1), takeUntil(destroyed$))
         .subscribe({
           next: (response) => {
@@ -105,24 +107,24 @@ export const SharedStore = signalStore(
           error: handleError,
         });
       },
-      addTownship(params: any) {
+      addTownship(params: { ops_ime: string; grd_id: number }) {
         http
-          .post<any>('township', params)
+          .post<{ success: string }>('township', params)
           .pipe(take(1), takeUntil(destroyed$))
           .subscribe({
-            next: (result: any) => {
+            next: (result) => {
               this.getTownships();
               notifier.notify(result.success, 'success', 'Close');
             },
             error: handleError,
           });
       },
-      addCity(params: any) {
+      addCity(params: { drz_id: number; grd_ime: string }) {
         http
-          .post<any>('countryandcities', params)
+          .post<{ success: string }>('countryandcities', params)
           .pipe(take(1), takeUntil(destroyed$))
           .subscribe({
-            next: (result: any) => {
+            next: (result) => {
               this.getCityandState();
               notifier.notify(result.success, 'success', 'Close');
             },
@@ -131,7 +133,7 @@ export const SharedStore = signalStore(
       },
       getGardenTypes() {
         http
-          .get<any>('gardenTypes')
+          .get<{ gardenTypes: GardenType[] }>('gardenTypes')
           .pipe(take(1), takeUntil(destroyed$))
           .subscribe({
             next: (response) => {

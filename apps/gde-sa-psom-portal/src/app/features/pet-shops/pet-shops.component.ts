@@ -23,7 +23,7 @@ import { SnackbarService } from '../../core/services/snackbar.service';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
 import { PetShopCardComponent } from '../../shared/components/pet-shop-card/pet-shop-card.component';
-import { PetShopFilters, PetShopsStore, SharedStore } from '@gde/shared/data-access';
+import { PetShopFilters, PetShopsStore, SharedStore, Township } from '@gde/shared/data-access';
 import { injectActiveLang, pluralKey, filterTownshipsMulti } from '@gde/shared/util';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
@@ -35,12 +35,6 @@ type ShopsForm = {
 };
 
 type ChipKey = 'townships' | 'hasDelivery' | 'near';
-
-/** Row shape of SharedStore.townships() (the legacy `opstina` table). */
-interface Township {
-  id: number;
-  ime: string;
-}
 
 interface FilterChip {
   key: ChipKey;
@@ -124,7 +118,7 @@ export class PetShopsComponent implements OnInit {
 
     const selected = value.townshipIds ?? [];
     if (selected.length) {
-      const names = (this.sharedStore.townships() as Township[])
+      const names = (this.sharedStore.townships())
         .filter((t) => selected.includes(t.id))
         .map((t) => t.ime);
       const shown = names.slice(0, 2).join(', ');

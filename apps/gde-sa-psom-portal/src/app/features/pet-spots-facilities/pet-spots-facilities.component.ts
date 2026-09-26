@@ -31,16 +31,6 @@ import {
 } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
-interface SearchPayload {
-  ops_id: string | null;
-  ugo_id: string | null;
-  sta_id: string | null;
-  word: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  radius: number | null;
-  resetOffset: boolean | null;
-}
 type PetSpotsForm = {
   ops_id: FormControl<number[] | null>;
   sta_id: FormControl<number | null>;

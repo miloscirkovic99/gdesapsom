@@ -11,6 +11,9 @@ export * from './lib/stores/dog-food.store';
 export * from './lib/stores/pet-shops.store';
 export * from './lib/stores/catalog-admin.store';
 
+// Venue / park / vet clinic / lookup models.
+export * from './lib/models/places.models';
+
 // Catalog data access and models.
 export * from './lib/catalog/catalog.models';
 export * from './lib/catalog/catalog-admin.models';

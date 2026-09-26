@@ -19,12 +19,13 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { TranslocoService } from '@ngneat/transloco';
 import { Notifier } from '../platform/notifier';
+import { VetClinic, VetClinicSearchParams } from '../models/places.models';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 
 // Define the initial state type
 type vetClinics = {
-  vetClinicsList: any[];
+  vetClinicsList: VetClinic[];
   totalResult: number;
   totalCount:number;
   limit: number;
@@ -51,13 +52,11 @@ export const VetClinicsStore = signalStore(
     const notifier = inject(Notifier);
     const translocoService = inject(TranslocoService);
     return {
-      loadVetclinics: rxMethod<any>(
+      loadVetclinics: rxMethod<{ data?: VetClinicSearchParams }>(
         pipe(
-          tap(() => {
-            debounceTime(300);
-            patchState(store, { isLoading: true });
-          }),
-          switchMap((params: any) => {
+          debounceTime(300),
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap((params) => {
             if (params?.data?.resetOffset) {
               patchState(store, { offset: 0, vetClinicsList: [] });
             }
@@ -66,7 +65,7 @@ export const VetClinicsStore = signalStore(
             const offset = store.offset();
 
             return http
-              .post<any>('veterinary-clinics/list', {
+              .post<{ vetClinics: VetClinic[]; totalResults: number; totalCount: number }>('veterinary-clinics/list', {
                  ops_id: params?.data?.ops_id,
                 grd_id: params?.data?.grd_id,
                 word: params.data?.word,
@@ -90,7 +89,7 @@ export const VetClinicsStore = signalStore(
               );
           }),
           tapResponse({
-            next: (response: any) => {
+            next: (response) => {
               patchState(store, (state) => ({
                 vetClinicsList: [...state.vetClinicsList, ...response.vetClinics],
                 totalResult: response.totalResults,

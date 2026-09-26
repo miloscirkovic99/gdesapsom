@@ -27,7 +27,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import * as L from 'leaflet';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { debounceTime, ReplaySubject } from 'rxjs';
-import { CatalogAdminApi, AdminPetShopDetail, AdminPetShopPayload, CatalogAdminStore, SharedStore } from '@gde/shared/data-access';
+import { CatalogAdminApi, AdminPetShopDetail, AdminPetShopPayload, CatalogAdminStore, SharedStore, Township } from '@gde/shared/data-access';
 import { geocodeAddress, GeocodeHit } from '../../../../shared/utils/geocode';
 import { isImageFile, MAX_UPLOAD_BYTES, prepareLogo } from '../../../../shared/utils/image-resize';
 import { filterTownshipsMulti } from '@gde/shared/util';
@@ -35,12 +35,6 @@ import { filterTownshipsMulti } from '@gde/shared/util';
 export interface PetShopFormDialogData {
   /** null = create */
   id: number | null;
-}
-
-/** Row shape of SharedStore.townships() (the legacy `opstina` table). */
-interface Township {
-  id: number;
-  ime: string;
 }
 
 const BELGRADE: L.LatLngTuple = [44.8125, 20.4612];
@@ -122,7 +116,7 @@ export class PetShopFormDialogComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      const townships = this.sharedStore.townships() as Township[];
+      const townships = this.sharedStore.townships();
       if (townships.length) this.filteredTownships.next(townships.slice());
     });
 
@@ -177,7 +171,7 @@ export class PetShopFormDialogComponent implements OnInit, OnDestroy {
     if (!address) return;
 
     const townshipId = this.form.controls.townshipId.value;
-    const township = (this.sharedStore.townships() as Township[]).find((t) => t.id === townshipId);
+    const township = (this.sharedStore.townships()).find((t) => t.id === townshipId);
     const query = [address, township?.ime, 'Srbija'].filter(Boolean).join(', ');
 
     this.isGeocoding.set(true);

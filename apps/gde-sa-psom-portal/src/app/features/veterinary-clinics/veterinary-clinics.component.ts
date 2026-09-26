@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { VetClinicsStore, SharedStore } from '@gde/shared/data-access';
+import { VetClinic, VetClinicsStore, SharedStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import {
   FormBuilder,
@@ -19,12 +19,6 @@ import {
   SEARCH_TRACKING_DEBOUNCE_MS,
 } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
-
-/** The clinic fields the contact links need; the list rows themselves are untyped. */
-interface VetClinicPlace {
-  vetc_id?: number;
-  vetc_adresa?: string | null;
-}
 
 @Component({
   selector: 'app-veterinary-clinics',
@@ -141,14 +135,14 @@ export class VeterinaryClinicsComponent {
     this.resetData();
   }
 
-  googleMapsUrl(item: VetClinicPlace): string | null {
+  googleMapsUrl(item: VetClinic): string | null {
     return item?.vetc_adresa
       ? `https://www.google.com/maps?q=${encodeURIComponent(item.vetc_adresa)}`
       : null;
   }
 
   /** `vet-<id>` names the clinic in GA4 (`venue_slug`); clinics have no slug. */
-  venueSlug(item: VetClinicPlace): string | null {
+  venueSlug(item: VetClinic): string | null {
     return item?.vetc_id ? `vet-${item.vetc_id}` : null;
   }
 

@@ -24,30 +24,29 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { APP_CONFIG } from '../config/app-config';
 import { Notifier } from '../platform/notifier';
+import { AllowedPetType, Spot, SpotSearchParams, SuggestSpotPayload } from '../models/places.models';
 
 interface SpotsSearchResponse {
-  spotsList: Record<string, unknown>[];
+  spotsList: Spot[];
   totalResults: number;
 }
 
 interface RandomSpotsResponse {
-  randomSpots: Record<string, unknown>[];
+  randomSpots: Spot[];
 }
 
 interface AllowedPetTypesResponse {
-  allowed: Record<string, unknown>[];
+  allowed: AllowedPetType[];
 }
 
 interface SpotsState {
-  spotsList: any[];
+  spotsList: Spot[];
   totalResult: number;
   limit: number;
   offset: number;
   isLoading: boolean;
-  random: any[];
-  allowed: any[];
-  spotTypes: any[];
-  spotsSearchResult: any[];
+  random: Spot[];
+  allowed: AllowedPetType[];
 }
 
 const initialSpotsState: SpotsState = {
@@ -58,8 +57,6 @@ const initialSpotsState: SpotsState = {
   isLoading: false,
   random: [],
   allowed: [],
-  spotTypes: [],
-  spotsSearchResult: [],
 };
 
 const destroyed$ = new Subject<void>();
@@ -95,7 +92,7 @@ export const SpotsStore = signalStore(
     };
 
     return {
-      loadSpots: rxMethod<{ data: { ops_id: string | null; ugo_id: string | null; sta_id: string | null; word: string | null; resetOffset?: boolean; latitude: number | null; longitude: number | null,radius:number | null} }>(
+      loadSpots: rxMethod<{ data: SpotSearchParams }>(
         pipe(
           debounceTime(300),
           tap(() => patchState(store, { isLoading: true })),
@@ -163,7 +160,7 @@ export const SpotsStore = signalStore(
       //     })
       //   )
       // ),
-      getSpotById(iuo_id: string, onSuccess: (spot: any) => void, onError: () => void) {
+      getSpotById(iuo_id: string, onSuccess: (spot: Spot | null) => void, onError: () => void) {
         if (!iuo_id) {
           console.error('getSpotById: iuo_id is null or undefined', iuo_id);
           onError();
@@ -171,7 +168,7 @@ export const SpotsStore = signalStore(
         }
                 
         http
-           .post<any>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
+           .post<{ spotsListSingle?: Spot[] }>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
@@ -196,7 +193,7 @@ export const SpotsStore = signalStore(
             error: () => showError(),
           });
       },
-      suggestSpot(form: any, onSuccess?: () => void, onError?: () => void) {
+      suggestSpot(form: SuggestSpotPayload, onSuccess?: () => void, onError?: () => void) {
         http
           .post<unknown>('pet-friendly-spots/pending', form)
           .pipe(takeUntil(destroyed$))
@@ -247,7 +244,7 @@ export const SpotsStore = signalStore(
           });
       },
       loadInitialData() {
-        const data = {
+        const data: SpotSearchParams = {
           ops_id: null,
           ugo_id: null,
           sta_id: null,
