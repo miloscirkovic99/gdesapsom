@@ -43,7 +43,10 @@
           "node_modules/leaflet/dist/leaflet.css",
           "apps/gde-sa-psom-mobile/src/styles.scss"
         ],
-        "scripts": []
+        "scripts": [],
+        "allowedCommonJsDependencies": [
+          "leaflet"
+        ]
       },
       "configurations": {
         "production": {

@@ -1,6 +1,7 @@
 export * from './lib/constants/route.constant';
 export * from './lib/constants/site';
 export * from './lib/helpers/map.helpers';
+export * from './lib/helpers/maps-links';
 export * from './lib/helpers/township.util';
 export * from './lib/i18n/active-lang';
 export * from './lib/i18n/language.service';

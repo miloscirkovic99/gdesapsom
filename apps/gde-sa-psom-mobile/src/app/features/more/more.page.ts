@@ -1,17 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  IonContent,
-  IonHeader,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonSegment,
-  IonSegmentButton,
-  IonTitle,
-  IonToggle,
-  IonToolbar,
-} from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonHeader } from '@ionic/angular/ion-header';
+import { IonItem } from '@ionic/angular/ion-item';
+import { IonLabel } from '@ionic/angular/ion-label';
+import { IonList } from '@ionic/angular/ion-list';
+import { IonListHeader } from '@ionic/angular/ion-list-header';
+import { IonSegment } from '@ionic/angular/ion-segment';
+import { IonSegmentButton } from '@ionic/angular/ion-segment-button';
+import { IonTitle } from '@ionic/angular/ion-title';
+import { IonToggle } from '@ionic/angular/ion-toggle';
+import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { AppLanguage, AppSettingsService } from '../../core/platform/app-settings.service';
 

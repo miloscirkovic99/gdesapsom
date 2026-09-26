@@ -186,9 +186,8 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {
-              patchState(store, (state) => ({
-                random: [...state.random, ...response.randomSpots],
-              }));
+              // A new random set replaces the old one (pull-to-refresh on mobile).
+              patchState(store, { random: response.randomSpots });
             },
             error: () => showError(),
           });

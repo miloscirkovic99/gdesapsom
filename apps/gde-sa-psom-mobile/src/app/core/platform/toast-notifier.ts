@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular/toast-controller';
 import { NoticeKind, Notifier } from '@gde/shared/data-access/core';
 
 /** Mobile implementation of `Notifier`: an Ionic toast just above the tab bar. */

@@ -597,5 +597,19 @@
   "mobile_tab_more": "More",
   "mobile_settings": "Settings",
   "mobile_dark_theme": "Dark theme",
-  "mobile_app_version": "Version"
+  "mobile_app_version": "Version",
+  "mobile_venues": "Venues",
+  "mobile_parks": "Parks",
+  "mobile_filters": "Filters",
+  "mobile_all": "All",
+  "mobile_near_me": "Near me",
+  "mobile_open_in_maps": "Open in Maps",
+  "mobile_call": "Call",
+  "mobile_open_website": "Open website",
+  "mobile_location_denied": "Allow location access in your phone's settings.",
+  "mobile_results": "Results",
+  "mobile_cancel": "Cancel",
+  "mobile_done": "Done",
+  "mobile_spot_not_found": "Place not found.",
+  "mobile_city": "City"
 }

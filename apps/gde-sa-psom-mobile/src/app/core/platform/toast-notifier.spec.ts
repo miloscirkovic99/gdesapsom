@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular/toast-controller';
 import { ToastNotifier } from './toast-notifier';
 
-jest.mock('@ionic/angular', () => ({ ToastController: class {} }));
+jest.mock('@ionic/angular/toast-controller', () => ({ ToastController: class {} }));
 
 describe('ToastNotifier', () => {
   let create: jest.Mock;

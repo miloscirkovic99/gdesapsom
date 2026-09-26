@@ -15,8 +15,15 @@ export interface IdName {
   ime: string;
 }
 
-/** A municipality (`opstina.ops_id` / `ops_ime`), from `township` and `township/:grd_id`. */
-export type Township = IdName;
+/**
+ * A municipality (`opstina.ops_id` / `ops_ime`), from `township`. The full list
+ * carries each township's city, so filter it by `grd_id` rather than calling
+ * `township/:grd_id` (that handler is not deployed on either API host).
+ */
+export interface Township extends IdName {
+  grd_id?: number;
+  city_name?: string;
+}
 /** Venue type (`ugo_objekat`): Kafić, Restoran, Hotel, ... */
 export type SpotType = IdName;
 /** Which dogs are allowed (`starost`): Svi psi, Mali pas, ... */
@@ -27,6 +34,8 @@ export type GardenType = IdName;
 export interface City {
   grd_id: number;
   grd_ime: string;
+  drz_id?: number;
+  drz_naziv?: string;
 }
 
 export interface Country {

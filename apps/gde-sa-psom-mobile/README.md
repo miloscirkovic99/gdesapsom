@@ -11,14 +11,19 @@ only the UI and the platform services in `src/app/core/platform/` are mobile-spe
 ```ts
 // src/env/env.dev.ts (development builds and `nx serve`)
 export const environment = {
-  apiUrl: 'https://dev.gdesapsom.com/', // must end with '/'
+  apiUrl: 'https://gdesapsom.com/', // must end with '/'
   production: false,
   useCatalogMocks: false,
 };
 ```
 
-- `env.qa.ts` is the same (the `uat` configuration).
-- `env.prod.ts` uses `apiUrl: 'https://gdesapsom.com/'` and `production: true`.
+- `env.prod.ts`: same `apiUrl`, `production: true`.
+- `env.qa.ts` (the `uat` configuration): `apiUrl: 'https://dev.gdesapsom.com/'`.
+
+Development uses the production API, like the portal, because `dev.gdesapsom.com` is an
+incomplete mirror: as of 2026-09-26 it lacks `pet-friendly-spots/all/:id` and
+`blog/getAll/:slug` (it answers with the website's HTML), so venue and article pages fail there.
+Submitting the suggest-a-place forms from a dev build therefore creates real pending entries.
 
 Source files always import `../env/env.dev`; `fileReplacements` in `project.json`
 swaps in the right file per configuration.

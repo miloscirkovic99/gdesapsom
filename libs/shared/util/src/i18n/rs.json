@@ -581,5 +581,19 @@
   "mobile_tab_more": "Više",
   "mobile_settings": "Podešavanja",
   "mobile_dark_theme": "Tamna tema",
-  "mobile_app_version": "Verzija"
+  "mobile_app_version": "Verzija",
+  "mobile_venues": "Objekti",
+  "mobile_parks": "Parkovi",
+  "mobile_filters": "Filteri",
+  "mobile_all": "Sve",
+  "mobile_near_me": "U blizini",
+  "mobile_open_in_maps": "Otvori u mapama",
+  "mobile_call": "Pozovi",
+  "mobile_open_website": "Otvori sajt",
+  "mobile_location_denied": "Dozvolite pristup lokaciji u podešavanjima telefona.",
+  "mobile_results": "Rezultati",
+  "mobile_cancel": "Otkaži",
+  "mobile_done": "Gotovo",
+  "mobile_spot_not_found": "Objekat nije pronađen.",
+  "mobile_city": "Grad"
 }
