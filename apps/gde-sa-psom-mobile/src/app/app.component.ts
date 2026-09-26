@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { IonApp } from '@ionic/angular/ion-app';
 import { IonRouterOutlet } from '@ionic/angular/ion-router-outlet';
+import { NativeShellService } from './core/platform/native-shell.service';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +13,9 @@ import { IonRouterOutlet } from '@ionic/angular/ion-router-outlet';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor() {
+    const shell = inject(NativeShellService);
+    afterNextRender(() => shell.start());
+  }
+}

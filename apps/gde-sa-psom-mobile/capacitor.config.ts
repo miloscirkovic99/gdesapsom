@@ -16,7 +16,7 @@ const config: CapacitorConfig = {
     SplashScreen: {
       // Hidden by the app once the first screen has rendered.
       launchAutoHide: false,
-      backgroundColor: '#0d542b',
+      backgroundColor: '#ffffff',
       showSpinner: false,
     },
   },

@@ -55,6 +55,48 @@ to `build`. Without one, `build` uses its default, **production**.
 
 Debug the WebView from desktop Chrome at `chrome://inspect`; native logs with `adb logcat`.
 
+## Icons and splash screens
+
+Sources live in `assets/` (made from the portal logo): `icon-only.png`, `icon-foreground.png` +
+`icon-background.png` (adaptive icon), `splash.png`, `splash-dark.png`. After changing them:
+
+```bash
+cd apps/gde-sa-psom-mobile && npx capacitor-assets generate --android --assetPath assets
+```
+
+## Releasing to Google Play (Android)
+
+1. **Upload key (once).** Create it outside the repo and back it up; losing it means an
+   upload-key reset through Play support:
+   ```bash
+   keytool -genkeypair -v -keystore C:\keys\gdesapsom-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+   ```
+   Then create `android/keystore.properties` (gitignored):
+   ```properties
+   storeFile=C:/keys/gdesapsom-upload.jks
+   storePassword=...
+   keyAlias=upload
+   keyPassword=...
+   ```
+2. **Version.** Raise `versionCode` (integer, +1 every upload) and `versionName` in
+   `android/app/build.gradle`.
+3. **Build.** `npx nx run gde-sa-psom-mobile:cap-sync:production`, then in Android Studio
+   (`cap-open-android`) *Build > Generate Signed App Bundle*, or from `android/`:
+   `gradlew bundleRelease` -> `app/build/outputs/bundle/release/app-release.aab`.
+4. **Play Console.** Create the app, enrol in Play App Signing, upload the `.aab` to the
+   *Internal testing* track first. Fill in the Data safety form (approximate/precise location
+   for "near me", photos for suggestions, no account data) and the privacy policy URL
+   (`https://www.gdesapsom.com/cookies-policy` or a dedicated page).
+5. **App Links (optional).** To open website links in the app, publish
+   `https://www.gdesapsom.com/.well-known/assetlinks.json` (and on the apex host) with the
+   SHA-256 of the **Play app signing** certificate (Play Console > App integrity):
+   ```json
+   [{ "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": { "namespace": "android_app", "package_name": "com.gdesapsom.app",
+                  "sha256_cert_fingerprints": ["AA:BB:..."] } }]
+   ```
+   The paths the app claims are in `AndroidManifest.xml`; `core/platform/deep-links.ts` maps them.
+
 ## Notes
 
 - `android/` is a normal Capacitor project and is committed, except what its own

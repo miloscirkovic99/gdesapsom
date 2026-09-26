@@ -1,6 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { TranslocoService } from '@ngneat/transloco';
 import { LanguageService } from '@gde/shared/util';
 import { firstValueFrom } from 'rxjs';
@@ -60,6 +62,10 @@ export class AppSettingsService {
     this.theme.set(theme);
     // Ionic's dark palette is scoped to this class (palettes/dark.class.css).
     this.document.documentElement.classList.toggle('ion-palette-dark', theme === 'dark');
+    // Style.Dark = light icons, for a dark background.
+    if (Capacitor.isNativePlatform()) {
+      void StatusBar.setStyle({ style: theme === 'dark' ? Style.Dark : Style.Light }).catch(() => undefined);
+    }
   }
 
   #systemTheme(): AppTheme {
