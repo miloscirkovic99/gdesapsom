@@ -27,7 +27,6 @@ export class SignInComponent {
   signIn(){
     this.authService.login(this.signinForm.value.email,this.signinForm.value.password).pipe(take(1)).subscribe({
       next:(result)=>{
-      localStorage.setItem('sid',result?.sid);
       this.authService.setToken(result.sid);
       this.router.navigate([`${RouteConstants.admin}`])
       }

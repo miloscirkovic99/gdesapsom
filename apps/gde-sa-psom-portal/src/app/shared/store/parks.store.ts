@@ -10,10 +10,9 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Subject, take, takeUntil } from 'rxjs';
-import { SnackbarService } from '../../core/services/snackbar.service';
-import { DialogService } from '../../core/services/dialog.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { ContactFormService } from '../components/contact-form/contact-form.service';
+import { ContactFormService } from '../data-access/contact/contact-form.service';
+import { Notifier } from '../data-access/platform/notifier';
 
 // Define the initial state type
 type ParksState = {
@@ -40,18 +39,17 @@ export const ParksStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
-    const dialogService = inject(DialogService);
     const translocoService = inject(TranslocoService);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
     const contactFormService=inject(ContactFormService)
 
     const handleError = (error: any) => {
       const translatedButton = translocoService.translate('close');
 
-      snackbarService.openSnackbar(
+      notifier.notify(
         'Oops... Something went wrong, please check your fields and try again',
-        translatedButton,
-        'error-snackbar'
+        'error',
+        translatedButton
       );
     };
     return {
@@ -100,15 +98,10 @@ export const ParksStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
-              dialogService.closeDialog();
               const translatedButton = translocoService.translate('close');
               const translatedMessage =
                 translocoService.translate('success_add');
-              snackbarService.openSnackbar(
-                translatedMessage,
-                translatedButton,
-                'success-snackbar'
-              );
+              notifier.notify(translatedMessage, 'success', translatedButton);
               const data={
                 from: 'noreply@gdesapsom.com',
                 subject: `Novi park ${form.par_ime}`,

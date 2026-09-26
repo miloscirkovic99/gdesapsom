@@ -27,6 +27,7 @@ import { PetShopFilters } from '../../shared/data-access/catalog/catalog.models'
 import { PetShopsStore } from '../../shared/store/pet-shops.store';
 import { SharedStore } from '../../shared/store/shared.store';
 import { injectActiveLang, pluralKey, filterTownshipsMulti } from '@gde/shared/util';
+import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 type ShopsForm = {
   word: FormControl<string | null>;
@@ -144,6 +145,7 @@ export class PetShopsComponent implements OnInit {
 
   // ── Constructor / effects ─────────────────────────────────────────────────
   constructor() {
+    refreshAosOn(() => this.store.items());
     effect(() => {
       const townships = this.sharedStore.townships();
       if (townships.length) {

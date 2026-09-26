@@ -11,10 +11,9 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { TranslocoService } from '@ngneat/transloco';
-import AOS from 'aos';
 import { debounceTime, pipe, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { SnackbarService } from '../../core/services/snackbar.service';
 import { PetShopsApi } from '../data-access/catalog/pet-shops.api';
+import { Notifier } from '../data-access/platform/notifier';
 import {
   EMPTY_PET_SHOP_FILTERS,
   PET_SHOP_PAGE_SIZE,
@@ -65,15 +64,14 @@ export const PetShopsStore = signalStore(
   })),
   withMethods((store) => {
     const api = inject(PetShopsApi);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
     const translocoService = inject(TranslocoService);
-    const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
 
     const showError = (messageKey = 'catalog_error') => {
-      snackbarService.openSnackbar(
+      notifier.notify(
         translocoService.translate(messageKey),
+        'error',
         translocoService.translate('close'),
-        'error-snackbar',
       );
     };
 
@@ -102,7 +100,6 @@ export const PetShopsStore = signalStore(
                     cursor: page.cursor,
                     isLoading: false,
                   });
-                  refreshAOS();
                 },
                 error: () => {
                   patchState(store, { isLoading: false, hasError: true });
@@ -132,7 +129,6 @@ export const PetShopsStore = signalStore(
                 cursor: page.cursor,
                 isLoadingMore: false,
               }));
-              refreshAOS();
             },
             error: () => {
               patchState(store, { isLoadingMore: false });

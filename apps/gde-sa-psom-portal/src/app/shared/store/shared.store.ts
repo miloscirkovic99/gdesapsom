@@ -10,7 +10,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Subject, take, takeUntil } from 'rxjs';
-import { SnackbarService } from '../../core/services/snackbar.service';
+import { Notifier } from '../data-access/platform/notifier';
 
 // Define the initial state type
 type SharedState = {
@@ -47,13 +47,13 @@ export const SharedStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
 
     const handleError = (error: any) => {
-      snackbarService.openSnackbar(
+      notifier.notify(
         'Oops... Something went wrong, please check your fields and try again',
-        'Close',
-        'error-snackbar'
+        'error',
+        'Close'
       );
     };
     return {
@@ -119,11 +119,7 @@ export const SharedStore = signalStore(
           .subscribe({
             next: (result: any) => {
               this.getTownships();
-              snackbarService.openSnackbar(
-                result.success,
-                'Close',
-                'success-snackbar'
-              );
+              notifier.notify(result.success, 'success', 'Close');
             },
             error: handleError,
           });
@@ -135,11 +131,7 @@ export const SharedStore = signalStore(
           .subscribe({
             next: (result: any) => {
               this.getCityandState();
-              snackbarService.openSnackbar(
-                result.success,
-                'Close',
-                'success-snackbar'
-              );
+              notifier.notify(result.success, 'success', 'Close');
             },
             error: handleError,
           });

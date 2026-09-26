@@ -30,6 +30,7 @@ import {
   AnalyticsService,
   SEARCH_TRACKING_DEBOUNCE_MS,
 } from '../../core/services/analytics.service';
+import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 interface SearchPayload {
   ops_id: string | null;
@@ -148,6 +149,7 @@ readonly formValue = toSignal(
 
   // ── Constructor / effects ─────────────────────────────────────────────────
   constructor() {
+    refreshAosOn(() => this.spotsStore.spots());
     this.#initFormSubscriptions();
     this.#initTownshipEffect();
     this.#initQueryParamEffect();

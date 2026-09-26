@@ -8,7 +8,6 @@ import {
   withHooks,
   withComputed,
 } from '@ngrx/signals';
-import AOS from 'aos';
 import {
   Subject,
   switchMap,
@@ -19,13 +18,12 @@ import {
   pipe,
   EMPTY,
 } from 'rxjs';
-import { SnackbarService } from '../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { DialogService } from '../../core/services/dialog.service';
-import { ContactFormService } from '../components/contact-form/contact-form.service';
+import { ContactFormService } from '../data-access/contact/contact-form.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
-import { environment } from '../../../env/env.dev';
+import { APP_CONFIG } from '../data-access/config/app-config';
+import { Notifier } from '../data-access/platform/notifier';
 
 interface SpotsSearchResponse {
   spotsList: Record<string, unknown>[];
@@ -74,25 +72,24 @@ export const SpotsStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
     const translocoService = inject(TranslocoService);
-    const dialogService = inject(DialogService);
     const contactFormService = inject(ContactFormService);
-    const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
+    const config = inject(APP_CONFIG);
 
     const showSuccess = (messageKey: string) => {
-      snackbarService.openSnackbar(
+      notifier.notify(
         translocoService.translate(messageKey),
-        translocoService.translate('close'),
-        'success-snackbar'
+        'success',
+        translocoService.translate('close')
       );
     };
 
     const showError = (messageKey: string = 'error_global') => {
-      snackbarService.openSnackbar(
+      notifier.notify(
         translocoService.translate(messageKey),
-        translocoService.translate('close'),
-        'error-snackbar'
+        'error',
+        translocoService.translate('close')
       );
       patchState(store, { isLoading: false });
     };
@@ -135,7 +132,6 @@ export const SpotsStore = signalStore(
                 offset: state.spotsList.length + response.spotsList.length,
                 isLoading: false,
               }));
-              refreshAOS();
             },
             error: () => patchState(store, { isLoading: false }),
           })
@@ -162,7 +158,6 @@ export const SpotsStore = signalStore(
       //           offset: 0,
       //           isLoading: false,
       //         }));
-      //         refreshAOS();
       //       },
       //       error: () => patchState(store, { isLoading: false }),
       //     })
@@ -207,9 +202,8 @@ export const SpotsStore = signalStore(
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
-              dialogService.closeDialog();
               showSuccess('success_add');
-              if (environment.production) {
+              if (config.production) {
                 contactFormService.sendEmail({
                   from: 'noreply@gdesapsom.com',
                   subject: `Novi objekat ${form.iuo_ime}`,
@@ -225,29 +219,29 @@ export const SpotsStore = signalStore(
             },
           });
       },
-      updateSpot(form: any) {
+      /** `onSuccess` runs before the success message, e.g. to close the edit dialog. */
+      updateSpot(form: any, onSuccess?: () => void) {
         http
           .post<unknown>('pet-friendly-spots/update', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
               this.loadInitialData();
-              dialogService.closeDialog();
+              onSuccess?.();
               showSuccess('spot_updated_success');
-              refreshAOS();
             },
             error: () => showError(),
           });
       },
-      updatePendingSpot(form: any) {
+      /** `onSuccess` runs before the success message, e.g. to close the edit dialog. */
+      updatePendingSpot(form: any, onSuccess?: () => void) {
         http
           .post<unknown>('pet-friendly-spots/update_pending', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
-              dialogService.closeDialog();
+              onSuccess?.();
               showSuccess('spot_updated_success');
-              refreshAOS();
             },
             error: () => showError(),
           });

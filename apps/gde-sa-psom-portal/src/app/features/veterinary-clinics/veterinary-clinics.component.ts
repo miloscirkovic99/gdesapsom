@@ -19,6 +19,7 @@ import {
   AnalyticsService,
   SEARCH_TRACKING_DEBOUNCE_MS,
 } from '../../core/services/analytics.service';
+import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 /** The clinic fields the contact links need; the list rows themselves are untyped. */
 interface VetClinicPlace {
@@ -59,6 +60,7 @@ export class VeterinaryClinicsComponent {
     >(1);
 
   constructor(private fb: FormBuilder) {
+    refreshAosOn(() => this.vetClinicsStore.vetClinicsList());
     this.form = this.fb.group({
       ops_id: new FormControl(null), // Multiple select
       grd_id: new FormControl(null), // Multiple select

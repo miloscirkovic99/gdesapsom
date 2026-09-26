@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { delay, map, Observable, of, switchMap, throwError, timer } from 'rxjs';
-import { USE_CATALOG_MOCKS } from './catalog.config';
+import { APP_CONFIG } from '../config/app-config';
 import { RawRow, toPetShopDetail, toPetShopListItem } from './catalog.mappers';
 import { mockPetShopDetail, mockPetShopList } from './catalog.mock-data';
 import {
@@ -19,7 +19,7 @@ import { normalizeSearchText } from './dog-food.api';
 @Injectable({
   providedIn: 'root',
   useFactory: (): PetShopsApi =>
-    USE_CATALOG_MOCKS ? new PetShopsMockApi() : new PetShopsHttpApi(inject(HttpClient)),
+    inject(APP_CONFIG).useCatalogMocks ? new PetShopsMockApi() : new PetShopsHttpApi(inject(HttpClient)),
 })
 export abstract class PetShopsApi {
   abstract search(

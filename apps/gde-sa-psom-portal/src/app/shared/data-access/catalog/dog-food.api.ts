@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { delay, map, Observable, of, switchMap, throwError, timer } from 'rxjs';
-import { USE_CATALOG_MOCKS } from './catalog.config';
+import { APP_CONFIG } from '../config/app-config';
 import { RawRow, toDogFoodDetail, toDogFoodListItem, toLookups } from './catalog.mappers';
 import { mockDogFoodDetail, mockDogFoodList, mockLookups } from './catalog.mock-data';
 import {
@@ -17,14 +17,14 @@ import {
  * Data access for the dog food catalog.
  *
  * The abstract class is the injection token; `useFactory` picks the HTTP
- * implementation or the in-memory mock based on `USE_CATALOG_MOCKS`
- * (see catalog.config.ts), so stores and components never know which one
+ * implementation or the in-memory mock based on `AppConfig.useCatalogMocks`
+ * (see config/app-config.ts), so stores and components never know which one
  * they talk to.
  */
 @Injectable({
   providedIn: 'root',
   useFactory: (): DogFoodApi =>
-    USE_CATALOG_MOCKS ? new DogFoodMockApi() : new DogFoodHttpApi(inject(HttpClient)),
+    inject(APP_CONFIG).useCatalogMocks ? new DogFoodMockApi() : new DogFoodHttpApi(inject(HttpClient)),
 })
 export abstract class DogFoodApi {
   abstract lookups(): Observable<CatalogLookups>;

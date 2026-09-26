@@ -4,6 +4,7 @@ export * from './lib/helpers/map.helpers';
 export * from './lib/helpers/township.util';
 export * from './lib/i18n/active-lang';
 export * from './lib/i18n/language.service';
+export * from './lib/i18n/provide-app-transloco';
 export * from './lib/models/localized-name';
 export * from './lib/pipes/local-name.pipe';
 export * from './lib/pipes/package-weight.pipe';

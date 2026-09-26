@@ -23,6 +23,7 @@ import {
 } from '../../shared/data-access/catalog/catalog.models';
 import { LocalNamePipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { DogFoodStore } from '../../shared/store/dog-food.store';
+import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 type CatalogForm = {
   word: FormControl<string | null>;
@@ -143,6 +144,10 @@ export class DogFoodCatalogComponent implements OnInit {
   });
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
+  constructor() {
+    refreshAosOn(() => this.store.items());
+  }
+
   ngOnInit(): void {
     this.#applyQueryParams(this.route.snapshot.queryParamMap);
 

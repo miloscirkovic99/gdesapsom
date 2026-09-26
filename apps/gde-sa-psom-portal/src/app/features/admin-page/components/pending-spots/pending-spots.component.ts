@@ -44,7 +44,7 @@ export class PendingSpotsComponent {
           data: data.data,
           onSave: (form: any) => {
             //TODO: implement edit pending spot 
-            this.spotsStore.updatePendingSpot(form.form)
+            this.spotsStore.updatePendingSpot(form.form, () => this.dialogService.closeDialog())
           },
           isEdit: true,
           isPending: true,

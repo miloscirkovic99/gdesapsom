@@ -3,8 +3,8 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { TranslocoService } from '@ngneat/transloco';
 import { catchError, Observable, take, tap, throwError } from 'rxjs';
-import { SnackbarService } from '../../core/services/snackbar.service';
 import { CatalogAdminApi } from '../data-access/catalog/catalog-admin.api';
+import { Notifier } from '../data-access/platform/notifier';
 import {
   AdminBrand,
   AdminBrandPayload,
@@ -51,14 +51,14 @@ export const CatalogAdminStore = signalStore(
   })),
   withMethods((store) => {
     const api = inject(CatalogAdminApi);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
     const translocoService = inject(TranslocoService);
 
     const notifySuccess = (messageKey: string): void => {
-      snackbarService.openSnackbar(
+      notifier.notify(
         translocoService.translate(messageKey),
+        'success',
         translocoService.translate('close'),
-        'success-snackbar',
       );
     };
 
@@ -73,10 +73,10 @@ export const CatalogAdminStore = signalStore(
         typeof error.error?.message === 'string'
           ? error.error.message
           : null;
-      snackbarService.openSnackbar(
+      notifier.notify(
         serverMessage || translocoService.translate('admin_error'),
+        'error',
         translocoService.translate('close'),
-        'error-snackbar',
       );
     };
 

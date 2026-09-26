@@ -1,25 +1,30 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { HttpParams } from "@angular/common/http"; // Make sure to import HttpParams
-import { environment } from "../../../env/env.dev";
+import { APP_CONFIG } from "../../shared/data-access/config/app-config";
+import { SessionStore } from "../../shared/data-access/platform/session-store";
 
 /**
- * Prefixes all requests with `environment.serverUrl`.
+ * Prefixes every request except static assets with `${apiUrl}api/v2/` and
+ * sends the session id as the `sid` query parameter.
+ *
+ * The params are replaced, not merged: callers put their own query string in
+ * the URL (e.g. `'dog-food/all?fields=admin'`).
  */
 @Injectable()
 export class ApiPrefixInterceptor implements HttpInterceptor {
+    private readonly config = inject(APP_CONFIG);
+    private readonly session = inject(SessionStore);
+
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
         if (!request.url.includes('assets')) {
-            let sid:any = localStorage.getItem('sid') ?? null;
-
-            // Ensure sid is not null or undefined
-                const params = new HttpParams().set('sid', sid);  // Create HttpParams with 'sid'
-                request = request.clone({
-                    url: `${environment.apiUrl}api/v2/` + request.url,
-                    params: params  // Set the HttpParams
-                });
+            const sid: any = this.session.getSid();
+            const params = new HttpParams().set('sid', sid);
+            request = request.clone({
+                url: `${this.config.apiUrl}api/v2/` + request.url,
+                params: params
+            });
 
         }
         return next.handle(request);

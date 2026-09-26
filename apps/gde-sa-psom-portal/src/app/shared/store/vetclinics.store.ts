@@ -18,11 +18,9 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import AOS from 'aos';
-import { SnackbarService } from '../../core/services/snackbar.service';
 import { HttpClient } from '@angular/common/http';
-import { DialogService } from '../../core/services/dialog.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { Notifier } from '../data-access/platform/notifier';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 
@@ -55,10 +53,8 @@ export const VetClinicsStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(HttpClient);
-    const snackbarService = inject(SnackbarService);
+    const notifier = inject(Notifier);
     const translocoService = inject(TranslocoService);
-    const dialogService = inject(DialogService);
-    const refreshAOS = () => setTimeout(() => AOS.refresh(), 500);
     return {
       loadVetclinics: rxMethod<any>(
         pipe(
@@ -89,11 +85,7 @@ export const VetClinicsStore = signalStore(
                     translocoService.translate('spots_error404');
                   const translatedButton = translocoService.translate('close');
 
-                  snackbarService.openSnackbar(
-                    translatedMessage,
-                    translatedButton,
-                    'error-snackbar'
-                  );
+                  notifier.notify(translatedMessage, 'error', translatedButton);
 
                   patchState(store, { isLoading: false });
 
@@ -111,7 +103,6 @@ export const VetClinicsStore = signalStore(
                 offset:state.vetClinicsList.length + response.vetClinics.length,
                 isLoading: false, // Reset loading state on success
               }));
-              refreshAOS();
             },
             error: (error: unknown) => {
               of(null);

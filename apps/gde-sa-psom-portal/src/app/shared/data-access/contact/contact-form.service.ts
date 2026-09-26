@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { SnackbarService } from '../../../core/services/snackbar.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { Notifier } from '../platform/notifier';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContactFormService {
   private http = inject(HttpClient);
-  private snackbarService = inject(SnackbarService);
+  private notifier = inject(Notifier);
   private translocoService = inject(TranslocoService);
   constructor() {}
 
@@ -20,11 +20,7 @@ export class ContactFormService {
         const translatedMessage =
           this.translocoService.translate('email_success');
         if (data.showSnackbar) {
-          this.snackbarService.openSnackbar(
-            translatedMessage,
-            translatedActionButton,
-            'success-snackbar'
-          );
+          this.notifier.notify(translatedMessage, 'success', translatedActionButton);
         }
       },
       error: (err) => {
@@ -32,11 +28,7 @@ export class ContactFormService {
           this.translocoService.translate('error_global');
 
         if (data.showSnackbar) {
-          this.snackbarService.openSnackbar(
-            translatedMessage,
-            translatedActionButton,
-            'error-snackbar'
-          );
+          this.notifier.notify(translatedMessage, 'error', translatedActionButton);
         }
       },
     });
