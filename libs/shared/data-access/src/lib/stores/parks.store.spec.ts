@@ -45,6 +45,23 @@ describe('ParksStore', () => {
     expect(store.parks().map((p) => p.par_id)).toEqual([1, 2, 3]);
   });
 
+  it('addPark reports the outcome through its optional callbacks', () => {
+    const onSuccess = jest.fn();
+    const onError = jest.fn();
+    const payload = { par_ime: 'P', par_lokacija: 'L', ops_id: 1, par_opis: '', par_accepted: 0 as const };
+
+    store.addPark(payload, onSuccess, onError);
+    httpMock.expectOne({ method: 'POST', url: 'pet-friendly-parks/create' }).flush({});
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+
+    store.addPark(payload, onSuccess, onError);
+    httpMock
+      .expectOne({ method: 'POST', url: 'pet-friendly-parks/create' })
+      .flush('x', { status: 500, statusText: 'Server Error' });
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps pending parks out of the public list', () => {
     store.petParks(0);
     answerList(0, [park(9, 0)]);

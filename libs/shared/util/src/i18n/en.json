@@ -612,5 +612,17 @@
   "mobile_done": "Done",
   "mobile_spot_not_found": "Place not found.",
   "mobile_city": "City",
-  "mobile_not_found": "Not found."
+  "mobile_not_found": "Not found.",
+  "mobile_photo": "Photo",
+  "mobile_take_photo": "Take a photo",
+  "mobile_choose_photo": "Choose from gallery",
+  "mobile_add_photo": "Add a photo",
+  "mobile_replace_photo": "Change",
+  "mobile_remove": "Remove",
+  "mobile_photo_outside": "Photo of the place",
+  "mobile_photo_inside": "Another photo (optional)",
+  "mobile_send": "Send for review",
+  "mobile_suggest": "Suggest",
+  "mobile_read": "Read",
+  "mobile_privacy": "Privacy and cookie policy"
 }

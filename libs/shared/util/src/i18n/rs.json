@@ -596,5 +596,17 @@
   "mobile_done": "Gotovo",
   "mobile_spot_not_found": "Objekat nije pronađen.",
   "mobile_city": "Grad",
-  "mobile_not_found": "Nije pronađeno."
+  "mobile_not_found": "Nije pronađeno.",
+  "mobile_photo": "Fotografija",
+  "mobile_take_photo": "Fotografiši",
+  "mobile_choose_photo": "Izaberi iz galerije",
+  "mobile_add_photo": "Dodaj fotografiju",
+  "mobile_replace_photo": "Promeni",
+  "mobile_remove": "Ukloni",
+  "mobile_photo_outside": "Fotografija objekta",
+  "mobile_photo_inside": "Dodatna fotografija (opciono)",
+  "mobile_send": "Pošalji na pregled",
+  "mobile_suggest": "Predloži",
+  "mobile_read": "Čitaj",
+  "mobile_privacy": "Politika privatnosti i kolačića"
 }

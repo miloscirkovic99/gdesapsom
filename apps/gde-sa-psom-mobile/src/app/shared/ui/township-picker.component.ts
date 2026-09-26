@@ -89,7 +89,7 @@ import { filterTownshipsMulti } from '@gde/shared/util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TownshipPickerComponent implements OnInit {
-  private readonly modal = inject(ModalController);
+  private readonly modalCtrl = inject(ModalController);
 
   // componentProps are set as plain properties by ModalController.
   @Input() townships: Township[] = [];
@@ -123,10 +123,10 @@ export class TownshipPickerComponent implements OnInit {
   }
 
   cancel(): void {
-    void this.modal.dismiss(null, 'cancel');
+    void this.modalCtrl.dismiss(null, 'cancel');
   }
 
   confirm(): void {
-    void this.modal.dismiss([...this.chosen()], 'confirm');
+    void this.modalCtrl.dismiss([...this.chosen()], 'confirm');
   }
 }

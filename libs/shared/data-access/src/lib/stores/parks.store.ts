@@ -83,7 +83,7 @@ export const ParksStore = signalStore(
             error: handleError,
           });
       },
-      addPark(form: SuggestParkPayload) {
+      addPark(form: SuggestParkPayload, onSuccess?: () => void, onError?: () => void) {
         http
           .post<unknown>('pet-friendly-parks/create', form)
           .pipe(takeUntil(destroyed$))
@@ -100,8 +100,12 @@ export const ParksStore = signalStore(
                 showSnackbar: false,
               }
               contactFormService.sendEmail(data)
+              onSuccess?.();
             },
-            error: handleError,
+            error: (error) => {
+              handleError(error);
+              onError?.();
+            },
           });
       },
     };

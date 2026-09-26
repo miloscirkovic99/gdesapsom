@@ -27,6 +27,24 @@ export const TAB_ROUTES: Routes = [
         loadComponent: () => import('../features/catalog/pet-shop-detail.page').then((m) => m.PetShopDetailPage),
       },
       { path: 'more', loadComponent: () => import('../features/more/more.page').then((m) => m.MorePage) },
+      {
+        path: 'more/suggest-spot',
+        loadComponent: () => import('../features/suggest/suggest-spot.page').then((m) => m.SuggestSpotPage),
+      },
+      {
+        path: 'more/suggest-park',
+        loadComponent: () => import('../features/suggest/suggest-park.page').then((m) => m.SuggestParkPage),
+      },
+      { path: 'more/blog', loadComponent: () => import('../features/content/blog-list.page').then((m) => m.BlogListPage) },
+      {
+        path: 'more/blog/:slug',
+        loadComponent: () => import('../features/content/blog-post.page').then((m) => m.BlogPostPage),
+      },
+      { path: 'more/about', loadComponent: () => import('../features/content/about.page').then((m) => m.AboutPage) },
+      {
+        path: 'more/business',
+        loadComponent: () => import('../features/content/business.page').then((m) => m.BusinessPage),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

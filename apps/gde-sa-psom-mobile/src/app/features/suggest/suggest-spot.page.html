@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/more" text="" />
+    </ion-buttons>
+    <ion-title>{{ 'add_spot' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p class="lead">{{ 'lp_add_lead' | transloco }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-input
+      formControlName="iuo_ime"
+      [label]="('spot_name' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      autocapitalize="sentences"
+      [errorText]="'required' | transloco"
+    />
+    <ion-input
+      formControlName="iuo_adressa"
+      [label]="('address' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      autocapitalize="words"
+      [errorText]="'required' | transloco"
+    />
+
+    <ion-item
+      button
+      detail="true"
+      lines="none"
+      class="picker"
+      [class.picker-invalid]="submitted() && form.controls.ops_id.invalid"
+      (click)="pickTownship()"
+    >
+      <ion-label>
+        <p>{{ 'township' | transloco }} *</p>
+        <h3>{{ townshipName() ?? ('select_city' | transloco) }}</h3>
+      </ion-label>
+    </ion-item>
+    @if (submitted() && form.controls.ops_id.invalid) {
+      <ion-note color="danger" class="field-error">{{ 'required' | transloco }}</ion-note>
+    }
+
+    <ion-select
+      formControlName="ugo_id"
+      [label]="('spot_type' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      interface="action-sheet"
+      [cancelText]="'mobile_cancel' | transloco"
+      [errorText]="'required' | transloco"
+    >
+      @for (t of shared.spotTypes(); track t.id) {
+        <ion-select-option [value]="t.id">{{ spotTypeKey[t.ime] ? (spotTypeKey[t.ime] | transloco) : t.ime }}</ion-select-option>
+      }
+    </ion-select>
+
+    <ion-select
+      formControlName="sta_id"
+      [label]="('pet_size' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      interface="action-sheet"
+      [cancelText]="'mobile_cancel' | transloco"
+      [errorText]="'required' | transloco"
+    >
+      @for (s of spots.allowed(); track s.id) {
+        <ion-select-option [value]="s.id">{{ petSizeKey[s.ime] ? (petSizeKey[s.ime] | transloco) : s.ime }}</ion-select-option>
+      }
+    </ion-select>
+
+    <ion-select
+      formControlName="bas_id"
+      [label]="('garden' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      interface="action-sheet"
+      [cancelText]="'mobile_cancel' | transloco"
+      [errorText]="'required' | transloco"
+    >
+      @for (g of shared.gardens(); track g.id) {
+        <ion-select-option [value]="g.id">{{ gardenKey[g.ime] ? (gardenKey[g.ime] | transloco) : g.ime }}</ion-select-option>
+      }
+    </ion-select>
+
+    <ion-input
+      formControlName="iuo_link_web"
+      [label]="('site_network' | transloco) + ' *'"
+      labelPlacement="stacked"
+      fill="outline"
+      type="url"
+      inputmode="url"
+      autocapitalize="off"
+      placeholder="instagram.com/..."
+      [errorText]="'required' | transloco"
+    />
+    <ion-input
+      formControlName="iuo_telefon"
+      [label]="'phone' | transloco"
+      labelPlacement="stacked"
+      fill="outline"
+      type="tel"
+      inputmode="tel"
+    />
+    <ion-textarea
+      formControlName="iuo_opis"
+      [label]="'short_description' | transloco"
+      labelPlacement="stacked"
+      fill="outline"
+      [autoGrow]="true"
+      [rows]="3"
+      autocapitalize="sentences"
+    />
+
+    <app-photo-field
+      label="mobile_photo_outside"
+      [required]="true"
+      [showError]="submitted() && !photoOutside()"
+      [(photo)]="photoOutside"
+    />
+    <app-photo-field label="mobile_photo_inside" [(photo)]="photoInside" />
+
+    <ion-button type="submit" expand="block" class="submit" [disabled]="submitting()">
+      @if (submitting()) {
+        <ion-spinner name="dots" />
+      } @else {
+        {{ 'mobile_send' | transloco }}
+      }
+    </ion-button>
+  </form>
+</ion-content>
