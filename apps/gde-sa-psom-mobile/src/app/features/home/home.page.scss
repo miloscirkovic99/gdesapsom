@@ -1,0 +1,354 @@
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* ── Hero: runs up under the status bar, mint like the logo's pin ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--ion-safe-area-top, 0px) + 14px) 20px 22px;
+  border-radius: 0 0 32px 32px;
+  background: var(--app-mint-soft);
+}
+
+.trail {
+  position: absolute;
+  inset: var(--ion-safe-area-top, 0px) 0 0 0;
+  pointer-events: none;
+}
+
+.print {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  fill: var(--app-mint);
+  opacity: 0;
+  transform: rotate(-14deg);
+  animation: step 0.42s cubic-bezier(0.3, 1.45, 0.55, 1) forwards;
+}
+
+:host-context(.ion-palette-dark) .print {
+  fill: #2d5a4e;
+}
+
+/* The page's one choreographed moment: the prints land one after another. */
+@keyframes step {
+  from {
+    opacity: 0;
+    transform: rotate(-14deg) scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-14deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .print {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.pin {
+  width: 22px;
+  height: 29px;
+  flex: none;
+}
+
+.pin-body {
+  fill: var(--app-mint);
+}
+
+.pin-ring {
+  fill: #ffffff;
+}
+
+.pin-paw {
+  fill: var(--app-pine);
+}
+
+:host-context(.ion-palette-dark) .pin-paw {
+  fill: #0f5a48;
+}
+
+.wordmark {
+  flex: 1;
+  font-family: var(--app-font-display);
+  font-size: 1.15rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.add {
+  --background: var(--app-surface);
+  --color: var(--app-pine);
+  --border-radius: 999px;
+  --padding-start: 12px;
+  --padding-end: 14px;
+  height: 36px;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.greeting {
+  position: relative;
+  margin: 0 0 4px;
+  color: var(--app-ink-2);
+  font-size: 1rem;
+  font-weight: 550;
+}
+
+h1 {
+  position: relative;
+  max-width: 76%;
+  text-wrap: balance;
+  margin: 0 0 22px;
+  font-size: 2.35rem;
+  font-weight: 750;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.hero-search {
+  --background: var(--app-surface);
+  --box-shadow: var(--app-shadow);
+  --icon-color: var(--app-pine);
+  position: relative;
+  padding: 0;
+}
+
+:host ::ng-deep .hero-search .searchbar-input {
+  min-height: 54px;
+  font-size: 1.05rem;
+}
+
+.recent-searches {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  margin: 14px -20px 0;
+  padding: 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.recent-search {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--app-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+:host-context(.ion-palette-dark) .recent-search {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Sections ── */
+.section {
+  margin-top: 28px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-inline-end: 12px;
+}
+
+.section-title {
+  margin: 0 20px 14px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.section-head .section-title {
+  margin-inline-end: 0;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 8px;
+  border: 0;
+  background: none;
+  color: var(--app-pine);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.text-button ion-icon {
+  font-size: 1.1rem;
+}
+
+.spinning ion-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Category grid: four across, icon tile above a two-line label. */
+.cats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 8px;
+  padding: 0 12px;
+}
+
+.cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--app-ink);
+  font: inherit;
+}
+
+.cat-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  color: var(--app-pine);
+  font-size: 26px;
+  transition: transform 0.15s ease;
+}
+
+.cat:active .cat-icon {
+  transform: scale(0.92);
+  background: var(--app-mint-soft);
+}
+
+.cat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* Horizontal rails. */
+.rail {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0 20px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.recent-spot {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  width: 244px;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid var(--app-line);
+  border-radius: 20px;
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font: inherit;
+  text-align: start;
+  scroll-snap-align: start;
+
+  img {
+    width: 56px;
+    height: 56px;
+    flex: none;
+    border-radius: 14px;
+    object-fit: cover;
+    background: var(--app-surface-2);
+  }
+}
+
+.recent-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+
+  strong,
+  span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  strong {
+    font-family: var(--app-font-display);
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  span {
+    color: var(--app-ink-2);
+    font-size: 0.85rem;
+  }
+}
+
+.rail-card {
+  flex: 0 0 84%;
+  scroll-snap-align: start;
+}
+
+.skeleton {
+  padding-bottom: 16px;
+  border-radius: 22px;
+  background: var(--app-surface);
+  overflow: hidden;
+
+  ion-skeleton-text {
+    margin: 12px 16px 0;
+  }
+}
+
+.skeleton-photo {
+  display: block;
+  width: auto;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  margin: 0 !important;
+  border-radius: 0;
+}
+
+.owner {
+  margin: 32px 0 28px;
+}

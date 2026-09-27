@@ -1,0 +1,132 @@
+<div class="space-y-6">
+  <!-- Header + filters -->
+  <div class="card bg-base-200/50 shadow-sm border border-base-300/30">
+    <div class="card-body">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-secondary/15 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-secondary" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.244a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+          </svg>
+        </div>
+        <h2 class="font-display text-xl font-bold">{{ 'admin_pet_shops' | transloco }}</h2>
+        <span class="badge badge-ghost">{{ store.shops().length }}</span>
+        <button type="button" class="btn btn-secondary btn-sm ml-auto" (click)="add()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          {{ 'admin_add_shop' | transloco }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <label class="input input-bordered input-sm flex items-center gap-2 grow max-w-md">
+          <input
+            type="text"
+            class="grow"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            [placeholder]="'admin_search_shops' | transloco"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+          </svg>
+        </label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            class="toggle toggle-secondary toggle-sm"
+            [ngModel]="showInactive()"
+            (ngModelChange)="showInactive.set($event)"
+          />
+          {{ 'admin_show_inactive' | transloco }}
+          @if (inactiveCount() > 0) {
+            <span class="badge badge-ghost badge-sm">{{ inactiveCount() }}</span>
+          }
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card bg-base-200/50 shadow-sm border border-base-300/30">
+    <div class="card-body p-2 sm:p-4">
+      @if (store.isLoadingShops() && store.shops().length === 0) {
+        <div class="flex justify-center p-10">
+          <span class="loading loading-spinner loading-md"></span>
+        </div>
+      } @else if (filtered().length === 0) {
+        <p class="text-center text-base-content/60 p-10">{{ 'admin_no_shops' | transloco }}</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>{{ 'admin_col_name' | transloco }}</th>
+                <th>{{ 'admin_col_location' | transloco }}</th>
+                <th>{{ 'admin_col_contact' | transloco }}</th>
+                <th>{{ 'admin_col_delivery' | transloco }}</th>
+                <th class="text-right">{{ 'admin_col_offers' | transloco }}</th>
+                <th>{{ 'admin_col_status' | transloco }}</th>
+                <th class="text-right"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (shop of filtered(); track shop.id) {
+                <tr [class.opacity-60]="!shop.isActive">
+                  <td>
+                    <div class="font-semibold">{{ shop.name }}</div>
+                    <div class="text-xs text-base-content/50">/pet-shops/{{ shop.slug }}</div>
+                  </td>
+                  <td>
+                    <div>{{ shop.address }}</div>
+                    <div class="text-xs text-base-content/60">
+                      {{ shop.townshipName }}@if (shop.cityName) {, {{ shop.cityName }}}
+                    </div>
+                    @if (shop.latitude === null || shop.longitude === null) {
+                      <span class="badge badge-warning badge-xs mt-1">{{ 'admin_no_coordinates' | transloco }}</span>
+                    }
+                  </td>
+                  <td>
+                    @if (shop.phone) {
+                      <div>{{ shop.phone }}</div>
+                    }
+                    @if (shop.websiteUrl) {
+                      <a [href]="shop.websiteUrl" target="_blank" rel="noopener noreferrer" class="link link-secondary text-xs break-all">
+                        {{ shop.websiteUrl }}
+                      </a>
+                    }
+                  </td>
+                  <td>
+                    <app-delivery-links [woltUrl]="shop.woltUrl" [glovoUrl]="shop.glovoUrl" size="xs" />
+                  </td>
+                  <td class="text-right tabular-nums">{{ shop.offerCount }}</td>
+                  <td>
+                    <span class="badge badge-sm" [class.badge-success]="shop.isActive" [class.badge-ghost]="!shop.isActive">
+                      {{ (shop.isActive ? 'admin_active' : 'admin_inactive') | transloco }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="flex flex-wrap justify-end gap-1">
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="edit(shop)">
+                        {{ 'admin_edit' | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="assortment(shop)">
+                        {{ 'admin_manage_assortment' | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs" (click)="toggleActive(shop)">
+                        {{ (shop.isActive ? 'admin_deactivate' : 'admin_activate') | transloco }}
+                      </button>
+                      <button type="button" class="btn btn-ghost btn-xs text-error" (click)="remove(shop)">
+                        {{ 'admin_delete_permanently' | transloco }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

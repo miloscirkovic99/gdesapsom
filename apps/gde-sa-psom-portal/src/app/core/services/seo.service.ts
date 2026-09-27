@@ -1,15 +1,17 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { SITE_ORIGIN } from '@gde/shared/util';
 
-/** Canonical host. Must match robots.txt, the sitemap, and the .htaccess redirect. */
-export const SITE_ORIGIN = 'https://www.gdesapsom.com';
+export { SITE_ORIGIN };
 
 const DEFAULT_TITLE =
   'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji';
 const DEFAULT_DESCRIPTION =
   'Pronađite gde su psi dobrodošli u Srbiji! Pretražite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Beogradu, Novom Sadu, Nišu i širom Srbije.';
-const DEFAULT_IMAGE = `${SITE_ORIGIN}/assets/logo-big.png`;
+/** Default share image, and the publisher logo in JSON-LD. */
+export const SITE_LOGO = `${SITE_ORIGIN}/assets/logo-big.png`;
+const DEFAULT_IMAGE = SITE_LOGO;
 
 const MAX_DESCRIPTION_LENGTH = 160;
 
@@ -60,6 +62,33 @@ export class SeoService {
     if (url) this.meta.updateTag({ property: 'twitter:url', content: url });
 
     this.setCanonical(url);
+  }
+
+  /**
+   * Adds or replaces a JSON-LD block identified by `id` (schema.org Product,
+   * PetStore, ...). Detail pages call it once their data arrives and
+   * `clearStructuredData` on destroy so the block never outlives the page.
+   */
+  setStructuredData(id: string, data: Record<string, unknown>): void {
+    const head = this.document.head;
+    let script = head.querySelector<HTMLScriptElement>(
+      `script[type="application/ld+json"][data-seo-id="${id}"]`,
+    );
+
+    if (!script) {
+      script = this.document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-seo-id', id);
+      head.appendChild(script);
+    }
+
+    script.textContent = JSON.stringify(data);
+  }
+
+  clearStructuredData(id: string): void {
+    this.document.head
+      .querySelector(`script[type="application/ld+json"][data-seo-id="${id}"]`)
+      ?.remove();
   }
 
   /** Strips HTML, collapses whitespace, and truncates on a word boundary. */

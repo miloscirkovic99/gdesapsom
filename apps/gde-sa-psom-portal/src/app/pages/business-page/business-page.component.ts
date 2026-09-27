@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 
 @Component({
   selector: 'app-business-page',

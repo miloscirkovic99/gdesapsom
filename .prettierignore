@@ -4,3 +4,7 @@
 /.nx/cache
 /.nx/workspace-data
 .angular
+
+# Capacitor native projects
+/apps/gde-sa-psom-mobile/android
+/apps/gde-sa-psom-mobile/ios

@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Subject, take, takeUntil } from 'rxjs';
 import { CardComponent } from '../../../../shared/components/card/card.component';
-import { DialogService } from 'apps/gde-sa-psom-portal/src/app/core/services/dialog.service';
-import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-location/add-location.component';
-import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
-import { ParksStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/parks.store';
+import { DialogService } from '../../../../core/services/dialog.service';
+import { AddSpotComponent } from '../../../../shared/dialogs/add-location/add-location.component';
+import { SpotsStore, ParksStore } from '@gde/shared/data-access';
 
 @Component({
   selector: 'app-pending-spots',
@@ -44,7 +43,7 @@ export class PendingSpotsComponent {
           data: data.data,
           onSave: (form: any) => {
             //TODO: implement edit pending spot 
-            this.spotsStore.updatePendingSpot(form.form)
+            this.spotsStore.updatePendingSpot(form.form, () => this.dialogService.closeDialog())
           },
           isEdit: true,
           isPending: true,

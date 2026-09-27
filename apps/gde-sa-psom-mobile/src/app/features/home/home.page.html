@@ -1,0 +1,118 @@
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+
+  <!-- One paw glyph, stamped along the trail and inside the logo pin. -->
+  <svg class="defs" aria-hidden="true">
+    <symbol id="app-paw" viewBox="0 0 24 24">
+      <path d="M12 11.2c-3 0-6.2 3.7-6.2 6.5 0 1.7 1.3 2.8 2.9 2.8 1.3 0 2-.6 3.3-.6s2 .6 3.3.6c1.6 0 2.9-1.1 2.9-2.8 0-2.8-3.2-6.5-6.2-6.5z" />
+      <ellipse cx="4.6" cy="10.4" rx="1.9" ry="2.5" transform="rotate(-22 4.6 10.4)" />
+      <ellipse cx="9" cy="5.6" rx="2" ry="2.7" transform="rotate(-8 9 5.6)" />
+      <ellipse cx="15" cy="5.6" rx="2" ry="2.7" transform="rotate(8 15 5.6)" />
+      <ellipse cx="19.4" cy="10.4" rx="1.9" ry="2.5" transform="rotate(22 19.4 10.4)" />
+    </symbol>
+  </svg>
+
+  <header class="hero">
+    <div class="trail" aria-hidden="true">
+      @for (p of trail; track $index) {
+        <svg class="print" [style.left.%]="p.x" [style.top.%]="p.y" [style.animation-delay.ms]="p.delay">
+          <use href="#app-paw" />
+        </svg>
+      }
+    </div>
+
+    <div class="brand">
+      <svg class="pin" viewBox="0 0 24 32" aria-hidden="true">
+        <path class="pin-body" d="M12 0C5.4 0 0 5.2 0 11.6 0 20.3 12 32 12 32s12-11.7 12-20.4C24 5.2 18.6 0 12 0z" />
+        <circle class="pin-ring" cx="12" cy="11.6" r="7.6" />
+        <svg x="6.6" y="6.2" width="10.8" height="10.8" viewBox="0 0 24 24" class="pin-paw"><use href="#app-paw" /></svg>
+      </svg>
+      <span class="wordmark">Gde sa psom</span>
+      <ion-button class="add" size="small" (click)="suggest()">
+        <ion-icon slot="start" name="add" aria-hidden="true" />
+        {{ 'mobile_add_place_short' | transloco }}
+      </ion-button>
+    </div>
+
+    <p class="greeting">{{ greeting | transloco }}</p>
+    <h1>{{ 'mobile_home_title' | transloco }}</h1>
+
+    <ion-searchbar
+      #searchbar
+      class="hero-search"
+      [placeholder]="'lp_search_placeholder' | transloco"
+      enterkeyhint="search"
+      (keyup.enter)="search(searchbar.value)"
+    />
+
+    @if (recent.searches().length) {
+      <div class="recent-searches" role="group" [attr.aria-label]="'mobile_recent_searches' | transloco">
+        @for (word of recent.searches(); track word) {
+          <button type="button" class="recent-search" (click)="search(word)">
+            <ion-icon name="time-outline" aria-hidden="true" />
+            {{ word }}
+          </button>
+        }
+      </div>
+    }
+  </header>
+
+  <section class="section">
+    <h2 class="section-title">{{ 'lp_cats_title' | transloco }}</h2>
+    <div class="cats">
+      @for (c of categories; track c.label) {
+        <button type="button" class="cat" (click)="open(c)">
+          <span class="cat-icon"><ion-icon [name]="c.icon" aria-hidden="true" /></span>
+          <span class="cat-label">{{ c.label | transloco }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (recent.spots().length) {
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">{{ 'mobile_continue_title' | transloco }}</h2>
+        <button type="button" class="text-button" (click)="recent.clearSpots()">{{ 'mobile_clear' | transloco }}</button>
+      </div>
+      <div class="rail">
+        @for (r of recent.spots(); track r.id) {
+          <button type="button" class="recent-spot" (click)="openRecent(r.id)">
+            <img [src]="r.thumb || 'assets/logo-small.png'" alt="" />
+            <span class="recent-text">
+              <strong>{{ r.name }}</strong>
+              <span>{{ spotTypeKey[r.type] ? (spotTypeKey[r.type] | transloco) : r.type }}, {{ r.city }}</span>
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">{{ 'mobile_discover_title' | transloco }}</h2>
+      <button type="button" class="text-button" [class.spinning]="shuffling()" (click)="shuffleSpots()">
+        <ion-icon name="shuffle" aria-hidden="true" />
+        {{ 'mobile_shuffle' | transloco }}
+      </button>
+    </div>
+    <div class="rail cards" #rail>
+      @for (spot of spots.random(); track spot.iuo_id) {
+        <app-spot-card class="rail-card" [spot]="spot" [link]="['/tabs/home/spots', '' + spot.iuo_id]" [lang]="lang()" />
+      } @empty {
+        @for (i of [1, 2]; track i) {
+          <div class="rail-card skeleton">
+            <ion-skeleton-text [animated]="true" class="skeleton-photo" />
+            <ion-skeleton-text [animated]="true" style="width: 60%" />
+            <ion-skeleton-text [animated]="true" style="width: 85%" />
+          </div>
+        }
+      }
+    </div>
+  </section>
+
+  <app-owner-card class="owner" />
+</ion-content>

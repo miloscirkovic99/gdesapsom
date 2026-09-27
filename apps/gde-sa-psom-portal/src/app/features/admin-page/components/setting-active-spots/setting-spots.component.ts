@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../../../../shared/components/card/card.component';
-import { SpotsStore } from 'apps/gde-sa-psom-portal/src/app/shared/store/spots.store';
+import { SpotsStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
-import { DialogService } from 'apps/gde-sa-psom-portal/src/app/core/services/dialog.service';
-import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs/add-location/add-location.component';
+import { DialogService } from '../../../../core/services/dialog.service';
+import { AddSpotComponent } from '../../../../shared/dialogs/add-location/add-location.component';
+import { refreshAosOn } from '../../../../core/aos/refresh-aos-on';
 
 @Component({
   selector: 'app-setting-spots',
@@ -16,6 +17,9 @@ import { AddSpotComponent } from 'apps/gde-sa-psom-portal/src/app/shared/dialogs
 export class SettingSpotsComponent {
   spotsStore = inject(SpotsStore);
   private dialogService = inject(DialogService);
+  constructor() {
+    refreshAosOn(() => this.spotsStore.spots());
+  }
   onSearchUpdated(event: any) {
     this.onSubmit(event,true);
   }
@@ -38,7 +42,7 @@ export class SettingSpotsComponent {
       data: data.data,
       isEdit: true,
       onSave: (form: any) => {
-        this.spotsStore.updateSpot(form.form);
+        this.spotsStore.updateSpot(form.form, () => this.dialogService.closeDialog());
       },
     };
     switch (data.action) {

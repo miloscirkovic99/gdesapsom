@@ -5,9 +5,11 @@ import {
   signal,
   HostListener,
   OnDestroy,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
 @Component({
   selector: 'app-pwa-install-dialog',
@@ -24,6 +26,7 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   showDialog = signal(false);
   isIOS = signal(false);
   private deferredPrompt: any;
+  private readonly analytics = inject(AnalyticsService);
   readonly PWA_FIRST_VISIT_KEY = 'pwa_first_visit';
   private beforeInstallHandler = (e: Event) => {
     e.preventDefault();
@@ -36,7 +39,11 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.detectPlatform();
+    const platform = this.detectPlatform();
+    // Desktop browsers get no install dialog, and neither does the installed app itself.
+    if (!platform || this.isStandalone()) return;
+
+    this.isIOS.set(platform === 'ios');
     this.checkFirstVisit();
     this.setupInstallPrompt();
   }
@@ -46,9 +53,26 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
     window.removeEventListener('appinstalled', this.appInstalledHandler);
   }
 
-  private detectPlatform(): void {
+  /** null for desktop browsers. */
+  private detectPlatform(): 'ios' | 'android' | null {
     const ua = navigator.userAgent;
-    this.isIOS.set(/iPad|iPhone|iPod/.test(ua) && !('MSStream' in window));
+    // iPadOS 13+ Safari sends a desktop Mac user agent; only touch support gives it away.
+    const isIPadOS = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+    if (/iPad|iPhone|iPod/.test(ua) || isIPadOS) return 'ios';
+    if (/Android/i.test(ua)) return 'android';
+    return null;
+  }
+
+  /**
+   * True when opened from the home screen. iOS keeps the installed app's
+   * storage apart from Safari's, so `pwa_first_visit` alone would offer the
+   * install again on its first launch.
+   */
+  private isStandalone(): boolean {
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true
+    );
   }
 
   private checkFirstVisit(): void {
@@ -91,6 +115,7 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
     this.deferredPrompt.userChoice
       .then((choiceResult: any) => {
         this.isLoading.set(false);
+        this.analytics.trackPwaInstall(choiceResult.outcome);
 
         if (choiceResult.outcome === 'accepted') {
           localStorage.setItem('pwa_installed', 'true');

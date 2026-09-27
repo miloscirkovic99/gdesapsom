@@ -1,0 +1,132 @@
+/* Shared by the dog food and pet shop detail pages. */
+.state {
+  text-align: center;
+  color: var(--ion-color-medium);
+  padding-top: 64px;
+}
+
+.photos {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  background: #fff;
+
+  img {
+    flex: 0 0 80%;
+    height: 260px;
+    object-fit: contain;
+    scroll-snap-align: start;
+  }
+
+  &.single img {
+    flex-basis: 100%;
+  }
+}
+
+h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 20px 0 8px;
+}
+
+.brand {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ion-color-medium);
+  margin: 0 0 4px;
+}
+
+.chips ion-chip:first-child {
+  margin-inline-start: 0;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+.text {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--ion-color-medium);
+}
+
+.in {
+  color: var(--ion-color-success);
+}
+
+.out {
+  color: var(--ion-color-medium);
+}
+
+.offer-actions {
+  --min-height: 40px;
+  --padding-bottom: 8px;
+}
+
+ion-badge {
+  margin-inline-start: 6px;
+  vertical-align: middle;
+}
+
+ion-thumbnail {
+  --size: 56px;
+  --border-radius: 8px;
+
+  img {
+    object-fit: contain;
+    background: #fff;
+  }
+}
+
+.offer-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.8rem;
+
+  strong {
+    color: var(--ion-color-primary);
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+}
+
+.shop-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  p {
+    margin: 2px 0 0;
+  }
+}
+
+.directions {
+  margin-top: 12px;
+}

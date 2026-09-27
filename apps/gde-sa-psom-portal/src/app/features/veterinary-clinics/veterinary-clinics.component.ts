@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { VetClinicsStore } from '../../shared/store/vetclinics.store';
+import { VetClinic, VetClinicsStore, SharedStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import {
   FormBuilder,
@@ -12,23 +12,10 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { SharedStore } from '../../shared/store/shared.store';
-import { ReplaySubject, takeUntil } from 'rxjs';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { AnalyticsService } from '../../core/analytics/analytics.service';
-import { SearchContext } from '../../core/analytics/analytics.events';
-import {
-  DirectionsProvider,
-  ItemCategory,
-  SearchCategory,
-  SearchType,
-} from '../../core/analytics/analytics.taxonomy';
-
-/** A `search` event waiting for its results so it can carry the real `results_count`. */
-interface PendingSearch {
-  params: SearchContext;
-  loadingSeen: boolean;
-}
+import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rxjs';
+import { filterTownshipsMulti, SEARCH_TRACKING_DEBOUNCE_MS } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/services/analytics.service';
+import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 @Component({
   selector: 'app-veterinary-clinics',
@@ -43,17 +30,16 @@ interface PendingSearch {
   templateUrl: './veterinary-clinics.component.html',
   styleUrl: './veterinary-clinics.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-
+  
 })
 export class VeterinaryClinicsComponent {
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   vetClinics = signal<any>([]);
   private http = inject(HttpClient);
-  private analytics = inject(AnalyticsService);
   vetClinicsStore = inject(VetClinicsStore);
   sharedStore=inject(SharedStore)
+  private analytics = inject(AnalyticsService);
   form!: FormGroup;
-  private pendingSearch: PendingSearch | null = null;
 
     /** control for the MatSelect filter keyword multi-selection */
     public townshipMultiFilterCtrl = new FormControl<string>('');
@@ -64,6 +50,7 @@ export class VeterinaryClinicsComponent {
     >(1);
 
   constructor(private fb: FormBuilder) {
+    refreshAosOn(() => this.vetClinicsStore.vetClinicsList());
     this.form = this.fb.group({
       ops_id: new FormControl(null), // Multiple select
       grd_id: new FormControl(null), // Multiple select
@@ -81,27 +68,12 @@ export class VeterinaryClinicsComponent {
         this.filteredtownshipsMulti.next(this.sharedStore.townshipsByCity().slice());
       }
     });
-    // Send the queued `search` once results are in, with the real total.
-    effect(() => {
-      const isLoading = this.vetClinicsStore.isLoading();
-      const pending = this.pendingSearch;
-      if (!pending) return;
-
-      if (isLoading) {
-        pending.loadingSeen = true;
-        return;
-      }
-      if (!pending.loadingSeen) return;
-
-      this.pendingSearch = null;
-      this.analytics.trackSearch({
-        ...pending.params,
-        results_count: this.vetClinicsStore.totalResult(),
-      });
-    });
     this.form.get('word')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((result)=>{
       this.formData(true,result);
     })
+    this.form.get('word')?.valueChanges
+      .pipe(debounceTime(SEARCH_TRACKING_DEBOUNCE_MS), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((word) => this.analytics.trackSearch('vet_clinics', word));
   }
 
   onSelectionChange(event: any) {
@@ -123,6 +95,14 @@ export class VeterinaryClinicsComponent {
     this.filteredtownshipsMulti.next(filteredTownships);
   }
   onSubmit(resetOffset: boolean = false) {
+    // resetOffset is only true for the Apply button; "see more" pages without it.
+    if (resetOffset) {
+      const { ops_id, grd_id } = this.form.value;
+      this.analytics.trackFilterApplied('vet_clinics', [
+        ...(ops_id?.length ? ['ops_id'] : []),
+        ...(grd_id ? ['grd_id'] : []),
+      ]);
+    }
     this.formData(resetOffset);
   }
   formData(resetOffset: boolean = false, word = null) {
@@ -136,34 +116,6 @@ export class VeterinaryClinicsComponent {
     };
 
     this.vetClinicsStore.loadVetclinics({ data });
-    this.queueSearchTracking(data);
-  }
-
-  /** Only a new search counts - "see more" pagination and clearing the filters do not. */
-  private queueSearchTracking(data: {
-    ops_id: string | null;
-    grd_id: number | null;
-    word: string | null;
-    resetOffset: boolean;
-  }): void {
-    if (!data.resetOffset || (!data.word && !data.grd_id && !data.ops_id)) {
-      this.pendingSearch = null;
-      return;
-    }
-
-    const city = data.grd_id
-      ? this.sharedStore.city().find((c: any) => c.grd_id === data.grd_id)?.grd_ime
-      : null;
-
-    this.pendingSearch = {
-      loadingSeen: false,
-      params: {
-        search_term: data.word,
-        search_category: SearchCategory.veterinary,
-        search_type: data.word ? SearchType.text : SearchType.filter,
-        city: city ?? null,
-      },
-    };
   }
 
   resetData() {
@@ -173,7 +125,6 @@ export class VeterinaryClinicsComponent {
       word: null,
       resetOffset: true,
     };
-    this.pendingSearch = null;
     this.vetClinicsStore.loadVetclinics({ data });
   }
   clearFilters() {
@@ -181,22 +132,15 @@ export class VeterinaryClinicsComponent {
     this.resetData();
   }
 
-  navigateToGoogleMaps(item: any) {
-    const location = item.vetc_adresa;
+  googleMapsUrl(item: VetClinic): string | null {
+    return item?.vetc_adresa
+      ? `https://www.google.com/maps?q=${encodeURIComponent(item.vetc_adresa)}`
+      : null;
+  }
 
-    // Check if location exists
-    if (location) {
-      this.analytics.trackGetDirections({
-        item_id: String(item?.vetc_id ?? ''),
-        item_category: ItemCategory.veterinary,
-        city: item?.grd_ime ?? null,
-        provider: DirectionsProvider.googleMaps,
-      });
-      const googleMapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(
-        location
-      )}`;
-      window.open(googleMapsUrl, '_blank'); // Open in a new tab
-    }
+  /** `vet-<id>` names the clinic in GA4 (`venue_slug`); clinics have no slug. */
+  venueSlug(item: VetClinic): string | null {
+    return item?.vetc_id ? `vet-${item.vetc_id}` : null;
   }
 
   disableForm(): boolean {

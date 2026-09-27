@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RouterModule } from '@angular/router';
-import { RouteConstants } from '../../constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 
 @Component({
   selector: 'app-footer',

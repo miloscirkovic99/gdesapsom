@@ -1,1 +1,5 @@
 node_modules
+
+# Capacitor native projects (the web bundle is copied into them)
+apps/gde-sa-psom-mobile/android
+apps/gde-sa-psom-mobile/ios

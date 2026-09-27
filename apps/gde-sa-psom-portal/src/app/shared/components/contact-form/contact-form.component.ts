@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ContactFormService } from './contact-form.service';
+import { ContactFormService } from '@gde/shared/data-access/core';
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({

@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@gde/shared/data-access": ["libs/shared/data-access/src/index.ts"],
+      "@gde/shared/data-access/core": ["libs/shared/data-access/src/core.ts"],
+      "@gde/shared/util": ["libs/shared/util/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

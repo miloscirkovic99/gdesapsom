@@ -1,0 +1,48 @@
+// Shared look for the catalog admin dialogs: Material dialog shell with
+// daisyUI form controls. Every dialog opens with `panelClass: 'admin-dialog'`.
+::ng-deep {
+  .admin-dialog .mat-mdc-dialog-surface {
+    @apply rounded-2xl;
+  }
+  .admin-dialog .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    @apply w-full text-sm text-base-content bg-base-200 rounded-lg border border-base-300 shadow-sm #{!important};
+  }
+  .admin-dialog .mat-mdc-select-placeholder {
+    @apply text-sm text-base-content/50;
+  }
+  .admin-dialog .mat-select-search-input {
+    @apply bg-base-100 #{!important};
+  }
+  .admin-dialog mat-label {
+    @apply text-sm text-base-content/70;
+  }
+  .admin-dialog .mat-mdc-select-min-line {
+    @apply text-sm text-base-content;
+  }
+  .admin-dialog .mat-mdc-form-field-subscript-wrapper {
+    @apply hidden;
+  }
+  .admin-dialog .mat-mdc-dialog-content {
+    @apply max-h-[70vh];
+  }
+}
+
+.admin-form-field {
+  @apply flex flex-col gap-1.5;
+}
+
+.admin-label {
+  @apply text-sm font-medium text-base-content/80;
+}
+
+.admin-hint {
+  @apply text-xs text-base-content/60;
+}
+
+.admin-dialog-title {
+  @apply font-display text-xl sm:text-2xl font-bold px-6 sm:px-8 pt-6 pb-3 flex items-center justify-between gap-6;
+}
+
+.admin-dialog-actions {
+  @apply px-6 sm:px-8 pb-6 pt-2 flex justify-end gap-2;
+}

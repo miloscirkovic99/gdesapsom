@@ -1,16 +1,406 @@
-.hero-shape {
-  @apply w-64 h-64 bg-secondary/20 relative rounded-tl-[15%] rounded-bl-[100%] rounded-tr-[15%] rounded-br-[12%] max-sm:w-44 max-sm:h-44 overflow-hidden animate-float;
+/*
+ * Landing page tokens
+ * Colors come from the daisyUI theme (base-*, secondary) so light and dark
+ * both work. This file only adds the type scale, rhythm and layout.
+ */
+:host {
+  display: block;
 }
 
-.hero-shape--alt {
-  @apply rounded-tl-[15%] rounded-bl-[12%] rounded-tr-[15%] rounded-br-[100%];
-  animation-delay: 0.5s;
+.lp {
+  @apply pb-6;
 }
 
-.quick-filter-chip {
-  @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium
-         bg-base-200 text-base-content border border-base-300
-         hover:bg-secondary hover:text-secondary-content hover:border-secondary
-         transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md;
+/* ── Type scale (1.25 ratio, Dosis for display, Inter for reading) ── */
+.lp-h1 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(2.6rem, 5.6vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  max-width: 13ch;
 }
 
+.lp-h2 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.lp-h2--sm {
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+}
+
+.lp-h3 {
+  @apply font-display text-xl font-bold text-base-content;
+  line-height: 1.2;
+}
+
+.lp-lead {
+  @apply mt-5 text-base-content/70 leading-relaxed;
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+  max-width: 56ch;
+}
+
+.lp-body {
+  @apply mt-1.5 text-base-content/70 leading-relaxed;
+  max-width: 50ch;
+}
+
+.lp-link {
+  @apply text-sm font-medium text-base-content/70 underline-offset-4 hover:text-base-content hover:underline;
+}
+
+.lp-link--lg {
+  @apply text-base font-semibold text-base-content underline decoration-base-300 decoration-2 hover:decoration-secondary;
+}
+
+/* ── Buttons: one shape, three emphasis levels ── */
+.lp-btn {
+  @apply h-12 min-h-12 rounded-xl px-6 text-base font-semibold normal-case;
+}
+
+.lp-btn--sm {
+  @apply h-11 min-h-11 px-5 text-[15px];
+}
+
+.lp-btn--quiet {
+  @apply text-base-content/80 hover:bg-base-200 hover:text-base-content;
+}
+
+/* ── Vertical rhythm ── */
+.lp-section {
+  @apply pt-20 md:pt-28;
+}
+
+.lp-section__title {
+  max-width: 22ch;
+}
+
+.lp-section__head {
+  @apply mb-2 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between;
+}
+
+/* ── Hero ── */
+.lp-hero {
+  @apply grid grid-cols-[minmax(0,1fr)] items-center gap-10 pt-8 sm:pt-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pt-20;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.lp-hero__actions {
+  @apply mt-8 flex flex-col gap-3 sm:flex-row sm:items-center;
+}
+
+.lp-hero__trust {
+  @apply mt-5 text-sm text-base-content/60;
+  max-width: 48ch;
+}
+
+/* Live product panel */
+.lp-panel {
+  @apply rounded-2xl border border-base-300 bg-base-100 p-3 sm:p-4;
+  box-shadow: 0 32px 64px -32px rgb(2 6 23 / 0.35);
+}
+
+.lp-panel__search {
+  @apply flex items-center gap-2 rounded-xl border border-base-300 bg-base-200 py-1 pl-3 pr-1 transition-colors;
+
+  &:focus-within {
+    @apply border-secondary ring-2 ring-secondary/25;
+  }
+
+  input {
+    @apply min-w-0 flex-1 bg-transparent py-2 text-base text-base-content outline-none placeholder:text-base-content/45;
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+}
+
+.lp-panel__search-icon {
+  @apply h-5 w-5 shrink-0 text-base-content/50;
+}
+
+.lp-panel__submit {
+  @apply h-9 min-h-9 rounded-lg px-4 normal-case;
+}
+
+.lp-panel__head {
+  @apply flex items-center justify-between px-2 pb-1 pt-4 text-sm text-base-content/60;
+}
+
+.lp-panel__list {
+  @apply flex flex-col gap-1;
+}
+
+.lp-row {
+  @apply flex gap-3 rounded-xl p-2 transition-colors;
+
+  &:hover,
+  &:focus-visible {
+    @apply bg-base-200;
+  }
+}
+
+.lp-row--skeleton {
+  @apply animate-pulse;
+
+  .lp-row__body {
+    @apply flex flex-col justify-center gap-2;
+  }
+}
+
+.lp-row__img {
+  @apply h-16 w-16 shrink-0 rounded-lg bg-base-200 object-cover sm:h-[4.5rem] sm:w-[4.5rem];
+}
+
+.lp-row__body {
+  @apply min-w-0 flex-1;
+}
+
+.lp-row__top {
+  @apply flex items-center justify-between gap-2;
+}
+
+.lp-row__name {
+  @apply truncate font-semibold text-base-content;
+}
+
+.lp-row__meta {
+  @apply mt-0.5 truncate text-sm text-base-content/60;
+}
+
+.lp-row__facts {
+  @apply mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-base-content/75;
+}
+
+.lp-tag {
+  @apply inline-flex shrink-0 items-center rounded-md border border-base-300 px-1.5 py-0.5 text-xs font-medium text-base-content/70;
+}
+
+.lp-fact {
+  @apply inline-flex items-center gap-1;
+}
+
+.lp-fact__check {
+  @apply h-3.5 w-3.5 text-secondary;
+}
+
+.lp-skel {
+  @apply h-3 rounded bg-base-300;
+}
+
+/* ── Category strip: edge-to-edge scroll on phones, grid on desktop ── */
+.lp-cats {
+  @apply pt-12 md:pt-16;
+}
+
+.lp-cats__title {
+  @apply mb-3 text-sm font-semibold text-base-content/60;
+}
+
+.lp-cats__list {
+  @apply -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0 md:grid md:grid-cols-4 md:overflow-visible lg:grid-cols-7;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+
+  > li {
+    flex: none;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.lp-cat {
+  @apply flex min-h-[44px] shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-base-300 bg-base-100 px-4 py-3 text-sm font-medium text-base-content transition-colors md:flex-col md:items-start md:gap-3 md:py-4;
+  scroll-snap-align: start;
+
+  &:hover,
+  &:focus-visible {
+    @apply border-secondary bg-secondary/5;
+  }
+
+  &:hover .lp-cat__icon,
+  &:focus-visible .lp-cat__icon {
+    @apply text-secondary;
+  }
+}
+
+.lp-cat__icon {
+  @apply h-5 w-5 shrink-0 text-base-content/60 transition-colors;
+}
+
+/* ── The question ── */
+.lp-problem {
+  @apply max-w-3xl;
+}
+
+.lp-problem__q {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.lp-problem__list {
+  @apply mt-10 grid gap-6 sm:grid-cols-3 sm:gap-5;
+}
+
+.lp-problem__item {
+  @apply border-t-2 border-base-300 pt-4 leading-relaxed text-base-content/75;
+}
+
+/* ── The answer: three facts next to a real listing ── */
+.lp-answer {
+  @apply grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-2 lg:items-center lg:gap-16;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.lp-facts {
+  @apply mt-8 flex flex-col divide-y divide-base-300 border-y border-base-300;
+}
+
+.lp-facts__item {
+  @apply flex gap-4 py-5;
+}
+
+.lp-facts__icon {
+  @apply mt-0.5 h-6 w-6 shrink-0 text-secondary;
+}
+
+.lp-answer__example {
+  @apply lg:justify-self-end;
+}
+
+.lp-example {
+  @apply w-full max-w-md overflow-hidden rounded-2xl border border-base-300 bg-base-100;
+  box-shadow: 0 32px 64px -32px rgb(2 6 23 / 0.35);
+}
+
+.lp-example--skeleton {
+  @apply animate-pulse;
+
+  .lp-example__body {
+    @apply gap-3;
+  }
+}
+
+.lp-example__img {
+  @apply h-52 w-full bg-base-200 object-cover sm:h-60;
+}
+
+.lp-example__body {
+  @apply flex flex-col gap-2 p-5;
+}
+
+.lp-example__name {
+  @apply truncate font-display text-lg font-bold text-base-content;
+}
+
+.lp-example__addr {
+  @apply flex items-center gap-2 text-sm text-base-content/60;
+}
+
+.lp-example__facts {
+  @apply mt-2 grid grid-cols-2 gap-3 border-t border-base-300 pt-4;
+
+  dt {
+    @apply mb-0.5 text-xs text-base-content/55;
+  }
+
+  dd {
+    @apply text-sm font-medium text-base-content;
+  }
+}
+
+.lp-example__caption {
+  @apply mt-3 text-xs text-base-content/50;
+}
+
+/* ── Steps (a real sequence, so the numbers earn their place) ── */
+.lp-steps {
+  @apply mt-10 grid gap-8 md:grid-cols-3 md:gap-6;
+}
+
+.lp-step {
+  @apply border-t-2 border-base-300 pt-5;
+}
+
+.lp-step__n {
+  @apply mb-4 block font-display text-4xl font-bold leading-none text-secondary;
+}
+
+/* ── Community ── */
+.lp-community {
+  @apply grid gap-4 md:grid-cols-2;
+}
+
+.lp-community__panel {
+  @apply flex flex-col items-start rounded-2xl border border-base-300 p-6 sm:p-8;
+}
+
+.lp-community__panel--tint {
+  @apply border-transparent bg-base-200;
+}
+
+.lp-community__cta {
+  @apply mt-6;
+}
+
+/* ── Final call to action ── */
+.lp-final {
+  @apply mt-20 grid items-center gap-8 rounded-3xl bg-base-200 px-6 py-12 sm:px-10 sm:py-16 md:mt-28 md:grid-cols-[1fr_auto];
+}
+
+.lp-final__actions {
+  @apply mt-8 flex flex-col gap-4 sm:flex-row sm:items-center;
+}
+
+.lp-final__note {
+  @apply text-sm text-base-content/60;
+}
+
+.lp-final__dog {
+  @apply hidden h-auto w-40 md:block lg:w-52;
+}
+
+/* ── Motion: one orchestrated entrance, nothing else moves on its own ── */
+@keyframes lp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lp-rise {
+  animation: lp-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--d, 0) * 90ms);
+}
+
+.lp-row-wrap {
+  animation: lp-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(120ms + var(--d, 0) * 80ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-rise,
+  .lp-row-wrap {
+    animation: none;
+  }
+}

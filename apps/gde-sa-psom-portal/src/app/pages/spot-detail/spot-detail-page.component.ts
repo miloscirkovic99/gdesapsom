@@ -1,32 +1,28 @@
-import { Component, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapGarden,
-  descriptionToKeyMapSpot,
-} from '../../shared/helpers/map.helpers';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, RouteConstants, cleanApiText, venueLinkType } from '@gde/shared/util';
 import { SnackbarService } from '../../core/services/snackbar.service';
-import { SeoService } from '../../core/services/seo.service';
-import { SpotsStore } from '../../shared/store/spots.store';
+import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
+import { SpotsStore } from '@gde/shared/data-access';
+import { spotStructuredData } from '../../shared/utils/structured-data';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
-import { AnalyticsService } from '../../core/analytics/analytics.service';
-import { ItemRef } from '../../core/analytics/analytics.events';
-import {
-  ContentType,
-  DestinationType,
-  DirectionsProvider,
-  MapType,
-  PageType,
-  ShareMethod,
-  toItemCategory,
-} from '../../core/analytics/analytics.taxonomy';
 
-/** The listing identity every business-action event on this page carries. */
-type SpotRef = ItemRef;
+const STRUCTURED_DATA_ID = 'spot';
 
 @Component({
   selector: 'app-spot-detail-page',
@@ -36,7 +32,7 @@ type SpotRef = ItemRef;
   styleUrl: './spot-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpotDetailPageComponent {
+export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
@@ -45,10 +41,10 @@ export class SpotDetailPageComponent {
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
   private seoService = inject(SeoService);
+  private sanitizer = inject(DomSanitizer);
   private analytics = inject(AnalyticsService);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
-  private mapOpenTracked = false;
 
   @ViewChild('startLocationInput') startLocationInput!: ElementRef<HTMLInputElement>;
 
@@ -58,6 +54,65 @@ export class SpotDetailPageComponent {
   readonly isLoading = signal(false);
   readonly isLoadingDirections = signal(false);
   readonly isGettingLocation = signal(false);
+
+  /** Spots have no slug, so `spot-<id>` names the venue in GA4 (`venue_slug`). */
+  readonly venueSlug = computed<string | null>(() => {
+    const id = this.spot()?.iuo_id;
+    return id ? `spot-${id}` : null;
+  });
+
+  /** "Sajt ili društvena mreža" holds either a website or an Instagram/Facebook page. */
+  readonly websiteLinkType = computed(() => venueLinkType(this.spot()?.iuo_link_web));
+
+  /** Null for spots saved with the literal description "null". */
+  readonly spotDescription = computed(() => cleanApiText(this.spot()?.iuo_opis));
+
+  /** "lat,lon" for the map apps; null when the spot has no coordinates. */
+  private readonly coordinates = computed<string | null>(() => {
+    const data = this.spot();
+    return data?.latitude && data?.longitude ? `${data.latitude},${data.longitude}` : null;
+  });
+
+  readonly googleMapsUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://www.google.com/maps/dir/?api=1&destination=${at}` : null;
+  });
+
+  readonly wazeUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://waze.com/ul?ll=${at}&navigate=yes` : null;
+  });
+
+  readonly appleMapsUrl = computed(() => {
+    const at = this.coordinates();
+    return at ? `https://maps.apple.com/?daddr=${at}` : null;
+  });
+
+  private readonly shareText = computed(() => encodeURIComponent(this.spot()?.iuo_ime ?? ''));
+
+  /**
+   * Share targets are real links rather than window.open() calls, so the
+   * outbound click tracker sees them and middle-click / Ctrl+click work.
+   */
+  readonly facebookShareUrl = computed(
+    () => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.spotUrl)}`,
+  );
+
+  readonly whatsAppShareUrl = computed(
+    () => `https://wa.me/?text=${this.shareText()}%20${encodeURIComponent(this.spotUrl)}`,
+  );
+
+  readonly telegramShareUrl = computed(
+    () => `https://t.me/share/url?url=${encodeURIComponent(this.spotUrl)}&text=${this.shareText()}`,
+  );
+
+  /** viber: is not on Angular's safe-URL list, so the value has to be trusted explicitly. */
+  readonly viberShareUrl = computed(() =>
+    this.sanitizer.bypassSecurityTrustUrl(
+      `viber://forward?text=${this.shareText()}%20${encodeURIComponent(this.spotUrl)}`,
+    ),
+  );
+
   currentSlide = 1;
 
   descriptionToKeyMap = descriptionToKeyMap;
@@ -80,10 +135,6 @@ export class SpotDetailPageComponent {
           this.spot.set(response);
           this.isLoading.set(false);
           this.updateSeo(response, id);
-          this.analytics.trackViewItem({
-            ...this.spotRef(),
-            item_name: response?.iuo_ime ?? null,
-          });
           setTimeout(() => {
             this.initializeMap();
             this.geocodeAddress(`${response.iuo_adressa},${response.grd_ime}`);
@@ -102,24 +153,26 @@ export class SpotDetailPageComponent {
 
   /**
    * Without this the page keeps the generic route title and the site-wide
-   * description, so all 127 spot pages look identical to a crawler.
+   * description, so all 127 spot pages look identical to a crawler. Also
+   * publishes the spot as schema.org LocalBusiness, removed in ngOnDestroy.
    * The spot photo is a base64 blob rather than a URL, so no og:image is passed.
    */
   private updateSeo(spot: any, id: string): void {
-    const name = spot?.iuo_ime?.trim();
+    const name = cleanApiText(spot?.iuo_ime);
     if (!name) return;
 
-    const city = spot?.grd_ime?.trim();
-    const type = spot?.ugo_ime?.trim();
-    const address = spot?.iuo_adressa?.trim();
-    const allowed = spot?.sta_ime?.trim();
+    const city = cleanApiText(spot?.grd_ime);
+    const type = cleanApiText(spot?.ugo_ime);
+    const address = cleanApiText(spot?.iuo_adressa);
+    const allowed = cleanApiText(spot?.sta_ime);
+    const path = `/spots/${id}`;
 
     const title = [name, type && city ? `${type} u ${city}` : type || city]
       .filter(Boolean)
       .join(' - ');
 
     const description =
-      spot?.iuo_opis?.trim() ||
+      cleanApiText(spot?.iuo_opis) ||
       [
         `${name} je pet-friendly ${(type || 'objekat').toLowerCase()}`,
         [address, city].filter(Boolean).join(', '),
@@ -131,8 +184,11 @@ export class SpotDetailPageComponent {
     this.seoService.update({
       title: `${title} | Gde sa psom`,
       description,
-      path: `/spots/${id}`,
+      path,
     });
+
+    const structuredData = spotStructuredData(spot, { url: `${SITE_ORIGIN}${path}`, description });
+    if (structuredData) this.seoService.setStructuredData(STRUCTURED_DATA_ID, structuredData);
   }
 
   ngAfterViewInit(): void {
@@ -141,6 +197,10 @@ export class SpotDetailPageComponent {
       this.initializeMap();
       this.geocodeAddress(`${data.iuo_adressa},${data.grd_ime}`);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
   }
 
   goToSlide(event: Event, slide: number): void {
@@ -156,67 +216,12 @@ export class SpotDetailPageComponent {
     return this.document.location.href;
   }
 
-  onWebsiteClick(): void {
-    this.analytics.trackOutboundClick({
-      ...this.spotRef(),
-      destination_type: DestinationType.website,
-    });
-  }
-
-  onPhoneClick(): void {
-    this.analytics.trackClickToCall(this.spotRef());
-  }
-
-  shareOnFacebook(): void {
-    this.trackShare(ShareMethod.facebook);
-    const url = encodeURIComponent(this.spotUrl);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
-  }
-
-  shareOnViber(): void {
-    this.trackShare(ShareMethod.viber);
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`viber://forward?text=${text}%20${url}`, '_self');
-  }
-
-  shareOnWhatsApp(): void {
-    this.trackShare(ShareMethod.whatsapp);
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`https://wa.me/?text=${text}%20${url}`, '_blank', 'noopener,noreferrer');
-  }
-
-  shareOnTelegram(): void {
-    this.trackShare(ShareMethod.telegram);
-    const url = encodeURIComponent(this.spotUrl);
-    const text = encodeURIComponent(this.spot()?.iuo_ime ?? '');
-    window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank', 'noopener,noreferrer');
-  }
-
   copyLink(): void {
     navigator.clipboard.writeText(this.spotUrl).then(() => {
-      this.trackShare(ShareMethod.copyLink);
+      this.analytics.trackShare('copy_link', 'spot', this.venueSlug());
       const msg = this.translocoService.translate('link_copied');
       const btn = this.translocoService.translate('close');
       this.snackbarService.openSnackbar(msg, btn, 'success-snackbar');
-    });
-  }
-
-  private spotRef(): SpotRef {
-    const spot = this.spot();
-    return {
-      item_id: String(spot?.iuo_id ?? this.route.snapshot.paramMap.get('id') ?? ''),
-      item_category: toItemCategory(spot?.ugo_ime),
-      city: spot?.grd_ime ?? null,
-    };
-  }
-
-  private trackShare(method: ShareMethod): void {
-    this.analytics.trackShare({
-      content_type: ContentType.spot,
-      item_id: this.spotRef().item_id,
-      method,
     });
   }
 
@@ -230,11 +235,6 @@ export class SpotDetailPageComponent {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
-
-    if (!this.mapOpenTracked) {
-      this.mapOpenTracked = true;
-      this.analytics.trackMapOpen({ map_type: MapType.leaflet, page_type: PageType.spotDetail });
-    }
   }
 
   private geocodeAddress(address: string): void {
@@ -268,8 +268,6 @@ export class SpotDetailPageComponent {
         )
         .openPopup();
 
-      marker.on('click', () => this.analytics.trackMapMarkerClick(this.spotRef()));
-
       // Ensure marker is centered and visible
       this.map.flyTo([lat, lon], 18, {
         duration: 1,
@@ -283,43 +281,6 @@ export class SpotDetailPageComponent {
   closeDirectionsModal(): void {
     this.showDirectionsModal.set(false);
     // this.showInlineRoute.set(false);
-  }
-
-  openInGoogleMaps(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    this.trackGetDirections(DirectionsProvider.googleMaps);
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${data.latitude},${data.longitude}`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
-  }
-
-  openInWaze(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    this.trackGetDirections(DirectionsProvider.waze);
-    window.open(
-      `https://waze.com/ul?ll=${data.latitude},${data.longitude}&navigate=yes`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
-  }
-
-  openInAppleMaps(): void {
-    const data = this.spot();
-    if (!data?.latitude || !data?.longitude) return;
-    this.trackGetDirections(DirectionsProvider.appleMaps);
-    window.open(
-      `https://maps.apple.com/?daddr=${data.latitude},${data.longitude}`,
-      '_blank', 'noopener,noreferrer'
-    );
-    this.closeDirectionsModal();
-  }
-
-  private trackGetDirections(provider: DirectionsProvider): void {
-    this.analytics.trackGetDirections({ ...this.spotRef(), provider });
   }
 
   showRouteOnMap(): void {

@@ -15,10 +15,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Router } from '@angular/router';
 import { ReplaySubject, takeUntil } from 'rxjs';
-import { SharedStore } from '../../shared/store/shared.store';
-import { ParksStore } from '../../shared/store/parks.store';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { SharedStore, ParksStore } from '@gde/shared/data-access';
+import { filterTownshipsMulti, RouteConstants } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -46,6 +45,7 @@ export class AddParkPageComponent {
 
   readonly sharedStore = inject(SharedStore);
   readonly parksStore = inject(ParksStore);
+  private readonly analytics = inject(AnalyticsService);
 
   townshipMultiFilterCtrl = new FormControl<string>('');
   filteredtownshipsMulti = new ReplaySubject<any[]>(1);
@@ -84,6 +84,8 @@ export class AddParkPageComponent {
   onSave(): void {
     if (this.parkForm.valid) {
       this.parksStore.addPark(this.parkForm.value);
+      // addPark has no success callback, so this counts submits, not saves.
+      this.analytics.trackSubmission('park');
       this.router.navigate(['/' + RouteConstants.petParks]);
     }
   }

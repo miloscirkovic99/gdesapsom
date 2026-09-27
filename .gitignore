@@ -88,3 +88,19 @@ logs/
 *.temp
 *~
 .cache/
+
+# Izuzeci: shema baze i dokumentacija feature-a se verzionisu
+!db/**/*.sql
+!db/**/*.md
+!docs/**/*.md
+
+# Mobile app signing (apps/gde-sa-psom-mobile). Upload keys never go in the repo.
+*.jks
+*.keystore
+keystore.properties
+apps/gde-sa-psom-mobile/android/app/release/
+**/google-services.json
+**/GoogleService-Info.plist
+# Built Android packages (e.g. the debug APK copied to the repo root for testing)
+*.apk
+*.aab

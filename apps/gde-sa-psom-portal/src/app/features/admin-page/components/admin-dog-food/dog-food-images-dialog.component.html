@@ -1,0 +1,88 @@
+<h1 class="admin-dialog-title">
+  <span class="truncate">{{ 'admin_images_title' | transloco: { name: data.name } }}</span>
+  <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" (click)="close()" [attr.aria-label]="'admin_close' | transloco">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+</h1>
+
+<mat-dialog-content>
+  <!-- Upload -->
+  <div class="card bg-base-200/60 border border-base-300/40 mb-4">
+    <div class="card-body p-4 gap-2">
+      <label class="admin-form-field">
+        <span class="admin-label">{{ 'admin_upload_images' | transloco }}</span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          class="file-input file-input-bordered file-input-sm w-full"
+          (change)="onFilesSelected($event)"
+          [disabled]="isBusy()"
+        />
+      </label>
+      <p class="admin-hint">{{ 'admin_image_hint' | transloco }}</p>
+      @if (progress(); as p) {
+        <p class="text-sm flex items-center gap-2">
+          <span class="loading loading-spinner loading-xs"></span>
+          {{ 'admin_uploading' | transloco: { done: p.done, total: p.total } }}
+        </p>
+      }
+      @if (uploadError(); as errorKey) {
+        <p class="text-error text-xs">{{ errorKey | transloco }}</p>
+      }
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  @if (isLoading() && images().length === 0) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else if (images().length === 0) {
+    <p class="text-center text-base-content/60 p-6">{{ 'admin_no_images' | transloco }}</p>
+  } @else {
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" [class.opacity-60]="isBusy()">
+      @for (image of images(); track image.id; let index = $index) {
+        <div class="card bg-base-200/60 border border-base-300/40">
+          <figure class="aspect-square bg-base-100">
+            @if (image.thumbnail; as thumbnail) {
+              <img [src]="thumbnail" [alt]="image.altText ?? ''" class="w-full h-full object-cover" loading="lazy" />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center text-base-content/30 text-xs">#{{ image.id }}</div>
+            }
+          </figure>
+          <div class="card-body p-2 gap-1">
+            @if (image.isPrimary) {
+              <span class="badge badge-secondary badge-xs self-start">{{ 'admin_primary' | transloco }}</span>
+            } @else {
+              <button type="button" class="btn btn-ghost btn-xs justify-start" (click)="setPrimary(image)" [disabled]="isBusy()">
+                {{ 'admin_set_primary' | transloco }}
+              </button>
+            }
+            <div class="flex justify-between gap-1">
+              <button type="button" class="btn btn-ghost btn-xs btn-square" (click)="move(index, -1)" [disabled]="isBusy() || index === 0" [title]="'admin_move_up' | transloco">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                </svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-xs btn-square" (click)="move(index, 1)" [disabled]="isBusy() || index === images().length - 1" [title]="'admin_move_down' | transloco">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-xs text-error ml-auto" (click)="remove(image)" [disabled]="isBusy()">
+                {{ 'admin_delete' | transloco }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions class="admin-dialog-actions">
+  <button type="button" class="btn btn-ghost btn-sm" (click)="close()">{{ 'admin_close' | transloco }}</button>
+</mat-dialog-actions>

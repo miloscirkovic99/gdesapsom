@@ -39,6 +39,8 @@ const STATIC_ROUTES = [
   { loc: '/all-spots', src: 'src/app/features/pet-spots-facilities', seed: '2026-04-30' },
   { loc: '/pet-parks', src: 'src/app/features/pet-parks', seed: '2026-04-06' },
   { loc: '/vet-clinics', src: 'src/app/features/veterinary-clinics', seed: '2026-04-06' },
+  { loc: '/dog-food', src: 'src/app/features/dog-food', seed: '2026-09-04' },
+  { loc: '/pet-shops', src: 'src/app/features/pet-shops', seed: '2026-09-04' },
   { loc: '/blog', src: 'src/app/pages/blog/blog-list', seed: '2026-04-30' },
   { loc: '/about-us', src: 'src/app/pages/about-us', seed: '2026-04-06' },
   { loc: '/for-business', src: 'src/app/pages/business-page', seed: '2026-05-01' },
@@ -230,6 +232,46 @@ async function getSpotIds() {
   return [...ids].sort((a, b) => a - b);
 }
 
+/**
+ * `dog-food/all?fields=sitemap` and `pet-shops/all?fields=sitemap` return
+ * `{ data: [{ slug, updatedAt }] }` - slugs only, no images, so one request
+ * covers the whole catalog.
+ *
+ * Until those handlers are pasted into the Mars instance the host answers the
+ * URL with the SPA's index.html; fetchJson reports that as "expected JSON".
+ * Only that specific case is skipped with a warning - any other failure still
+ * aborts the run so a broken API can never silently shrink the sitemap.
+ */
+async function getCatalogEntries(endpoint, pathPrefix) {
+  let data;
+  try {
+    data = await fetchJson(`${API_BASE}/${endpoint}/all?fields=sitemap`);
+  } catch (error) {
+    if (!String(error.message).includes('expected JSON')) throw error;
+    console.warn(`  ${endpoint}/all is not deployed yet - skipping /${pathPrefix}/* entries`);
+    return [];
+  }
+
+  if (!Array.isArray(data?.data)) {
+    throw new Error(`${endpoint}/all did not return a data array`);
+  }
+
+  const bySlug = new Map();
+
+  for (const row of data.data) {
+    const slug = typeof row?.slug === 'string' ? row.slug.trim() : '';
+    if (!slug || bySlug.has(slug)) continue;
+
+    const updated = String(row.updatedAt ?? '').slice(0, 10);
+    bySlug.set(slug, {
+      loc: `/${pathPrefix}/${encodeURIComponent(slug)}`,
+      lastmod: ISO_DATE.test(updated) ? updated : null,
+    });
+  }
+
+  return [...bySlug.values()].sort((a, b) => a.loc.localeCompare(b.loc));
+}
+
 // ── Output ──────────────────────────────────────────────────────────────────
 function buildUrlset(entries) {
   const lines = [
@@ -262,9 +304,16 @@ function normalize(text) {
 async function main() {
   console.log(`Generating sitemap from ${API_BASE}`);
 
-  const [blog, spotIds] = await Promise.all([getBlogEntries(), getSpotIds()]);
+  const [blog, spotIds, dogFood, petShops] = await Promise.all([
+    getBlogEntries(),
+    getSpotIds(),
+    getCatalogEntries('dog-food', 'dog-food'),
+    getCatalogEntries('pet-shops', 'pet-shops'),
+  ]);
   console.log(`  blog posts: ${blog.entries.length}`);
   console.log(`  spots:      ${spotIds.length}`);
+  console.log(`  dog food:   ${dogFood.length}`);
+  console.log(`  pet shops:  ${petShops.length}`);
 
   const entries = [
     ...STATIC_ROUTES.map((route) => {
@@ -277,6 +326,8 @@ async function main() {
     }),
     ...blog.entries,
     ...spotIds.map((id) => ({ loc: `/spots/${id}`, lastmod: null })), // API has no date field for spots
+    ...dogFood,
+    ...petShops,
   ];
 
   if (entries.length < STATIC_ROUTES.length + 1) {

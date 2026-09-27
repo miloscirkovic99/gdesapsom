@@ -15,16 +15,10 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Router } from '@angular/router';
 import { ReplaySubject, takeUntil } from 'rxjs';
-import {
-  descriptionToKeyMap,
-  descriptionToKeyMapGarden,
-  descriptionToKeyMapSpot,
-} from '../../shared/helpers/map.helpers';
-import { SpotsStore } from '../../shared/store/spots.store';
-import { SharedStore } from '../../shared/store/shared.store';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, filterTownshipsMulti, RouteConstants } from '@gde/shared/util';
+import { SpotsStore, SharedStore } from '@gde/shared/data-access';
 import { fileSizeValidator } from '../../core/validators/file-size-valdiator';
-import { filterTownshipsMulti } from '../../shared/utils/township.util';
-import { RouteConstants } from '../../shared/constants/route.constant';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -52,6 +46,7 @@ export class AddSpotPageComponent {
 
   readonly spotsStore = inject(SpotsStore);
   readonly sharedStore = inject(SharedStore);
+  private readonly analytics = inject(AnalyticsService);
 
   townshipMultiFilterCtrl = new FormControl<string>('');
   filteredtownshipsMulti = new ReplaySubject<any[]>(1);
@@ -156,6 +151,7 @@ export class AddSpotPageComponent {
       };
       this.spotsStore.suggestSpot(formData, () => {
         this.submitting.set(false);
+        this.analytics.trackSubmission('spot');
         this.router.navigate(['/' + RouteConstants.allSpots]);
       }, () => {
         this.submitting.set(false);

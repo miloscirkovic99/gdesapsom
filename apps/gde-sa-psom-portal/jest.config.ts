@@ -13,7 +13,10 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  // Transloco depends on `flat`, which ships as ESM only: let it through the
+  // ignore list and have jest-preset-angular convert it to CJS with esbuild.
+  transformIgnorePatterns: ['node_modules/(?!(.*\\.mjs$|@ngneat/transloco/node_modules/flat/|flat/))'],
+  globals: { ngJest: { processWithEsbuild: ['**/node_modules/flat/index.js'] } },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

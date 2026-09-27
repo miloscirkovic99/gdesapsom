@@ -1,0 +1,147 @@
+<h1 class="admin-dialog-title">
+  <span class="truncate">{{ titleKey | transloco: { name: data.name } }}</span>
+  <button type="button" class="btn btn-ghost btn-sm btn-square shrink-0" (click)="close()" [attr.aria-label]="'admin_close' | transloco">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+</h1>
+
+<mat-dialog-content>
+  <!-- Add offer -->
+  <div class="card bg-base-200/60 border border-base-300/40 mb-4">
+    <div class="card-body p-4 gap-3">
+      <h3 class="font-semibold text-sm">{{ 'admin_add_offer' | transloco }}</h3>
+      @if (partners().length === 0 && !isLoading()) {
+        <p class="admin-hint">{{ 'admin_all_partners_added' | transloco }}</p>
+      } @else {
+        <div class="flex flex-wrap items-end gap-3">
+          <label class="admin-form-field grow min-w-56">
+            <span class="admin-label">{{ partnerPlaceholderKey | transloco }} *</span>
+            <select class="select select-bordered select-sm w-full" [ngModel]="newPartnerId()" (ngModelChange)="newPartnerId.set($event)">
+              <option [ngValue]="null">{{ 'admin_select' | transloco }}</option>
+              @for (partner of partners(); track partner.id) {
+                <option [ngValue]="partner.id">{{ partner.label }}</option>
+              }
+            </select>
+          </label>
+          <label class="admin-form-field w-36">
+            <span class="admin-label">{{ 'admin_field_price' | transloco }}</span>
+            <input type="number" min="0" step="1" class="input input-bordered input-sm w-full" [ngModel]="newPrice()" (ngModelChange)="newPrice.set($event)" />
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer pb-2">
+            <input type="checkbox" class="toggle toggle-secondary toggle-sm" [ngModel]="newInStock()" (ngModelChange)="newInStock.set($event)" />
+            <span class="text-sm">{{ 'admin_in_stock' | transloco }}</span>
+          </label>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="add()" [disabled]="newPartnerId() === null || isAdding()">
+            @if (isAdding()) {
+              <span class="loading loading-spinner loading-xs"></span>
+            }
+            {{ 'add' | transloco }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Existing offers -->
+  @if (isLoading() && rows().length === 0) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else if (rows().length === 0) {
+    <p class="text-center text-base-content/60 p-6">{{ 'admin_no_offers' | transloco }}</p>
+  } @else {
+    <p class="admin-hint mb-2">{{ 'admin_offer_links_hint' | transloco }}</p>
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>{{ (data.mode === 'food' ? 'admin_pet_shops' : 'admin_dog_food') | transloco }}</th>
+            <th class="w-36">{{ 'admin_field_price' | transloco }}</th>
+            <th>{{ 'admin_in_stock' | transloco }}</th>
+            <th>{{ 'admin_field_wolt' | transloco }}</th>
+            <th>{{ 'admin_field_glovo' | transloco }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (state of rows(); track state.row.id) {
+            <tr [class.opacity-60]="state.saving">
+              <td>
+                <div class="flex items-center gap-3">
+                  @if (state.row.thumbnail; as thumbnail) {
+                    <img [src]="thumbnail" alt="" class="w-10 h-10 rounded-lg object-cover bg-base-100 shrink-0" loading="lazy" />
+                  }
+                  <div>
+                    <div class="font-semibold">{{ state.row.partnerName }}</div>
+                    <div class="text-xs text-base-content/60">{{ state.row.partnerDetail }}</div>
+                    @if (state.row.price !== null && !state.dirty) {
+                      <div class="text-xs text-base-content/50">{{ state.row.price | rsdPrice: lang() }}</div>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  class="input input-bordered input-sm w-32"
+                  [ngModel]="state.price"
+                  (ngModelChange)="update(state, { price: $event })"
+                  [disabled]="state.saving"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  class="toggle toggle-secondary toggle-sm"
+                  [ngModel]="state.isInStock"
+                  (ngModelChange)="update(state, { isInStock: $event })"
+                  [disabled]="state.saving"
+                />
+              </td>
+              <td>
+                <input
+                  type="url"
+                  class="input input-bordered input-sm w-44"
+                  [ngModel]="state.woltUrl"
+                  (ngModelChange)="update(state, { woltUrl: $event })"
+                  [placeholder]="state.row.effectiveWoltUrl ?? ''"
+                  [disabled]="state.saving"
+                />
+              </td>
+              <td>
+                <input
+                  type="url"
+                  class="input input-bordered input-sm w-44"
+                  [ngModel]="state.glovoUrl"
+                  (ngModelChange)="update(state, { glovoUrl: $event })"
+                  [placeholder]="state.row.effectiveGlovoUrl ?? ''"
+                  [disabled]="state.saving"
+                />
+              </td>
+              <td>
+                <div class="flex justify-end gap-1">
+                  @if (state.dirty) {
+                    <button type="button" class="btn btn-secondary btn-xs" (click)="saveRow(state)" [disabled]="state.saving">
+                      {{ 'admin_save' | transloco }}
+                    </button>
+                  }
+                  <button type="button" class="btn btn-ghost btn-xs text-error" (click)="removeRow(state)" [disabled]="state.saving">
+                    {{ 'admin_remove' | transloco }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions class="admin-dialog-actions">
+  <button type="button" class="btn btn-ghost btn-sm" (click)="close()">{{ 'admin_close' | transloco }}</button>
+</mat-dialog-actions>

@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
-import { RouteConstants } from '../../../shared/constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 import { AuthService } from '../auth.service';
-import { AnalyticsService } from '../../../core/analytics/analytics.service';
-import { AuthMethod } from '../../../core/analytics/analytics.taxonomy';
 
 @Component({
   selector: 'app-sign-in',
@@ -19,7 +17,6 @@ export class SignInComponent {
   signinForm!: FormGroup;
   protected authService=inject(AuthService);
   private router=inject(Router)
-  private analytics = inject(AnalyticsService);
   constructor() {
     // Initializing the form with controls and validators
     this.signinForm = new FormGroup({
@@ -30,10 +27,7 @@ export class SignInComponent {
   signIn(){
     this.authService.login(this.signinForm.value.email,this.signinForm.value.password).pipe(take(1)).subscribe({
       next:(result)=>{
-      localStorage.setItem('sid',result?.sid);
       this.authService.setToken(result.sid);
-      // Only the method is reported - never the email or the session id.
-      this.analytics.trackLogin({ method: AuthMethod.password });
       this.router.navigate([`${RouteConstants.admin}`])
       }
     })

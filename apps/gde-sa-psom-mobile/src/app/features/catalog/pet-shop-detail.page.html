@@ -1,0 +1,159 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/catalog" text="" />
+    </ion-buttons>
+    <ion-title>{{ shop()?.name }}</ion-title>
+    @if (shop()) {
+      <ion-buttons slot="end">
+        <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
+          <ion-icon slot="icon-only" name="share-social-outline" />
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (shop(); as s) {
+    <section class="ion-padding shop-head">
+      @if (s.logo) {
+        <img class="logo" [src]="s.logo" alt="" />
+      }
+      <div>
+        <h1>{{ s.name }}</h1>
+        <p class="muted">{{ s.townshipName ?? s.cityName }}</p>
+      </div>
+    </section>
+
+    <ion-list lines="full">
+      <ion-item
+        [href]="addressUrl()"
+        target="_blank"
+        rel="noopener"
+        detail="true"
+        data-link-type="venue_maps"
+        [attr.data-venue-slug]="s.slug"
+      >
+        <ion-icon slot="start" name="location-outline" aria-hidden="true" />
+        <ion-label class="ion-text-wrap">
+          <p>{{ 'address' | transloco }}</p>
+          <h3>{{ s.address }}</h3>
+        </ion-label>
+      </ion-item>
+      @if (s.phone) {
+        <ion-item [href]="'tel:' + s.phone" detail="true" data-link-type="venue_phone" [attr.data-venue-slug]="s.slug">
+          <ion-icon slot="start" name="call-outline" aria-hidden="true" />
+          <ion-label>
+            <p>{{ 'phone' | transloco }}</p>
+            <h3>{{ s.phone }}</h3>
+          </ion-label>
+        </ion-item>
+      }
+      @if (s.websiteUrl) {
+        <ion-item button detail="true" (click)="openWebsite()">
+          <ion-icon slot="start" name="globe-outline" aria-hidden="true" />
+          <ion-label class="ion-text-wrap">
+            <p>{{ 'website' | transloco }}</p>
+            <h3>{{ s.websiteUrl }}</h3>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    @if (s.woltUrl || s.glovoUrl) {
+      <section class="ion-padding-horizontal ion-padding-top">
+        <app-delivery-links [woltUrl]="s.woltUrl" [glovoUrl]="s.glovoUrl" [venueSlug]="s.slug" />
+      </section>
+    }
+
+    @if (description(); as d) {
+      <section class="ion-padding">
+        <p class="text">{{ d }}</p>
+      </section>
+    }
+
+    @if (coords(); as c) {
+      <section class="ion-padding">
+        <app-map-view [latitude]="c.latitude" [longitude]="c.longitude" [label]="s.name" />
+        <ion-button
+          expand="block"
+          class="directions"
+          [href]="directionsUrl()"
+          target="_blank"
+          rel="noopener"
+          data-link-type="venue_maps"
+          [attr.data-venue-slug]="s.slug"
+        >
+          <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
+          {{ 'get_directions' | transloco }}
+        </ion-button>
+      </section>
+    }
+
+    <section>
+      <h2 class="ion-padding-horizontal">{{ 'assortment' | transloco }}</h2>
+      @if (s.offers.length) {
+        @if (s.offers.length > 6) {
+          <ion-searchbar
+            [placeholder]="'assortment_search' | transloco"
+            [debounce]="200"
+            (ionInput)="assortmentQuery.set($event.detail.value ?? '')"
+          />
+        }
+        <ion-list>
+          @for (offer of assortment(); track offer.offerId) {
+            <ion-item [routerLink]="['/tabs/catalog/food', offer.food.slug]" detail="false">
+              <ion-thumbnail slot="start">
+                <img [src]="offer.food.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
+              </ion-thumbnail>
+              <ion-label class="ion-text-wrap">
+                <p class="brand">{{ offer.food.brandName }}</p>
+                <h3>{{ offer.food.name }}</h3>
+                <p>
+                  {{ offer.food.foodType | localName: lang() }}
+                  @if (offer.food.packageWeightG) {
+                    · {{ offer.food.packageWeightG | packageWeight: lang() }}
+                  }
+                </p>
+              </ion-label>
+              <ion-note slot="end" class="offer-price">
+                <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
+                <span [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
+                  {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
+                </span>
+              </ion-note>
+            </ion-item>
+          } @empty {
+            <p class="ion-padding-horizontal muted">{{ 'no_results' | transloco }}</p>
+          }
+        </ion-list>
+      } @else {
+        <p class="ion-padding-horizontal muted">{{ 'assortment_soon_text' | transloco }}</p>
+      }
+    </section>
+
+    @if (s.nearby.length) {
+      <section>
+        <h2 class="ion-padding-horizontal">{{ 'nearby_shops' | transloco }}</h2>
+        <ion-list>
+          @for (n of s.nearby; track n.id) {
+            <ion-item [routerLink]="['/tabs/catalog/shops', n.slug]" detail="true">
+              <ion-label class="ion-text-wrap">
+                <h3>{{ n.name }}</h3>
+                <p>{{ n.address }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </section>
+    }
+  } @else if (shops.detailError()) {
+    <div class="state ion-padding">
+      <h3>{{ 'mobile_not_found' | transloco }}</h3>
+      <ion-button fill="outline" (click)="reload()">{{ 'try_again' | transloco }}</ion-button>
+    </div>
+  } @else {
+    <div class="state"><ion-spinner /></div>
+  }
+</ion-content>

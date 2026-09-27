@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- App Links: public pages of the website open in the app
+                 (NativeShellService maps them to tabs). Android only verifies
+                 them once https://www.gdesapsom.com/.well-known/assetlinks.json
+                 lists this app's signing certificate; until then they open in
+                 the browser as before. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="www.gdesapsom.com" />
+                <data android:host="gdesapsom.com" />
+                <data android:pathPrefix="/spots/" />
+                <data android:pathPrefix="/all-spots" />
+                <data android:pathPrefix="/pet-parks" />
+                <data android:pathPrefix="/vet-clinics" />
+                <data android:pathPrefix="/dog-food" />
+                <data android:pathPrefix="/pet-shops" />
+                <data android:pathPrefix="/blog" />
+            </intent-filter>
+        </activity>
+
+        <!-- Firebase Analytics (@capacitor-firebase/analytics). Nothing is collected
+             until the user says yes (AnalyticsConsentService calls setEnabled and
+             setConsent); the ad consent types are never granted. Screens are
+             reported by the web app, not per Activity. Keep the Data safety
+             answers in the app README in line with these. -->
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+    <!-- Permissions -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- @capacitor/geolocation: "near me" searches. GPS is optional so the app
+         still installs on devices without it (network location is enough). -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+    <!-- @capacitor/camera needs no permission: photos are not saved to the gallery. -->
+
+    <!-- Firebase Analytics adds the advertising ID permissions (Google Play services
+         and Privacy Sandbox) for ad attribution; the app shows no ads and does not
+         collect the ID (see the meta-data above), so Play Console can say "no".
+         The install referrer (which store listing or campaign led to the
+         install) stays. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" tools:node="remove" />
+</manifest>

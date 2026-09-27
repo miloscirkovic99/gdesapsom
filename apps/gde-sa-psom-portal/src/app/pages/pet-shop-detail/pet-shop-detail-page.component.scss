@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+// Leaflet panes carry their own z-index; an isolated stacking context keeps
+// the map (and its zoom controls) under the sticky navbar while scrolling.
+#shop-map {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}

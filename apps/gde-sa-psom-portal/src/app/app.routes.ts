@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { RouteConstants } from './shared/constants/route.constant';
+import { RouteConstants } from '@gde/shared/util';
 import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Route[] = [
@@ -117,6 +117,18 @@ export const appRoutes: Route[] = [
     }
   },
   {
+    path:RouteConstants.privacyPolicy,
+    loadComponent: () => {
+      return import('./pages/privacy-policy-page/privacy-policy-page.component').then(
+        (m) => m.PrivacyPolicyPageComponent
+      );
+    },
+    title:'Politika privatnosti - Gde sa psom',
+    data:{
+      description:'Koje podatke prikupljaju sajt i Android aplikacija Gde sa psom, zašto ih prikupljamo i kako njima upravljate.'
+    }
+  },
+  {
     path: RouteConstants.addSpot,
     loadComponent: () => {
       return import('./pages/add-spot/add-spot-page.component').then(
@@ -151,6 +163,56 @@ export const appRoutes: Route[] = [
     // SpotDetailPageComponent overwrites the title and description once the spot loads.
     data:{
       description:'Detalji pet-friendly objekta - adresa, kontakt, tip objekta i koji ljubimci su dobrodošli.'
+    }
+  },
+  {
+    path: RouteConstants.dogFood,
+    loadComponent: () => {
+      return import('./features/dog-food/dog-food-catalog.component').then(
+        (m) => m.DogFoodCatalogComponent
+      );
+    },
+    title: 'Hrana za Pse - Uporedite Cene i Pronađite Prodavnicu - Gde sa psom',
+    data:{
+      description:'Katalog hrane za pse u Srbiji. Filtrirajte po brendu, tipu hrane, uzrastu i veličini rase, uporedite cene i pronađite prodavnicu u kojoj možete da kupite hranu za svog psa.'
+    }
+  },
+  {
+    path: RouteConstants.dogFoodDetail,
+    loadComponent: () => {
+      return import('./pages/dog-food-detail/dog-food-detail-page.component').then(
+        (m) => m.DogFoodDetailPageComponent
+      );
+    },
+    title: 'Hrana za pse - Gde sa psom',
+    // DogFoodDetailPageComponent overwrites the title and description once the product loads.
+    data:{
+      description:'Detalji proizvoda - sastav, pakovanje, cene i prodavnice u kojima je hrana za pse dostupna.'
+    }
+  },
+  {
+    path: RouteConstants.petShops,
+    loadComponent: () => {
+      return import('./features/pet-shops/pet-shops.component').then(
+        (m) => m.PetShopsComponent
+      );
+    },
+    title: 'Prodavnice za Ljubimce u Srbiji - Pet Shop u Blizini - Gde sa psom',
+    data:{
+      description:'Pronađite pet shop u blizini. Adrese, kontakti, dostava preko Wolta i Glova i asortiman hrane za pse u prodavnicama za ljubimce širom Srbije.'
+    }
+  },
+  {
+    path: RouteConstants.petShopDetail,
+    loadComponent: () => {
+      return import('./pages/pet-shop-detail/pet-shop-detail-page.component').then(
+        (m) => m.PetShopDetailPageComponent
+      );
+    },
+    title: 'Prodavnica za ljubimce - Gde sa psom',
+    // PetShopDetailPageComponent overwrites the title and description once the shop loads.
+    data:{
+      description:'Detalji prodavnice za ljubimce - adresa, kontakt, dostava i asortiman hrane za pse.'
     }
   },
   {
@@ -190,6 +252,30 @@ export const appRoutes: Route[] = [
       loadComponent: () => {
         return import('./features/admin-page/components/setting-townships/setting-township.component').then(
           (m) => m.SettingTownshipComponent
+        );
+      },
+    },
+    {
+      path:RouteConstants.adminPetShops,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-pet-shops/admin-pet-shops.component').then(
+          (m) => m.AdminPetShopsComponent
+        );
+      },
+    },
+    {
+      path:RouteConstants.adminDogFood,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-dog-food/admin-dog-food.component').then(
+          (m) => m.AdminDogFoodComponent
+        );
+      },
+    },
+    {
+      path:RouteConstants.adminNewPost,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-blog-post/admin-blog-post-form.component').then(
+          (m) => m.AdminBlogPostFormComponent
         );
       },
     },

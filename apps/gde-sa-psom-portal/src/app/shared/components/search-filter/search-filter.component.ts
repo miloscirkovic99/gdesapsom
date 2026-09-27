@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ReplaySubject } from 'rxjs';
-import { descriptionToKeyMap, descriptionToKeyMapSpot } from '../../helpers/map.helpers';
+import { descriptionToKeyMap, descriptionToKeyMapSpot } from '@gde/shared/util';
 
 @Component({
   selector: 'app-search-filter',

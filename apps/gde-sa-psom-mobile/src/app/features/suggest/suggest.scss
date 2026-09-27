@@ -1,0 +1,40 @@
+/* Shared by the suggest-a-place forms. */
+.lead {
+  margin-top: 0;
+  color: var(--ion-color-medium);
+}
+
+ion-input,
+ion-select,
+ion-textarea {
+  margin-bottom: 16px;
+}
+
+.picker {
+  --background: transparent;
+  --border-radius: 4px;
+  --padding-start: 16px;
+  border: 1px solid var(--ion-color-step-300, #b3b3b3);
+  border-radius: 4px;
+  margin-bottom: 16px;
+
+  h3 {
+    margin-top: 2px;
+  }
+}
+
+.picker-invalid {
+  border-color: var(--ion-color-danger);
+  margin-bottom: 4px;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.75rem;
+  margin: 0 0 16px 16px;
+}
+
+.submit {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}

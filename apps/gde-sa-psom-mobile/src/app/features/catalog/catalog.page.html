@@ -1,0 +1,251 @@
+<ion-header>
+  <ion-toolbar class="page-toolbar">
+    <ion-title class="page-title">{{ 'mobile_tab_catalog' | transloco }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment mode="ios" [value]="segment()" (ionChange)="setSegment($event.detail.value)">
+      <ion-segment-button value="food">
+        <ion-label>{{ 'dog_food_title' | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="shops">
+        <ion-label>{{ 'pet_shops_title' | transloco }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  <ion-toolbar>
+    @if (segment() === 'food') {
+      <ion-searchbar
+        [value]="food.filters().word"
+        [placeholder]="'search_food_placeholder' | transloco"
+        [debounce]="400"
+        enterkeyhint="search"
+        (ionInput)="setFoodWord($event.detail.value)"
+      />
+      <ion-buttons slot="end">
+        <ion-button class="filter-button" (click)="openFoodFilters()" [attr.aria-label]="'mobile_filters' | transloco">
+          <ion-icon slot="icon-only" name="options-outline" />
+          @if (food.activeFilterCount()) {
+            <ion-badge class="filter-badge">{{ food.activeFilterCount() }}</ion-badge>
+          }
+        </ion-button>
+      </ion-buttons>
+    } @else {
+      <ion-searchbar
+        [value]="shops.filters().word"
+        [placeholder]="'search_shop_placeholder' | transloco"
+        [debounce]="400"
+        enterkeyhint="search"
+        (ionInput)="setShopWord($event.detail.value)"
+      />
+      <ion-buttons slot="end">
+        <ion-button class="filter-button" (click)="openShopFilters()" [attr.aria-label]="'mobile_filters' | transloco">
+          <ion-icon slot="icon-only" name="options-outline" />
+          @if (shops.activeFilterCount()) {
+            <ion-badge class="filter-badge">{{ shops.activeFilterCount() }}</ion-badge>
+          }
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+
+  @if (segment() === 'food') {
+    @if (food.total() !== null && food.items().length) {
+      <p class="count ion-padding-horizontal">{{ countKey('food_count', food.total()!) | transloco: { count: food.total() } }}</p>
+    }
+    <ion-list>
+      @for (item of food.items(); track item.id) {
+        <ion-item [routerLink]="['/tabs/catalog/food', item.slug]" detail="false">
+          <ion-thumbnail slot="start">
+            <img [src]="item.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
+          </ion-thumbnail>
+          <ion-label class="ion-text-wrap">
+            <p class="brand">{{ item.brand.name }}</p>
+            <h2>{{ item.name }}</h2>
+            <p>
+              {{ item.foodType | localName: lang() }}
+              @if (item.packageWeightG) {
+                · {{ item.packageWeightG | packageWeight: lang() }}
+              }
+            </p>
+          </ion-label>
+          <div slot="end" class="price">
+            @if (item.minPrice !== null) {
+              <small>{{ 'price_from_label' | transloco }}</small>
+              <strong>{{ item.minPrice | rsdPrice: lang() }}</strong>
+            } @else {
+              <small>{{ 'price_unknown' | transloco }}</small>
+            }
+          </div>
+        </ion-item>
+      } @empty {
+        <div class="state ion-padding">
+          @if (food.isLoading()) {
+            <ion-spinner />
+          } @else if (food.hasError()) {
+            <p>{{ 'catalog_error' | transloco }}</p>
+          } @else {
+            <h3>{{ 'no_results_title' | transloco }}</h3>
+          }
+        </div>
+      }
+    </ion-list>
+    <ion-infinite-scroll [disabled]="!food.hasMore()" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content />
+    </ion-infinite-scroll>
+  } @else {
+    <ion-list>
+      @for (shop of shops.items(); track shop.id) {
+        <ion-item [routerLink]="['/tabs/catalog/shops', shop.slug]" detail="true">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ shop.name }}</h2>
+            <p>{{ shop.address }}</p>
+            <p>{{ shop.townshipName ?? shop.cityName }}</p>
+            <div class="chips">
+              @if (shop.offerCount) {
+                <ion-chip color="primary">
+                  <ion-label>{{ countKey('food_count', shop.offerCount) | transloco: { count: shop.offerCount } }}</ion-label>
+                </ion-chip>
+              }
+              @if (distance(shop.distanceM); as d) {
+                <ion-chip><ion-label>{{ d }}</ion-label></ion-chip>
+              }
+              @if (shop.woltUrl || shop.glovoUrl) {
+                <ion-chip><ion-label>{{ shop.woltUrl ? 'Wolt' : '' }}{{ shop.woltUrl && shop.glovoUrl ? ' · ' : '' }}{{ shop.glovoUrl ? 'Glovo' : '' }}</ion-label></ion-chip>
+              }
+            </div>
+          </ion-label>
+        </ion-item>
+      } @empty {
+        <div class="state ion-padding">
+          @if (shops.isLoading()) {
+            <ion-spinner />
+          } @else if (shops.hasError()) {
+            <p>{{ 'catalog_error' | transloco }}</p>
+          } @else {
+            <h3>{{ 'no_results_title' | transloco }}</h3>
+            <p>{{ 'no_entries' | transloco }}</p>
+          }
+        </div>
+      }
+    </ion-list>
+    <ion-infinite-scroll [disabled]="!shops.hasMore()" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content />
+    </ion-infinite-scroll>
+  }
+
+  <!-- Food filters -->
+  <ion-modal [isOpen]="foodSheetOpen()" [initialBreakpoint]="0.85" [breakpoints]="[0, 0.85, 1]" (didDismiss)="foodSheetOpen.set(false)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'mobile_filters' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="clearFood()">{{ 'clear_filters' | transloco }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        @let lookups = food.lookups();
+        <ion-list>
+          <ion-item>
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'sort_label' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="foodDraft().sort" (ionChange)="patchFood({ sort: $event.detail.value })">
+              @for (s of sortOptions; track s.value) {
+                <ion-select-option [value]="s.value">{{ s.key | transloco }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_food_type' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="foodDraft().foodType ?? ''" (ionChange)="patchFood({ foodType: $event.detail.value || null })">
+              <ion-select-option value="">{{ 'filter_all' | transloco }}</ion-select-option>
+              @for (o of lookups?.foodTypes ?? []; track o.code) {
+                <ion-select-option [value]="o.code">{{ o | localName: lang() }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_life_stage' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="foodDraft().lifeStage ?? ''" (ionChange)="patchFood({ lifeStage: $event.detail.value || null })">
+              <ion-select-option value="">{{ 'filter_all' | transloco }}</ion-select-option>
+              @for (o of lookups?.lifeStages ?? []; track o.code) {
+                <ion-select-option [value]="o.code">{{ o | localName: lang() }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_breed_size' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="foodDraft().breedSize ?? ''" (ionChange)="patchFood({ breedSize: $event.detail.value || null })">
+              <ion-select-option value="">{{ 'filter_all' | transloco }}</ion-select-option>
+              @for (o of lookups?.breedSizes ?? []; track o.code) {
+                <ion-select-option [value]="o.code">{{ o | localName: lang() }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_brand' | transloco" labelPlacement="stacked" [multiple]="true" interface="alert" [value]="foodDraft().brands" (ionChange)="patchFood({ brands: $event.detail.value ?? [] })">
+              @for (b of lookups?.brands ?? []; track b.slug) {
+                <ion-select-option [value]="b.slug">{{ b.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-toggle [checked]="foodDraft().grainFree === true" (ionChange)="patchFood({ grainFree: $event.detail.checked ? true : null })">
+              {{ 'filter_grain_free' | transloco }}
+            </ion-toggle>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="block" class="apply" (click)="applyFood()">{{ 'apply_filters' | transloco }}</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Shop filters -->
+  <ion-modal [isOpen]="shopSheetOpen()" [initialBreakpoint]="0.7" [breakpoints]="[0, 0.7, 1]" (didDismiss)="shopSheetOpen.set(false)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'mobile_filters' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="clearShops()">{{ 'clear_filters' | transloco }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item button detail="true" (click)="pickShopTownships()">
+            <ion-label>
+              <p>{{ 'filter_township' | transloco }}</p>
+              <h3>{{ shopDraft().townshipIds.length || ('filter_all' | transloco) }}</h3>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-toggle [checked]="shopDraft().hasDelivery" (ionChange)="patchShop({ hasDelivery: $event.detail.checked })">
+              {{ 'filter_has_delivery' | transloco }}
+            </ion-toggle>
+          </ion-item>
+          <ion-item>
+            <ion-toggle [checked]="!!shopDraft().near" [disabled]="locating()" (ionChange)="toggleShopsNearMe($event.detail.checked, $event.target)">
+              {{ 'shops_near_me' | transloco }}
+            </ion-toggle>
+            @if (locating()) {
+              <ion-spinner slot="end" name="dots" />
+            }
+          </ion-item>
+          @if (shopDraft().near; as near) {
+            <ion-item>
+              <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'radius_km' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="near.radius" (ionChange)="setShopRadius($event.detail.value)">
+                @for (r of radiusOptions; track r) {
+                  <ion-select-option [value]="r">{{ r / 1000 }} km</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          }
+        </ion-list>
+        <ion-button expand="block" class="apply" (click)="applyShops()">{{ 'apply_filters' | transloco }}</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

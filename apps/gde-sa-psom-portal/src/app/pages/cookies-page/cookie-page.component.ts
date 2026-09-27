@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { DomSanitizer } from '@angular/platform-browser';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConsentService } from '../../core/services/consent.service';
 
 @Component({
   selector: 'app-cookie-page',
@@ -17,7 +16,6 @@ export class CookiePageComponent {
   sanitizedCookieAnalytics: any;
   sanitizedCookieControlDescription: any;
   private destroyRef = inject(DestroyRef);
-  readonly consent = inject(ConsentService);
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -31,11 +29,6 @@ export class CookiePageComponent {
         this.setupSanitizedText();
       }, 100);
     });
-  }
-
-  /** Re-opens the consent banner so the visitor can change their analytics choice. */
-  manageCookies(): void {
-    this.consent.openPreferences();
   }
 
   setupSanitizedText() {

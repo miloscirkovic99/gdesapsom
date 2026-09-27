@@ -1,34 +1,28 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { BlogService } from '../blog.service';
-import { Post } from '../../../shared/models/posts';
-import { SeoService } from '../../../core/services/seo.service';
-import { AnalyticsService } from '../../../core/analytics/analytics.service';
-import { ScrollDepthDirective } from '../../../core/analytics/scroll-depth.directive';
-import { classifyBlogLink } from '../../../core/analytics/blog-cta.helper';
-import { ContentType, toSlug } from '../../../core/analytics/analytics.taxonomy';
+import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
+import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
+import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
+
+const STRUCTURED_DATA_ID = 'blog-post';
 
 @Component({
   selector: 'app-blog-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollDepthDirective],
+  imports: [CommonModule, RouterModule],
   templateUrl: './blog-details.component.html',
   styleUrl: './blog-details.component.scss',
 })
-export class BlogDetailsComponent implements OnInit {
+export class BlogDetailsComponent implements OnInit, OnDestroy {
   private blogService = inject(BlogService);
   private route       = inject(ActivatedRoute);
   private router      = inject(Router);
   private seoService  = inject(SeoService);
-  private analytics   = inject(AnalyticsService);
-  private document    = inject(DOCUMENT);
 
   post       = signal<Post | null>(null);
   ucitavanje = signal(false);
   greska     = signal('');
-  /** Slug from the URL; used as the GA4 content id when the post itself has none. */
-  slug       = signal('');
 
   // Uvek vraća stabilan niz — nikad undefined
   tagovi = computed<string[]>(() => {
@@ -37,12 +31,12 @@ export class BlogDetailsComponent implements OnInit {
     return t.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
   });
 
-  readonly contentId = computed(() => this.post()?.slug || this.slug());
+  /** A legacy file name under /assets/slike/ or a full URL from the admin form. */
+  coverUrl = computed(() => postCoverUrl(this.post()?.slika_naslovna));
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       if (params['slug']) {
-        this.slug.set(params['slug']);
         this.loadPost(params['slug']);
       }
     });
@@ -59,44 +53,32 @@ export class BlogDetailsComponent implements OnInit {
         this.ucitavanje.set(false);
 
         if (postData?.naslov) {
+          const path = `/blog/${postData.slug ?? slug}`;
+          // Crawlers get the same cover as the template, as an absolute URL.
+          const image = postCoverUrl(postData.slika_naslovna, SITE_ORIGIN);
+
           this.seoService.update({
             title: `${postData.naslov} - Gde sa psom Blog`,
             description: postData.sadrzaj,
-            path: `/blog/${postData.slug ?? slug}`,
-            image: postData.slika_naslovna,
+            path,
+            image,
             type: 'article',
           });
-        }
 
-        this.analytics.trackBlogView({
-          content_id: postData?.slug ?? slug,
-          content_category: toSlug(postData?.kategorija),
-          content_type: ContentType.article,
-        });
+          const structuredData = blogPostingStructuredData(postData, {
+            url: `${SITE_ORIGIN}${path}`,
+            image,
+            tags: this.tagovi(),
+          });
+          if (structuredData) this.seoService.setStructuredData(STRUCTURED_DATA_ID, structuredData);
+        }
       },
       error: (err) => {
+        this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
         this.greska.set('Članak nije pronađen ili je došlo do greške. Vrati se na blog.');
         this.ucitavanje.set(false);
         console.error('Blog post loading error:', err);
       }
-    });
-  }
-
-  /**
-   * The article body is CMS HTML rendered via innerHTML, so its links cannot
-   * carry Angular handlers. One delegated listener classifies whichever anchor
-   * was clicked and reports it as a blog CTA.
-   */
-  onArticleClick(event: MouseEvent): void {
-    const anchor = (event.target as HTMLElement | null)?.closest?.('a[href]');
-    if (!anchor) return;
-
-    const target = classifyBlogLink(anchor.getAttribute('href'), this.document.location.origin);
-    if (!target) return;
-
-    this.analytics.trackBlogCtaClick({
-      content_id: this.contentId(),
-      ...target,
     });
   }
 
@@ -110,5 +92,9 @@ export class BlogDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/blog']);
+  }
+
+  ngOnDestroy() {
+    this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
   }
 }

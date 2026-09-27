@@ -1,0 +1,96 @@
+.count {
+  margin: 12px 20px 10px;
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+}
+
+.locating {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 16px;
+  padding: 4px 16px 8px;
+}
+
+.state {
+  padding: 48px 24px 8px;
+  text-align: center;
+  color: var(--app-ink-2);
+
+  h3 {
+    margin: 8px 0 6px;
+    color: var(--app-ink);
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.45;
+  }
+}
+
+.state-icon {
+  font-size: 40px;
+  color: var(--app-mint);
+}
+
+/* End of the list: the community invitation (owners get theirs on Home and More). */
+.missing {
+  margin: 16px 16px 28px;
+  padding: 22px 20px 20px;
+  border-radius: 24px;
+  background: var(--app-mint-soft);
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0 0 16px;
+    color: var(--app-ink-2);
+    line-height: 1.45;
+  }
+
+  ion-button {
+    --border-radius: 999px;
+    --color: var(--app-pine);
+    --border-color: var(--app-pine);
+    margin: 0;
+  }
+}
+
+.parks ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 12px;
+  --min-height: 88px;
+
+  h2 {
+    font-weight: 650;
+  }
+}
+
+.parks ion-thumbnail {
+  --size: 64px;
+}
+
+ion-button {
+  position: relative;
+}
+
+.filter-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.65rem;
+}
+
+.apply {
+  margin-top: 24px;
+}
