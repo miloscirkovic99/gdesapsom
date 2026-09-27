@@ -49,7 +49,14 @@
       </section>
 
       <ion-list [inset]="true" lines="full" class="facts">
-        <ion-item [href]="addressUrl()" target="_blank" rel="noopener" detail="true">
+        <ion-item
+          [href]="addressUrl()"
+          target="_blank"
+          rel="noopener"
+          detail="true"
+          data-link-type="venue_maps"
+          [attr.data-venue-slug]="venueSlug()"
+        >
           <ion-icon slot="start" name="location-outline" aria-hidden="true" />
           <ion-label class="ion-text-wrap">
             <p>{{ 'address' | transloco }}</p>
@@ -58,7 +65,12 @@
           </ion-label>
         </ion-item>
         @if (s.iuo_telefon) {
-          <ion-item [href]="'tel:' + s.iuo_telefon" detail="true">
+          <ion-item
+            [href]="'tel:' + s.iuo_telefon"
+            detail="true"
+            data-link-type="venue_phone"
+            [attr.data-venue-slug]="venueSlug()"
+          >
             <ion-icon slot="start" name="call-outline" aria-hidden="true" />
             <ion-label>
               <p>{{ 'phone' | transloco }}</p>
@@ -89,11 +101,26 @@
           <h2>{{ 'location' | transloco }}</h2>
           <app-map-view [latitude]="c.latitude" [longitude]="c.longitude" [label]="s.iuo_ime" />
           <div class="directions">
-            <ion-button expand="block" [href]="googleUrl()" target="_blank" rel="noopener">
+            <ion-button
+              expand="block"
+              [href]="googleUrl()"
+              target="_blank"
+              rel="noopener"
+              data-link-type="venue_maps"
+              [attr.data-venue-slug]="venueSlug()"
+            >
               <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
               Google Maps
             </ion-button>
-            <ion-button expand="block" fill="outline" [href]="wazeUrl()" target="_blank" rel="noopener">
+            <ion-button
+              expand="block"
+              fill="outline"
+              [href]="wazeUrl()"
+              target="_blank"
+              rel="noopener"
+              data-link-type="venue_maps"
+              [attr.data-venue-slug]="venueSlug()"
+            >
               Waze
             </ion-button>
           </div>

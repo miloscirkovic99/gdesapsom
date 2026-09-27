@@ -62,6 +62,35 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 | PATCH | `pet-shops/update` | admin — **parcijalna izmena** |
 | POST | `pet-shops/delete` | admin — meko brisanje (`hard=1` za trajno) |
 
+### `blog`
+
+| Metod | Putanja | Vraća |
+|---|---|---|
+| GET | `blog/getAll` | `{ blogList }` — samo `status = 'objavljen'` (stari oblik) |
+| GET | `blog/getAll/:slug` | `{ blogPostSingle: [...] }` — samo objavljen |
+| GET | `blog/categories` | `{ data, total }` — `id, naziv`, za formu |
+| GET | `blog/tags` | `{ data, total }` — `id, naziv`, za formu |
+| POST | `blog/create` | admin — `201 { message, data, tagIds }` |
+
+`blog/create` telo: `naslov`, `sadrzaj` (HTML) obavezni; `slug`, `kategorijaId`,
+`slikaNaslovna`, `status` (`draft` \| `objavljen`, podrazumevano `draft`),
+`tagIds` opcioni. Pravila:
+
+- Admin se proverava u bazi (`korisnik.kor_admin = 1` za `kor_email` iz
+  sesije), i odatle dolazi `autor_id`; telo ga ne može podmetnuti.
+- `tagIds` forma šalje kao `"1,2,3"`, isti oblik kao `townshipId` u
+  `pet-shops/search-query`. JSON niz `[1, 2]` handler takođe razume, ali taj
+  oblik na Marsu još nije viđen.
+- `slikaNaslovna` je `https://…` ili putanja na sajtu (`/assets/…`): CSP
+  portala blokira `http://` slike. Stari postovi drže samo ime fajla iz
+  `/assets/slike/`; `postCoverUrl()` u `shared/data-access` razume oba oblika.
+- Slug: bez poslatog se pravi iz naslova (č/ć→c, š→s, ž→z, đ→dj, ostalo `-`).
+  Zauzet slug je `409` sa `suggestedSlug`, ne tihi sufiks — URL posta mora biti
+  onaj koji je admin video u formi.
+- 400/409 nose `field` (ime polja iz tela) da forma poruku prikaže uz polje.
+- Upis u `posts` i `post_tags` je u jednoj transakciji — onoj koju Mars otvara
+  za svaki skript (vidi dole, tačka 3).
+
 ---
 
 ## Admin panel
@@ -178,14 +207,13 @@ Handleri su izvedeni iz postojećih fajlova; MARS docs
 2. **`response.setCache('1Y')`** — zakomentarisano u `dog-food/images/_id.GET.js`.
    Poziv postoji u `search-query/_id/avatar.GET.js`, takođe zakomentarisan.
 
-3. **Nema eksplicitnih transakcija.** Nijedan postojeći handler ih ne koristi.
-   Zbog toga je `pending.PUT.js` (odobravanje) napisan tako da svaki prekid
-   ostavi stanje koje se može ponoviti: predlog se označava odobrenim **tek na
-   kraju**, pa neuspeh na pola znači da predlog i dalje čeka i akcija sme da se
-   pokrene ponovo.
-
-Ako Mars nudi `db.transaction`, `pending.PUT.js` i `pet-shops/delete.POST.js`
-su dva mesta koja bi je iskoristila.
+3. **Transakcije su implicitne.** Docs (`concepts/database-transactions`):
+   svaki skript je jedna transakcija — commit kad se završi, rollback na
+   grešku **ili `exit()`**; `db.commit()` / `db.rollback()` postoje za ručnu
+   kontrolu. Zato 4xx grane pozivaju `exit()` samo pre prvog upisa, a
+   `blog/create` se oslanja na to za `posts` + `post_tags`. `pending.PUT.js`
+   (odobravanje) je pisan pre ovog saznanja, pa i dalje označava predlog
+   odobrenim **tek na kraju**; to ne smeta.
 
 ## Napomena o postojećim fajlovima
 

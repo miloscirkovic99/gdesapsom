@@ -20,6 +20,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
 import {
   addCircleOutline,
+  barChartOutline,
   briefcaseOutline,
   documentTextOutline,
   informationCircleOutline,
@@ -28,7 +29,9 @@ import {
   moonOutline,
   newspaperOutline,
 } from 'ionicons/icons';
-import { SITE_ORIGIN } from '@gde/shared/util';
+import { RouteConstants, SITE_ORIGIN } from '@gde/shared/util';
+import { AnalyticsConsentService } from '../../core/analytics/analytics-consent.service';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { AppSettingsService } from '../../core/platform/app-settings.service';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
@@ -120,6 +123,16 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
             {{ 'mobile_dark_theme' | transloco }}
           </ion-toggle>
         </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="bar-chart-outline" aria-hidden="true" />
+          <ion-toggle
+            [checked]="consent.granted()"
+            [helperText]="'mobile_analytics_hint' | transloco"
+            (ionChange)="setAnalytics($event.detail.checked)"
+          >
+            {{ 'mobile_analytics' | transloco }}
+          </ion-toggle>
+        </ion-item>
       </ion-list>
 
       <ion-list [inset]="true">
@@ -143,6 +156,8 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
 })
 export class MorePage {
   readonly settings = inject(AppSettingsService);
+  readonly consent = inject(AnalyticsConsentService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly links = inject(ExternalLinkService);
 
   readonly version = signal('web');
@@ -150,6 +165,7 @@ export class MorePage {
   constructor() {
     addIcons({
       addCircleOutline,
+      barChartOutline,
       leafOutline,
       newspaperOutline,
       informationCircleOutline,
@@ -164,10 +180,17 @@ export class MorePage {
   }
 
   setLanguage(value: unknown): void {
-    if (value === 'rs' || value === 'en') this.settings.setLanguage(value);
+    if (value !== 'rs' && value !== 'en') return;
+    this.settings.setLanguage(value);
+    this.analytics.trackLanguageSwitch(value);
+  }
+
+  /** Off also deletes the analytics data still on the phone (AnalyticsConsentService). */
+  setAnalytics(on: boolean): void {
+    void this.consent.set(on ? 'granted' : 'denied');
   }
 
   openPolicy(): void {
-    void this.links.openWeb(`${SITE_ORIGIN}/cookies-policy`);
+    void this.links.openWeb(`${SITE_ORIGIN}/${RouteConstants.privacyPolicy}`);
   }
 }

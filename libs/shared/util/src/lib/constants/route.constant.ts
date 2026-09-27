@@ -7,6 +7,8 @@ export class RouteConstants {
     static readonly settingSpots='setting-spots';
     static readonly pendingSpots='pending-spots';
     static readonly cookiesPolicy='cookies-policy';
+    /** Also the privacy policy URL of the Android app on Google Play. */
+    static readonly privacyPolicy = 'privacy-policy';
     static readonly townships='townships';
     static readonly vet_clinics='vet-clinics';
     static readonly addSpot = 'spots/new';
@@ -18,8 +20,9 @@ export class RouteConstants {
     static readonly dogFoodDetail = 'dog-food/:slug';
     static readonly petShops = 'pet-shops';
     static readonly petShopDetail = 'pet-shops/:slug';
-    /** Admin children: /admin/pet-shops, /admin/dog-food */
+    /** Admin children: /admin/pet-shops, /admin/dog-food, /admin/posts/new */
     static readonly adminPetShops = 'pet-shops';
     static readonly adminDogFood = 'dog-food';
+    static readonly adminNewPost = 'posts/new';
 
 }

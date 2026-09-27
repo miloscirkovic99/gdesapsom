@@ -25,7 +25,7 @@
               <figure class="relative h-48 overflow-hidden group">
                 @if (post.slika_naslovna) {
                   <img
-                    [src]="'/assets/slike/' + post.slika_naslovna"
+                    [src]="coverUrl(post.slika_naslovna)"
                     [alt]="post.naslov"
                     loading="lazy"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

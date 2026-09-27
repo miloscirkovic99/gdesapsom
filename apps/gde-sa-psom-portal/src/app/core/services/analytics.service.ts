@@ -1,33 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, inject, Injectable } from '@angular/core';
-
-/**
- * Values for `data-link-type` on external links. They are sent as the
- * `link_type` event parameter, so keep them in sync with the custom
- * dimension registered in GA4.
- */
-export type LinkType =
-  | 'venue_website'
-  | 'venue_maps'
-  | 'venue_phone'
-  | 'affiliate_booking'
-  | 'social'
-  | 'other';
-
-/** Which list a search, filter or near-me event came from (`search_scope`). */
-export type SearchScope = 'spots' | 'vet_clinics' | 'pet_shops';
-
-/** What the visitor suggested through a public form (`content_type`). */
-export type SubmissionType = 'spot' | 'park';
+import { SearchScope, SubmissionType } from '@gde/shared/util';
 
 /** GA4 truncates event parameter values at 100 characters anyway. */
 export const MAX_LINK_TEXT_LENGTH = 100;
-
-/**
- * Free-text search boxes fire on every keystroke; callers debounce by this
- * much before calling `trackSearch` so only the settled term is reported.
- */
-export const SEARCH_TRACKING_DEBOUNCE_MS = 1500;
 
 /** Links that open a contact app rather than a web page. */
 const CONTACT_PROTOCOLS: ReadonlySet<string> = new Set(['mailto:', 'tel:', 'sms:']);
@@ -54,7 +30,7 @@ const stripWww = (hostname: string): string => hostname.replace(/^www\./, '');
  * guard themselves. `initOutboundTracking()` reports clicks that leave the
  * site: `outbound_click` for external pages and `contact_click` for
  * mailto:/tel:/sms: links. Templates describe a link with `data-link-type`
- * (see {@link LinkType}) and, for venue links, `data-venue-slug`.
+ * (a `LinkType` from `@gde/shared/util`) and, for venue links, `data-venue-slug`.
  */
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {

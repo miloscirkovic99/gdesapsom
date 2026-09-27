@@ -26,6 +26,16 @@ export function activeSpotFilterCount(f: SpotFilters): number {
   return [f.townshipIds.length > 0, f.spotTypeId > 0, f.petSizeId > 0, f.near !== null].filter(Boolean).length;
 }
 
+/** Active filters as the website reports them in `filter_applied` (same keys, same order). */
+export function spotFilterKeys(f: SpotFilters): string[] {
+  return [
+    ...(f.petSizeId ? ['sta_id'] : []),
+    ...(f.spotTypeId ? ['ugo_id'] : []),
+    ...(f.townshipIds.length ? ['ops_id'] : []),
+    ...(f.near ? ['location'] : []),
+  ];
+}
+
 /** `SpotsStore.loadSpots` parameters; `resetOffset` starts a new list instead of appending a page. */
 export function toSpotSearchParams(f: SpotFilters, resetOffset: boolean): SpotSearchParams {
   return {

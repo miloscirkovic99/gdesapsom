@@ -43,9 +43,11 @@ import {
   SharedStore,
 } from '@gde/shared/data-access';
 import { injectActiveLang, LocalNamePipe, PackageWeightPipe, pluralKey, RsdPricePipe } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { GeolocationService } from '../../core/platform/geolocation.service';
 import { formatDistance } from '../../shared/format-distance';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
+import { foodFilterKeys, shopFilterKeys } from './catalog-filters';
 
 type Segment = 'food' | 'shops';
 
@@ -100,6 +102,7 @@ export class CatalogPage {
   private readonly route = inject(ActivatedRoute);
   private readonly modals = inject(ModalController);
   private readonly geolocation = inject(GeolocationService);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly sortOptions: { value: DogFoodSort; key: string }[] = [
     { value: 'name', key: 'sort_name' },
@@ -161,12 +164,16 @@ export class CatalogPage {
   // ── Search ──────────────────────────────────────────────────────────────
   setFoodWord(value: string | null | undefined): void {
     const word = (value ?? '').trim() || null;
-    if (word !== this.food.filters().word) this.food.search({ ...this.food.filters(), word });
+    if (word === this.food.filters().word) return;
+    this.food.search({ ...this.food.filters(), word });
+    this.analytics.trackSearch('dog_food', word);
   }
 
   setShopWord(value: string | null | undefined): void {
     const word = (value ?? '').trim() || null;
-    if (word !== this.shops.filters().word) this.shops.search({ ...this.shops.filters(), word });
+    if (word === this.shops.filters().word) return;
+    this.shops.search({ ...this.shops.filters(), word });
+    this.analytics.trackSearch('pet_shops', word);
   }
 
   loadMore(event: InfiniteScrollCustomEvent): void {
@@ -206,6 +213,7 @@ export class CatalogPage {
   applyFood(): void {
     this.food.search(this.foodDraft());
     this.foodSheetOpen.set(false);
+    this.analytics.trackFilterApplied('dog_food', foodFilterKeys(this.foodDraft()));
   }
 
   clearFood(): void {
@@ -248,6 +256,7 @@ export class CatalogPage {
     this.locating.set(false);
     if (position) {
       this.patchShop({ near: { lat: position.latitude, lon: position.longitude, radius: 5000 } });
+      this.analytics.trackNearMe('pet_shops');
     } else if (toggle) {
       (toggle as HTMLIonToggleElement).checked = false;
     }
@@ -261,6 +270,7 @@ export class CatalogPage {
   applyShops(): void {
     this.shops.search(this.shopDraft());
     this.shopSheetOpen.set(false);
+    this.analytics.trackFilterApplied('pet_shops', shopFilterKeys(this.shopDraft()));
   }
 
   clearShops(): void {

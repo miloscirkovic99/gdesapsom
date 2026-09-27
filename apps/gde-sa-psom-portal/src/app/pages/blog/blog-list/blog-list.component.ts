@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlogService, Post } from '@gde/shared/data-access';
+import { BlogService, postCoverUrl } from '@gde/shared/data-access';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 
@@ -55,6 +55,11 @@ export class BlogListComponent implements OnInit {
     const readingTime = Math.ceil(wordCount / 200);
     
     return readingTime < 1 ? 1 : readingTime;
+  }
+
+  /** A legacy file name under /assets/slike/ or a full URL from the admin form. */
+  coverUrl(cover: string): string | null {
+    return postCoverUrl(cover);
   }
 
   /**

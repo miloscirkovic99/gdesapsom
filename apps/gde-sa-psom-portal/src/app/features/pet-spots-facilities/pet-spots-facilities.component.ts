@@ -22,13 +22,15 @@ import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
-import { descriptionToKeyMap, descriptionToKeyMapSpot, filterTownshipsMulti } from '@gde/shared/util';
+import {
+  descriptionToKeyMap,
+  descriptionToKeyMapSpot,
+  filterTownshipsMulti,
+  SEARCH_TRACKING_DEBOUNCE_MS,
+} from '@gde/shared/util';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import {
-  AnalyticsService,
-  SEARCH_TRACKING_DEBOUNCE_MS,
-} from '../../core/services/analytics.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 type PetSpotsForm = {

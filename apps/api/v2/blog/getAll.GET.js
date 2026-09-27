@@ -32,7 +32,10 @@ LEFT JOIN post_tags  pt  ON p.id            = pt.post_id
 LEFT JOIN tags       t   ON pt.tag_id       = t.id
 LEFT JOIN comments   com ON p.id            = com.post_id AND com.odobren = TRUE
 
-GROUP BY 
+-- Nacrti i arhivirani postovi ne idu u javnu listu (isto kao blog/getAll/:slug).
+WHERE p.status = 'objavljen'
+
+GROUP BY
   p.id, p.naslov, p.slug, p.sadrzaj, p.slika_naslovna, p.status, p.objavljen_u,
   k.kor_id, k.kor_ime, k.kor_email,
   c.naziv

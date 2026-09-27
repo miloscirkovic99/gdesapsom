@@ -1,3 +1,5 @@
+export * from './lib/analytics/analytics-events';
+export * from './lib/analytics/link-type';
 export * from './lib/constants/route.constant';
 export * from './lib/constants/site';
 export * from './lib/helpers/map.helpers';

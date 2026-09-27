@@ -38,10 +38,11 @@ import {
   googleMapsSearchUrl,
   injectActiveLang,
 } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { GeolocationService } from '../../core/platform/geolocation.service';
 import { SpotCardComponent } from '../../shared/ui/spot-card.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
-import { activeSpotFilterCount, NO_SPOT_FILTERS, SpotFilters, toSpotSearchParams } from './spot-filters';
+import { activeSpotFilterCount, NO_SPOT_FILTERS, SpotFilters, spotFilterKeys, toSpotSearchParams } from './spot-filters';
 
 type Segment = 'venues' | 'parks';
 
@@ -94,6 +95,7 @@ export class PlacesPage {
   private readonly route = inject(ActivatedRoute);
   private readonly modals = inject(ModalController);
   private readonly geolocation = inject(GeolocationService);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly radiusOptions = [1000, 2000, 3000, 5000, 10000];
   readonly petSizeKey = descriptionToKeyMap;
@@ -178,6 +180,7 @@ export class PlacesPage {
     if (word === this.filters().word) return;
     this.filters.update((f) => ({ ...f, word }));
     this.search();
+    this.analytics.trackSearch('spots', word);
   }
 
   /** `reset` starts a new list; otherwise the next page is appended. */
@@ -235,6 +238,7 @@ export class PlacesPage {
     this.locating.set(false);
     if (near) {
       this.patchDraft({ near });
+      this.analytics.trackNearMe('spots');
     } else if (toggle) {
       // No position: put the switch back.
       (toggle as HTMLIonToggleElement).checked = false;
@@ -245,6 +249,7 @@ export class PlacesPage {
     this.filters.set(this.draft());
     this.sheetOpen.set(false);
     this.search();
+    this.analytics.trackFilterApplied('spots', spotFilterKeys(this.filters()));
   }
 
   clearFilters(): void {
@@ -273,6 +278,8 @@ export class PlacesPage {
     if (word === null && spotType === null) return;
 
     this.filters.set({ ...NO_SPOT_FILTERS, word: word?.trim() || null });
+    // A search typed on Home.
+    this.analytics.trackSearch('spots', word);
     if (spotType) {
       this.pendingSpotType.set(spotType);
     } else {
@@ -286,6 +293,7 @@ export class PlacesPage {
     const near = await this.geolocation.current();
     this.locating.set(false);
     if (!near) return;
+    this.analytics.trackNearMe('spots');
     this.filters.set({ ...NO_SPOT_FILTERS, near });
     this.search();
   }

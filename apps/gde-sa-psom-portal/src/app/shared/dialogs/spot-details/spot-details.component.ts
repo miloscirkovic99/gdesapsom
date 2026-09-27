@@ -17,8 +17,7 @@ import * as L from 'leaflet'; // Import Leaflet
 import 'leaflet-control-geocoder'; // Import geocoder control if using
 import { TranslocoModule } from '@ngneat/transloco';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
-import { venueLinkType } from '../../utils/link-type';
+import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, venueLinkType } from '@gde/shared/util';
 @Component({
   selector: 'app-spot-details',
   imports: [

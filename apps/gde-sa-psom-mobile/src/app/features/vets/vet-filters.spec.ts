@@ -1,4 +1,4 @@
-import { NO_VET_FILTERS, toVetSearchParams } from './vet-filters';
+import { NO_VET_FILTERS, toVetSearchParams, vetFilterKeys } from './vet-filters';
 
 describe('toVetSearchParams', () => {
   it('sends nulls for "every city" and no townships', () => {
@@ -17,5 +17,12 @@ describe('toVetSearchParams', () => {
       ops_id: '4,9',
       resetOffset: false,
     });
+  });
+});
+
+describe('vetFilterKeys', () => {
+  it('reports townships and city like the website', () => {
+    expect(vetFilterKeys(NO_VET_FILTERS)).toEqual([]);
+    expect(vetFilterKeys({ word: 'vet', cityId: 1, townshipIds: [5] })).toEqual(['ops_id', 'grd_id']);
   });
 });

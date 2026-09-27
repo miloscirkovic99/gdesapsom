@@ -1,4 +1,4 @@
-import { activeSpotFilterCount, NO_SPOT_FILTERS, toSpotSearchParams } from './spot-filters';
+import { activeSpotFilterCount, NO_SPOT_FILTERS, spotFilterKeys, toSpotSearchParams } from './spot-filters';
 
 describe('toSpotSearchParams', () => {
   it('sends no filters for the empty state', () => {
@@ -55,5 +55,23 @@ describe('activeSpotFilterCount', () => {
         near: { latitude: 1, longitude: 1 },
       }),
     ).toBe(3);
+  });
+});
+
+describe('spotFilterKeys', () => {
+  it('ignores the search word and the radius on their own', () => {
+    expect(spotFilterKeys({ ...NO_SPOT_FILTERS, word: 'bar', radius: 1000 })).toEqual([]);
+  });
+
+  it("uses the website's keys and order", () => {
+    expect(
+      spotFilterKeys({
+        ...NO_SPOT_FILTERS,
+        townshipIds: [1, 2],
+        spotTypeId: 3,
+        petSizeId: 4,
+        near: { latitude: 44.8, longitude: 20.4 },
+      }),
+    ).toEqual(['sta_id', 'ugo_id', 'ops_id', 'location']);
   });
 });

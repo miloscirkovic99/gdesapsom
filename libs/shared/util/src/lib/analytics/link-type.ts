@@ -1,4 +1,4 @@
-import { LinkType } from '../../core/services/analytics.service';
+import { LinkType } from './analytics-events';
 
 /** Hosts where a venue's "site or social network" link is a profile, not a website. */
 const SOCIAL_HOSTS: readonly string[] = [

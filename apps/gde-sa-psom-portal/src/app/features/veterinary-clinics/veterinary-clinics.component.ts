@@ -13,11 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rxjs';
-import { filterTownshipsMulti } from '@gde/shared/util';
-import {
-  AnalyticsService,
-  SEARCH_TRACKING_DEBOUNCE_MS,
-} from '../../core/services/analytics.service';
+import { filterTownshipsMulti, SEARCH_TRACKING_DEBOUNCE_MS } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 
 @Component({

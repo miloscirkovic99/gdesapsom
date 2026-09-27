@@ -112,6 +112,6 @@ export class DogFoodDetailPage implements ViewWillEnter {
 
   share(): void {
     const p = this.product();
-    if (p) void this.sharing.share(`${p.brand.name} ${p.name}`, `/dog-food/${p.slug}`);
+    if (p) void this.sharing.share(`${p.brand.name} ${p.name}`, `/dog-food/${p.slug}`, { type: 'dog_food', id: p.slug });
   }
 }

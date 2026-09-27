@@ -9,6 +9,8 @@ import { bicycleOutline } from 'ionicons/icons';
  * Wolt / Glovo buttons. Renders nothing when neither link exists. The links
  * leave the app, so Android opens the delivery app when it is installed.
  * (Ionic moves `aria-label` from ion-button onto its inner native button.)
+ * Taps are reported as `affiliate_booking` outbound clicks, with the shop
+ * slug as `venue_slug` when the caller passes it.
  */
 @Component({
   selector: 'app-delivery-links',
@@ -21,6 +23,8 @@ import { bicycleOutline } from 'ionicons/icons';
         [href]="wolt"
         target="_blank"
         rel="noopener sponsored"
+        data-link-type="affiliate_booking"
+        [attr.data-venue-slug]="venueSlug()"
         [attr.aria-label]="'order_on' | transloco: { service: 'Wolt' }"
       >
         <ion-icon slot="start" name="bicycle-outline" aria-hidden="true" />
@@ -34,6 +38,8 @@ import { bicycleOutline } from 'ionicons/icons';
         [href]="glovo"
         target="_blank"
         rel="noopener sponsored"
+        data-link-type="affiliate_booking"
+        [attr.data-venue-slug]="venueSlug()"
         [attr.aria-label]="'order_on' | transloco: { service: 'Glovo' }"
       >
         <ion-icon slot="start" name="bicycle-outline" aria-hidden="true" />
@@ -53,6 +59,7 @@ import { bicycleOutline } from 'ionicons/icons';
 export class DeliveryLinksComponent {
   readonly woltUrl = input<string | null>(null);
   readonly glovoUrl = input<string | null>(null);
+  readonly venueSlug = input<string | null>(null);
 
   constructor() {
     addIcons({ bicycleOutline });

@@ -17,9 +17,8 @@ import * as L from 'leaflet';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { DeliveryLinksComponent } from '../../shared/components/delivery-links/delivery-links.component';
-import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
+import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey, venueLinkType } from '@gde/shared/util';
 import { LookupRef, PetShopDetail, PetShopOffer, normalizeSearchText, PetShopsStore } from '@gde/shared/data-access';
-import { venueLinkType } from '../../shared/utils/link-type';
 
 const STRUCTURED_DATA_ID = 'pet-shop';
 const MAP_ELEMENT_ID = 'shop-map';

@@ -16,6 +16,7 @@ import {
 import { provideAppTransloco } from '@gde/shared/util';
 import { environment } from '../env/env.dev';
 import { appRoutes } from './app.routes';
+import { AnalyticsConsentService } from './core/analytics/analytics-consent.service';
 import { AppSettingsService } from './core/platform/app-settings.service';
 import { PreferencesSessionStore } from './core/platform/preferences-session-store';
 import { ToastNotifier } from './core/platform/toast-notifier';
@@ -41,7 +42,9 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       const session = inject(PreferencesSessionStore);
       const settings = inject(AppSettingsService);
-      return Promise.all([session.load(), settings.load()]);
+      // Before the first navigation, so its screen_view already knows the answer.
+      const consent = inject(AnalyticsConsentService);
+      return Promise.all([session.load(), settings.load(), consent.load()]);
     }),
   ],
 };

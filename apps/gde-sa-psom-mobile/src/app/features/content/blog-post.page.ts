@@ -12,7 +12,7 @@ import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
 import { shareSocialOutline } from 'ionicons/icons';
-import { BlogService, Post } from '@gde/shared/data-access';
+import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
 import { SITE_ORIGIN } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
@@ -122,11 +122,8 @@ export class BlogPostPage {
   readonly post = signal<Post | null>(null);
   readonly status = signal<'loading' | 'loaded' | 'error'>('loading');
   readonly minutes = computed(() => readingMinutes(this.post()?.sadrzaj));
-  /** Covers live on the website, like in the portal. */
-  readonly cover = computed(() => {
-    const file = this.post()?.slika_naslovna;
-    return file ? `${SITE_ORIGIN}/assets/slike/${file}` : null;
-  });
+  /** A legacy file name on the website or a full URL from the admin form, as in the portal. */
+  readonly cover = computed(() => postCoverUrl(this.post()?.slika_naslovna, SITE_ORIGIN));
 
   constructor() {
     addIcons({ shareSocialOutline });
@@ -151,6 +148,7 @@ export class BlogPostPage {
     const anchor = (event.target as HTMLElement | null)?.closest('a');
     const href = anchor?.getAttribute('href');
     if (!anchor || !href || href.startsWith('#')) return;
+    // AnalyticsService has already reported the tap (document click listener).
     event.preventDefault();
     const url = href.startsWith('/') ? `${SITE_ORIGIN}${href}` : href;
     if (/^https?:\/\//i.test(url)) void this.links.openWeb(url);
@@ -159,6 +157,6 @@ export class BlogPostPage {
 
   share(): void {
     const p = this.post();
-    if (p) void this.sharing.share(p.naslov, `/blog/${p.slug}`);
+    if (p) void this.sharing.share(p.naslov, `/blog/${p.slug}`, { type: 'blog_post', id: p.slug });
   }
 }

@@ -10,6 +10,11 @@ export interface VetFilters {
 
 export const NO_VET_FILTERS: VetFilters = { word: null, cityId: 0, townshipIds: [] };
 
+/** Active filters as the website reports them in `filter_applied`. */
+export function vetFilterKeys(f: VetFilters): string[] {
+  return [...(f.townshipIds.length ? ['ops_id'] : []), ...(f.cityId ? ['grd_id'] : [])];
+}
+
 /** `VetClinicsStore.loadVetclinics` parameters. */
 export function toVetSearchParams(f: VetFilters, resetOffset: boolean): VetClinicSearchParams {
   return {

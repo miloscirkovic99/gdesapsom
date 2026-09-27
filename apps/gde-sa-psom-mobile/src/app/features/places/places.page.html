@@ -78,7 +78,7 @@
   } @else {
     <ion-list class="parks">
       @for (park of parks.parks(); track park.par_id) {
-        <ion-item [href]="parkMapUrl(park)" target="_blank" rel="noopener" detail="true">
+        <ion-item [href]="parkMapUrl(park)" target="_blank" rel="noopener" detail="true" data-link-type="venue_maps">
           <ion-thumbnail slot="start">
             <img [src]="park.iuo_slika_base64 || 'assets/park.jpg'" alt="" />
           </ion-thumbnail>

@@ -117,6 +117,18 @@ export const appRoutes: Route[] = [
     }
   },
   {
+    path:RouteConstants.privacyPolicy,
+    loadComponent: () => {
+      return import('./pages/privacy-policy-page/privacy-policy-page.component').then(
+        (m) => m.PrivacyPolicyPageComponent
+      );
+    },
+    title:'Politika privatnosti - Gde sa psom',
+    data:{
+      description:'Koje podatke prikupljaju sajt i Android aplikacija Gde sa psom, zašto ih prikupljamo i kako njima upravljate.'
+    }
+  },
+  {
     path: RouteConstants.addSpot,
     loadComponent: () => {
       return import('./pages/add-spot/add-spot-page.component').then(
@@ -256,6 +268,14 @@ export const appRoutes: Route[] = [
       loadComponent: () => {
         return import('./features/admin-page/components/admin-dog-food/admin-dog-food.component').then(
           (m) => m.AdminDogFoodComponent
+        );
+      },
+    },
+    {
+      path:RouteConstants.adminNewPost,
+      loadComponent: () => {
+        return import('./features/admin-page/components/admin-blog-post/admin-blog-post-form.component').then(
+          (m) => m.AdminBlogPostFormComponent
         );
       },
     },

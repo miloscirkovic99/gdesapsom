@@ -23,6 +23,7 @@ import {
   googleMapsDirectionsUrl,
   googleMapsSearchUrl,
   parseCoordinates,
+  venueLinkType,
   wazeDirectionsUrl,
 } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
@@ -74,6 +75,11 @@ export class SpotDetailPage {
   readonly dogsKey = computed(() => descriptionToKeyMap[this.spot()?.sta_ime ?? ''] ?? null);
   readonly gardenKey = computed(() => descriptionToKeyMapGarden[this.spot()?.bas_naziv ?? ''] ?? null);
   readonly description = computed(() => cleanApiText(this.spot()?.iuo_opis));
+  /** Spots have no slug, so `spot-<id>` names the venue in GA4 (`venue_slug`), as on the website. */
+  readonly venueSlug = computed(() => {
+    const id = this.spot()?.iuo_id;
+    return id ? `spot-${id}` : null;
+  });
   readonly coords = computed(() => {
     const s = this.spot();
     return s ? parseCoordinates(s.latitude, s.longitude) : null;
@@ -116,11 +122,11 @@ export class SpotDetailPage {
 
   share(): void {
     const s = this.spot();
-    if (s) void this.sharing.share(s.iuo_ime, `/spots/${s.iuo_id}`);
+    if (s) void this.sharing.share(s.iuo_ime, `/spots/${s.iuo_id}`, { type: 'spot', id: `spot-${s.iuo_id}` });
   }
 
   openWebsite(): void {
     const url = this.spot()?.iuo_link_web;
-    if (url) void this.links.openWeb(url);
+    if (url) void this.links.openWeb(url, { type: venueLinkType(url), venue: this.venueSlug() });
   }
 }

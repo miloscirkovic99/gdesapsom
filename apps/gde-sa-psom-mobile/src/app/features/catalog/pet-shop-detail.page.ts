@@ -30,6 +30,7 @@ import {
   PackageWeightPipe,
   parseCoordinates,
   RsdPricePipe,
+  venueLinkType,
 } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
@@ -122,11 +123,11 @@ export class PetShopDetailPage implements ViewWillEnter {
 
   openWebsite(): void {
     const url = this.shop()?.websiteUrl;
-    if (url) void this.links.openWeb(url);
+    if (url) void this.links.openWeb(url, { type: venueLinkType(url), venue: this.shop()?.slug });
   }
 
   share(): void {
     const s = this.shop();
-    if (s) void this.sharing.share(s.name, `/pet-shops/${s.slug}`);
+    if (s) void this.sharing.share(s.name, `/pet-shops/${s.slug}`, { type: 'pet_shop', id: s.slug });
   }
 }

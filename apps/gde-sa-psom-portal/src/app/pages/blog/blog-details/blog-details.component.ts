@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { BlogService, Post } from '@gde/shared/data-access';
+import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
 import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
 import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
 
@@ -31,6 +31,9 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
     return t.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
   });
 
+  /** A legacy file name under /assets/slike/ or a full URL from the admin form. */
+  coverUrl = computed(() => postCoverUrl(this.post()?.slika_naslovna));
+
   ngOnInit() {
     this.route.params.subscribe(params => {
       if (params['slug']) {
@@ -51,10 +54,8 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
 
         if (postData?.naslov) {
           const path = `/blog/${postData.slug ?? slug}`;
-          // The template loads the cover from /assets/slike/, and so must crawlers.
-          const image = postData.slika_naslovna
-            ? `${SITE_ORIGIN}/assets/slike/${postData.slika_naslovna}`
-            : null;
+          // Crawlers get the same cover as the template, as an absolute URL.
+          const image = postCoverUrl(postData.slika_naslovna, SITE_ORIGIN);
 
           this.seoService.update({
             title: `${postData.naslov} - Gde sa psom Blog`,

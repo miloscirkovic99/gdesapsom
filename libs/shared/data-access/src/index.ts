@@ -23,4 +23,5 @@ export * from './lib/catalog/catalog-admin.api';
 
 // Blog.
 export * from './lib/blog/blog.service';
+export * from './lib/blog/blog-admin.api';
 export * from './lib/blog/post';

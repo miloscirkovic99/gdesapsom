@@ -24,8 +24,9 @@ import { addIcons } from 'ionicons';
 import { callOutline, locationOutline } from 'ionicons/icons';
 import { SharedStore, VetClinic, VetClinicsStore } from '@gde/shared/data-access';
 import { googleMapsSearchUrl } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
-import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
+import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './vet-filters';
 
 @Component({
   selector: 'app-vets',
@@ -104,7 +105,11 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
             </ion-label>
             <ion-buttons slot="end">
               @if (clinic.vetc_telefon) {
-                <ion-button [href]="'tel:' + clinic.vetc_telefon" [attr.aria-label]="'mobile_call' | transloco">
+                <ion-button
+                  [href]="'tel:' + clinic.vetc_telefon"
+                  data-link-type="venue_phone"
+                  [attr.aria-label]="'mobile_call' | transloco"
+                >
                   <ion-icon slot="icon-only" name="call-outline" />
                 </ion-button>
               }
@@ -112,6 +117,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters } from './vet-filters';
                 [href]="mapUrl(clinic)"
                 target="_blank"
                 rel="noopener"
+                data-link-type="venue_maps"
                 [attr.aria-label]="'mobile_open_in_maps' | transloco"
               >
                 <ion-icon slot="icon-only" name="location-outline" />
@@ -154,6 +160,7 @@ export class VetsPage {
   readonly vets = inject(VetClinicsStore);
   readonly shared = inject(SharedStore);
   private readonly modals = inject(ModalController);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly filters = signal<VetFilters>(NO_VET_FILTERS);
   /** Townships of the chosen city, from the full list (see Township). */
@@ -186,12 +193,14 @@ export class VetsPage {
     if (word === this.filters().word) return;
     this.filters.update((f) => ({ ...f, word }));
     this.search();
+    this.analytics.trackSearch('vet_clinics', word);
   }
 
   setCity(value: unknown): void {
     const cityId = typeof value === 'number' ? value : 0;
     this.filters.update((f) => ({ ...f, cityId, townshipIds: [] }));
     this.search();
+    this.analytics.trackFilterApplied('vet_clinics', vetFilterKeys(this.filters()));
   }
 
   async pickTownships(): Promise<void> {
@@ -209,6 +218,7 @@ export class VetsPage {
     if (role === 'confirm' && data) {
       this.filters.update((f) => ({ ...f, townshipIds: data }));
       this.search();
+      this.analytics.trackFilterApplied('vet_clinics', vetFilterKeys(this.filters()));
     }
   }
 

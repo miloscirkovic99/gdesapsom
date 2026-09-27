@@ -84,9 +84,8 @@ cd apps/gde-sa-psom-mobile && npx capacitor-assets generate --android --assetPat
    (`cap-open-android`) *Build > Generate Signed App Bundle*, or from `android/`:
    `gradlew bundleRelease` -> `app/build/outputs/bundle/release/app-release.aab`.
 4. **Play Console.** Create the app, enrol in Play App Signing, upload the `.aab` to the
-   *Internal testing* track first. Fill in the Data safety form (approximate/precise location
-   for "near me", photos for suggestions, no account data) and the privacy policy URL
-   (`https://www.gdesapsom.com/cookies-policy` or a dedicated page).
+   *Internal testing* track first. Fill in *App content* as described in
+   [Google Play: Data safety and App content](#google-play-data-safety-and-app-content).
 5. **App Links (optional).** To open website links in the app, publish
    `https://www.gdesapsom.com/.well-known/assetlinks.json` (and on the apex host) with the
    SHA-256 of the **Play app signing** certificate (Play Console > App integrity):
@@ -96,6 +95,90 @@ cd apps/gde-sa-psom-mobile && npx capacitor-assets generate --android --assetPat
                   "sha256_cert_fingerprints": ["AA:BB:..."] } }]
    ```
    The paths the app claims are in `AndroidManifest.xml`; `core/platform/deep-links.ts` maps them.
+
+## Analytics (Google Analytics 4 through Firebase)
+
+The app reports to the same GA4 property as the website, as its own Android data stream,
+through `@capacitor-firebase/analytics`. Event names and parameters are the website's
+(`search`, `filter_applied`, `near_me_used`, `generate_lead`, `share`, `outbound_click`,
+`contact_click`, `language_switch`; types in `@gde/shared/util` analytics-events), plus
+`screen_view` with the path as `screen_name` (`places/spots/41`) and the route pattern as
+`screen_class` (`places/spots/:id`). `search_scope` gains `dog_food`.
+
+**Consent.** Nothing is collected until the user says yes:
+
+- `AndroidManifest.xml` switches collection off by default, denies every consent type,
+  and turns off the advertising ID, the SSAID (Android ID) and per-Activity screen reports.
+  It also removes the advertising ID permissions that Firebase adds (`AD_ID`,
+  `ACCESS_ADSERVICES_AD_ID`, `ACCESS_ADSERVICES_ATTRIBUTION`).
+- On first launch `ConsentPromptService` shows a sheet with *Allow* and *Don't allow*. The
+  answer is kept in Preferences (`analyticsConsent`) and can be changed in More > Settings >
+  Usage statistics. `AnalyticsConsentService` applies it (`setConsent(analytics_storage)` +
+  `setEnabled`). Switching it off also calls `resetAnalyticsData()`, which deletes the data
+  still on the phone and the app-instance ID.
+- `AnalyticsService` drops every event while consent is off. In a browser (`nx serve`) it
+  never loads Firebase and logs the events to the console (dev mode only).
+
+**Setup (once).**
+
+1. GA4 > Admin > Data streams > Add stream > Android app, package `com.gdesapsom.app`.
+   GA creates or links a Firebase project.
+2. Download `google-services.json` into `android/app/`. It holds project identifiers, not
+   secrets. Without it the app builds and runs, but Firebase has no project and nothing is sent.
+3. `npx nx run gde-sa-psom-mobile:cap-sync:production`, then build as below.
+4. Check the events live: `adb shell setprop debug.firebase.analytics.app com.gdesapsom.app`,
+   answer *Allow* in the app, and watch GA4 > Admin > DebugView. Undo with
+   `adb shell setprop debug.firebase.analytics.app .none.`.
+
+Keep **Google signals** and **Google Ads links** off for this stream. With either one on,
+the data counts as shared for advertising: the Data safety answers below and the consent
+text would then be wrong. GA4 > Admin > Data retention decides how long event data is kept.
+The privacy policy promises at most 14 months.
+
+## Google Play: Data safety and App content
+
+The answers follow from the code as of 2026-09-26. Change them whenever a plugin, SDK or
+form that sends data off the phone is added. The privacy policy page on the website
+(`/privacy-policy`, portal `pages/privacy-policy-page`, keys `privacy_*`) must say the same.
+
+**Privacy policy URL:** `https://www.gdesapsom.com/privacy-policy`. Deploy the portal before
+submitting: the page is new, and the app links to it from More.
+
+**Data safety, overview**
+
+| Question | Answer |
+|---|---|
+| Does your app collect or share any of the required user data types? | Yes |
+| Is all of the user data collected by your app encrypted in transit? | Yes (API, Firebase and map tiles are HTTPS only) |
+| Which methods of account creation does your app support? | None: the app has no accounts |
+| Do you provide a way for users to request that their data is deleted? | Yes: the website contact form, and the Usage statistics switch deletes on-device analytics data |
+
+**Data types.** For every row: *Shared* = No (Google, the hosting provider and Gmail process
+data on our behalf as service providers), *Required or optional* = Optional.
+
+| Category | Data type | Ephemeral | Purposes | Where it comes from |
+|---|---|---|---|---|
+| Location | Approximate location | No | App functionality, Analytics | "Near me" with only coarse permission; Firebase derives the city from the IP |
+| Location | Precise location | Yes | App functionality | "Near me": coordinates go to the search API and are not stored |
+| Photos and videos | Photos | No | App functionality | Photos attached to a suggested place |
+| App activity | App interactions | No | Analytics | Screens, filters, taps on links, shares (Firebase, after consent) |
+| App activity | In-app search history | No | App functionality, Analytics | Search terms: sent to the API for results and, after consent, as `search_term` |
+| App activity | Other user-generated content | No | App functionality | Name, address, description and contact details of a suggested place or park |
+| Device or other IDs | Device or other IDs | No | Analytics | Firebase app-instance ID (after consent); no advertising ID, no Android ID |
+
+Not collected: personal info (name, email, phone), financial info, health, messages,
+contacts, calendar, audio, files, app info and performance, web browsing. The app has no
+contact form, and recent searches and viewed places stay on the phone.
+
+**Other App content answers**
+
+- *Advertising ID*: "No". The merged manifest has no `AD_ID` or `ACCESS_ADSERVICES_*`
+  permission (check `app/build/intermediates/merged_manifest/*/process*MainManifest/AndroidManifest.xml`).
+- *Ads*: the app has no ad SDK and no banner or native ads. The Wolt and Glovo buttons are
+  affiliate links, which Play's help does not classify either way; answer "Yes" if a venue
+  ever pays for its placement.
+- *Target audience*: adult age groups only. The app is not aimed at children, and a
+  younger audience brings the Families policy with it.
 
 ## Notes
 

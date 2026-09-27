@@ -18,6 +18,7 @@ import { ModalController } from '@ionic/angular/modal-controller';
 import { NavController } from '@ionic/angular/nav-controller';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ParksStore, SharedStore, SuggestParkPayload } from '@gde/shared/data-access';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { requiredValue } from '../../shared/forms';
 import { SentViewComponent } from '../../shared/ui/sent-view.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
@@ -119,6 +120,7 @@ export class SuggestParkPage {
   private readonly modals = inject(ModalController);
   private readonly nav = inject(NavController);
   private readonly fb = inject(FormBuilder);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly form = this.fb.group({
     par_ime: ['', Validators.required],
@@ -182,6 +184,7 @@ export class SuggestParkPage {
         this.form.reset();
         this.submitted.set(false);
         this.sent.set(true);
+        this.analytics.trackSubmission('park');
         void this.content()?.scrollToTop(300);
       },
       () => this.submitting.set(false),

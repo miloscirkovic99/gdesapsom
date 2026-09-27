@@ -79,9 +79,18 @@
               </ion-label>
             </ion-item>
             <ion-item class="offer-actions">
-              <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" />
+              <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" [venueSlug]="offer.shop.slug" />
               @if (directionsUrl(offer); as url) {
-                <ion-button slot="end" size="small" fill="clear" [href]="url" target="_blank" rel="noopener">
+                <ion-button
+                  slot="end"
+                  size="small"
+                  fill="clear"
+                  [href]="url"
+                  target="_blank"
+                  rel="noopener"
+                  data-link-type="venue_maps"
+                  [attr.data-venue-slug]="offer.shop.slug"
+                >
                   <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
                   {{ 'get_directions' | transloco }}
                 </ion-button>

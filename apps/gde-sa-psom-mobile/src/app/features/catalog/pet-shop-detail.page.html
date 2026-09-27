@@ -27,7 +27,14 @@
     </section>
 
     <ion-list lines="full">
-      <ion-item [href]="addressUrl()" target="_blank" rel="noopener" detail="true">
+      <ion-item
+        [href]="addressUrl()"
+        target="_blank"
+        rel="noopener"
+        detail="true"
+        data-link-type="venue_maps"
+        [attr.data-venue-slug]="s.slug"
+      >
         <ion-icon slot="start" name="location-outline" aria-hidden="true" />
         <ion-label class="ion-text-wrap">
           <p>{{ 'address' | transloco }}</p>
@@ -35,7 +42,7 @@
         </ion-label>
       </ion-item>
       @if (s.phone) {
-        <ion-item [href]="'tel:' + s.phone" detail="true">
+        <ion-item [href]="'tel:' + s.phone" detail="true" data-link-type="venue_phone" [attr.data-venue-slug]="s.slug">
           <ion-icon slot="start" name="call-outline" aria-hidden="true" />
           <ion-label>
             <p>{{ 'phone' | transloco }}</p>
@@ -56,7 +63,7 @@
 
     @if (s.woltUrl || s.glovoUrl) {
       <section class="ion-padding-horizontal ion-padding-top">
-        <app-delivery-links [woltUrl]="s.woltUrl" [glovoUrl]="s.glovoUrl" />
+        <app-delivery-links [woltUrl]="s.woltUrl" [glovoUrl]="s.glovoUrl" [venueSlug]="s.slug" />
       </section>
     }
 
@@ -69,7 +76,15 @@
     @if (coords(); as c) {
       <section class="ion-padding">
         <app-map-view [latitude]="c.latitude" [longitude]="c.longitude" [label]="s.name" />
-        <ion-button expand="block" class="directions" [href]="directionsUrl()" target="_blank" rel="noopener">
+        <ion-button
+          expand="block"
+          class="directions"
+          [href]="directionsUrl()"
+          target="_blank"
+          rel="noopener"
+          data-link-type="venue_maps"
+          [attr.data-venue-slug]="s.slug"
+        >
           <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
           {{ 'get_directions' | transloco }}
         </ion-button>

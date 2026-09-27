@@ -254,6 +254,24 @@ ion-modal {
   --border-radius: 24px;
 }
 
+/*
+ * The first-launch consent question (ConsentPromptService): a card as tall as
+ * its content, at the bottom, with the app visible above it. A modal's page is
+ * absolutely positioned and size-contained by default, which would give it no height.
+ */
+ion-modal.consent-sheet {
+  --width: 100%;
+  --max-width: 560px;
+  --height: auto;
+  --border-radius: 28px 28px 0 0;
+  align-items: flex-end;
+
+  .ion-page {
+    position: relative;
+    contain: content;
+  }
+}
+
 /* Leaflet sits inside ion-content; keep its controls under Ionic overlays. */
 .leaflet-container {
   z-index: 0;

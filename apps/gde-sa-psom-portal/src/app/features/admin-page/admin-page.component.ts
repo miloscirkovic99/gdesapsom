@@ -46,6 +46,11 @@ export class AdminPageComponent {
       title: 'admin_dog_food',
       icon: 'food',
     },
+    {
+      route: '/admin/posts/new',
+      title: 'admin_blog_new_post',
+      icon: 'blog',
+    },
   ];
 
   toggleSidebar(): void {

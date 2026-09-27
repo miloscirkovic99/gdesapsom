@@ -52,9 +52,9 @@
         </header>
 
         <!-- Featured Image -->
-        @if (post()?.slika_naslovna) {
+        @if (coverUrl(); as cover) {
         <figure class="my-8">
-            <img [src]="'/assets/slike/' + post()?.slika_naslovna" [alt]="post()?.naslov"
+            <img [src]="cover" [alt]="post()?.naslov"
                 class="rounded-xl shadow-lg w-full" />
         </figure>
         }

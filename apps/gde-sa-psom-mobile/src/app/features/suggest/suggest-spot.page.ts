@@ -21,6 +21,7 @@ import { NavController } from '@ionic/angular/nav-controller';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { SharedStore, SpotsStore, SuggestSpotPayload } from '@gde/shared/data-access';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { PhotoFieldComponent } from '../../shared/ui/photo-field.component';
 import { requiredValue } from '../../shared/forms';
 import { SentViewComponent } from '../../shared/ui/sent-view.component';
@@ -59,6 +60,7 @@ export class SuggestSpotPage {
   private readonly modals = inject(ModalController);
   private readonly nav = inject(NavController);
   private readonly fb = inject(FormBuilder);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly spotTypeKey = descriptionToKeyMapSpot;
   readonly petSizeKey = descriptionToKeyMap;
@@ -144,6 +146,7 @@ export class SuggestSpotPage {
         this.submitting.set(false);
         this.#reset();
         this.sent.set(true);
+        this.analytics.trackSubmission('spot');
         void this.content()?.scrollToTop(300);
       },
       () => this.submitting.set(false),
