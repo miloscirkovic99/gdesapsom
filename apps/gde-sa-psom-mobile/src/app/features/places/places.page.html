@@ -2,8 +2,8 @@
   <ion-toolbar class="page-toolbar">
     <ion-title class="page-title">{{ 'mobile_tab_places' | transloco }}</ion-title>
   </ion-toolbar>
-  <ion-toolbar>
-    <ion-segment mode="ios" [value]="segment()" (ionChange)="setSegment($event.detail.value)">
+  <ion-toolbar class="sub-toolbar">
+    <ion-segment [value]="segment()" (ionChange)="setSegment($event.detail.value)">
       <ion-segment-button value="venues">
         <ion-label>{{ 'mobile_venues' | transloco }}</ion-label>
       </ion-segment-button>
@@ -13,22 +13,28 @@
     </ion-segment>
   </ion-toolbar>
   @if (segment() === 'venues') {
-    <ion-toolbar>
-      <ion-searchbar
-        [value]="filters().word"
-        [placeholder]="'search_name' | transloco"
-        [debounce]="400"
-        enterkeyhint="search"
-        (ionInput)="setWord($event.detail.value)"
-      />
-      <ion-buttons slot="end">
-        <ion-button (click)="openFilters()" [attr.aria-label]="'mobile_filters' | transloco">
-          <ion-icon slot="icon-only" name="options-outline" />
+    <ion-toolbar class="sub-toolbar">
+      <div class="search-row">
+        <ion-searchbar
+          [value]="filters().word"
+          [placeholder]="'search_name' | transloco"
+          [debounce]="400"
+          enterkeyhint="search"
+          (ionInput)="setWord($event.detail.value)"
+        />
+        <button
+          type="button"
+          class="filter-button"
+          [class.active]="activeFilterCount()"
+          (click)="openFilters()"
+          [attr.aria-label]="'mobile_filters' | transloco"
+        >
+          <ion-icon name="options-outline" aria-hidden="true" />
           @if (activeFilterCount()) {
-            <ion-badge class="filter-badge">{{ activeFilterCount() }}</ion-badge>
+            <span class="filter-count" aria-hidden="true">{{ activeFilterCount() }}</span>
           }
-        </ion-button>
-      </ion-buttons>
+        </button>
+      </div>
     </ion-toolbar>
   }
 </ion-header>
@@ -49,15 +55,22 @@
       @for (spot of spots.spotsList(); track spot.iuo_id) {
         <app-spot-card [spot]="spot" [link]="['/tabs/places/spots', '' + spot.iuo_id]" [lang]="lang()" />
       } @empty {
-        <div class="state">
-          @if (spots.isLoading()) {
-            <ion-spinner />
-          } @else {
-            <ion-icon class="state-icon" name="paw-outline" aria-hidden="true" />
+        @if (spots.isLoading()) {
+          @for (i of [1, 2]; track i) {
+            <div class="card-skeleton" aria-hidden="true">
+              <ion-skeleton-text [animated]="true" class="skeleton-photo" />
+              <ion-skeleton-text [animated]="true" style="width: 30%" />
+              <ion-skeleton-text [animated]="true" style="width: 70%; height: 16px" />
+              <ion-skeleton-text [animated]="true" style="width: 50%" />
+            </div>
+          }
+        } @else {
+          <div class="app-state">
+            <ion-icon name="search-outline" aria-hidden="true" />
             <h3>{{ 'no_results_title' | transloco }}</h3>
             <p>{{ 'spots_error404' | transloco }}</p>
-          }
-        </div>
+          </div>
+        }
       }
     </div>
     <ion-infinite-scroll [disabled]="!canLoadMore()" (ionInfinite)="loadMore($event)">
@@ -76,27 +89,43 @@
       </section>
     }
   } @else {
-    <ion-list class="parks">
+    <ion-list class="parks" lines="inset">
       @for (park of parks.parks(); track park.par_id) {
-        <ion-item [href]="parkMapUrl(park)" target="_blank" rel="noopener" detail="true" data-link-type="venue_maps">
+        <ion-item
+          [href]="parkMapUrl(park)"
+          target="_blank"
+          rel="noopener"
+          detail="true"
+          detailIcon="open-outline"
+          data-link-type="venue_maps"
+        >
           <ion-thumbnail slot="start">
             <img [src]="park.iuo_slika_base64 || 'assets/park.jpg'" alt="" />
           </ion-thumbnail>
           <ion-label class="ion-text-wrap">
             <h2>{{ park.par_ime }}</h2>
             <p>{{ park.par_lokacija }}</p>
-            <p>{{ park.ops_ime }}, {{ park.grd_ime }}</p>
+            <p class="park-area">{{ park.ops_ime }}, {{ park.grd_ime }}</p>
           </ion-label>
         </ion-item>
       } @empty {
-        <div class="state ion-padding">
-          @if (parks.parksStatus() === 'loading' || parks.parksStatus() === 'idle') {
-            <ion-spinner />
-          } @else {
+        @if (parks.parksStatus() === 'loading' || parks.parksStatus() === 'idle') {
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div class="skeleton-row" aria-hidden="true">
+              <ion-skeleton-text [animated]="true" class="skeleton-thumb" />
+              <div class="skeleton-lines">
+                <ion-skeleton-text [animated]="true" style="width: 60%" />
+                <ion-skeleton-text [animated]="true" style="width: 85%" />
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="app-state">
+            <ion-icon name="leaf-outline" aria-hidden="true" />
             <h3>{{ 'no_parks_title' | transloco }}</h3>
             <p>{{ 'no_parks' | transloco }}</p>
-          }
-        </div>
+          </div>
+        }
       }
     </ion-list>
   }
@@ -105,6 +134,7 @@
     [isOpen]="sheetOpen()"
     [initialBreakpoint]="0.75"
     [breakpoints]="[0, 0.75, 1]"
+    [expandToScroll]="false"
     (didDismiss)="sheetOpen.set(false)"
   >
     <ng-template>
@@ -112,12 +142,12 @@
         <ion-toolbar>
           <ion-title>{{ 'mobile_filters' | transloco }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="clearFilters()">{{ 'clear_filters' | transloco }}</ion-button>
+            <ion-button class="reset-button" (click)="clearFilters()">{{ 'clear_filters' | transloco }}</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding">
-        <ion-list>
+      <ion-content>
+        <ion-list class="sheet-fields" lines="inset">
           <ion-item>
             <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
               [label]="'spot_type' | transloco"
@@ -153,7 +183,7 @@
           </ion-item>
 
           <ion-item button detail="true" (click)="pickTownships()">
-            <ion-label class="ion-text-wrap">
+            <ion-label class="ion-text-wrap picker-label">
               <p>{{ 'township' | transloco }}</p>
               <h3>{{ draftTownships() || ('mobile_all' | transloco) }}</h3>
             </ion-label>
@@ -188,11 +218,14 @@
             </ion-item>
           }
         </ion-list>
-
-        <ion-button expand="block" class="apply" (click)="applyFilters()">
-          {{ 'apply_filters' | transloco }}
-        </ion-button>
       </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-button expand="block" color="primary" (click)="applyFilters()">
+            {{ 'apply_filters' | transloco }}
+          </ion-button>
+        </ion-toolbar>
+      </ion-footer>
     </ng-template>
   </ion-modal>
 </ion-content>

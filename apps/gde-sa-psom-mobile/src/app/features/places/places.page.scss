@@ -1,7 +1,10 @@
+@use '../../shared/sheet-fields';
+
 .count {
-  margin: 12px 20px 10px;
-  color: var(--ion-color-medium);
-  font-size: 0.85rem;
+  margin: 16px var(--app-gutter) 12px;
+  color: var(--app-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .locating {
@@ -12,85 +15,82 @@
 
 .cards {
   display: grid;
-  gap: 16px;
-  padding: 4px 16px 8px;
+  gap: 28px;
+  padding: 4px var(--app-gutter) 8px;
 }
 
-.state {
-  padding: 48px 24px 8px;
-  text-align: center;
-  color: var(--app-ink-2);
+.card-skeleton {
+  padding-top: 12px;
 
-  h3 {
-    margin: 8px 0 6px;
-    color: var(--app-ink);
-    font-size: 1.2rem;
-    font-weight: 700;
-  }
-
-  p {
-    margin: 0;
-    line-height: 1.45;
+  ion-skeleton-text {
+    height: 12px;
+    margin: 10px 0 0;
   }
 }
 
-.state-icon {
-  font-size: 40px;
-  color: var(--app-mint);
+.skeleton-photo {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 3 / 2;
+  margin: 0 0 4px !important;
+  border-radius: var(--app-radius-lg);
 }
 
 /* End of the list: the community invitation (owners get theirs on Home and More). */
 .missing {
-  margin: 16px 16px 28px;
-  padding: 22px 20px 20px;
-  border-radius: 24px;
-  background: var(--app-mint-soft);
+  margin: 24px 16px 32px;
+  padding: 24px 20px;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface-sunken);
 
   h2 {
     margin: 0 0 6px;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.3;
   }
 
   p {
     margin: 0 0 16px;
-    color: var(--app-ink-2);
-    line-height: 1.45;
+    color: var(--app-text-2);
+    font-size: 0.9375rem;
+    line-height: 1.5;
   }
 
   ion-button {
-    --border-radius: 999px;
-    --color: var(--app-pine);
-    --border-color: var(--app-pine);
+    --background: var(--app-surface);
     margin: 0;
   }
 }
 
-.parks ion-item {
-  --padding-start: 16px;
-  --inner-padding-end: 12px;
-  --min-height: 88px;
+.parks {
+  padding-top: 8px;
+}
 
-  h2 {
-    font-weight: 650;
-  }
+.parks ion-item {
+  --min-height: 88px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
 }
 
 .parks ion-thumbnail {
   --size: 64px;
+  margin-inline-end: 16px;
 }
 
-ion-button {
-  position: relative;
+.parks ion-label {
+  margin-block: 8px;
+
+  h2 {
+    margin-bottom: 2px;
+  }
+
+  p {
+    color: var(--app-text-2);
+  }
 }
 
-.filter-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.65rem;
-}
-
-.apply {
-  margin-top: 24px;
+.park-area {
+  margin-top: 2px;
+  font-size: 0.8125rem !important;
 }

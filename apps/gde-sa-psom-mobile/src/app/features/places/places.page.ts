@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { IonBadge } from '@ionic/angular/ion-badge';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
 import { IonContent } from '@ionic/angular/ion-content';
+import { IonFooter } from '@ionic/angular/ion-footer';
 import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonInfiniteScroll } from '@ionic/angular/ion-infinite-scroll';
@@ -21,6 +21,7 @@ import { IonSegment } from '@ionic/angular/ion-segment';
 import { IonSegmentButton } from '@ionic/angular/ion-segment-button';
 import { IonSelect } from '@ionic/angular/ion-select';
 import { IonSelectOption } from '@ionic/angular/ion-select-option';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonSpinner } from '@ionic/angular/ion-spinner';
 import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
@@ -30,7 +31,7 @@ import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { add, optionsOutline, pawOutline } from 'ionicons/icons';
+import { add, leafOutline, openOutline, optionsOutline, searchOutline } from 'ionicons/icons';
 import { Park, ParksStore, SharedStore, SpotsStore, Township } from '@gde/shared/data-access';
 import {
   descriptionToKeyMap,
@@ -60,7 +61,6 @@ interface Completable {
     IonButtons,
     IonButton,
     IonIcon,
-    IonBadge,
     IonSegment,
     IonSegmentButton,
     IonSearchbar,
@@ -74,7 +74,9 @@ interface Completable {
     IonLabel,
     IonThumbnail,
     IonSpinner,
+    IonSkeletonText,
     IonModal,
+    IonFooter,
     IonSelect,
     IonSelectOption,
     IonToggle,
@@ -131,7 +133,7 @@ export class PlacesPage {
   #pendingParks: Completable | null = null;
 
   constructor() {
-    addIcons({ add, optionsOutline, pawOutline });
+    addIcons({ add, leafOutline, openOutline, optionsOutline, searchOutline });
 
     // Finish pull-to-refresh / infinite scroll once the store is done.
     effect(() => {

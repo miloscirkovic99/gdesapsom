@@ -24,6 +24,7 @@ import {
   basketOutline,
   bedOutline,
   cafeOutline,
+  imageOutline,
   leafOutline,
   medkitOutline,
   navigateOutline,
@@ -43,13 +44,6 @@ interface Category {
   icon: string;
   commands: string[];
   queryParams?: Record<string, string>;
-}
-
-/** One print of the trail across the hero, in % of the hero box. */
-interface PawPrint {
-  x: number;
-  y: number;
-  delay: number;
 }
 
 @Component({
@@ -83,18 +77,6 @@ export class HomePage {
   /** True from a tap on "Shuffle" until the new set arrives. */
   readonly shuffling = signal(false);
 
-  /**
-   * A dog walking up the right edge of the hero, left and right paws in turn,
-   * between the brand row and the search field and clear of the headline.
-   */
-  readonly trail: PawPrint[] = [
-    { x: 88, y: 62 },
-    { x: 79, y: 52 },
-    { x: 88, y: 42 },
-    { x: 79, y: 32 },
-    { x: 88, y: 22 },
-  ].map((p, i) => ({ ...p, delay: 250 + i * 170 }));
-
   readonly categories: Category[] = [
     { label: 'lp_cat_restaurants', icon: 'restaurant-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Restoran' } },
     { label: 'lp_cat_cafes', icon: 'cafe-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Kafić' } },
@@ -112,6 +94,7 @@ export class HomePage {
       restaurantOutline,
       cafeOutline,
       bedOutline,
+      imageOutline,
       leafOutline,
       medkitOutline,
       basketOutline,

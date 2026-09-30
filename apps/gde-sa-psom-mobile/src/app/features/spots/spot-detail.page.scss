@@ -1,26 +1,25 @@
-.state {
-  text-align: center;
-  color: var(--ion-color-medium);
-  padding-top: 64px;
-}
-
-/* Outside and inside photo, swiped sideways. */
+/* Outside and inside photo, swiped sideways; the next one peeks in. */
 .photos {
   display: flex;
   gap: 8px;
-  padding: 4px 16px 0;
+  padding: 8px var(--app-gutter) 0;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: 16px;
+  scroll-padding-inline: var(--app-gutter);
   scrollbar-width: none;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   img {
-    flex: 0 0 88%;
-    height: 260px;
-    border-radius: 24px;
+    flex: 0 0 86%;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--app-radius-lg);
     object-fit: cover;
     scroll-snap-align: start;
-    background: var(--app-surface-2);
+    background: var(--app-surface-sunken);
   }
 
   &.single img {
@@ -29,82 +28,137 @@
 }
 
 .intro {
-  padding: 20px 16px 4px;
+  padding: 20px var(--app-gutter) 0;
+}
+
+.kicker {
+  margin: 0 0 4px;
+  color: var(--app-text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 h1 {
-  margin: 0 0 12px;
-  font-size: 1.85rem;
-  font-weight: 750;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  margin: 0 0 6px;
 }
 
-h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin: 0 0 10px;
+.where {
+  margin: 0;
+  color: var(--app-text-2);
+  font-size: 0.9375rem;
 }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+/* Dog policy: the product's core answer, in the brand's quiet tint. */
+.dogs {
+  display: grid;
+  margin: 20px var(--app-gutter) 0;
+  padding: 4px 16px;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-primary-soft);
 }
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: var(--app-surface-2);
-  font-size: 0.85rem;
-  font-weight: 600;
+.fact {
+  position: relative;
+  padding: 12px 0 12px 32px;
+
+  & + .fact {
+    border-top: 1px solid var(--app-border);
+  }
+
+  ion-icon {
+    position: absolute;
+    top: 14px;
+    left: 0;
+    color: var(--app-primary);
+    font-size: 20px;
+  }
+
+  dt {
+    color: var(--app-text-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--app-text);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
 }
 
-.tag.type {
-  background: var(--app-pine);
-  color: var(--app-on-pine);
-}
+.contact-head {
+  margin-bottom: 4px;
 
-.tag.dogs {
-  background: var(--app-mint-soft);
-  color: var(--app-pine);
+  .app-section-title {
+    margin: 0;
+  }
 }
 
 .facts {
-  margin-top: 16px;
+  ion-item {
+    --padding-start: var(--app-gutter);
+    --min-height: 64px;
+  }
 
-  ion-icon[slot='start'] {
-    color: var(--app-pine);
+  ion-label {
+    margin-block: 10px;
+  }
+
+  p {
+    color: var(--app-text-2);
   }
 
   h3 {
-    font-family: var(--app-font-body);
-    font-weight: 600;
+    margin: 1px 0;
+    font-weight: 500;
   }
-}
-
-.description {
-  white-space: pre-line;
-  line-height: 1.55;
-  margin: 0;
 }
 
 app-map-view {
   display: block;
-  border-radius: 20px;
   overflow: hidden;
+  border-radius: var(--app-radius-lg);
 }
 
 .directions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 12px;
   margin-top: 12px;
 
   ion-button {
     margin: 0;
   }
+}
+
+.end {
+  height: 32px;
+}
+
+/* Loading: the page's own shape. */
+.skeleton {
+  padding: 8px var(--app-gutter) 0;
+
+  ion-skeleton-text {
+    height: 12px;
+    margin: 12px 0 0;
+  }
+}
+
+.skeleton-photo {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 4 / 3;
+  margin: 0 0 8px !important;
+  border-radius: var(--app-radius-lg);
+}
+
+.skeleton-panel {
+  height: 104px !important;
+  margin-top: 20px !important;
+  border-radius: var(--app-radius-lg);
 }

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/places" text="" />
     </ion-buttons>
-    <ion-title>{{ spot()?.iuo_ime }}</ion-title>
+    <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ spot()?.iuo_ime }}</ion-title>
     @if (spot()) {
       <ion-buttons slot="end">
         <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
@@ -14,13 +14,20 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="title.onScroll($event)">
   @switch (status()) {
     @case ('loading') {
-      <div class="state"><ion-spinner /></div>
+      <div class="skeleton" aria-hidden="true">
+        <ion-skeleton-text [animated]="true" class="skeleton-photo" />
+        <ion-skeleton-text [animated]="true" style="width: 25%" />
+        <ion-skeleton-text [animated]="true" style="width: 75%; height: 24px" />
+        <ion-skeleton-text [animated]="true" style="width: 45%" />
+        <ion-skeleton-text [animated]="true" class="skeleton-panel" />
+      </div>
     }
     @case ('error') {
-      <div class="state ion-padding">
+      <div class="app-state">
+        <ion-icon name="alert-circle-outline" aria-hidden="true" />
         <h3>{{ 'mobile_spot_not_found' | transloco }}</h3>
         <ion-button fill="outline" (click)="load(id())">{{ 'try_again' | transloco }}</ion-button>
       </div>
@@ -36,19 +43,40 @@
       }
 
       <section class="intro">
-        <h1>{{ s.iuo_ime }}</h1>
-        <div class="tags">
-          <span class="tag type">{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</span>
-          @if (dogsKey()) {
-            <span class="tag dogs"><ion-icon name="paw" aria-hidden="true" />{{ dogsKey()! | transloco }}</span>
-          }
-          @if (gardenKey()) {
-            <span class="tag"><ion-icon name="leaf-outline" aria-hidden="true" />{{ gardenKey()! | transloco }}</span>
-          }
-        </div>
+        <p class="kicker">{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</p>
+        <h1 #headline>{{ s.iuo_ime }}</h1>
+        <p class="where">{{ s.ops_ime }}, {{ s.grd_ime }}</p>
       </section>
 
-      <ion-list [inset]="true" lines="full" class="facts">
+      <!-- The answer to "can I bring my dog?", in the words the website uses. -->
+      @if (dogsKey() || gardenKey()) {
+        <dl class="dogs">
+          @if (dogsKey()) {
+            <div class="fact">
+              <dt><ion-icon name="paw" aria-hidden="true" />{{ 'lp_example_dogs' | transloco }}</dt>
+              <dd>{{ dogsKey()! | transloco }}</dd>
+            </div>
+          }
+          @if (gardenKey()) {
+            <div class="fact">
+              <dt><ion-icon name="leaf-outline" aria-hidden="true" />{{ 'lp_example_garden' | transloco }}</dt>
+              <dd>{{ gardenKey()! | transloco }}</dd>
+            </div>
+          }
+        </dl>
+      }
+
+      @if (description()) {
+        <section class="app-block">
+          <h2 class="app-section-title">{{ 'short_description' | transloco }}</h2>
+          <p class="app-prose">{{ description() }}</p>
+        </section>
+      }
+
+      <section class="app-block contact-head">
+        <h2 class="app-section-title">{{ 'contact' | transloco }}</h2>
+      </section>
+      <ion-list lines="inset" class="facts">
         <ion-item
           [href]="addressUrl()"
           target="_blank"
@@ -89,16 +117,9 @@
         }
       </ion-list>
 
-      @if (description()) {
-        <section class="ion-padding">
-          <h2>{{ 'short_description' | transloco }}</h2>
-          <p class="description">{{ description() }}</p>
-        </section>
-      }
-
       @if (coords(); as c) {
-        <section class="ion-padding">
-          <h2>{{ 'location' | transloco }}</h2>
+        <section class="app-block">
+          <h2 class="app-section-title">{{ 'location' | transloco }}</h2>
           <app-map-view [latitude]="c.latitude" [longitude]="c.longitude" [label]="s.iuo_ime" />
           <div class="directions">
             <ion-button
@@ -126,6 +147,7 @@
           </div>
         </section>
       }
+      <div class="end"></div>
     }
   }
 </ion-content>

@@ -14,14 +14,14 @@ import { IonRefresherContent } from '@ionic/angular/ion-refresher-content';
 import { IonSearchbar } from '@ionic/angular/ion-searchbar';
 import { IonSelect } from '@ionic/angular/ion-select';
 import { IonSelectOption } from '@ionic/angular/ion-select-option';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { callOutline, locationOutline } from 'ionicons/icons';
+import { callOutline, chevronDown, locationOutline, searchOutline } from 'ionicons/icons';
 import { SharedStore, VetClinic, VetClinicsStore } from '@gde/shared/data-access';
 import { googleMapsSearchUrl } from '@gde/shared/util';
 import { AnalyticsService } from '../../core/analytics/analytics.service';
@@ -48,7 +48,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
     IonLabel,
     IonSelect,
     IonSelectOption,
-    IonSpinner,
+    IonSkeletonText,
     TranslocoPipe,
   ],
   template: `
@@ -56,35 +56,36 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
       <ion-toolbar class="page-toolbar">
         <ion-title class="page-title">{{ 'mobile_tab_vets' | transloco }}</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar
-          [value]="filters().word"
-          [placeholder]="'search_name' | transloco"
-          [debounce]="400"
-          enterkeyhint="search"
-          (ionInput)="setWord($event.detail.value)"
-        />
-      </ion-toolbar>
-      <ion-toolbar>
-        <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
-          class="city"
-          [label]="'mobile_city' | transloco"
-          interface="action-sheet"
-          [value]="filters().cityId"
-          (ionChange)="setCity($event.detail.value)"
-        >
-          <ion-select-option [value]="0">{{ 'mobile_all' | transloco }}</ion-select-option>
-          @for (city of shared.city(); track city.grd_id) {
-            <ion-select-option [value]="city.grd_id">{{ city.grd_ime }}</ion-select-option>
-          }
-        </ion-select>
-        @if (cityTownships().length > 1) {
-          <ion-buttons slot="end">
-            <ion-button (click)="pickTownships()">
+      <ion-toolbar class="sub-toolbar">
+        <div class="search-row">
+          <ion-searchbar
+            [value]="filters().word"
+            [placeholder]="'search_name' | transloco"
+            [debounce]="400"
+            enterkeyhint="search"
+            (ionInput)="setWord($event.detail.value)"
+          />
+        </div>
+        <div class="place-row">
+          <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco"
+            class="city"
+            [label]="'mobile_city' | transloco"
+            interface="action-sheet"
+            [value]="filters().cityId"
+            (ionChange)="setCity($event.detail.value)"
+          >
+            <ion-select-option [value]="0">{{ 'mobile_all' | transloco }}</ion-select-option>
+            @for (city of shared.city(); track city.grd_id) {
+              <ion-select-option [value]="city.grd_id">{{ city.grd_ime }}</ion-select-option>
+            }
+          </ion-select>
+          @if (cityTownships().length > 1) {
+            <button type="button" class="township" [class.active]="filters().townshipIds.length" (click)="pickTownships()">
               {{ 'township' | transloco }}{{ filters().townshipIds.length ? ' (' + filters().townshipIds.length + ')' : '' }}
-            </ion-button>
-          </ion-buttons>
-        }
+              <ion-icon name="chevron-down" aria-hidden="true" />
+            </button>
+          }
+        </div>
       </ion-toolbar>
     </ion-header>
 
@@ -93,7 +94,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
         <ion-refresher-content />
       </ion-refresher>
 
-      <ion-list lines="full">
+      <ion-list lines="inset" class="clinics">
         @for (clinic of vets.vetClinicsList(); track clinic.vetc_id) {
           <ion-item>
             <ion-label class="ion-text-wrap">
@@ -101,7 +102,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
               @if (clinic.vetc_adresa) {
                 <p>{{ clinic.vetc_adresa }}</p>
               }
-              <p>{{ clinic.ops_ime ? clinic.ops_ime + ', ' : '' }}{{ clinic.grd_ime }}</p>
+              <p class="area">{{ clinic.ops_ime ? clinic.ops_ime + ', ' : '' }}{{ clinic.grd_ime }}</p>
             </ion-label>
             <ion-buttons slot="end">
               @if (clinic.vetc_telefon) {
@@ -125,14 +126,23 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
             </ion-buttons>
           </ion-item>
         } @empty {
-          <div class="state ion-padding">
-            @if (vets.isLoading()) {
-              <ion-spinner />
-            } @else {
+          @if (vets.isLoading()) {
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <div class="skeleton-row" aria-hidden="true">
+                <div class="skeleton-lines">
+                  <ion-skeleton-text [animated]="true" style="width: 65%; height: 14px" />
+                  <ion-skeleton-text [animated]="true" style="width: 50%" />
+                  <ion-skeleton-text [animated]="true" style="width: 35%" />
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="app-state">
+              <ion-icon name="search-outline" aria-hidden="true" />
               <h3>{{ 'no_results_title' | transloco }}</h3>
               <p>{{ 'no_entries' | transloco }}</p>
-            }
-          </div>
+            </div>
+          }
         }
       </ion-list>
 
@@ -142,16 +152,89 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
     </ion-content>
   `,
   styles: `
+    .search-row {
+      padding-bottom: 8px;
+    }
+    /* City and municipality: two filled controls under the search. */
+    .place-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 var(--app-gutter) 12px;
+    }
     .city {
-      padding-inline: 16px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      flex: 1;
+      min-width: 0;
+      min-height: 44px;
+      border-radius: var(--app-radius-md);
+      background: var(--app-surface-sunken);
+      font-size: 0.9375rem;
     }
-    ion-item ion-buttons ion-button {
-      --color: var(--app-pine);
+    .city::part(label) {
+      color: var(--app-text-2);
+      font-weight: 500;
     }
-    .state {
-      text-align: center;
-      color: var(--ion-color-medium);
-      padding-top: 48px;
+    .city::part(text) {
+      font-weight: 600;
+    }
+    .township {
+      display: inline-flex;
+      flex: none;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: var(--app-radius-md);
+      background: var(--app-surface-sunken);
+      color: var(--app-text);
+      font: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+    .township.active {
+      background: var(--app-primary-soft);
+      color: var(--app-on-primary-soft);
+    }
+    .township ion-icon {
+      color: var(--app-text-2);
+      font-size: 14px;
+    }
+    .clinics {
+      padding-top: 8px;
+    }
+    .clinics ion-item {
+      --min-height: 76px;
+    }
+    .clinics ion-label {
+      margin-block: 12px;
+    }
+    .clinics ion-label p {
+      color: var(--app-text-2);
+    }
+    .area {
+      font-size: 0.8125rem !important;
+    }
+    /* Call and map: round, filled, thumb-sized. */
+    .clinics ion-buttons {
+      gap: 8px;
+      margin-inline-start: 12px;
+    }
+    .clinics ion-buttons ion-button {
+      --background: var(--app-surface-sunken);
+      --background-activated: var(--app-primary-soft);
+      --background-activated-opacity: 1;
+      --border-radius: 50%;
+      --color: var(--app-primary);
+      --padding-start: 0;
+      --padding-end: 0;
+      width: 44px;
+      height: 44px;
+      margin: 0;
+    }
+    .clinics ion-buttons ion-icon {
+      font-size: 20px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -176,7 +259,7 @@ export class VetsPage {
   #pending: { complete(): Promise<void> | void } | null = null;
 
   constructor() {
-    addIcons({ callOutline, locationOutline });
+    addIcons({ callOutline, chevronDown, locationOutline, searchOutline });
     effect(() => {
       const busy = this.vets.isLoading();
       untracked(() => {

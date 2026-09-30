@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
@@ -8,12 +19,21 @@ import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonItem } from '@ionic/angular/ion-item';
 import { IonLabel } from '@ionic/angular/ion-label';
 import { IonList } from '@ionic/angular/ion-list';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { callOutline, globeOutline, leafOutline, locationOutline, navigateOutline, paw, shareSocialOutline } from 'ionicons/icons';
+import {
+  alertCircleOutline,
+  callOutline,
+  globeOutline,
+  leafOutline,
+  locationOutline,
+  navigateOutline,
+  paw,
+  shareSocialOutline,
+} from 'ionicons/icons';
 import { Spot, SpotsStore } from '@gde/shared/data-access';
 import {
   cleanApiText,
@@ -29,6 +49,7 @@ import {
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
 import { RecentActivityService } from '../../core/recent/recent-activity.service';
+import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { MapViewComponent } from '../../shared/ui/map-view.component';
 
 type LoadStatus = 'loading' | 'loaded' | 'error';
@@ -44,7 +65,7 @@ type LoadStatus = 'loading' | 'loaded' | 'error';
     IonIcon,
     IonTitle,
     IonContent,
-    IonSpinner,
+    IonSkeletonText,
     IonLabel,
     IonList,
     IonItem,
@@ -66,6 +87,8 @@ export class SpotDetailPage {
 
   readonly spot = signal<Spot | null>(null);
   readonly status = signal<LoadStatus>('loading');
+  private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');
+  readonly title = revealTitleOnScroll(this.headline);
 
   readonly photos = computed(() => {
     const s = this.spot();
@@ -100,7 +123,16 @@ export class SpotDetailPage {
   });
 
   constructor() {
-    addIcons({ callOutline, globeOutline, leafOutline, locationOutline, navigateOutline, paw, shareSocialOutline });
+    addIcons({
+      alertCircleOutline,
+      callOutline,
+      globeOutline,
+      leafOutline,
+      locationOutline,
+      navigateOutline,
+      paw,
+      shareSocialOutline,
+    });
     effect(() => {
       const id = this.id();
       untracked(() => this.load(id));
