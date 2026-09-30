@@ -10,14 +10,15 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 
-// Bundled marker images (copied to assets/leaflet by project.json), not a CDN.
-const MARKER = L.icon({
-  iconUrl: 'assets/leaflet/marker-icon.png',
-  iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-  shadowUrl: 'assets/leaflet/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  shadowSize: [41, 41],
+// The brand pin, drawn inline (styled by `.app-map-pin` in styles.scss), so it needs no image files.
+const MARKER = L.divIcon({
+  className: 'app-map-pin',
+  html:
+    '<svg viewBox="0 0 32 42" aria-hidden="true">' +
+    '<path class="pin-body" d="M16 1C7.7 1 1 7.6 1 15.8 1 26.9 16 41 16 41s15-14.1 15-25.2C31 7.6 24.3 1 16 1z"/>' +
+    '<circle class="pin-dot" cx="16" cy="15.5" r="5.5"/></svg>',
+  iconSize: [32, 42],
+  iconAnchor: [16, 41],
 });
 
 /**
@@ -32,8 +33,8 @@ const MARKER = L.icon({
       display: block;
     }
     .map {
-      height: 220px;
-      border-radius: 12px;
+      height: 200px;
+      border-radius: var(--app-radius-lg);
       overflow: hidden;
     }
   `,

@@ -50,12 +50,14 @@ import { filterTownshipsMulti } from '@gde/shared/util';
           <ion-button strong (click)="confirm()">{{ 'mobile_done' | transloco }}</ion-button>
         </ion-buttons>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar
-          [placeholder]="'search' | transloco"
-          [debounce]="150"
-          (ionInput)="query.set($any($event).detail.value ?? '')"
-        />
+      <ion-toolbar class="sub-toolbar">
+        <div class="search-row">
+          <ion-searchbar
+            [placeholder]="'search' | transloco"
+            [debounce]="150"
+            (ionInput)="query.set($any($event).detail.value ?? '')"
+          />
+        </div>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -85,6 +87,18 @@ import { filterTownshipsMulti } from '@gde/shared/util';
         </ion-list>
       }
     </ion-content>
+  `,
+  styles: `
+    ion-list {
+      padding-top: 4px;
+    }
+    ion-item {
+      --min-height: 52px;
+    }
+    ion-buttons ion-button[strong] {
+      --color: var(--app-primary);
+      font-weight: 700;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

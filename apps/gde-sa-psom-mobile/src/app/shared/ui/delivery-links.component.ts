@@ -51,7 +51,10 @@ import { bicycleOutline } from 'ionicons/icons';
     :host {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 8px;
+    }
+    ion-button {
+      margin: 0;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

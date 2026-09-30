@@ -20,38 +20,38 @@ import { checkmark } from 'ionicons/icons';
   `,
   styles: `
     .sent {
-      padding: 48px 8px 24px;
+      padding: 56px 4px 24px;
       text-align: center;
     }
     .mark {
       display: grid;
       place-items: center;
-      width: 88px;
-      height: 88px;
+      width: 72px;
+      height: 72px;
       margin: 0 auto 24px;
       border-radius: 50%;
-      background: var(--app-mint-soft);
-      color: var(--app-pine);
-      font-size: 44px;
-      animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.55, 1) both;
+      background: var(--app-primary-soft);
+      color: var(--app-on-primary-soft);
+      font-size: 36px;
+      animation: pop 0.4s cubic-bezier(0.3, 1.3, 0.55, 1) both;
     }
     @keyframes pop {
       from {
-        transform: scale(0.4);
+        transform: scale(0.6);
         opacity: 0;
       }
     }
     h1 {
-      margin: 0 0 10px;
-      font-size: 1.7rem;
-      font-weight: 750;
-      line-height: 1.1;
+      margin: 0 0 12px;
     }
     p {
       max-width: 34ch;
-      margin: 0 auto 28px;
-      color: var(--app-ink-2);
-      line-height: 1.5;
+      margin: 0 auto 32px;
+      color: var(--app-text-2);
+      line-height: 1.55;
+    }
+    ion-button {
+      margin: 0 0 8px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

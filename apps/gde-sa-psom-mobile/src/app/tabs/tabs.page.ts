@@ -44,32 +44,52 @@ interface Tab {
   `,
   styles: `
     ion-tab-bar {
-      height: 68px;
-      padding-top: 4px;
+      height: 64px;
+      padding-top: 6px;
+      padding-bottom: 6px;
     }
     ion-tab-button {
       --ripple-color: transparent;
       --padding-start: 0;
       --padding-end: 0;
+      --padding-top: 0;
+      --padding-bottom: 0;
       min-width: 0;
     }
+    /* The icon sits in an indicator that fills in when its tab is selected. */
     ion-tab-button ion-icon {
       box-sizing: content-box;
-      font-size: 22px;
-      padding: 5px 18px;
+      width: 22px;
+      height: 22px;
+      padding: 5px 20px;
       margin: 0 0 4px;
-      border-radius: 999px;
-      transition: background-color 0.2s ease;
+      border-radius: var(--app-radius-lg);
+      transition:
+        background-color 0.2s ease,
+        transform 0.15s ease;
     }
     ion-tab-button.tab-selected ion-icon {
-      background: var(--app-mint-soft);
+      background: var(--app-primary-soft);
+      color: var(--app-on-primary-soft);
+    }
+    ion-tab-button:active ion-icon {
+      transform: scale(0.92);
     }
     ion-tab-button ion-label {
+      margin: 0;
       font-size: 0.75rem;
-      font-weight: 550;
+      font-weight: 500;
+      line-height: 1.2;
     }
     ion-tab-button.tab-selected ion-label {
-      font-weight: 750;
+      color: var(--app-text);
+      font-weight: 600;
+    }
+    /* Toasts sit just above this tab bar (ToastNotifier): their action reads as a word, not a shout. */
+    ::ng-deep ion-toast::part(button) {
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

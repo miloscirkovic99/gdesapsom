@@ -1,0 +1,12 @@
+/*
+ * Filter sheets (Places, Shopping). Ionic shrinks stacked select labels to 75%;
+ * size them here. Kept out of styles.scss: the build's critical-CSS pass cannot
+ * parse ::part() selectors.
+ */
+.sheet-fields ion-select::part(label) {
+  margin-bottom: 2px;
+  color: var(--app-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transform: none;
+}

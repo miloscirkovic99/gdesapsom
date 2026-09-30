@@ -42,66 +42,67 @@ import { AnalyticsConsent } from './analytics-consent.service';
   `,
   styles: `
     .sheet {
-      padding: 28px 20px calc(12px + var(--ion-safe-area-bottom, 0px));
-      background: var(--app-surface);
-      color: var(--app-ink);
+      padding: 28px var(--app-gutter) calc(12px + var(--ion-safe-area-bottom, 0px));
+      background: var(--app-surface-raised);
+      color: var(--app-text);
     }
     .mark {
       display: grid;
       place-items: center;
-      width: 56px;
-      height: 56px;
-      margin-bottom: 16px;
-      border-radius: 18px;
-      background: var(--app-mint-soft);
-      color: var(--app-pine);
-      font-size: 28px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 20px;
+      border-radius: var(--app-radius-md);
+      background: var(--app-primary-soft);
+      color: var(--app-on-primary-soft);
+      font-size: 24px;
     }
     h2 {
       margin: 0 0 8px;
-      font-size: 1.45rem;
-      font-weight: 750;
-      line-height: 1.15;
+      font-size: 1.375rem;
+      line-height: 1.2;
     }
     .lead {
-      margin: 0 0 16px;
-      color: var(--app-ink-2);
-      line-height: 1.5;
+      margin: 0 0 20px;
+      color: var(--app-text-2);
+      font-size: 0.9375rem;
+      line-height: 1.55;
     }
     .points {
       display: grid;
-      gap: 10px;
-      margin: 0 0 24px;
+      gap: 12px;
+      margin: 0 0 28px;
       padding: 0;
       list-style: none;
-      font-weight: 550;
+      font-size: 0.9375rem;
+      font-weight: 500;
     }
     .points li {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      line-height: 1.35;
+      gap: 12px;
+      line-height: 1.4;
     }
     .points ion-icon {
       flex: none;
       margin-top: 1px;
       font-size: 20px;
-      color: var(--app-pine);
+      color: var(--app-primary);
     }
     .answers {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
     .answers ion-button {
       margin: 0;
     }
     .policy {
+      --color: var(--app-text-2);
       display: block;
       width: fit-content;
       margin: 8px auto 0;
-      --color: var(--app-ink-2);
-      font-weight: 600;
       text-decoration: underline;
+      text-underline-offset: 3px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

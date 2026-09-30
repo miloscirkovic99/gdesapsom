@@ -5,7 +5,7 @@ import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { leafOutline, locationOutline, navigate, paw } from 'ionicons/icons';
+import { imageOutline, leafOutline, navigate, paw } from 'ionicons/icons';
 import { Spot } from '@gde/shared/data-access';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 import { formatDistance } from '../format-distance';
@@ -17,30 +17,40 @@ import { formatDistance } from '../format-distance';
     @let s = spot();
     <ion-card [routerLink]="link()" button>
       <div class="media">
-        <img [src]="s.iuo_slika_base64 || 'assets/logo-normal.png'" alt="" loading="lazy" />
-        <span class="badge">{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</span>
-        @if (distance()) {
-          <span class="badge distance">
-            <ion-icon name="navigate" aria-hidden="true" />
-            {{ distance() }}
-          </span>
+        @if (s.iuo_slika_base64) {
+          <img [src]="s.iuo_slika_base64" alt="" loading="lazy" />
+        } @else {
+          <span class="no-photo"><ion-icon name="image-outline" aria-hidden="true" /></span>
         }
       </div>
       <div class="body">
-        <h3>{{ s.iuo_ime }}</h3>
-        <p class="where">
-          <ion-icon name="location-outline" aria-hidden="true" />
-          <span>{{ s.iuo_adressa ? s.iuo_adressa + ', ' : '' }}{{ s.grd_ime }}</span>
+        <p class="kicker">
+          <span>{{ typeKey() ? (typeKey()! | transloco) : s.ugo_ime }}</span>
+          @if (distance()) {
+            <span class="distance">
+              <ion-icon name="navigate" aria-hidden="true" />
+              {{ distance() }}
+            </span>
+          }
         </p>
+        <h3>{{ s.iuo_ime }}</h3>
+        <p class="where">{{ s.iuo_adressa ? s.iuo_adressa + ', ' : '' }}{{ s.grd_ime }}</p>
+        <!-- What a dog owner scans for: who is welcome, and whether there is a garden. -->
         @if (dogsKey() || gardenKey()) {
-          <div class="tags">
-            @if (dogsKey()) {
-              <span class="tag dogs"><ion-icon name="paw" aria-hidden="true" />{{ dogsKey()! | transloco }}</span>
-            }
-            @if (gardenKey()) {
-              <span class="tag"><ion-icon name="leaf-outline" aria-hidden="true" />{{ gardenKey()! | transloco }}</span>
-            }
-          </div>
+          <p class="dogs">
+            <ion-icon [name]="dogsKey() ? 'paw' : 'leaf-outline'" aria-hidden="true" />
+            <span>
+              @if (dogsKey()) {
+                <strong>{{ dogsKey()! | transloco }}</strong>
+              }
+              @if (dogsKey() && gardenKey()) {
+                <span class="sep" aria-hidden="true">·</span>
+              }
+              @if (gardenKey()) {
+                {{ gardenKey()! | transloco }}
+              }
+            </span>
+          </p>
         }
       </div>
     </ion-card>
@@ -50,87 +60,109 @@ import { formatDistance } from '../format-distance';
       display: block;
     }
     ion-card {
-      margin: 0;
+      --background: transparent;
+      --ripple-color: transparent;
       height: 100%;
+      margin: 0;
+      overflow: visible;
+      border-radius: var(--app-radius-lg);
+      box-shadow: none;
+      transition: transform 0.15s ease;
+    }
+    ion-card.ion-activated {
+      transform: scale(0.985);
     }
     .media {
-      position: relative;
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      border-radius: var(--app-radius-lg);
+      background: var(--app-surface-sunken);
     }
     img {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 10;
+      height: 100%;
       object-fit: cover;
-      background: var(--app-surface-2);
     }
-    .badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
+    .no-photo {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      color: var(--app-text-3);
+      font-size: 32px;
+    }
+    .body {
+      padding: 12px 2px 0;
+    }
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 2px;
+      color: var(--app-text-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .distance {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #12241d;
-      font-size: 0.8rem;
-      font-weight: 650;
-    }
-    .distance {
-      left: auto;
-      right: 12px;
-      background: #0f5a48;
-      color: #ffffff;
-    }
-    .body {
-      padding: 14px 16px 16px;
-    }
-    h3 {
-      margin: 0 0 6px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: var(--app-ink);
-    }
-    .where {
-      display: flex;
-      gap: 6px;
-      margin: 0;
-      color: var(--app-ink-2);
-      font-size: 0.9rem;
-      line-height: 1.35;
-    }
-    .where ion-icon {
-      flex: none;
-      margin-top: 2px;
-    }
-    .where span {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 12px;
-    }
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: var(--app-surface-2);
-      color: var(--app-ink);
-      font-size: 0.8rem;
+      color: var(--app-text);
       font-weight: 600;
     }
-    .tag.dogs {
-      background: var(--app-mint-soft);
-      color: var(--app-pine);
+    .distance::before {
+      content: '·';
+      margin-inline-end: 4px;
+      color: var(--app-text-3);
+      font-weight: 500;
+    }
+    .distance ion-icon {
+      color: var(--app-primary);
+      font-size: 12px;
+    }
+    h3 {
+      display: -webkit-box;
+      margin: 0 0 2px;
+      overflow: hidden;
+      color: var(--app-text);
+      font-size: 1.0625rem;
+      font-weight: 600;
+      line-height: 1.35;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .where {
+      margin: 0;
+      overflow: hidden;
+      color: var(--app-text-2);
+      font-size: 0.875rem;
+      line-height: 1.45;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .dogs {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin: 8px 0 0;
+      color: var(--app-text-2);
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+    .dogs ion-icon {
+      flex: none;
+      margin-top: 2px;
+      color: var(--app-primary);
+      font-size: 16px;
+    }
+    .dogs strong {
+      color: var(--app-text);
+      font-weight: 600;
+    }
+    .sep {
+      margin: 0 4px;
+      color: var(--app-text-3);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -148,6 +180,6 @@ export class SpotCardComponent {
   readonly distance = computed(() => formatDistance(this.spot().distance_m, this.lang()));
 
   constructor() {
-    addIcons({ leafOutline, locationOutline, navigate, paw });
+    addIcons({ imageOutline, leafOutline, navigate, paw });
   }
 }

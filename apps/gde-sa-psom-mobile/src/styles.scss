@@ -20,64 +20,162 @@
 @import '@fontsource-variable/figtree/wght.css';
 
 /*
- * App tokens. Colours come from the logo: its mint pin (#7ECBBD) and the brand's
- * deep green, pulled towards teal so the two sit together. The tennis-ball yellow
- * is kept for the one call to venue owners.
+ * ═══ Design tokens ═══
+ *
+ * Colour comes from the logo: its deep pine green is the one interactive colour,
+ * the mint pin a quiet tint for selected and "dogs welcome" states, and the
+ * tennis-ball yellow is kept for the single call to venue owners.
+ *
+ * Pages sit on a plain background; content is separated by spacing and
+ * hairlines rather than boxes and shadows. A filled (sunken) surface marks
+ * controls and grouped rows; elevation is kept for things that float.
+ *
+ * Type: Bricolage for screen and section titles only, Figtree for everything
+ * people read or tap. Four weights: 400 text, 500 labels, 600 titles and
+ * buttons, 700 headlines.
+ *
+ * Spacing steps: 4 8 12 16 20 24 32 40 48. Screen gutter 20.
+ * Radius: 6 tags, 10 small controls and thumbnails, 12 fields and buttons,
+ * 16 photos and grouped surfaces, 24 sheets; round only for icon buttons.
  */
 :root {
+  /* Colour: brand */
+  --app-primary: #0f5a48;
+  --app-primary-pressed: #0b4637;
+  --app-on-primary: #ffffff;
+  --app-primary-soft: #e3f2ed;
+  --app-on-primary-soft: #0f5a48;
+  --app-secondary: #7ecbbd;
+  --app-accent: #ddee5f;
+  --app-accent-pressed: #cadc4e;
+  --app-on-accent: #1d2a06;
+
+  /* Colour: surfaces */
+  --app-bg: #ffffff;
+  --app-surface: #ffffff;
+  --app-surface-raised: #ffffff;
+  --app-surface-sunken: #f2f5f3;
+  --app-surface-sunken-pressed: #e6ebe8;
+
+  /* Colour: text and lines */
+  --app-text: #12241d;
+  --app-text-2: #475a51;
+  --app-text-3: #617269;
+  --app-border: rgba(18, 36, 29, 0.1);
+  --app-border-strong: rgba(18, 36, 29, 0.24);
+
+  /* Colour: status */
+  --app-success: #1e7a4c;
+  --app-success-soft: #e4f3ea;
+  --app-warning: #9a5a06;
+  --app-warning-soft: #fcf0da;
+  --app-danger: #c0352b;
+  --app-danger-soft: #fbe9e7;
+
+  /* Elevation: only for what floats above the page. */
+  --app-shadow-1: 0 1px 2px rgba(18, 36, 29, 0.06), 0 2px 8px -2px rgba(18, 36, 29, 0.08);
+  --app-shadow-2: 0 12px 32px -12px rgba(18, 36, 29, 0.28);
+
+  /* Type */
   --app-font-display: 'Bricolage Grotesque Variable', 'Figtree Variable', system-ui, sans-serif;
   --app-font-body: 'Figtree Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --app-bg: #f3f6f4;
-  --app-surface: #ffffff;
-  --app-surface-2: #e6eee9;
-  --app-ink: #12241d;
-  --app-ink-2: #55675f;
-  --app-line: rgba(18, 36, 29, 0.09);
-  --app-pine: #0f5a48;
-  --app-on-pine: #ffffff;
-  --app-mint: #7ecbbd;
-  --app-mint-soft: #d9f0ea;
-  --app-ball: #ddee5f;
-  --app-on-ball: #1d2a06;
-  --app-shadow: 0 10px 30px -12px rgba(15, 90, 72, 0.35);
+  /* Shape */
+  --app-radius-xs: 6px;
+  --app-radius-sm: 10px;
+  --app-radius-md: 12px;
+  --app-radius-lg: 16px;
+  --app-radius-xl: 24px;
+  --app-gutter: 20px;
 
+  /* Ionic */
   --ion-font-family: var(--app-font-body);
   --ion-background-color: var(--app-bg);
-  --ion-background-color-rgb: 243, 246, 244;
-  --ion-text-color: var(--app-ink);
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: var(--app-text);
   --ion-text-color-rgb: 18, 36, 29;
+  --ion-text-color-step-400: var(--app-text-2);
+  --ion-placeholder-color: var(--app-text-3);
   --ion-toolbar-background: var(--app-bg);
-  --ion-toolbar-color: var(--app-ink);
-  --ion-toolbar-border-color: transparent;
+  --ion-toolbar-color: var(--app-text);
+  --ion-toolbar-border-color: var(--app-border);
   --ion-tab-bar-background: var(--app-surface);
-  --ion-tab-bar-border-color: var(--app-line);
-  --ion-tab-bar-color: var(--app-ink-2);
-  --ion-tab-bar-color-selected: var(--app-pine);
+  --ion-tab-bar-border-color: var(--app-border);
+  --ion-tab-bar-color: var(--app-text-2);
+  --ion-tab-bar-color-selected: var(--app-primary);
   --ion-item-background: transparent;
-  --ion-card-background: var(--app-surface);
-  --ion-border-color: var(--app-line);
+  --ion-item-border-color: var(--app-border);
+  --ion-card-background: transparent;
+  --ion-border-color: var(--app-border);
+  --ion-overlay-background-color: var(--app-surface-raised);
 
   --ion-color-primary: #0f5a48;
   --ion-color-primary-rgb: 15, 90, 72;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0d4f3f;
+  --ion-color-primary-shade: #0b4637;
   --ion-color-primary-tint: #276b5a;
+
+  --ion-color-success: #1e7a4c;
+  --ion-color-success-rgb: 30, 122, 76;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #1a6b43;
+  --ion-color-success-tint: #35875e;
+
+  --ion-color-danger: #c0352b;
+  --ion-color-danger-rgb: 192, 53, 43;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #a92f26;
+  --ion-color-danger-tint: #c64940;
+}
+
+/* Former token names, kept while screens move to the tokens above. */
+:root {
+  --app-ink: var(--app-text);
+  --app-ink-2: var(--app-text-2);
+  --app-line: var(--app-border);
+  --app-pine: var(--app-primary);
+  --app-on-pine: var(--app-on-primary);
+  --app-mint: var(--app-secondary);
+  --app-mint-soft: var(--app-primary-soft);
+  --app-surface-2: var(--app-surface-sunken);
+  --app-shadow: var(--app-shadow-2);
+  --app-ball: var(--app-accent);
+  --app-on-ball: var(--app-on-accent);
 }
 
 /* The deep green is too dark to read on a dark background: the mint takes over. */
 :root.ion-palette-dark {
-  --app-bg: #0c1411;
-  --app-surface: #141e1a;
-  --app-surface-2: #1e2b26;
-  --app-ink: #e6f0eb;
-  --app-ink-2: #9cb0a7;
-  --app-line: rgba(230, 240, 235, 0.09);
-  --app-pine: #7ecbbd;
-  --app-on-pine: #06231b;
-  --app-mint-soft: #173229;
-  --app-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  --app-primary: #7ecbbd;
+  --app-primary-pressed: #6ab8aa;
+  --app-on-primary: #06231b;
+  --app-primary-soft: #183a31;
+  --app-on-primary-soft: #a5e0d4;
+  --app-accent-pressed: #c4d64a;
+
+  --app-bg: #0d1411;
+  --app-surface: #111a16;
+  --app-surface-raised: #17221d;
+  --app-surface-sunken: #1a2420;
+  --app-surface-sunken-pressed: #22302a;
+
+  --app-text: #e7f0eb;
+  --app-text-2: #a8bab2;
+  --app-text-3: #8a9d94;
+  --app-border: rgba(231, 240, 235, 0.1);
+  --app-border-strong: rgba(231, 240, 235, 0.26);
+
+  --app-success: #5cc58a;
+  --app-success-soft: #16301f;
+  --app-warning: #f0b35a;
+  --app-warning-soft: #33260f;
+  --app-danger: #ff8a7a;
+  --app-danger-soft: #3a1b17;
+
+  --app-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --app-shadow-2: 0 12px 32px -12px rgba(0, 0, 0, 0.8);
 
   --ion-color-primary: #7ecbbd;
   --ion-color-primary-rgb: 126, 203, 189;
@@ -85,119 +183,348 @@
   --ion-color-primary-contrast-rgb: 6, 35, 27;
   --ion-color-primary-shade: #6fb3a6;
   --ion-color-primary-tint: #8bd0c4;
+
+  --ion-color-success: #5cc58a;
+  --ion-color-success-rgb: 92, 197, 138;
+  --ion-color-success-contrast: #06231b;
+  --ion-color-success-contrast-rgb: 6, 35, 27;
+  --ion-color-success-shade: #51ad79;
+  --ion-color-success-tint: #6ccb96;
+
+  --ion-color-danger: #ff8a7a;
+  --ion-color-danger-rgb: 255, 138, 122;
+  --ion-color-danger-contrast: #2a0b07;
+  --ion-color-danger-contrast-rgb: 42, 11, 7;
+  --ion-color-danger-shade: #e0796b;
+  --ion-color-danger-tint: #ff9687;
 }
 
 /* Beats the dark palette's own `.ion-palette-dark.md` surface colours. */
 :root.ion-palette-dark.md,
 :root.ion-palette-dark.ios {
   --ion-background-color: var(--app-bg);
-  --ion-background-color-rgb: 12, 20, 17;
-  --ion-text-color: var(--app-ink);
-  --ion-text-color-rgb: 230, 240, 235;
+  --ion-background-color-rgb: 13, 20, 17;
+  --ion-text-color: var(--app-text);
+  --ion-text-color-rgb: 231, 240, 235;
+  --ion-text-color-step-400: var(--app-text-2);
+  --ion-placeholder-color: var(--app-text-3);
   --ion-toolbar-background: var(--app-bg);
-  --ion-toolbar-color: var(--app-ink);
-  --ion-toolbar-border-color: transparent;
+  --ion-toolbar-color: var(--app-text);
+  --ion-toolbar-border-color: var(--app-border);
   --ion-tab-bar-background: var(--app-surface);
-  --ion-tab-bar-border-color: var(--app-line);
-  --ion-tab-bar-color: var(--app-ink-2);
-  --ion-tab-bar-color-selected: var(--app-pine);
+  --ion-tab-bar-border-color: var(--app-border);
+  --ion-tab-bar-color: var(--app-text-2);
+  --ion-tab-bar-color-selected: var(--app-primary);
   --ion-item-background: transparent;
-  --ion-card-background: var(--app-surface);
-  --ion-border-color: var(--app-line);
-  --ion-overlay-background-color: var(--app-surface);
+  --ion-item-border-color: var(--app-border);
+  --ion-card-background: transparent;
+  --ion-border-color: var(--app-border);
+  --ion-overlay-background-color: var(--app-surface-raised);
 }
 
 body {
   -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
+/* ═══ Typography ═══ */
+
+/* Display face for screen and section titles; text headings use the body face. */
 h1,
-h2,
-h3 {
+h2 {
   font-family: var(--app-font-display);
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
-/* ── Top bars: the page's own colour, no shadow (Material 3), display titles ── */
+/* H1: the headline of a detail or content page. */
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-family: var(--app-font-body);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Section header: a title, with an optional text action on the right. */
+.app-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  margin: 0 0 8px;
+  padding: 0 8px 0 var(--app-gutter);
+}
+
+.app-section-title {
+  margin: 0;
+  font-family: var(--app-font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+
+/* Small label above a title: a brand, a category, a date. */
+.app-eyebrow {
+  margin: 0 0 4px;
+  color: var(--app-text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.33;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.app-caption {
+  color: var(--app-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Low-priority inline action: section "Clear", "Shuffle". */
+.app-text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--app-radius-md);
+  background: none;
+  color: var(--app-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  ion-icon {
+    font-size: 1.125rem;
+  }
+
+  &:active {
+    background: var(--app-surface-sunken);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+
+/* ═══ Top bars: the page's colour, a hairline under them, no shadow ═══ */
 ion-header.header-md {
   box-shadow: none;
 }
 
 ion-toolbar {
   --border-width: 0;
-  --padding-start: 8px;
-  --padding-end: 8px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --min-height: 56px;
+}
+
+/* The last toolbar of a header carries the hairline between bar and page. */
+ion-header ion-toolbar:last-of-type {
+  --border-width: 0 0 1px;
 }
 
 ion-title {
-  font-family: var(--app-font-display);
-  font-size: 1.125rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-family: var(--app-font-body);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
-/* A tab's root screen: big title, left aligned. */
+/* Detail pages: the name joins the bar once its headline has scrolled away. */
+ion-title.title-reveal {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  &.revealed {
+    opacity: 1;
+  }
+}
+
+/* A tab's root screen: big title, left aligned with the page gutter. */
 ion-toolbar.page-toolbar {
-  --min-height: 64px;
+  --min-height: 60px;
   --padding-start: 0;
 }
 
 ion-title.page-title {
+  padding-inline: var(--app-gutter);
+  font-family: var(--app-font-display);
   font-size: 1.75rem;
-  font-weight: 750;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
-/*
- * ── Search: a rounded field with a hairline, no drop shadow ──
- * The searchbar is a scoped (not shadow) component whose own defaults sit on a
- * class selector, hence the mode class here.
- */
+/* Rows under a big title (segments, search): no hairline between them. */
+ion-toolbar.sub-toolbar {
+  --min-height: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-header ion-toolbar.sub-toolbar:not(:last-of-type) {
+  --border-width: 0;
+}
+
+ion-back-button {
+  --icon-font-size: 24px;
+}
+
+/* ═══ Search: a filled field, no border or shadow ═══ */
+/* The searchbar is a scoped (not shadow) component; its own defaults sit on the mode class. */
 ion-searchbar.md,
 ion-searchbar.ios {
-  --background: var(--app-surface);
-  --border-radius: 999px;
-  --box-shadow: 0 0 0 1px var(--app-line);
-  --color: var(--app-ink);
-  --icon-color: var(--app-ink-2);
-  --placeholder-color: var(--app-ink-2);
+  --background: var(--app-surface-sunken);
+  --border-radius: var(--app-radius-md);
+  --box-shadow: none;
+  --color: var(--app-text);
+  --icon-color: var(--app-text-2);
+  --placeholder-color: var(--app-text-3);
   --placeholder-opacity: 1;
-  --clear-button-color: var(--app-ink-2);
+  --clear-button-color: var(--app-text-2);
+  padding: 0;
+  min-height: 0;
+
+  .searchbar-input-container {
+    min-height: 44px;
+  }
 
   .searchbar-input {
+    min-height: 44px;
     font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .searchbar-search-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.searchbar-has-focus {
+    --background: var(--app-surface);
+    --box-shadow: inset 0 0 0 1.5px var(--app-primary);
   }
 }
 
-/* ── Segmented control (templates set mode="ios" for the pill look) ── */
+/* A search field with its filter button beside it. */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px var(--app-gutter) 12px;
+
+  ion-searchbar {
+    flex: 1;
+  }
+
+  /* Ionic pads a searchbar inside a toolbar; the row already has the gutter. */
+  ion-searchbar.md,
+  ion-searchbar.ios {
+    padding: 0;
+  }
+}
+
+/* Square filter button, filled like the field; tinted with a count when filters are on. */
+.filter-button {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface-sunken);
+  color: var(--app-text);
+  font-size: 22px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:active {
+    background: var(--app-surface-sunken-pressed);
+  }
+
+  &.active {
+    background: var(--app-primary-soft);
+    color: var(--app-on-primary-soft);
+  }
+}
+
+.filter-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 2px solid var(--app-bg);
+  border-radius: 10px;
+  background: var(--app-primary);
+  color: var(--app-on-primary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  box-sizing: content-box;
+}
+
+/* ═══ Segments: two views of one tab, as underlined tabs ═══ */
 ion-segment {
-  --background: var(--app-surface-2);
-  margin: 4px 16px 8px;
+  --background: transparent;
+  margin: 0 var(--app-gutter);
   width: auto;
-  border-radius: 999px;
-  padding: 3px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--app-border);
 }
 
 ion-segment-button {
-  --indicator-color: var(--app-surface);
-  --indicator-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-  --color: var(--app-ink-2);
-  --color-checked: var(--app-ink);
-  --border-radius: 999px;
-  min-height: 38px;
-  font-size: 0.95rem;
+  --color: var(--app-text-2);
+  --color-checked: var(--app-text);
+  --indicator-color: var(--app-primary);
+  --indicator-height: 2px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --ripple-color: transparent;
+  min-width: 0;
+  min-height: 44px;
+  font-size: 0.9375rem;
   font-weight: 600;
-  text-transform: none;
   letter-spacing: 0;
+  text-transform: none;
 }
 
-/* ── Buttons ── */
+/* ═══ Buttons: primary (filled), secondary (outlined), tertiary (clear) ═══ */
 ion-button {
-  --border-radius: 14px;
+  --border-radius: var(--app-radius-md);
   --box-shadow: none;
-  font-weight: 650;
-  text-transform: none;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 600;
   letter-spacing: 0;
+  text-transform: none;
+
+  ion-icon[slot='start'] {
+    margin-inline-end: 8px;
+    font-size: 1.25em;
+  }
 }
 
 ion-button[expand='block'] {
@@ -205,53 +532,213 @@ ion-button[expand='block'] {
   font-size: 1rem;
 }
 
-/* ── Chips, cards, lists ── */
-ion-chip {
-  --background: var(--app-surface-2);
-  --color: var(--app-ink);
-  font-weight: 550;
+ion-button[size='small'] {
+  --border-radius: var(--app-radius-sm);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  height: 40px;
+  font-size: 0.875rem;
 }
 
-ion-card {
-  border-radius: 22px;
-  box-shadow: none;
-  border: 1px solid var(--app-line);
+ion-button[fill='outline']:not(.ion-color) {
+  --border-width: 1px;
+  --border-color: var(--app-border-strong);
+  --color: var(--app-text);
+  --background-activated: var(--app-text);
+  --background-activated-opacity: 0.06;
+  --background-focused: var(--app-text);
+  --background-focused-opacity: 0.06;
 }
 
-/* Scoped component: its own inset radius sits on .list-md.list-inset. */
-ion-list.list-inset.list-md,
-ion-list.list-inset.list-ios {
-  --ion-item-background: var(--app-surface);
-  border-radius: 20px;
-  border: 1px solid var(--app-line);
+ion-button.button-disabled {
+  opacity: 0.45;
+}
+
+/* Toolbar icon buttons keep Ionic's own sizes. */
+ion-buttons ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 48px;
+  font-size: 1rem;
+}
+
+/* ═══ Lists ═══ */
+ion-list.list-md,
+ion-list.list-ios {
+  padding: 0;
+  background: transparent;
+}
+
+ion-item {
+  --padding-start: var(--app-gutter);
+  --inner-padding-end: 16px;
+  --min-height: 56px;
+  --border-color: var(--app-border);
+  --background-activated: var(--app-text);
+  --background-activated-opacity: 0.05;
+  --ripple-color: rgba(var(--ion-text-color-rgb), 0.08);
 }
 
 ion-item > ion-icon[slot='start'] {
-  color: var(--app-pine);
+  margin-inline-end: 16px;
+  color: var(--app-primary);
+  font-size: 22px;
 }
 
-ion-list-header {
-  font-family: var(--app-font-display);
-  font-size: 1.05rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+ion-item h2,
+ion-item h3 {
+  font-family: var(--app-font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+ion-label p {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Grouped rows (settings): a filled surface, no border. */
+ion-list.list-inset.list-md,
+ion-list.list-inset.list-ios {
+  --ion-item-background: var(--app-surface-sunken);
+  margin: 0 16px;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface-sunken);
+
+  ion-item {
+    --padding-start: 16px;
+  }
+}
+
+/* Label above a group of rows. */
+.group-label {
+  margin: 28px var(--app-gutter) 8px;
+  color: var(--app-text-2);
+  font-family: var(--app-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 ion-thumbnail {
-  --border-radius: 14px;
+  --border-radius: var(--app-radius-sm);
 }
 
-/* ── Form fields ── */
-ion-input,
-ion-textarea,
-ion-select {
-  --border-radius: 14px;
-  --highlight-color-focused: var(--app-pine);
+ion-note:not(.ion-color) {
+  color: var(--app-text-2);
 }
 
-/* ── Bottom sheets ── */
+/* Photo-less thumbnail: a quiet tile instead of the logo on repeat. */
+.thumb-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--app-surface-sunken);
+  color: var(--app-text-3);
+  font-size: 22px;
+}
+
+/* ═══ Form fields ═══ */
+ion-input.md,
+ion-textarea.md,
+ion-select.md {
+  --border-radius: var(--app-radius-md);
+  --border-color: var(--app-border-strong);
+  --highlight-color-focused: var(--app-primary);
+  --highlight-color-invalid: var(--app-danger);
+  --placeholder-color: var(--app-text-3);
+  --placeholder-opacity: 1;
+  min-height: 56px;
+}
+
+ion-input .label-text-wrapper,
+ion-textarea .label-text-wrapper,
+ion-select .label-text-wrapper {
+  font-weight: 500;
+}
+
+.helper-text,
+.error-text {
+  font-size: 0.8125rem !important;
+}
+
+ion-toggle {
+  --track-background-checked: var(--app-primary);
+  --handle-background-checked: var(--app-on-primary);
+}
+
+ion-checkbox,
+ion-radio {
+  --checkbox-background-checked: var(--app-primary);
+  --border-color-checked: var(--app-primary);
+  --color-checked: var(--app-primary);
+}
+
+/* ═══ Sheets and dialogs ═══ */
 ion-modal {
-  --border-radius: 24px;
+  --border-radius: var(--app-radius-xl);
+  --backdrop-opacity: 0.4;
+}
+
+ion-modal.modal-sheet {
+  --background: var(--app-surface-raised);
+
+  ion-header ion-toolbar {
+    --background: var(--app-surface-raised);
+    --padding-start: 12px;
+    --padding-end: 8px;
+    --border-width: 0 !important;
+    padding-top: 8px;
+  }
+
+  ion-title {
+    font-family: var(--app-font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  ion-content {
+    --background: var(--app-surface-raised);
+  }
+
+  ion-footer ion-toolbar {
+    --background: var(--app-surface-raised);
+    --border-width: 1px 0 0 !important;
+    --padding-start: var(--app-gutter);
+    --padding-end: var(--app-gutter);
+    padding-block: 12px;
+  }
+}
+
+/* Filter rows inside a sheet: label small and quiet, value readable. */
+.sheet-fields ion-item {
+  --padding-start: var(--app-gutter);
+  --min-height: 64px;
+
+  /* A row that opens a picker: the same label/value pair as a select. */
+  .picker-label {
+    p {
+      color: var(--app-text-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+
+    h3 {
+      margin-top: 2px;
+      font-weight: 400;
+    }
+  }
+}
+
+/* Low-priority reset in a sheet header. */
+.reset-button {
+  --color: var(--app-text-2) !important;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 /*
@@ -263,7 +750,7 @@ ion-modal.consent-sheet {
   --width: 100%;
   --max-width: 560px;
   --height: auto;
-  --border-radius: 28px 28px 0 0;
+  --border-radius: var(--app-radius-xl) var(--app-radius-xl) 0 0;
   align-items: flex-end;
 
   .ion-page {
@@ -272,10 +759,206 @@ ion-modal.consent-sheet {
   }
 }
 
+ion-action-sheet {
+  --background: var(--app-surface-raised);
+  --button-color: var(--app-text);
+  --button-color-selected: var(--app-primary);
+}
+
+ion-alert {
+  --background: var(--app-surface-raised);
+  --max-width: 340px;
+}
+
+ion-toast {
+  --border-radius: var(--app-radius-md);
+  --box-shadow: var(--app-shadow-2);
+  --start: 12px;
+  --end: 12px;
+  font-weight: 500;
+}
+
+/* ═══ Page patterns ═══ */
+
+/* Empty, error and not-found states: an icon, a title, a sentence, maybe one action. */
+.app-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+  margin: 0 auto;
+  padding: 56px 24px 24px;
+  text-align: center;
+
+  > ion-icon {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 50%;
+    background: var(--app-surface-sunken);
+    color: var(--app-text-2);
+  }
+
+  h3 {
+    margin: 0 0 6px;
+    color: var(--app-text);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  p {
+    margin: 0;
+    color: var(--app-text-2);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  ion-button {
+    margin-top: 20px;
+  }
+}
+
+/* Skeleton placeholders: shaped like what they stand in for. */
+ion-skeleton-text {
+  --background: var(--app-surface-sunken);
+  --background-rgb: var(--ion-text-color-rgb);
+  border-radius: var(--app-radius-xs);
+  line-height: 1;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px var(--app-gutter);
+
+  .skeleton-thumb {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    margin: 0;
+    border-radius: var(--app-radius-sm);
+  }
+
+  .skeleton-lines {
+    display: grid;
+    flex: 1;
+    gap: 8px;
+
+    ion-skeleton-text {
+      height: 12px;
+      margin: 0;
+    }
+  }
+}
+
+/* Long text from the API: descriptions, ingredients. */
+.app-prose {
+  margin: 0;
+  color: var(--app-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* A page section below a detail header. */
+.app-block {
+  padding: 0 var(--app-gutter);
+  margin-top: 32px;
+
+  > .app-section-title {
+    margin-bottom: 12px;
+  }
+}
+
+/* Stock status: a dot and a word, never colour alone. */
+.stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.in {
+    color: var(--app-success);
+  }
+
+  &.out {
+    color: var(--app-text-3);
+  }
+}
+
+/* One small quiet label: "Best price". */
+.app-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--app-radius-xs);
+  background: var(--app-success-soft);
+  color: var(--app-success);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* ═══ Map ═══ */
 /* Leaflet sits inside ion-content; keep its controls under Ionic overlays. */
 .leaflet-container {
   z-index: 0;
   font: inherit;
+  background: var(--app-surface-sunken);
+}
+
+.leaflet-container .leaflet-control-attribution {
+  padding: 2px 6px;
+  border-top-left-radius: var(--app-radius-xs);
+  background: rgba(255, 255, 255, 0.85);
+  color: #4d5f57;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+
+  a {
+    color: inherit;
+  }
+}
+
+/* The venue marker: a brand pin (MapViewComponent). */
+.app-map-pin {
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 3px 4px rgba(18, 36, 29, 0.35));
+  }
+
+  .pin-body {
+    fill: var(--app-primary);
+    stroke: #ffffff;
+    stroke-width: 1.5;
+  }
+
+  .pin-dot {
+    fill: #ffffff;
+  }
+}
+
+:root.ion-palette-dark .app-map-pin .pin-body {
+  fill: #0f5a48;
 }
 
 @media (prefers-reduced-motion: reduce) {

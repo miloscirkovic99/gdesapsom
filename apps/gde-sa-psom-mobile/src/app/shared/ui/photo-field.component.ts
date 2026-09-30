@@ -50,28 +50,46 @@ import { CameraService } from '../../core/platform/camera.service';
   styles: `
     :host {
       display: block;
-      margin: 16px 0;
+      margin: 28px 0 0;
     }
     .label {
-      margin: 0 0 6px;
-      font-size: 0.85rem;
-      color: var(--ion-color-medium);
+      margin: 0 0 8px;
+      color: var(--app-text);
+      font-size: 0.9375rem;
+      font-weight: 500;
     }
     .preview img {
       display: block;
       width: 100%;
-      max-height: 220px;
+      aspect-ratio: 4 / 3;
+      max-height: 240px;
+      border-radius: var(--app-radius-md);
       object-fit: cover;
-      border-radius: 12px;
+      background: var(--app-surface-sunken);
     }
     .actions {
       display: flex;
       justify-content: space-between;
-      margin-top: 6px;
+      margin-top: 8px;
     }
+    .actions ion-button {
+      margin: 0;
+    }
+    /* An empty photo slot: a dashed drop zone. */
     .add {
+      --background: var(--app-surface-sunken);
       --border-style: dashed;
-      height: 64px;
+      --border-width: 1.5px;
+      height: 88px;
+      margin: 0;
+    }
+    .add ion-icon[slot='start'] {
+      color: var(--app-primary);
+    }
+    ion-note {
+      display: block;
+      margin: 6px 0 0 16px;
+      font-size: 0.8125rem;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

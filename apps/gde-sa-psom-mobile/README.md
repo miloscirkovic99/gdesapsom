@@ -193,3 +193,21 @@ contact form, and recent searches and viewed places stay on the phone.
 - Unit tests run transpile-only (`isolatedModules` in `jest.config.ts`) and mock
   `@ionic/angular` / `@capacitor/*`; type errors are caught by `nx build` and lint.
 - No Tailwind or daisyUI: Ionic components plus the CSS variables in `src/styles.scss`.
+
+## Design system
+
+`src/styles.scss` holds the tokens (`--app-*`: colours with dark variants, radius, gutter)
+and the shared patterns every screen reuses. Use them before writing new component CSS:
+
+- Type: Bricolage for screen and section titles (`h1`, `h2`, `.app-section-title`), Figtree
+  for the rest. Weights 400 / 500 / 600 / 700 only.
+- Spacing on a 4 px grid, screen gutter `--app-gutter` (20 px). Radius: 6 tags, 10 small
+  controls, 12 fields and buttons, 16 photos and grouped surfaces, 24 sheets.
+- Colour: `--app-primary` is the one interactive colour; `--app-primary-soft` marks selected
+  and dog-policy states; `--app-accent` (tennis-ball yellow) is only for the owner CTA.
+- Buttons: filled = primary action, `fill="outline"` = secondary, `fill="clear"` = tertiary.
+- Patterns: `.search-row` + `.filter-button` (search with filters), `.app-state` (empty and
+  error states), `.skeleton-row` and `ion-skeleton-text` (loading), `.app-section-head`,
+  `.app-block`, `.app-eyebrow`, `.group-label`, `.thumb-placeholder`, `.stock`, `.app-tag`.
+- Detail pages show the toolbar title only after the headline has scrolled away
+  (`shared/title-reveal.ts`).
