@@ -131,21 +131,6 @@
   --ion-color-danger-tint: #c64940;
 }
 
-/* Former token names, kept while screens move to the tokens above. */
-:root {
-  --app-ink: var(--app-text);
-  --app-ink-2: var(--app-text-2);
-  --app-line: var(--app-border);
-  --app-pine: var(--app-primary);
-  --app-on-pine: var(--app-on-primary);
-  --app-mint: var(--app-secondary);
-  --app-mint-soft: var(--app-primary-soft);
-  --app-surface-2: var(--app-surface-sunken);
-  --app-shadow: var(--app-shadow-2);
-  --app-ball: var(--app-accent);
-  --app-on-ball: var(--app-on-accent);
-}
-
 /* The deep green is too dark to read on a dark background: the mint takes over. */
 :root.ion-palette-dark {
   --app-primary: #7ecbbd;

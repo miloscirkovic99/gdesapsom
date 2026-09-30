@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/catalog" text="" />
     </ion-buttons>
-    <ion-title>{{ product()?.name }}</ion-title>
+    <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ product()?.name }}</ion-title>
     @if (product()) {
       <ion-buttons slot="end">
         <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
@@ -14,7 +14,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="title.onScroll($event)">
   @if (product(); as p) {
     @if (p.images.length) {
       <div class="photos" [class.single]="p.images.length === 1">
@@ -24,117 +24,141 @@
       </div>
     }
 
-    <section class="ion-padding">
-      <p class="brand">{{ p.brand.name }}</p>
-      <h1>{{ p.name }}</h1>
-      <div class="chips">
-        <ion-chip color="primary"><ion-label>{{ p.foodType | localName: lang() }}</ion-label></ion-chip>
-        <ion-chip><ion-label>{{ p.lifeStage | localName: lang() }}</ion-label></ion-chip>
-        <ion-chip><ion-label>{{ p.breedSize | localName: lang() }}</ion-label></ion-chip>
-        @if (p.isGrainFree) {
-          <ion-chip><ion-label>{{ 'grain_free' | transloco }}</ion-label></ion-chip>
-        }
-      </div>
-      <p class="facts">
-        @if (p.packageWeightG) {
-          {{ 'package_weight' | transloco }}: <strong>{{ p.packageWeightG | packageWeight: lang() }}</strong>
-        }
-      </p>
+    <section class="intro">
+      <p class="app-eyebrow">{{ p.brand.name }}</p>
+      <h1 #headline>{{ p.name }}</h1>
       <p class="price">
         @if (p.aggregate.lowPrice !== null) {
-          {{ 'price_from' | transloco: { price: (p.aggregate.lowPrice | rsdPrice: lang()) } }}
+          <strong>{{ 'price_from' | transloco: { price: (p.aggregate.lowPrice | rsdPrice: lang()) } }}</strong>
           @if (p.aggregate.highPrice !== null && p.aggregate.highPrice !== p.aggregate.lowPrice) {
-            · {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}
+            <span>· {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}</span>
           }
         } @else {
-          {{ 'price_unknown' | transloco }}
+          <span>{{ 'price_unknown' | transloco }}</span>
         }
       </p>
-      @if (description(); as d) {
-        <p class="text">{{ d }}</p>
-      }
     </section>
 
-    <section>
-      <h2 class="ion-padding-horizontal">{{ 'available_at' | transloco }}</h2>
-      @if (p.offers.length) {
-        <ion-list lines="full">
-          @for (offer of p.offers; track offer.id) {
-            <ion-item [routerLink]="['/tabs/catalog/shops', offer.shop.slug]" detail="true" lines="none">
-              <ion-label class="ion-text-wrap">
-                <h3>
-                  {{ offer.shop.name }}
-                  @if (offer.id === bestOfferId()) {
-                    <ion-badge color="success">{{ 'best_price' | transloco }}</ion-badge>
-                  }
-                </h3>
-                <p>{{ locationOf(offer) }}</p>
-                <p>
-                  <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
-                  ·
-                  <span [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
-                    {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
-                  </span>
-                </p>
-              </ion-label>
-            </ion-item>
-            <ion-item class="offer-actions">
-              <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" [venueSlug]="offer.shop.slug" />
-              @if (directionsUrl(offer); as url) {
-                <ion-button
-                  slot="end"
-                  size="small"
-                  fill="clear"
-                  [href]="url"
-                  target="_blank"
-                  rel="noopener"
-                  data-link-type="venue_maps"
-                  [attr.data-venue-slug]="offer.shop.slug"
-                >
-                  <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
-                  {{ 'get_directions' | transloco }}
-                </ion-button>
-              }
-            </ion-item>
-          }
-        </ion-list>
-      } @else {
-        <p class="ion-padding-horizontal muted">{{ 'no_offers_hint' | transloco }}</p>
+    <dl class="specs">
+      <div>
+        <dt>{{ 'filter_food_type' | transloco }}</dt>
+        <dd>{{ p.foodType | localName: lang() }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'filter_life_stage' | transloco }}</dt>
+        <dd>{{ p.lifeStage | localName: lang() }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'filter_breed_size' | transloco }}</dt>
+        <dd>{{ p.breedSize | localName: lang() }}</dd>
+      </div>
+      @if (p.packageWeightG) {
+        <div>
+          <dt>{{ 'package_weight' | transloco }}</dt>
+          <dd>{{ p.packageWeightG | packageWeight: lang() }}</dd>
+        </div>
       }
+    </dl>
+    @if (p.isGrainFree) {
+      <p class="flag"><ion-icon name="checkmark-circle" aria-hidden="true" />{{ 'grain_free' | transloco }}</p>
+    }
+
+    @if (description(); as d) {
+      <section class="app-block">
+        <p class="app-prose">{{ d }}</p>
+      </section>
+    }
+
+    <section class="app-block list-head">
+      <h2 class="app-section-title">{{ 'available_at' | transloco }}</h2>
     </section>
+    @if (p.offers.length) {
+      <ion-list lines="inset" class="offers">
+        @for (offer of p.offers; track offer.id) {
+          <ion-item [routerLink]="['/tabs/catalog/shops', offer.shop.slug]" detail="true" lines="none">
+            <ion-label class="ion-text-wrap">
+              <h3>
+                {{ offer.shop.name }}
+                @if (offer.id === bestOfferId()) {
+                  <span class="app-tag">{{ 'best_price' | transloco }}</span>
+                }
+              </h3>
+              <p>{{ locationOf(offer) }}</p>
+              <p class="offer-line">
+                <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
+                <span class="stock" [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
+                  {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
+                </span>
+              </p>
+            </ion-label>
+          </ion-item>
+          <ion-item class="offer-actions">
+            <app-delivery-links [woltUrl]="offer.woltUrl" [glovoUrl]="offer.glovoUrl" [venueSlug]="offer.shop.slug" />
+            @if (directionsUrl(offer); as url) {
+              <ion-button
+                slot="end"
+                size="small"
+                fill="clear"
+                [href]="url"
+                target="_blank"
+                rel="noopener"
+                data-link-type="venue_maps"
+                [attr.data-venue-slug]="offer.shop.slug"
+              >
+                <ion-icon slot="start" name="navigate-outline" aria-hidden="true" />
+                {{ 'get_directions' | transloco }}
+              </ion-button>
+            }
+          </ion-item>
+        }
+      </ion-list>
+    } @else {
+      <p class="app-block muted">{{ 'no_offers_hint' | transloco }}</p>
+    }
 
     @if (ingredients(); as i) {
-      <section class="ion-padding">
-        <h2>{{ 'ingredients' | transloco }}</h2>
-        <p class="text">{{ i }}</p>
+      <section class="app-block">
+        <h2 class="app-section-title">{{ 'ingredients' | transloco }}</h2>
+        <p class="app-prose">{{ i }}</p>
       </section>
     }
 
     @if (p.related.length) {
-      <section>
-        <h2 class="ion-padding-horizontal">{{ 'related_products' | transloco }}</h2>
-        <ion-list>
-          @for (r of p.related; track r.id) {
-            <ion-item [routerLink]="['/tabs/catalog/food', r.slug]" detail="true">
-              <ion-thumbnail slot="start">
-                <img [src]="r.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
-              </ion-thumbnail>
-              <ion-label class="ion-text-wrap">
-                <p>{{ r.brandName }}</p>
-                <h3>{{ r.name }}</h3>
-                <p>{{ r.minPrice !== null ? (r.minPrice | rsdPrice: lang()) : ('price_unknown' | transloco) }}</p>
-              </ion-label>
-            </ion-item>
-          }
-        </ion-list>
+      <section class="app-block list-head">
+        <h2 class="app-section-title">{{ 'related_products' | transloco }}</h2>
       </section>
+      <ion-list lines="inset" class="products">
+        @for (r of p.related; track r.id) {
+          <ion-item [routerLink]="['/tabs/catalog/food', r.slug]" detail="true">
+            <ion-thumbnail slot="start" class="product">
+              @if (r.thumbnail) {
+                <img [src]="r.thumbnail" alt="" loading="lazy" />
+              } @else {
+                <span class="thumb-placeholder"><ion-icon name="image-outline" aria-hidden="true" /></span>
+              }
+            </ion-thumbnail>
+            <ion-label class="ion-text-wrap">
+              <p class="app-eyebrow">{{ r.brandName }}</p>
+              <h3>{{ r.name }}</h3>
+              <p>{{ r.minPrice !== null ? (r.minPrice | rsdPrice: lang()) : ('price_unknown' | transloco) }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
     }
+    <div class="end"></div>
   } @else if (food.detailError()) {
-    <div class="state ion-padding">
+    <div class="app-state">
+      <ion-icon name="alert-circle-outline" aria-hidden="true" />
       <h3>{{ 'mobile_not_found' | transloco }}</h3>
       <ion-button fill="outline" (click)="reload()">{{ 'try_again' | transloco }}</ion-button>
     </div>
   } @else {
-    <div class="state"><ion-spinner /></div>
+    <div class="skeleton" aria-hidden="true">
+      <ion-skeleton-text [animated]="true" class="skeleton-photo" />
+      <ion-skeleton-text [animated]="true" style="width: 25%" />
+      <ion-skeleton-text [animated]="true" style="width: 70%; height: 22px" />
+      <ion-skeleton-text [animated]="true" style="width: 40%" />
+    </div>
   }
 </ion-content>

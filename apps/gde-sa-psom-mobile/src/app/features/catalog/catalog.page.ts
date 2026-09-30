@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { IonBadge } from '@ionic/angular/ion-badge';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
-import { IonChip } from '@ionic/angular/ion-chip';
 import { IonContent } from '@ionic/angular/ion-content';
+import { IonFooter } from '@ionic/angular/ion-footer';
 import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonInfiniteScroll } from '@ionic/angular/ion-infinite-scroll';
@@ -22,6 +21,7 @@ import { IonSegment } from '@ionic/angular/ion-segment';
 import { IonSegmentButton } from '@ionic/angular/ion-segment-button';
 import { IonSelect } from '@ionic/angular/ion-select';
 import { IonSelectOption } from '@ionic/angular/ion-select-option';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonSpinner } from '@ionic/angular/ion-spinner';
 import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
@@ -31,7 +31,7 @@ import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { optionsOutline } from 'ionicons/icons';
+import { cloudOfflineOutline, imageOutline, optionsOutline, searchOutline } from 'ionicons/icons';
 import {
   DogFoodFilters,
   DogFoodSort,
@@ -69,7 +69,6 @@ interface Completable {
     IonButtons,
     IonButton,
     IonIcon,
-    IonBadge,
     IonContent,
     IonRefresher,
     IonRefresherContent,
@@ -79,9 +78,10 @@ interface Completable {
     IonItem,
     IonLabel,
     IonThumbnail,
-    IonChip,
     IonSpinner,
+    IonSkeletonText,
     IonModal,
+    IonFooter,
     IonSelect,
     IonSelectOption,
     IonToggle,
@@ -122,7 +122,7 @@ export class CatalogPage {
   #pendingShops: Completable | null = null;
 
   constructor() {
-    addIcons({ optionsOutline });
+    addIcons({ cloudOfflineOutline, imageOutline, optionsOutline, searchOutline });
 
     this.food.search(EMPTY_DOG_FOOD_FILTERS);
 

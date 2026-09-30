@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/catalog" text="" />
     </ion-buttons>
-    <ion-title>{{ shop()?.name }}</ion-title>
+    <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ shop()?.name }}</ion-title>
     @if (shop()) {
       <ion-buttons slot="end">
         <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
@@ -14,19 +14,34 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="title.onScroll($event)">
   @if (shop(); as s) {
-    <section class="ion-padding shop-head">
+    <section class="intro shop-head">
       @if (s.logo) {
         <img class="logo" [src]="s.logo" alt="" />
       }
       <div>
-        <h1>{{ s.name }}</h1>
-        <p class="muted">{{ s.townshipName ?? s.cityName }}</p>
+        <h1 #headline>{{ s.name }}</h1>
+        <p class="where">{{ s.townshipName ?? s.cityName }}</p>
       </div>
     </section>
 
-    <ion-list lines="full">
+    @if (s.woltUrl || s.glovoUrl) {
+      <div class="delivery">
+        <app-delivery-links [woltUrl]="s.woltUrl" [glovoUrl]="s.glovoUrl" [venueSlug]="s.slug" />
+      </div>
+    }
+
+    @if (description(); as d) {
+      <section class="app-block">
+        <p class="app-prose">{{ d }}</p>
+      </section>
+    }
+
+    <section class="app-block list-head">
+      <h2 class="app-section-title">{{ 'contact' | transloco }}</h2>
+    </section>
+    <ion-list lines="inset" class="facts">
       <ion-item
         [href]="addressUrl()"
         target="_blank"
@@ -61,20 +76,8 @@
       }
     </ion-list>
 
-    @if (s.woltUrl || s.glovoUrl) {
-      <section class="ion-padding-horizontal ion-padding-top">
-        <app-delivery-links [woltUrl]="s.woltUrl" [glovoUrl]="s.glovoUrl" [venueSlug]="s.slug" />
-      </section>
-    }
-
-    @if (description(); as d) {
-      <section class="ion-padding">
-        <p class="text">{{ d }}</p>
-      </section>
-    }
-
     @if (coords(); as c) {
-      <section class="ion-padding">
+      <section class="app-block">
         <app-map-view [latitude]="c.latitude" [longitude]="c.longitude" [label]="s.name" />
         <ion-button
           expand="block"
@@ -91,69 +94,81 @@
       </section>
     }
 
-    <section>
-      <h2 class="ion-padding-horizontal">{{ 'assortment' | transloco }}</h2>
-      @if (s.offers.length) {
-        @if (s.offers.length > 6) {
+    <section class="app-block list-head">
+      <h2 class="app-section-title">{{ 'assortment' | transloco }}</h2>
+    </section>
+    @if (s.offers.length) {
+      @if (s.offers.length > 6) {
+        <div class="search-row">
           <ion-searchbar
             [placeholder]="'assortment_search' | transloco"
             [debounce]="200"
             (ionInput)="assortmentQuery.set($event.detail.value ?? '')"
           />
-        }
-        <ion-list>
-          @for (offer of assortment(); track offer.offerId) {
-            <ion-item [routerLink]="['/tabs/catalog/food', offer.food.slug]" detail="false">
-              <ion-thumbnail slot="start">
-                <img [src]="offer.food.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
-              </ion-thumbnail>
-              <ion-label class="ion-text-wrap">
-                <p class="brand">{{ offer.food.brandName }}</p>
-                <h3>{{ offer.food.name }}</h3>
-                <p>
-                  {{ offer.food.foodType | localName: lang() }}
-                  @if (offer.food.packageWeightG) {
-                    · {{ offer.food.packageWeightG | packageWeight: lang() }}
-                  }
-                </p>
-              </ion-label>
-              <ion-note slot="end" class="offer-price">
-                <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
-                <span [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
-                  {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
-                </span>
-              </ion-note>
-            </ion-item>
-          } @empty {
-            <p class="ion-padding-horizontal muted">{{ 'no_results' | transloco }}</p>
-          }
-        </ion-list>
-      } @else {
-        <p class="ion-padding-horizontal muted">{{ 'assortment_soon_text' | transloco }}</p>
+        </div>
       }
-    </section>
+      <ion-list lines="inset" class="products">
+        @for (offer of assortment(); track offer.offerId) {
+          <ion-item [routerLink]="['/tabs/catalog/food', offer.food.slug]" detail="false">
+            <ion-thumbnail slot="start" class="product">
+              @if (offer.food.thumbnail) {
+                <img [src]="offer.food.thumbnail" alt="" loading="lazy" />
+              } @else {
+                <span class="thumb-placeholder"><ion-icon name="image-outline" aria-hidden="true" /></span>
+              }
+            </ion-thumbnail>
+            <ion-label class="ion-text-wrap">
+              <p class="app-eyebrow">{{ offer.food.brandName }}</p>
+              <h3>{{ offer.food.name }}</h3>
+              <p>
+                {{ offer.food.foodType | localName: lang() }}
+                @if (offer.food.packageWeightG) {
+                  · {{ offer.food.packageWeightG | packageWeight: lang() }}
+                }
+              </p>
+            </ion-label>
+            <ion-note slot="end" class="offer-price">
+              <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
+              <span class="stock" [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
+                {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
+              </span>
+            </ion-note>
+          </ion-item>
+        } @empty {
+          <p class="app-block muted">{{ 'no_results' | transloco }}</p>
+        }
+      </ion-list>
+    } @else {
+      <p class="app-block muted">{{ 'assortment_soon_text' | transloco }}</p>
+    }
 
     @if (s.nearby.length) {
-      <section>
-        <h2 class="ion-padding-horizontal">{{ 'nearby_shops' | transloco }}</h2>
-        <ion-list>
-          @for (n of s.nearby; track n.id) {
-            <ion-item [routerLink]="['/tabs/catalog/shops', n.slug]" detail="true">
-              <ion-label class="ion-text-wrap">
-                <h3>{{ n.name }}</h3>
-                <p>{{ n.address }}</p>
-              </ion-label>
-            </ion-item>
-          }
-        </ion-list>
+      <section class="app-block list-head">
+        <h2 class="app-section-title">{{ 'nearby_shops' | transloco }}</h2>
       </section>
+      <ion-list lines="inset" class="facts">
+        @for (n of s.nearby; track n.id) {
+          <ion-item [routerLink]="['/tabs/catalog/shops', n.slug]" detail="true">
+            <ion-label class="ion-text-wrap">
+              <h3>{{ n.name }}</h3>
+              <p>{{ n.address }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
     }
+    <div class="end"></div>
   } @else if (shops.detailError()) {
-    <div class="state ion-padding">
+    <div class="app-state">
+      <ion-icon name="alert-circle-outline" aria-hidden="true" />
       <h3>{{ 'mobile_not_found' | transloco }}</h3>
       <ion-button fill="outline" (click)="reload()">{{ 'try_again' | transloco }}</ion-button>
     </div>
   } @else {
-    <div class="state"><ion-spinner /></div>
+    <div class="skeleton" aria-hidden="true">
+      <ion-skeleton-text [animated]="true" style="width: 60%; height: 24px" />
+      <ion-skeleton-text [animated]="true" style="width: 30%" />
+      <ion-skeleton-text [animated]="true" class="skeleton-panel" />
+    </div>
   }
 </ion-content>

@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
@@ -12,14 +23,22 @@ import { IonList } from '@ionic/angular/ion-list';
 import { IonNote } from '@ionic/angular/ion-note';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
 import { IonSearchbar } from '@ionic/angular/ion-searchbar';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { ViewWillEnter } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { callOutline, globeOutline, locationOutline, navigateOutline, shareSocialOutline } from 'ionicons/icons';
+import {
+  alertCircleOutline,
+  callOutline,
+  globeOutline,
+  imageOutline,
+  locationOutline,
+  navigateOutline,
+  shareSocialOutline,
+} from 'ionicons/icons';
 import { PetShopsStore } from '@gde/shared/data-access';
 import {
   cleanApiText,
@@ -34,6 +53,7 @@ import {
 } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
+import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { DeliveryLinksComponent } from '../../shared/ui/delivery-links.component';
 import { MapViewComponent } from '../../shared/ui/map-view.component';
 
@@ -56,7 +76,7 @@ import { MapViewComponent } from '../../shared/ui/map-view.component';
     IonNote,
     IonThumbnail,
     IonSearchbar,
-    IonSpinner,
+    IonSkeletonText,
     TranslocoPipe,
     LocalNamePipe,
     PackageWeightPipe,
@@ -78,6 +98,8 @@ export class PetShopDetailPage implements ViewWillEnter {
   private readonly sharing = inject(ShareService);
 
   readonly assortmentQuery = signal('');
+  private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');
+  readonly title = revealTitleOnScroll(this.headline);
 
   /** See DogFoodDetailPage: only show the store's detail when it is this page's shop. */
   readonly shop = computed(() => {
@@ -106,7 +128,15 @@ export class PetShopDetailPage implements ViewWillEnter {
   });
 
   constructor() {
-    addIcons({ callOutline, globeOutline, locationOutline, navigateOutline, shareSocialOutline });
+    addIcons({
+      alertCircleOutline,
+      callOutline,
+      globeOutline,
+      imageOutline,
+      locationOutline,
+      navigateOutline,
+      shareSocialOutline,
+    });
     effect(() => {
       const slug = this.slug();
       untracked(() => this.shops.loadDetail(slug));

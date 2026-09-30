@@ -1,40 +1,48 @@
+@use '../../shared/sheet-fields';
+
 .count {
-  margin: 12px 0 0;
-  color: var(--ion-color-medium);
-  font-size: 0.85rem;
+  margin: 16px var(--app-gutter) 4px;
+  color: var(--app-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
-.state {
-  text-align: center;
-  color: var(--ion-color-medium);
-  padding-top: 48px;
-}
+.rows {
+  padding-top: 4px;
 
-.filter-button {
-  position: relative;
-}
+  ion-item {
+    --min-height: 88px;
+  }
 
-.filter-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.65rem;
-}
+  ion-label {
+    margin-block: 12px;
+  }
 
-ion-thumbnail {
-  --size: 64px;
-  --border-radius: 14px;
+  ion-label p:not(.app-eyebrow) {
+    color: var(--app-text-2);
+  }
 
-  img {
-    object-fit: contain;
-    background: #fff;
+  .app-eyebrow {
+    margin-bottom: 2px;
+    font-size: 0.6875rem;
+  }
+
+  h2 {
+    margin-bottom: 2px;
   }
 }
 
-.brand {
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
+/* Packshots sit on white in both themes, like on the shops' own sites. */
+ion-thumbnail.product {
+  --size: 64px;
+  margin-inline-end: 16px;
+
+  img {
+    border-radius: var(--app-radius-sm);
+    object-fit: contain;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px var(--app-border);
+  }
 }
 
 .price {
@@ -42,23 +50,42 @@ ion-thumbnail {
   flex-direction: column;
   align-items: flex-end;
   gap: 2px;
+  margin-inline-start: 12px;
+  text-align: end;
 
   small {
-    color: var(--ion-color-medium);
+    color: var(--app-text-2);
+    font-size: 0.75rem;
   }
 
   strong {
-    color: var(--ion-color-primary);
+    color: var(--app-text);
+    font-size: 0.9375rem;
+    font-weight: 600;
     white-space: nowrap;
   }
 }
 
-.chips ion-chip {
-  margin-inline-start: 0;
-  height: 26px;
-  font-size: 0.8rem;
-}
+/* Offers, distance and delivery as one quiet line. */
+.shop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin-top: 6px !important;
+  font-size: 0.8125rem !important;
 
-.apply {
-  margin-top: 24px;
+  &:empty {
+    display: none;
+  }
+
+  span + span::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--app-text-3);
+  }
+
+  .offers {
+    color: var(--app-primary);
+    font-weight: 600;
+  }
 }

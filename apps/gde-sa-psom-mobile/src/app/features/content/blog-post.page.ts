@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
@@ -6,16 +17,17 @@ import { IonButtons } from '@ionic/angular/ion-buttons';
 import { IonContent } from '@ionic/angular/ion-content';
 import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { shareSocialOutline } from 'ionicons/icons';
+import { alertCircleOutline, shareSocialOutline } from 'ionicons/icons';
 import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
 import { SITE_ORIGIN } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
+import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { readingMinutes } from './reading-time';
 
 @Component({
@@ -29,7 +41,7 @@ import { readingMinutes } from './reading-time';
     IonIcon,
     IonTitle,
     IonContent,
-    IonSpinner,
+    IonSkeletonText,
     TranslocoPipe,
     SlicePipe,
   ],
@@ -39,7 +51,7 @@ import { readingMinutes } from './reading-time';
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/tabs/more/blog" text="" />
         </ion-buttons>
-        <ion-title>{{ post()?.naslov }}</ion-title>
+        <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ post()?.naslov }}</ion-title>
         @if (post()) {
           <ion-buttons slot="end">
             <ion-button (click)="share()" [attr.aria-label]="'share' | transloco">
@@ -49,64 +61,91 @@ import { readingMinutes } from './reading-time';
         }
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content [scrollEvents]="true" (ionScroll)="title.onScroll($event)">
       @switch (status()) {
         @case ('loading') {
-          <div class="state"><ion-spinner /></div>
+          <div class="skeleton" aria-hidden="true">
+            <ion-skeleton-text [animated]="true" style="width: 40%" />
+            <ion-skeleton-text [animated]="true" style="width: 90%; height: 24px" />
+            <ion-skeleton-text [animated]="true" style="width: 70%; height: 24px" />
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <ion-skeleton-text [animated]="true" style="width: 100%" />
+            }
+          </div>
         }
         @case ('error') {
-          <div class="state">
+          <div class="app-state">
+            <ion-icon name="alert-circle-outline" aria-hidden="true" />
             <h3>{{ 'mobile_not_found' | transloco }}</h3>
             <ion-button fill="outline" (click)="load(slug())">{{ 'try_again' | transloco }}</ion-button>
           </div>
         }
         @default {
           @let p = post()!;
-          @if (cover(); as src) {
-            <img class="cover" [src]="src" [alt]="p.naslov" />
-          }
-          <p class="meta">{{ p.kategorija }} · {{ minutes() }} min · {{ p.objavljen_u | slice: 0 : 10 }}</p>
-          <h1>{{ p.naslov }}</h1>
-          <!-- Sanitised by Angular. Links open in an in-app browser tab (see onContentClick). -->
-          <article class="body" [innerHTML]="p.sadrzaj" (click)="onContentClick($event)"></article>
+          <article class="post">
+            @if (cover(); as src) {
+              <img class="cover" [src]="src" [alt]="p.naslov" />
+            }
+            <p class="app-eyebrow">{{ p.kategorija }} · {{ minutes() }} min · {{ p.objavljen_u | slice: 0 : 10 }}</p>
+            <h1 #headline>{{ p.naslov }}</h1>
+            <!-- Sanitised by Angular. Links open in an in-app browser tab (see onContentClick). -->
+            <div class="body" [innerHTML]="p.sadrzaj" (click)="onContentClick($event)"></div>
+          </article>
         }
       }
     </ion-content>
   `,
   styles: `
-    .state {
-      text-align: center;
-      color: var(--ion-color-medium);
-      padding-top: 64px;
+    .post {
+      padding: 8px var(--app-gutter) 40px;
     }
     .cover {
+      display: block;
       width: 100%;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-    .meta {
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-      color: var(--ion-color-medium);
-      margin: 0;
+      aspect-ratio: 16 / 9;
+      margin-bottom: 20px;
+      border-radius: var(--app-radius-lg);
+      object-fit: cover;
+      background: var(--app-surface-sunken);
     }
     h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      line-height: 1.25;
+      margin: 0 0 20px;
     }
     .body {
-      line-height: 1.6;
-      font-size: 1.02rem;
+      color: var(--app-text);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+    }
+    .body ::ng-deep h2,
+    .body ::ng-deep h3 {
+      margin: 32px 0 8px;
+      line-height: 1.3;
+    }
+    .body ::ng-deep h2 {
+      font-size: 1.25rem;
+    }
+    .body ::ng-deep h3 {
+      font-size: 1.0625rem;
+    }
+    .body ::ng-deep p {
+      margin: 0 0 16px;
     }
     .body ::ng-deep img {
       max-width: 100%;
       height: auto;
-      border-radius: 8px;
+      border-radius: var(--app-radius-md);
     }
     .body ::ng-deep a {
-      color: var(--ion-color-primary);
+      color: var(--app-primary);
+      font-weight: 500;
+      text-underline-offset: 2px;
+    }
+    .skeleton {
+      padding: 16px var(--app-gutter) 0;
+    }
+    .skeleton ion-skeleton-text {
+      height: 12px;
+      margin: 0 0 12px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -124,9 +163,11 @@ export class BlogPostPage {
   readonly minutes = computed(() => readingMinutes(this.post()?.sadrzaj));
   /** A legacy file name on the website or a full URL from the admin form, as in the portal. */
   readonly cover = computed(() => postCoverUrl(this.post()?.slika_naslovna, SITE_ORIGIN));
+  private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');
+  readonly title = revealTitleOnScroll(this.headline);
 
   constructor() {
-    addIcons({ shareSocialOutline });
+    addIcons({ alertCircleOutline, shareSocialOutline });
     effect(() => {
       const slug = this.slug();
       untracked(() => this.load(slug));

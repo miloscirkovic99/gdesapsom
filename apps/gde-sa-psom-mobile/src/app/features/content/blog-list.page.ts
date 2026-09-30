@@ -12,11 +12,14 @@ import { IonList } from '@ionic/angular/ion-list';
 import { IonRefresher } from '@ionic/angular/ion-refresher';
 import { IonRefresherContent } from '@ionic/angular/ion-refresher-content';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { addIcons } from 'ionicons';
+import { cloudOfflineOutline } from 'ionicons/icons';
 import { BlogService, Post } from '@gde/shared/data-access';
 import { readingMinutes } from './reading-time';
 
@@ -36,7 +39,8 @@ import { readingMinutes } from './reading-time';
     IonList,
     IonItem,
     IonLabel,
-    IonSpinner,
+    IonSkeletonText,
+    IonIcon,
     IonButton,
     TranslocoPipe,
     SlicePipe,
@@ -56,22 +60,33 @@ import { readingMinutes } from './reading-time';
       </ion-refresher>
       @switch (status()) {
         @case ('loading') {
-          <div class="state"><ion-spinner /></div>
+          <div class="list-skeleton" aria-hidden="true">
+            @for (i of [1, 2, 3, 4]; track i) {
+              <div class="skeleton-row">
+                <div class="skeleton-lines">
+                  <ion-skeleton-text [animated]="true" style="width: 30%" />
+                  <ion-skeleton-text [animated]="true" style="width: 85%; height: 16px" />
+                  <ion-skeleton-text [animated]="true" style="width: 25%" />
+                </div>
+              </div>
+            }
+          </div>
         }
         @case ('error') {
-          <div class="state ion-padding">
+          <div class="app-state">
+            <ion-icon name="cloud-offline-outline" aria-hidden="true" />
             <p>{{ 'catalog_error' | transloco }}</p>
             <ion-button fill="outline" (click)="load()">{{ 'try_again' | transloco }}</ion-button>
           </div>
         }
         @default {
-          <ion-list lines="full">
+          <ion-list lines="inset" class="posts">
             @for (post of posts(); track post.post_id) {
               <ion-item [routerLink]="['/tabs/more/blog', post.slug]" detail="true">
                 <ion-label class="ion-text-wrap">
-                  <p class="meta">{{ post.kategorija }} · {{ minutes(post) }} min</p>
+                  <p class="app-eyebrow">{{ post.kategorija }} · {{ minutes(post) }} min</p>
                   <h2>{{ post.naslov }}</h2>
-                  <p>{{ post.objavljen_u | slice: 0 : 10 }}</p>
+                  <p class="date">{{ post.objavljen_u | slice: 0 : 10 }}</p>
                 </ion-label>
               </ion-item>
             }
@@ -81,18 +96,24 @@ import { readingMinutes } from './reading-time';
     </ion-content>
   `,
   styles: `
-    .state {
-      text-align: center;
-      color: var(--ion-color-medium);
-      padding-top: 64px;
+    .list-skeleton,
+    .posts {
+      padding-top: 8px;
     }
-    .meta {
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
+    .posts ion-item {
+      --min-height: 96px;
     }
-    h2 {
-      font-weight: 600;
+    .posts ion-label {
+      margin-block: 14px;
+    }
+    .posts h2 {
+      margin: 2px 0 4px;
+      font-size: 1.0625rem;
+      line-height: 1.35;
+    }
+    .date {
+      color: var(--app-text-2);
+      font-size: 0.8125rem !important;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -104,6 +125,7 @@ export class BlogListPage {
   readonly status = signal<'loading' | 'loaded' | 'error'>('loading');
 
   constructor() {
+    addIcons({ cloudOfflineOutline });
     this.load();
   }
 

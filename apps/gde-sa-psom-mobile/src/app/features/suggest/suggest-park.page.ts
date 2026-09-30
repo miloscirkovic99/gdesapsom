@@ -53,7 +53,7 @@ import { TownshipPickerComponent } from '../../shared/ui/township-picker.compone
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
+    <ion-content class="form-content">
       @if (sent()) {
         <app-sent-view (home)="goHome()" (another)="addAnother()" />
       } @else {

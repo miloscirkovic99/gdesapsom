@@ -2,8 +2,8 @@
   <ion-toolbar class="page-toolbar">
     <ion-title class="page-title">{{ 'mobile_tab_catalog' | transloco }}</ion-title>
   </ion-toolbar>
-  <ion-toolbar>
-    <ion-segment mode="ios" [value]="segment()" (ionChange)="setSegment($event.detail.value)">
+  <ion-toolbar class="sub-toolbar">
+    <ion-segment [value]="segment()" (ionChange)="setSegment($event.detail.value)">
       <ion-segment-button value="food">
         <ion-label>{{ 'dog_food_title' | transloco }}</ion-label>
       </ion-segment-button>
@@ -12,40 +12,50 @@
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
-  <ion-toolbar>
-    @if (segment() === 'food') {
-      <ion-searchbar
-        [value]="food.filters().word"
-        [placeholder]="'search_food_placeholder' | transloco"
-        [debounce]="400"
-        enterkeyhint="search"
-        (ionInput)="setFoodWord($event.detail.value)"
-      />
-      <ion-buttons slot="end">
-        <ion-button class="filter-button" (click)="openFoodFilters()" [attr.aria-label]="'mobile_filters' | transloco">
-          <ion-icon slot="icon-only" name="options-outline" />
+  <ion-toolbar class="sub-toolbar">
+    <div class="search-row">
+      @if (segment() === 'food') {
+        <ion-searchbar
+          [value]="food.filters().word"
+          [placeholder]="'search_food_placeholder' | transloco"
+          [debounce]="400"
+          enterkeyhint="search"
+          (ionInput)="setFoodWord($event.detail.value)"
+        />
+        <button
+          type="button"
+          class="filter-button"
+          [class.active]="food.activeFilterCount()"
+          (click)="openFoodFilters()"
+          [attr.aria-label]="'mobile_filters' | transloco"
+        >
+          <ion-icon name="options-outline" aria-hidden="true" />
           @if (food.activeFilterCount()) {
-            <ion-badge class="filter-badge">{{ food.activeFilterCount() }}</ion-badge>
+            <span class="filter-count" aria-hidden="true">{{ food.activeFilterCount() }}</span>
           }
-        </ion-button>
-      </ion-buttons>
-    } @else {
-      <ion-searchbar
-        [value]="shops.filters().word"
-        [placeholder]="'search_shop_placeholder' | transloco"
-        [debounce]="400"
-        enterkeyhint="search"
-        (ionInput)="setShopWord($event.detail.value)"
-      />
-      <ion-buttons slot="end">
-        <ion-button class="filter-button" (click)="openShopFilters()" [attr.aria-label]="'mobile_filters' | transloco">
-          <ion-icon slot="icon-only" name="options-outline" />
+        </button>
+      } @else {
+        <ion-searchbar
+          [value]="shops.filters().word"
+          [placeholder]="'search_shop_placeholder' | transloco"
+          [debounce]="400"
+          enterkeyhint="search"
+          (ionInput)="setShopWord($event.detail.value)"
+        />
+        <button
+          type="button"
+          class="filter-button"
+          [class.active]="shops.activeFilterCount()"
+          (click)="openShopFilters()"
+          [attr.aria-label]="'mobile_filters' | transloco"
+        >
+          <ion-icon name="options-outline" aria-hidden="true" />
           @if (shops.activeFilterCount()) {
-            <ion-badge class="filter-badge">{{ shops.activeFilterCount() }}</ion-badge>
+            <span class="filter-count" aria-hidden="true">{{ shops.activeFilterCount() }}</span>
           }
-        </ion-button>
-      </ion-buttons>
-    }
+        </button>
+      }
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -56,16 +66,20 @@
 
   @if (segment() === 'food') {
     @if (food.total() !== null && food.items().length) {
-      <p class="count ion-padding-horizontal">{{ countKey('food_count', food.total()!) | transloco: { count: food.total() } }}</p>
+      <p class="count">{{ countKey('food_count', food.total()!) | transloco: { count: food.total() } }}</p>
     }
-    <ion-list>
+    <ion-list lines="inset" class="rows">
       @for (item of food.items(); track item.id) {
         <ion-item [routerLink]="['/tabs/catalog/food', item.slug]" detail="false">
-          <ion-thumbnail slot="start">
-            <img [src]="item.thumbnail || 'assets/logo-small.png'" alt="" loading="lazy" />
+          <ion-thumbnail slot="start" class="product">
+            @if (item.thumbnail) {
+              <img [src]="item.thumbnail" alt="" loading="lazy" />
+            } @else {
+              <span class="thumb-placeholder"><ion-icon name="image-outline" aria-hidden="true" /></span>
+            }
           </ion-thumbnail>
           <ion-label class="ion-text-wrap">
-            <p class="brand">{{ item.brand.name }}</p>
+            <p class="app-eyebrow">{{ item.brand.name }}</p>
             <h2>{{ item.name }}</h2>
             <p>
               {{ item.foodType | localName: lang() }}
@@ -84,54 +98,77 @@
           </div>
         </ion-item>
       } @empty {
-        <div class="state ion-padding">
-          @if (food.isLoading()) {
-            <ion-spinner />
-          } @else if (food.hasError()) {
-            <p>{{ 'catalog_error' | transloco }}</p>
-          } @else {
-            <h3>{{ 'no_results_title' | transloco }}</h3>
+        @if (food.isLoading()) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <div class="skeleton-row" aria-hidden="true">
+              <ion-skeleton-text [animated]="true" class="skeleton-thumb" />
+              <div class="skeleton-lines">
+                <ion-skeleton-text [animated]="true" style="width: 30%" />
+                <ion-skeleton-text [animated]="true" style="width: 75%; height: 14px" />
+                <ion-skeleton-text [animated]="true" style="width: 45%" />
+              </div>
+            </div>
           }
-        </div>
+        } @else if (food.hasError()) {
+          <div class="app-state">
+            <ion-icon name="cloud-offline-outline" aria-hidden="true" />
+            <p>{{ 'catalog_error' | transloco }}</p>
+          </div>
+        } @else {
+          <div class="app-state">
+            <ion-icon name="search-outline" aria-hidden="true" />
+            <h3>{{ 'no_results_title' | transloco }}</h3>
+          </div>
+        }
       }
     </ion-list>
     <ion-infinite-scroll [disabled]="!food.hasMore()" (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content />
     </ion-infinite-scroll>
   } @else {
-    <ion-list>
+    <ion-list lines="inset" class="rows shops">
       @for (shop of shops.items(); track shop.id) {
         <ion-item [routerLink]="['/tabs/catalog/shops', shop.slug]" detail="true">
           <ion-label class="ion-text-wrap">
             <h2>{{ shop.name }}</h2>
             <p>{{ shop.address }}</p>
             <p>{{ shop.townshipName ?? shop.cityName }}</p>
-            <div class="chips">
+            <p class="shop-meta">
               @if (shop.offerCount) {
-                <ion-chip color="primary">
-                  <ion-label>{{ countKey('food_count', shop.offerCount) | transloco: { count: shop.offerCount } }}</ion-label>
-                </ion-chip>
+                <span class="offers">{{ countKey('food_count', shop.offerCount) | transloco: { count: shop.offerCount } }}</span>
               }
               @if (distance(shop.distanceM); as d) {
-                <ion-chip><ion-label>{{ d }}</ion-label></ion-chip>
+                <span>{{ d }}</span>
               }
               @if (shop.woltUrl || shop.glovoUrl) {
-                <ion-chip><ion-label>{{ shop.woltUrl ? 'Wolt' : '' }}{{ shop.woltUrl && shop.glovoUrl ? ' · ' : '' }}{{ shop.glovoUrl ? 'Glovo' : '' }}</ion-label></ion-chip>
+                <span>{{ shop.woltUrl ? 'Wolt' : '' }}{{ shop.woltUrl && shop.glovoUrl ? ' · ' : '' }}{{ shop.glovoUrl ? 'Glovo' : '' }}</span>
               }
-            </div>
+            </p>
           </ion-label>
         </ion-item>
       } @empty {
-        <div class="state ion-padding">
-          @if (shops.isLoading()) {
-            <ion-spinner />
-          } @else if (shops.hasError()) {
+        @if (shops.isLoading()) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <div class="skeleton-row" aria-hidden="true">
+              <div class="skeleton-lines">
+                <ion-skeleton-text [animated]="true" style="width: 55%; height: 14px" />
+                <ion-skeleton-text [animated]="true" style="width: 70%" />
+                <ion-skeleton-text [animated]="true" style="width: 35%" />
+              </div>
+            </div>
+          }
+        } @else if (shops.hasError()) {
+          <div class="app-state">
+            <ion-icon name="cloud-offline-outline" aria-hidden="true" />
             <p>{{ 'catalog_error' | transloco }}</p>
-          } @else {
+          </div>
+        } @else {
+          <div class="app-state">
+            <ion-icon name="search-outline" aria-hidden="true" />
             <h3>{{ 'no_results_title' | transloco }}</h3>
             <p>{{ 'no_entries' | transloco }}</p>
-          }
-        </div>
+          </div>
+        }
       }
     </ion-list>
     <ion-infinite-scroll [disabled]="!shops.hasMore()" (ionInfinite)="loadMore($event)">
@@ -140,19 +177,25 @@
   }
 
   <!-- Food filters -->
-  <ion-modal [isOpen]="foodSheetOpen()" [initialBreakpoint]="0.85" [breakpoints]="[0, 0.85, 1]" (didDismiss)="foodSheetOpen.set(false)">
+  <ion-modal
+    [isOpen]="foodSheetOpen()"
+    [initialBreakpoint]="0.85"
+    [breakpoints]="[0, 0.85, 1]"
+    [expandToScroll]="false"
+    (didDismiss)="foodSheetOpen.set(false)"
+  >
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>{{ 'mobile_filters' | transloco }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="clearFood()">{{ 'clear_filters' | transloco }}</ion-button>
+            <ion-button class="reset-button" (click)="clearFood()">{{ 'clear_filters' | transloco }}</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding">
+      <ion-content>
         @let lookups = food.lookups();
-        <ion-list>
+        <ion-list class="sheet-fields" lines="inset">
           <ion-item>
             <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'sort_label' | transloco" labelPlacement="stacked" interface="action-sheet" [value]="foodDraft().sort" (ionChange)="patchFood({ sort: $event.detail.value })">
               @for (s of sortOptions; track s.value) {
@@ -185,7 +228,7 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_brand' | transloco" labelPlacement="stacked" [multiple]="true" interface="alert" [value]="foodDraft().brands" (ionChange)="patchFood({ brands: $event.detail.value ?? [] })">
+            <ion-select [cancelText]="'mobile_cancel' | transloco" [okText]="'mobile_done' | transloco" [label]="'filter_brand' | transloco" labelPlacement="stacked" [multiple]="true" interface="alert" [value]="foodDraft().brands" [placeholder]="'filter_all' | transloco" (ionChange)="patchFood({ brands: $event.detail.value ?? [] })">
               @for (b of lookups?.brands ?? []; track b.slug) {
                 <ion-select-option [value]="b.slug">{{ b.name }}</ion-select-option>
               }
@@ -197,26 +240,36 @@
             </ion-toggle>
           </ion-item>
         </ion-list>
-        <ion-button expand="block" class="apply" (click)="applyFood()">{{ 'apply_filters' | transloco }}</ion-button>
       </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-button expand="block" color="primary" (click)="applyFood()">{{ 'apply_filters' | transloco }}</ion-button>
+        </ion-toolbar>
+      </ion-footer>
     </ng-template>
   </ion-modal>
 
   <!-- Shop filters -->
-  <ion-modal [isOpen]="shopSheetOpen()" [initialBreakpoint]="0.7" [breakpoints]="[0, 0.7, 1]" (didDismiss)="shopSheetOpen.set(false)">
+  <ion-modal
+    [isOpen]="shopSheetOpen()"
+    [initialBreakpoint]="0.7"
+    [breakpoints]="[0, 0.7, 1]"
+    [expandToScroll]="false"
+    (didDismiss)="shopSheetOpen.set(false)"
+  >
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>{{ 'mobile_filters' | transloco }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="clearShops()">{{ 'clear_filters' | transloco }}</ion-button>
+            <ion-button class="reset-button" (click)="clearShops()">{{ 'clear_filters' | transloco }}</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding">
-        <ion-list>
+      <ion-content>
+        <ion-list class="sheet-fields" lines="inset">
           <ion-item button detail="true" (click)="pickShopTownships()">
-            <ion-label>
+            <ion-label class="picker-label">
               <p>{{ 'filter_township' | transloco }}</p>
               <h3>{{ shopDraft().townshipIds.length || ('filter_all' | transloco) }}</h3>
             </ion-label>
@@ -244,8 +297,12 @@
             </ion-item>
           }
         </ion-list>
-        <ion-button expand="block" class="apply" (click)="applyShops()">{{ 'apply_filters' | transloco }}</ion-button>
       </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-button expand="block" color="primary" (click)="applyShops()">{{ 'apply_filters' | transloco }}</ion-button>
+        </ion-toolbar>
+      </ion-footer>
     </ng-template>
   </ion-modal>
 </ion-content>

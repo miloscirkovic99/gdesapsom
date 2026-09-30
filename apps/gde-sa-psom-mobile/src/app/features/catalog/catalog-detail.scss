@@ -1,22 +1,31 @@
 /* Shared by the dog food and pet shop detail pages. */
-.state {
-  text-align: center;
-  color: var(--ion-color-medium);
-  padding-top: 64px;
-}
 
+/* Packshots on white in both themes, swiped sideways. */
 .photos {
   display: flex;
+  gap: 8px;
+  padding: 8px var(--app-gutter) 0;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--app-gutter);
   scrollbar-width: none;
-  background: #fff;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   img {
     flex: 0 0 80%;
-    height: 260px;
+    min-width: 0;
+    height: 240px;
+    padding: 16px;
+    border-radius: var(--app-radius-lg);
     object-fit: contain;
+    background: #ffffff;
+    outline: 1px solid var(--app-border);
+    outline-offset: -1px;
     scroll-snap-align: start;
+    box-sizing: border-box;
   }
 
   &.single img {
@@ -24,70 +33,176 @@
   }
 }
 
+.intro {
+  padding: 20px var(--app-gutter) 0;
+}
+
 h1 {
-  font-size: 1.4rem;
-  font-weight: 700;
   margin: 0 0 8px;
 }
 
-h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 20px 0 8px;
-}
-
-.brand {
-  text-transform: uppercase;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  color: var(--ion-color-medium);
-  margin: 0 0 4px;
-}
-
-.chips ion-chip:first-child {
-  margin-inline-start: 0;
+.where {
+  margin: 0;
+  color: var(--app-text-2);
+  font-size: 0.9375rem;
 }
 
 .price {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--ion-color-primary);
+  margin: 0;
+  color: var(--app-text-2);
+  font-size: 0.9375rem;
+
+  strong {
+    color: var(--app-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  strong + span {
+    margin-inline-start: 4px;
+  }
 }
 
-.text {
-  white-space: pre-line;
-  line-height: 1.5;
+/* Product facts as label and value, two to a row. */
+.specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 20px var(--app-gutter) 0;
+  overflow: hidden;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-border);
+
+  > div {
+    padding: 12px 16px;
+    background: var(--app-surface-sunken);
+  }
+
+  > div:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+
+  dt {
+    color: var(--app-text-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    color: var(--app-text);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px var(--app-gutter) 0;
+  color: var(--app-text);
+  font-size: 0.9375rem;
+  font-weight: 500;
+
+  ion-icon {
+    color: var(--app-success);
+    font-size: 20px;
+  }
 }
 
 .muted {
-  color: var(--ion-color-medium);
+  color: var(--app-text-2);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
-.in {
-  color: var(--ion-color-success);
+p.app-block {
+  margin-top: 8px;
 }
 
-.out {
-  color: var(--ion-color-medium);
+.list-head {
+  margin-bottom: 4px;
+
+  .app-section-title {
+    margin: 0;
+  }
+}
+
+/* Where to buy: the shop, its price, then its actions. */
+.offers {
+  ion-item:not(.offer-actions) {
+    --min-height: 0;
+
+    ion-label {
+      margin: 14px 0 6px;
+    }
+  }
+
+  h3 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  p {
+    color: var(--app-text-2);
+  }
+}
+
+.offer-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px !important;
+
+  strong {
+    color: var(--app-text);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
 }
 
 .offer-actions {
-  --min-height: 40px;
-  --padding-bottom: 8px;
+  --min-height: 0;
+  --padding-bottom: 12px;
+  --inner-padding-end: 8px;
+
+  ion-button {
+    margin: 0;
+  }
 }
 
-ion-badge {
-  margin-inline-start: 6px;
-  vertical-align: middle;
+/* Product rows: related products and a shop's assortment. */
+.products {
+  ion-item {
+    --min-height: 80px;
+  }
+
+  ion-label {
+    margin-block: 12px;
+  }
+
+  ion-label p:not(.app-eyebrow) {
+    color: var(--app-text-2);
+  }
+
+  .app-eyebrow {
+    margin-bottom: 2px;
+    font-size: 0.6875rem;
+  }
 }
 
-ion-thumbnail {
+ion-thumbnail.product {
   --size: 56px;
-  --border-radius: 8px;
+  margin-inline-end: 16px;
 
   img {
+    border-radius: var(--app-radius-sm);
     object-fit: contain;
-    background: #fff;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px var(--app-border);
   }
 }
 
@@ -95,38 +210,103 @@ ion-thumbnail {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
-  font-size: 0.8rem;
+  gap: 4px;
+  margin-inline-start: 12px;
 
   strong {
-    color: var(--ion-color-primary);
-    font-size: 0.95rem;
+    color: var(--app-text);
+    font-size: 0.9375rem;
+    font-weight: 600;
     white-space: nowrap;
+  }
+}
+
+/* Contact rows and nearby shops. */
+.facts {
+  ion-item {
+    --min-height: 64px;
+  }
+
+  ion-label {
+    margin-block: 10px;
+  }
+
+  p {
+    color: var(--app-text-2);
+  }
+
+  h3 {
+    margin: 1px 0;
+    font-weight: 500;
   }
 }
 
 .shop-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 
   .logo {
+    flex: none;
     width: 64px;
     height: 64px;
+    padding: 6px;
+    border-radius: var(--app-radius-md);
     object-fit: contain;
-    border-radius: 12px;
-    background: #fff;
+    background: #ffffff;
+    outline: 1px solid var(--app-border);
+    outline-offset: -1px;
+    box-sizing: border-box;
   }
 
   h1 {
-    margin: 0;
-  }
-
-  p {
-    margin: 2px 0 0;
+    margin-bottom: 2px;
   }
 }
 
+.delivery {
+  padding: 16px var(--app-gutter) 0;
+}
+
+app-map-view {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--app-radius-lg);
+}
+
 .directions {
-  margin-top: 12px;
+  margin: 12px 0 0;
+}
+
+.search-row {
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.end {
+  height: 32px;
+}
+
+/* Loading: the page's own shape. */
+.skeleton {
+  padding: 8px var(--app-gutter) 0;
+
+  ion-skeleton-text {
+    height: 12px;
+    margin: 12px 0 0;
+  }
+}
+
+.skeleton-photo {
+  display: block;
+  width: 100%;
+  height: 240px !important;
+  margin: 0 0 8px !important;
+  border-radius: var(--app-radius-lg);
+}
+
+.skeleton-panel {
+  height: 120px !important;
+  margin-top: 24px !important;
+  border-radius: var(--app-radius-lg);
 }

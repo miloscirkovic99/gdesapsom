@@ -1,40 +1,58 @@
 /* Shared by the suggest-a-place forms. */
+.form-content {
+  --padding-start: var(--app-gutter);
+  --padding-end: var(--app-gutter);
+  --padding-top: 8px;
+  --padding-bottom: 32px;
+}
+
 .lead {
-  margin-top: 0;
-  color: var(--ion-color-medium);
+  margin: 0 0 24px;
+  color: var(--app-text-2);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 ion-input,
 ion-select,
 ion-textarea {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
+/* The township row opens a picker; it reads as one more outlined field. */
 .picker {
   --background: transparent;
-  --border-radius: 4px;
+  --border-radius: var(--app-radius-md);
   --padding-start: 16px;
-  border: 1px solid var(--ion-color-step-300, #b3b3b3);
-  border-radius: 4px;
-  margin-bottom: 16px;
+  --inner-padding-end: 12px;
+  --min-height: 56px;
+  margin-bottom: 20px;
+  border: 1px solid var(--app-border-strong);
+  border-radius: var(--app-radius-md);
+
+  p {
+    color: var(--app-text-2);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
 
   h3 {
     margin-top: 2px;
+    font-weight: 400;
   }
 }
 
 .picker-invalid {
-  border-color: var(--ion-color-danger);
+  border-color: var(--app-danger);
   margin-bottom: 4px;
 }
 
 .field-error {
   display: block;
-  font-size: 0.75rem;
-  margin: 0 0 16px 16px;
+  margin: 0 0 20px 16px;
+  font-size: 0.8125rem;
 }
 
 .submit {
-  margin-top: 16px;
-  margin-bottom: 24px;
+  margin: 28px 0 8px;
 }

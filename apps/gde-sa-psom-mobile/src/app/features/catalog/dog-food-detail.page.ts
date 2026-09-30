@@ -1,10 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
-import { IonBadge } from '@ionic/angular/ion-badge';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
-import { IonChip } from '@ionic/angular/ion-chip';
 import { IonContent } from '@ionic/angular/ion-content';
 import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
@@ -12,14 +20,14 @@ import { IonItem } from '@ionic/angular/ion-item';
 import { IonLabel } from '@ionic/angular/ion-label';
 import { IonList } from '@ionic/angular/ion-list';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
-import { IonSpinner } from '@ionic/angular/ion-spinner';
+import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
 import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { ViewWillEnter } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { navigateOutline, shareSocialOutline } from 'ionicons/icons';
+import { alertCircleOutline, checkmarkCircle, imageOutline, navigateOutline, shareSocialOutline } from 'ionicons/icons';
 import { DogFoodOffer, DogFoodStore } from '@gde/shared/data-access';
 import {
   cleanApiText,
@@ -31,6 +39,7 @@ import {
   RsdPricePipe,
 } from '@gde/shared/util';
 import { ShareService } from '../../core/platform/share.service';
+import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { DeliveryLinksComponent } from '../../shared/ui/delivery-links.component';
 import { bestOfferId } from './best-offer';
 
@@ -47,13 +56,11 @@ import { bestOfferId } from './best-offer';
     IonIcon,
     IonTitle,
     IonContent,
-    IonChip,
     IonLabel,
-    IonBadge,
     IonList,
     IonItem,
     IonThumbnail,
-    IonSpinner,
+    IonSkeletonText,
     TranslocoPipe,
     LocalNamePipe,
     PackageWeightPipe,
@@ -83,9 +90,11 @@ export class DogFoodDetailPage implements ViewWillEnter {
   readonly description = computed(() => cleanApiText(this.product()?.description));
   readonly ingredients = computed(() => cleanApiText(this.product()?.ingredients));
   readonly bestOfferId = computed(() => bestOfferId(this.product()?.offers ?? []));
+  private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');
+  readonly title = revealTitleOnScroll(this.headline);
 
   constructor() {
-    addIcons({ navigateOutline, shareSocialOutline });
+    addIcons({ alertCircleOutline, checkmarkCircle, imageOutline, navigateOutline, shareSocialOutline });
     effect(() => {
       const slug = this.slug();
       untracked(() => this.food.loadDetail(slug));

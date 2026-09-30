@@ -8,7 +8,6 @@ import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonItem } from '@ionic/angular/ion-item';
 import { IonLabel } from '@ionic/angular/ion-label';
 import { IonList } from '@ionic/angular/ion-list';
-import { IonListHeader } from '@ionic/angular/ion-list-header';
 import { IonNote } from '@ionic/angular/ion-note';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
 import { IonSelect } from '@ionic/angular/ion-select';
@@ -46,7 +45,6 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
     IonTitle,
     IonContent,
     IonList,
-    IonListHeader,
     IonItem,
     IonLabel,
     IonIcon,
@@ -65,24 +63,21 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
     </ion-header>
     <ion-content>
       <app-owner-card class="owner" />
+
+      <h2 class="group-label">{{ 'mobile_suggest' | transloco }}</h2>
       <ion-list [inset]="true">
-        <ion-list-header>
-          <ion-label>{{ 'mobile_suggest' | transloco }}</ion-label>
-        </ion-list-header>
         <ion-item [routerLink]="['/tabs/more/suggest-spot']" detail="true">
           <ion-icon slot="start" name="add-circle-outline" aria-hidden="true" />
           <ion-label>{{ 'add_spot' | transloco }}</ion-label>
         </ion-item>
-        <ion-item [routerLink]="['/tabs/more/suggest-park']" detail="true">
+        <ion-item [routerLink]="['/tabs/more/suggest-park']" detail="true" lines="none">
           <ion-icon slot="start" name="leaf-outline" aria-hidden="true" />
           <ion-label>{{ 'add_park' | transloco }}</ion-label>
         </ion-item>
       </ion-list>
 
+      <h2 class="group-label">{{ 'mobile_read' | transloco }}</h2>
       <ion-list [inset]="true">
-        <ion-list-header>
-          <ion-label>{{ 'mobile_read' | transloco }}</ion-label>
-        </ion-list-header>
         <ion-item [routerLink]="['/tabs/more/blog']" detail="true">
           <ion-icon slot="start" name="newspaper-outline" aria-hidden="true" />
           <ion-label>{{ 'blog' | transloco }}</ion-label>
@@ -91,16 +86,14 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
           <ion-icon slot="start" name="information-circle-outline" aria-hidden="true" />
           <ion-label>{{ 'about' | transloco }}</ion-label>
         </ion-item>
-        <ion-item [routerLink]="['/tabs/more/business']" detail="true">
+        <ion-item [routerLink]="['/tabs/more/business']" detail="true" lines="none">
           <ion-icon slot="start" name="briefcase-outline" aria-hidden="true" />
           <ion-label>{{ 'for_business_nav' | transloco }}</ion-label>
         </ion-item>
       </ion-list>
 
+      <h2 class="group-label">{{ 'mobile_settings' | transloco }}</h2>
       <ion-list [inset]="true">
-        <ion-list-header>
-          <ion-label>{{ 'mobile_settings' | transloco }}</ion-label>
-        </ion-list-header>
         <ion-item>
           <ion-icon slot="start" name="language-outline" aria-hidden="true" />
           <ion-select
@@ -123,7 +116,7 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
             {{ 'mobile_dark_theme' | transloco }}
           </ion-toggle>
         </ion-item>
-        <ion-item>
+        <ion-item lines="none" class="with-hint">
           <ion-icon slot="start" name="bar-chart-outline" aria-hidden="true" />
           <ion-toggle
             [checked]="consent.granted()"
@@ -135,13 +128,13 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
         </ion-item>
       </ion-list>
 
-      <ion-list [inset]="true">
+      <ion-list [inset]="true" class="legal">
         <ion-item button detail="true" (click)="openPolicy()">
           <ion-icon slot="start" name="document-text-outline" aria-hidden="true" />
           <ion-label>{{ 'mobile_privacy' | transloco }}</ion-label>
         </ion-item>
         <ion-item lines="none">
-          <ion-label>{{ 'mobile_app_version' | transloco }}</ion-label>
+          <ion-label class="version">{{ 'mobile_app_version' | transloco }}</ion-label>
           <ion-note slot="end">{{ version() }}</ion-note>
         </ion-item>
       </ion-list>
@@ -149,7 +142,24 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
   `,
   styles: `
     .owner {
-      margin: 8px 0 8px;
+      margin: 12px 0 0;
+    }
+    .legal {
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+    ion-select::part(text) {
+      color: var(--app-text-2);
+    }
+    .with-hint ion-toggle {
+      padding-block: 12px;
+    }
+    .with-hint ion-toggle::part(supporting-text) {
+      padding-inline-end: 12px;
+    }
+    .version {
+      color: var(--app-text-2);
+      margin-inline-start: 38px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
