@@ -19,6 +19,8 @@ import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { SpotsStore } from '@gde/shared/data-access';
 import { spotStructuredData } from '../../shared/utils/structured-data';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { NotFoundComponent } from '../not-found/not-found.component';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
 
@@ -27,7 +29,7 @@ const STRUCTURED_DATA_ID = 'spot';
 @Component({
   selector: 'app-spot-detail-page',
   standalone: true,
-  imports: [CommonModule, TranslocoModule],
+  imports: [CommonModule, TranslocoModule, BreadcrumbComponent, NotFoundComponent],
   templateUrl: './spot-detail-page.component.html',
   styleUrl: './spot-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +54,8 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
   readonly showInlineRoute = signal(false);
   readonly spot = signal<any>(null);
   readonly isLoading = signal(false);
+  /** The API has no spot with this id (or failed): the page shows the not-found view. */
+  readonly notFound = signal(false);
   readonly isLoadingDirections = signal(false);
   readonly isGettingLocation = signal(false);
 
@@ -66,6 +70,12 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
   /** Null for spots saved with the literal description "null". */
   readonly spotDescription = computed(() => cleanApiText(this.spot()?.iuo_opis));
+
+  /** Početna › Pet-friendly objekti › {spot}; also published as BreadcrumbList. */
+  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => [
+    { labelKey: 'breadcrumb_spots', link: ['/', RouteConstants.allSpots] },
+    { label: cleanApiText(this.spot()?.iuo_ime) },
+  ]);
 
   /** "lat,lon" for the map apps; null when the spot has no coordinates. */
   private readonly coordinates = computed<string | null>(() => {
@@ -141,14 +151,27 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
           });
         } else {
           this.isLoading.set(false);
-          this.router.navigate(['/' + RouteConstants.allSpots]);
+          this.showNotFound();
         }
       },
       () => {
         this.isLoading.set(false);
-        this.router.navigate(['/' + RouteConstants.allSpots]);
+        this.showNotFound();
       }
     );
+  }
+
+  /**
+   * Stays on the URL and renders the not-found view instead of bouncing to the
+   * list: the redirect made every dead spot URL look like a copy of /all-spots.
+   * The SPA still answers 200, so `noindex` is what drops the URL from the index.
+   */
+  private showNotFound(): void {
+    this.notFound.set(true);
+    this.seoService.update({
+      title: `${this.translocoService.translate('spot_not_found')} | Gde sa psom`,
+      noindex: true,
+    });
   }
 
   /**

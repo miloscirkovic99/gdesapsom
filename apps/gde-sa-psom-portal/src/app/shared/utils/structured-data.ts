@@ -138,3 +138,66 @@ function toHttpUrl(value: string | null | undefined): string | null {
     return null;
   }
 }
+
+/** One step of a breadcrumb trail. */
+export interface BreadcrumbCrumb {
+  name: string;
+  /** Absolute URL of the page the crumb links to; the current page has none. */
+  url?: string | null;
+}
+
+/**
+ * schema.org BreadcrumbList matching the visible trail. The last step is the
+ * current page and carries no `item`, as Google's guidelines ask; a single
+ * step is not a trail, so that yields null.
+ */
+export function breadcrumbListStructuredData(
+  crumbs: readonly BreadcrumbCrumb[],
+): Record<string, unknown> | null {
+  const steps = crumbs.filter((crumb) => crumb.name.trim());
+  if (steps.length < 2) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: steps.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name.trim(),
+      item: index < steps.length - 1 && crumb.url ? crumb.url : undefined,
+    })),
+  };
+}
+
+/** A list page the homepage points to. */
+export interface HomeSection {
+  name: string;
+  /** Site-relative path without a leading slash, e.g. 'all-spots'. */
+  path: string;
+}
+
+/**
+ * schema.org CollectionPage for the homepage: the list pages a visitor can
+ * start from. The landing component renders it, so it exists on `/` only;
+ * the same block used to ship in index.html and therefore on every page.
+ */
+export function homeCollectionStructuredData(sections: readonly HomeSection[]): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${SITE_ORIGIN}/#page`,
+    url: `${SITE_ORIGIN}/`,
+    name: 'Gde sa psom - pet friendly mesta u Srbiji',
+    inLanguage: 'sr-Latn',
+    isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: sections.map((section, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: section.name,
+        url: `${SITE_ORIGIN}/${section.path.replace(/^\/+/, '')}`,
+      })),
+    },
+  };
+}

@@ -16,6 +16,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { OfferListComponent } from '../../shared/components/offer-list/offer-list.component';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { DogFoodDetail, DogFoodStore } from '@gde/shared/data-access';
 
@@ -24,7 +25,7 @@ const INGREDIENTS_CLAMP_LENGTH = 220;
 
 @Component({
   selector: 'app-dog-food-detail-page',
-  imports: [RouterLink, TranslocoModule, OfferListComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
+  imports: [RouterLink, TranslocoModule, OfferListComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
   templateUrl: './dog-food-detail-page.component.html',
   styleUrl: './dog-food-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +49,24 @@ export class DogFoodDetailPageComponent implements OnInit, OnDestroy {
 
   // ── Derived ───────────────────────────────────────────────────────────────
   readonly product = this.store.detail;
+
+  readonly #localName = new LocalNamePipe();
+
+  /** Početna › Hrana za pse › {tip hrane} › {proizvod}; also published as BreadcrumbList. */
+  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => {
+    const catalog: BreadcrumbItem = { labelKey: 'dog_food_title', link: ['/', RouteConstants.dogFood] };
+    const product = this.product();
+    if (!product) return [catalog];
+    return [
+      catalog,
+      {
+        label: this.#localName.transform(product.foodType, this.lang()),
+        link: ['/', RouteConstants.dogFood],
+        queryParams: { type: product.foodType.code },
+      },
+      { label: product.name },
+    ];
+  });
   readonly images = computed(() => this.product()?.images ?? []);
   readonly currentImage = computed(() => this.images()[this.activeImage()] ?? null);
   readonly inStockOffers = computed(() => (this.product()?.offers ?? []).filter((o) => o.isInStock).length);
@@ -62,6 +81,7 @@ export class DogFoodDetailPageComponent implements OnInit, OnDestroy {
     effect(() => {
       const product = this.store.detail();
       if (product) this.#updateSeo(product);
+      else if (this.store.detailError() === 'not-found') this.#markNotFound();
     });
   }
 
@@ -79,6 +99,14 @@ export class DogFoodDetailPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.clearDetail();
     this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
+  }
+
+  /** The SPA answers 200 for any slug, so the robots tag is what keeps a dead URL out of the index. */
+  #markNotFound(): void {
+    this.seoService.update({
+      title: `${this.translocoService.translate('product_not_found')} | Gde sa psom`,
+      noindex: true,
+    });
   }
 
   // ── Public API ────────────────────────────────────────────────────────────

@@ -1,5 +1,11 @@
 import { Post } from '@gde/shared/data-access';
-import { blogPostingStructuredData, SpotSchemaSource, spotStructuredData } from './structured-data';
+import {
+  blogPostingStructuredData,
+  breadcrumbListStructuredData,
+  homeCollectionStructuredData,
+  SpotSchemaSource,
+  spotStructuredData,
+} from './structured-data';
 
 const SPOT_PAGE = { url: 'https://www.gdesapsom.com/spots/56', description: 'Opis lokala' };
 
@@ -174,5 +180,68 @@ describe('blogPostingStructuredData', () => {
 
   it('returns null without a title', () => {
     expect(blogPostingStructuredData(post({ naslov: '' }), page)).toBeNull();
+  });
+});
+
+describe('breadcrumbListStructuredData', () => {
+  it('numbers the steps and leaves the current page without a URL', () => {
+    expect(
+      breadcrumbListStructuredData([
+        { name: 'Početna', url: 'https://www.gdesapsom.com/' },
+        { name: 'Pet-friendly objekti', url: 'https://www.gdesapsom.com/all-spots' },
+        { name: 'Witch Bar', url: 'https://www.gdesapsom.com/spots/21' },
+      ]),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Početna', item: 'https://www.gdesapsom.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Pet-friendly objekti', item: 'https://www.gdesapsom.com/all-spots' },
+        { '@type': 'ListItem', position: 3, name: 'Witch Bar' },
+      ],
+    });
+  });
+
+  it('skips blank names, so a spot that has not loaded yet does not add an empty step', () => {
+    const data = breadcrumbListStructuredData([
+      { name: 'Početna', url: 'https://www.gdesapsom.com/' },
+      { name: '  ' },
+      { name: 'Blog', url: 'https://www.gdesapsom.com/blog' },
+    ]);
+
+    expect(data?.['itemListElement']).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Početna', item: 'https://www.gdesapsom.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog' },
+    ]);
+  });
+
+  it('is null for a single step, which is not a trail', () => {
+    expect(breadcrumbListStructuredData([{ name: 'Početna', url: 'https://www.gdesapsom.com/' }])).toBeNull();
+  });
+});
+
+describe('homeCollectionStructuredData', () => {
+  it('lists the section pages as absolute URLs under the site WebSite node', () => {
+    expect(
+      homeCollectionStructuredData([
+        { name: 'Pet-friendly objekti', path: 'all-spots' },
+        { name: 'Parkovi za pse', path: '/pet-parks' },
+      ]),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': 'https://www.gdesapsom.com/#page',
+      url: 'https://www.gdesapsom.com/',
+      name: 'Gde sa psom - pet friendly mesta u Srbiji',
+      inLanguage: 'sr-Latn',
+      isPartOf: { '@id': 'https://www.gdesapsom.com/#website' },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Pet-friendly objekti', url: 'https://www.gdesapsom.com/all-spots' },
+          { '@type': 'ListItem', position: 2, name: 'Parkovi za pse', url: 'https://www.gdesapsom.com/pet-parks' },
+        ],
+      },
+    });
   });
 });

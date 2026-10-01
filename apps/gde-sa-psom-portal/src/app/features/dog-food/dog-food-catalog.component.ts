@@ -16,6 +16,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { DogFoodCardComponent } from '../../shared/components/dog-food-card/dog-food-card.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { DogFoodFilters, DogFoodSort, LookupItem, DogFoodStore } from '@gde/shared/data-access';
 import { LocalNamePipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
@@ -51,6 +52,7 @@ interface FilterChip {
     ListStateComponent,
     LocalNamePipe,
     RsdPricePipe,
+    BreadcrumbComponent,
   ],
   templateUrl: './dog-food-catalog.component.html',
   styleUrl: './dog-food-catalog.component.scss',

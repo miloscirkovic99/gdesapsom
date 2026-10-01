@@ -4,10 +4,11 @@ import { CardComponent } from '../../shared/components/card/card.component';
 import { ParksStore } from '@gde/shared/data-access';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-pet-parks',
-  imports: [CommonModule, CardComponent, TranslocoModule, ListStateComponent],
+  imports: [CommonModule, CardComponent, TranslocoModule, ListStateComponent, BreadcrumbComponent],
   templateUrl: './pet-parks.component.html',
   styleUrl: './pet-parks.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -94,6 +94,7 @@ export class AppComponent {
       title: snapshot.title,
       description: snapshot.data?.['description'],
       path: url,
+      noindex: snapshot.data?.['noindex'] === true,
     });
   }
 

@@ -35,7 +35,13 @@
 
         <div class="card-body gap-3 p-5">
           <div class="flex items-start justify-between gap-2">
-            <h2 class="card-title font-display text-lg">{{ item?.iuo_ime ?? item?.par_ime }}</h2>
+            <h2 class="card-title font-display text-lg">
+              @if (spotLink(item); as link) {
+                <a [routerLink]="link" class="link link-hover">{{ item?.iuo_ime }}</a>
+              } @else {
+                {{ item?.iuo_ime ?? item?.par_ime }}
+              }
+            </h2>
             @if (isAdmin()) {
               <button
                 class="btn btn-ghost btn-xs btn-circle hover:text-secondary"
@@ -105,9 +111,11 @@
                   {{ 'add' | transloco }}
                 </button>
               }
-              <button class="btn btn-secondary btn-sm" (click)="openDialog(item)">
-                {{ 'see_details' | transloco }}
-              </button>
+              @if (spotLink(item); as link) {
+                <a [routerLink]="link" class="btn btn-secondary btn-sm">
+                  {{ 'see_details' | transloco }}
+                </a>
+              }
             </div>
           }
         </div>

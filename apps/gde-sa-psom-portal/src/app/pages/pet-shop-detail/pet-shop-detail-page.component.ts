@@ -17,6 +17,7 @@ import * as L from 'leaflet';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { DeliveryLinksComponent } from '../../shared/components/delivery-links/delivery-links.component';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey, venueLinkType } from '@gde/shared/util';
 import { LookupRef, PetShopDetail, PetShopOffer, normalizeSearchText, PetShopsStore } from '@gde/shared/data-access';
 
@@ -30,7 +31,7 @@ interface AssortmentGroup {
 
 @Component({
   selector: 'app-pet-shop-detail-page',
-  imports: [RouterLink, TranslocoModule, DeliveryLinksComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
+  imports: [RouterLink, TranslocoModule, DeliveryLinksComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
   templateUrl: './pet-shop-detail-page.component.html',
   styleUrl: './pet-shop-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,12 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
 
   // ── Derived ───────────────────────────────────────────────────────────────
   readonly shop = this.store.detail;
+
+  /** Početna › Prodavnice za ljubimce › {shop}; also published as BreadcrumbList. */
+  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => [
+    { labelKey: 'pet_shops_title', link: ['/', RouteConstants.petShops] },
+    { label: this.shop()?.name ?? '' },
+  ]);
 
   /** "Vračar, Beograd" - collapses township and city when they share a name. */
   readonly locationLine = computed(() => {
@@ -96,7 +103,10 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       const shop = this.store.detail();
-      if (!shop) return;
+      if (!shop) {
+        if (this.store.detailError() === 'not-found') this.#markNotFound();
+        return;
+      }
       this.#updateSeo(shop);
       // The map container is rendered by the same change detection pass that
       // reacts to `detail`, so Leaflet has to wait a tick for it to exist.
@@ -119,6 +129,14 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
     this.map = undefined;
     this.store.clearDetail();
     this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
+  }
+
+  /** The SPA answers 200 for any slug, so the robots tag is what keeps a dead URL out of the index. */
+  #markNotFound(): void {
+    this.seoService.update({
+      title: `${this.translocoService.translate('shop_not_found')} | Gde sa psom`,
+      noindex: true,
+    });
   }
 
   // ── Public API ────────────────────────────────────────────────────────────

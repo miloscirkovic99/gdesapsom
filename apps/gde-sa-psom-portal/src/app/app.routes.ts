@@ -290,8 +290,20 @@ export const appRoutes: Route[] = [
     },
    },
   {
-    path:'**',
-    redirectTo:'',
-    pathMatch:'full'
+    // A real not-found page instead of a redirect to the homepage: redirecting
+    // made every mistyped or removed URL look like a copy of "/" (a soft 404).
+    // `noindex` is read by AppComponent.updateSeo. New top-level paths must also
+    // be added to the SPA fallback list in the root .htaccess.
+    path: '**',
+    loadComponent: () => {
+      return import('./pages/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      );
+    },
+    title: 'Stranica nije pronađena - Gde sa psom',
+    data: {
+      description: 'Tražena stranica ne postoji ili je premeštena. Pretražite pet-friendly objekte, parkove za pse i veterinare u Srbiji.',
+      noindex: true,
+    },
   }
 ];

@@ -110,4 +110,28 @@ describe('SeoService', () => {
     expect(meta.getTag('property="og:title"')?.content).toBe('Šupa - Kafić u Beogradu | Gde sa psom');
     expect(meta.getTag('property="og:url"')?.content).toBe(`${SITE_ORIGIN}/spots/3`);
   });
+
+  it('does not write a meta name="title" tag, which no search engine reads', () => {
+    service.update({ title: 'Blog - Gde sa psom', path: '/blog' });
+
+    expect(meta.getTag('name="title"')).toBeNull();
+  });
+
+  describe('noindex', () => {
+    it('marks a missing page noindex and drops its canonical', () => {
+      service.update({ path: '/spots/999999', noindex: true });
+
+      expect(meta.getTag('name="robots"')?.content).toBe('noindex, follow');
+      expect(canonicalHref()).toBeUndefined();
+    });
+
+    it('restores indexing and the canonical on the next ordinary page', () => {
+      service.update({ path: '/ovo-ne-postoji', noindex: true });
+      service.update({ path: '/pet-parks' });
+
+      expect(meta.getTag('name="robots"')?.content).toContain('index, follow');
+      expect(meta.getTag('name="robots"')?.content).not.toContain('noindex');
+      expect(canonicalHref()).toBe(`${SITE_ORIGIN}/pet-parks`);
+    });
+  });
 });
