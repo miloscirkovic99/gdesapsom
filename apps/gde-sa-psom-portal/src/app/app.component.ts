@@ -1,17 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, HostListener, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import AOS from 'aos';
-import { filter, Subscription } from 'rxjs';
+import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ContactFormComponent } from './shared/components/contact-form/contact-form.component';
-import {
-  NgcCookieConsentService,
-  NgcStatusChangeEvent,
-} from 'ngx-cookieconsent';
 
 import { CommonModule } from '@angular/common';
+import { ConsentService } from './core/consent/consent.service';
 import { AnalyticsService } from './core/services/analytics.service';
 import { GoogleAnalyticsService } from './core/services/google-analytics.service';
 import { PushNotificationService } from './core/services/push-notification.service';
@@ -19,6 +16,7 @@ import { SeoService } from './core/services/seo.service';
 import { VersionUpdateService } from './core/services/version-update.service';
 import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/pwa-install-dialog.component';
 import { BottomNavigationComponent } from './shared/components/bottom-navigation/bottom-navigation.component';
+import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 @Component({
   imports: [
     RouterModule,
@@ -27,7 +25,8 @@ import { BottomNavigationComponent } from './shared/components/bottom-navigation
     ContactFormComponent,
     CommonModule,
     PwaInstallDialogComponent,
-    BottomNavigationComponent
+    BottomNavigationComponent,
+    CookieBannerComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -43,12 +42,25 @@ export class AppComponent {
   private readonly versionUpdateService = inject(VersionUpdateService);
   private readonly seoService = inject(SeoService);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly consent = inject(ConsentService);
   isAdminMode = signal(false);
   private destroyRef = inject(DestroyRef);
-  private statusChangeSubscription!: Subscription;
   showTopButton=false;
 
-  constructor(private ccService: NgcCookieConsentService) {}
+  constructor() {
+    // Opt-out analytics: gtag.js loads for everyone who has not said no, so
+    // the visit is measured from its first page view. "Samo neophodno" (now or
+    // later, from the footer) switches it off and deletes its cookies; a
+    // visitor who had said no never gets the script at all.
+    effect(() => {
+      if (this.consent.measurementAllowed()) {
+        this.googleAnalyticsService.initialize();
+        this.googleAnalyticsService.setEnabled(true);
+      } else {
+        this.googleAnalyticsService.setEnabled(false);
+      }
+    });
+  }
 
   ngOnInit() {
     AOS.init({
@@ -73,8 +85,6 @@ export class AppComponent {
           AOS.refresh();
         }, 500);
       });
-    this.setupCookie();
-    this.checkAndEnableAnalytics(); 
     this.analyticsService.initOutboundTracking();
   }
 
@@ -98,47 +108,11 @@ export class AppComponent {
     });
   }
 
-  private checkAndEnableAnalytics(): void {
-    if (this.isAnalyticsConsentGranted()) {
-      this.enableAnalytics();
-    }
-  }
-
-  private isAnalyticsConsentGranted(): boolean {
-    return (
-      localStorage.getItem('analyticsAccepted') === 'true' ||
-      this.ccService.hasConsented()
-    );
-  }
-
-  private enableAnalytics(): void {
-    this.googleAnalyticsService.initialize();
-  }
-
   @HostListener('window:scroll')
   onWindowScroll() {
     this.showTopButton = window.scrollY > 350;
   }
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-
-  private setupCookie(): void {
-    this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
-      (event: NgcStatusChangeEvent) => {
-        this.handleCookieConsent(event);
-      }
-    );
-  }
-
-  private handleCookieConsent(event: NgcStatusChangeEvent): void {
-    if (event.status === 'dismiss') {
-      localStorage.setItem('analyticsAccepted', 'true');
-      this.enableAnalytics();
-    }
-  }
-  ngOnDestroy() {
-    this.statusChangeSubscription.unsubscribe();
   }
 }

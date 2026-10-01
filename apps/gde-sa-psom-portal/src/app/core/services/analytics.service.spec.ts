@@ -3,10 +3,12 @@
  */
 import { TestBed } from '@angular/core/testing';
 
+import { ConsentService } from '../consent/consent.service';
 import { AnalyticsService, MAX_LINK_TEXT_LENGTH } from './analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
+  let consent: ConsentService;
   let gtag: jest.Mock;
 
   const render = (html: string): HTMLElement => {
@@ -41,28 +43,53 @@ describe('AnalyticsService', () => {
     gtag.mock.calls[gtag.mock.calls.length - 1][2] as Record<string, unknown>;
 
   beforeEach(() => {
+    localStorage.clear();
     gtag = jest.fn();
     window.gtag = gtag;
     TestBed.configureTestingModule({});
+    consent = TestBed.inject(ConsentService);
+    consent.acceptAll();
     service = TestBed.inject(AnalyticsService);
   });
 
   afterEach(() => {
     document.body.innerHTML = '';
     delete window.gtag;
+    localStorage.clear();
   });
 
   describe('event', () => {
-    it('forwards to window.gtag as a GA4 event', () => {
+    it('forwards to window.gtag as a GA4 event once the visitor has accepted', () => {
       service.event('share', { method: 'viber' });
 
       expect(gtag).toHaveBeenCalledWith('event', 'share', { method: 'viber' });
     });
 
-    it('is a no-op while gtag.js is not loaded (no consent yet, ad blocker)', () => {
+    it('is a no-op while gtag.js is not loaded (switched off, ad blocker)', () => {
       delete window.gtag;
 
       expect(() => service.event('share', {})).not.toThrow();
+    });
+
+    it('sends nothing while the banner is unanswered: page views are measured, details are not', () => {
+      localStorage.clear();
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      consent = TestBed.inject(ConsentService);
+      service = TestBed.inject(AnalyticsService);
+      expect(consent.status()).toBe('pending');
+
+      service.event('search', { search_term: 'kafić' });
+
+      expect(gtag).not.toHaveBeenCalled();
+    });
+
+    it('sends nothing after "Samo neophodno"', () => {
+      consent.necessaryOnly();
+
+      service.event('search', { search_term: 'kafić' });
+
+      expect(gtag).not.toHaveBeenCalled();
     });
   });
 

@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { SearchScope, SubmissionType } from '@gde/shared/util';
+import { ConsentService } from '../consent/consent.service';
 
 /** GA4 truncates event parameter values at 100 characters anyway. */
 export const MAX_LINK_TEXT_LENGTH = 100;
@@ -13,9 +14,9 @@ type Gtag = (command: string, ...args: unknown[]) => void;
 declare global {
   interface Window {
     /**
-     * Defined once GoogleAnalyticsService has injected gtag.js, i.e. after
-     * cookie consent. Missing while consent is pending or when an ad blocker
-     * removed the script.
+     * Defined once GoogleAnalyticsService has set up gtag.js. Missing after
+     * the visitor chose "Samo neophodno" before it ever loaded, or when an ad
+     * blocker removed the script.
      */
     gtag?: Gtag;
   }
@@ -26,8 +27,11 @@ const stripWww = (hostname: string): string => hostname.replace(/^www\./, '');
 /**
  * Custom GA4 events on top of gtag.js.
  *
- * `event()` is a no-op until gtag.js is loaded, so callers never have to
- * guard themselves. `initOutboundTracking()` reports clicks that leave the
+ * Page views and user counts come from gtag.js itself (opt-out, see
+ * ConsentService). The events here carry details (search terms, venue slugs,
+ * link URLs), so `event()` sends nothing until the visitor has explicitly
+ * accepted; it is also a no-op while gtag.js is missing. Callers never have
+ * to guard themselves. `initOutboundTracking()` reports clicks that leave the
  * site: `outbound_click` for external pages and `contact_click` for
  * mailto:/tel:/sms: links. Templates describe a link with `data-link-type`
  * (a `LinkType` from `@gde/shared/util`) and, for venue links, `data-venue-slug`.
@@ -36,9 +40,11 @@ const stripWww = (hostname: string): string => hostname.replace(/^www\./, '');
 export class AnalyticsService {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly consent = inject(ConsentService);
   private trackingOutbound = false;
 
   event(name: string, params: Record<string, unknown>): void {
+    if (!this.consent.detailedEventsAllowed()) return;
     this.document.defaultView?.gtag?.('event', name, params);
   }
 

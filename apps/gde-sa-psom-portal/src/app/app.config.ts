@@ -5,33 +5,11 @@ import { provideAppTransloco } from '@gde/shared/util';
 import { BrowserAnimationsModule, provideAnimations, } from '@angular/platform-browser/animations';
 import { provideApiHttp, provideAppConfig, Notifier } from '@gde/shared/data-access/core';
 import { SnackbarNotifier } from './core/services/snackbar-notifier';
-import {NgcCookieConsentConfig, provideNgcCookieConsent} from 'ngx-cookieconsent';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../env/env.dev';
 
-const cookieConfig:NgcCookieConsentConfig = {
-  cookie: {
-    domain: `${environment.cookieDomain}`
-  },
-  position: "bottom",
-  theme:'classic',
-  palette: {
-    popup: {
-      background: '#000'
-    },
-    button: {
-      background: '#44cd88'
-    }
-  },
-  type: 'info',
-  content: {
-    "message": "This website uses cookies to ensure you get the best experience on our website.",
-    "link": "Learn more",
-    "href": `${environment.baseUrl}${'/cookies-policy'}`,
-    "policy": "Cookie Policy",
-
-  }
-};
+// The cookie banner is the app's own CookieBannerComponent + ConsentService
+// (core/consent); ngx-cookieconsent is no longer used.
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -48,7 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes,  withInMemoryScrolling({
       scrollPositionRestoration: 'top',
     }),),
-    provideNgcCookieConsent(cookieConfig),
     importProvidersFrom(BrowserAnimationsModule),
      provideServiceWorker('ngsw-worker.js', {
       enabled:true,

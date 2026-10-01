@@ -28,6 +28,11 @@
           </a>
         </li>
         <li>
+          <button type="button" (click)="consent.open()" class="hover:text-secondary transition-colors">
+            {{ 'consent_footer_link' | transloco }}
+          </button>
+        </li>
+        <li>
           <a [routerLink]="routeConstants.allSpots" class="hover:text-secondary transition-colors">
             {{ 'find_pet_spots' | transloco }}
           </a>
