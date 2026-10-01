@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CardComponent } from '../../shared/components/card/card.component';
+import { SeoService } from '../../core/services/seo.service';
+import { homeCollectionStructuredData } from '../../shared/utils/structured-data';
 import { SpotsStore, ParksStore, VetClinicsStore } from '@gde/shared/data-access';
 import { RouteConstants, descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
 
@@ -15,6 +18,21 @@ interface Category {
   queryParams?: Record<string, string>;
 }
 
+const HOME_STRUCTURED_DATA_ID = 'home';
+
+/**
+ * The list pages the homepage's CollectionPage schema points to. Real pages
+ * only: the old block in index.html listed `?spotType=` filter URLs, which
+ * canonicalise to /all-spots and are not pages of their own.
+ */
+const HOME_SECTIONS = [
+  { labelKey: 'breadcrumb_spots', path: RouteConstants.allSpots },
+  { labelKey: 'dog_parks', path: RouteConstants.petParks },
+  { labelKey: 'vet_clinics', path: RouteConstants.vet_clinics },
+  { labelKey: 'dog_food_title', path: RouteConstants.dogFood },
+  { labelKey: 'pet_shops_title', path: RouteConstants.petShops },
+];
+
 @Component({
   selector: 'app-landing-page',
   imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent],
@@ -22,12 +40,19 @@ interface Category {
   styleUrl: './landing-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnDestroy {
   readonly spotsStore = inject(SpotsStore);
   readonly parksStore = inject(ParksStore);
   readonly vetClinicsStore = inject(VetClinicsStore);
   readonly routeConstants = RouteConstants;
   readonly #router = inject(Router);
+  readonly #seo = inject(SeoService);
+  readonly #transloco = inject(TranslocoService);
+
+  /** Section names in the active language, once translations have loaded. */
+  readonly #sectionNames = toSignal(
+    this.#transloco.selectTranslate<string[]>(HOME_SECTIONS.map((section) => section.labelKey)),
+  );
 
   /** Free-text search in the hero; submits to the spots list as `?word=`. */
   readonly searchControl = new FormControl('', { nonNullable: true });
@@ -77,6 +102,23 @@ export class LandingPageComponent {
     { title: 'lp_step_2_title', desc: 'lp_step_2_desc' },
     { title: 'lp_step_3_title', desc: 'lp_step_3_desc' },
   ];
+
+  constructor() {
+    // The CollectionPage block lives here, not in index.html, so it exists on
+    // "/" only; it used to ship on every spot and blog page as well.
+    effect(() => {
+      const names = this.#sectionNames();
+      if (!names) return;
+      this.#seo.setStructuredData(
+        HOME_STRUCTURED_DATA_ID,
+        homeCollectionStructuredData(HOME_SECTIONS.map((section, index) => ({ name: names[index], path: section.path }))),
+      );
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.#seo.clearStructuredData(HOME_STRUCTURED_DATA_ID);
+  }
 
   submitSearch(): void {
     const word = this.searchControl.value.trim();

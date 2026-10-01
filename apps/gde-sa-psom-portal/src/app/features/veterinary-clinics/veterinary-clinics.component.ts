@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged, ReplaySubject, takeUntil } from 'rx
 import { filterTownshipsMulti, SEARCH_TRACKING_DEBOUNCE_MS } from '@gde/shared/util';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-veterinary-clinics',
@@ -26,6 +27,7 @@ import { refreshAosOn } from '../../core/aos/refresh-aos-on';
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
+    BreadcrumbComponent,
   ],
   templateUrl: './veterinary-clinics.component.html',
   styleUrl: './veterinary-clinics.component.scss',

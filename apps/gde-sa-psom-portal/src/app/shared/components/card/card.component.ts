@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
@@ -15,15 +15,13 @@ interface CardPlace {
 
 @Component({
   selector: 'app-card',
-  imports: [CommonModule,TranslocoModule],
+  imports: [CommonModule, TranslocoModule, RouterLink],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  
+
 })
 export class CardComponent {
-  private router = inject(Router);
-
   data=input<any>();
   isLoading=input();
   hiddeDetailsButton=input<boolean>(false);
@@ -40,18 +38,25 @@ export class CardComponent {
   ngAfterViewChecked() {
     AOS.refresh();
   }
-  openDialog(data:any){
-    this.router.navigate(['/spots', data.iuo_id || 0], { state: { spot: data } });
-  }
   onAction(data:any,action:string){
     const actions={
       data:data,
       action:action,
       isPending:this.isPendingSpot()
     }
-    
+
     this.onActionClick.emit(actions)
   }
+
+  /**
+   * Router commands for the spot page, rendered as real `<a href>` links so
+   * crawlers can reach /spots/:id from the lists (a click handler hid them).
+   * Parks and pending entries without an id get no link.
+   */
+  spotLink(item: { iuo_id?: number | string | null } | null | undefined): unknown[] | null {
+    return item?.iuo_id ? ['/spots', item.iuo_id] : null;
+  }
+
   /** Parks link their address to Google Maps; spots open the detail page instead. */
   googleMapsUrl(item: CardPlace): string | null {
     if (!item?.par_lokacija) return null;

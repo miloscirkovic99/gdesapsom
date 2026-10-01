@@ -21,6 +21,9 @@
     </div>
     <button class="btn btn-s mt-4" (click)="goBack()">Nazad na blog</button>
     } @else if (post()) {
+    <div class="max-w-4xl mx-auto mb-6">
+        <app-breadcrumb [items]="breadcrumbs()" />
+    </div>
     <article class="prose prose-lg max-w-4xl mx-auto dark:prose-invert">
         <!-- Article Header -->
         <header class="mb-8 pb-6 border-b-2 border-base-200">

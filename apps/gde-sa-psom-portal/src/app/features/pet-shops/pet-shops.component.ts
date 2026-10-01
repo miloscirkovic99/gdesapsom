@@ -23,6 +23,7 @@ import { SnackbarService } from '../../core/services/snackbar.service';
 import { CatalogNavComponent } from '../../shared/components/catalog-nav/catalog-nav.component';
 import { ListStateComponent, ListStatus } from '../../shared/components/list-state/list-state.component';
 import { PetShopCardComponent } from '../../shared/components/pet-shop-card/pet-shop-card.component';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { PetShopFilters, PetShopsStore, SharedStore, Township } from '@gde/shared/data-access';
 import { injectActiveLang, pluralKey, filterTownshipsMulti } from '@gde/shared/util';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
@@ -57,6 +58,7 @@ const DEFAULT_RADIUS = 5000;
     CatalogNavComponent,
     ListStateComponent,
     PetShopCardComponent,
+    BreadcrumbComponent,
   ],
   templateUrl: './pet-shops.component.html',
   styleUrl: './pet-shops.component.scss',

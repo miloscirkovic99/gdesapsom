@@ -1,0 +1,55 @@
+@if (consent.bannerOpen()) {
+  <section
+    class="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-4 pointer-events-none"
+    role="dialog"
+    aria-labelledby="consent-title"
+    aria-describedby="consent-text"
+  >
+    <div class="pointer-events-auto mx-auto max-w-3xl rounded-2xl border border-base-300/60 bg-base-100 shadow-2xl p-4 sm:p-6 space-y-4">
+      <div class="space-y-1.5">
+        <h2 id="consent-title" class="font-display text-lg font-bold leading-tight">{{ 'consent_title' | transloco }}</h2>
+        <p id="consent-text" class="text-sm text-base-content/70">{{ 'consent_text' | transloco }}</p>
+        <p class="text-xs text-base-content/60">
+          <a [routerLink]="['/', routes.cookiesPolicy]" class="link link-hover">{{ 'cookie_header' | transloco }}</a>
+          <span aria-hidden="true"> · </span>
+          <a [routerLink]="['/', routes.privacyPolicy]" class="link link-hover">{{ 'privacy_title' | transloco }}</a>
+        </p>
+      </div>
+
+      @if (showSettings()) {
+        <ul class="space-y-2">
+          <li class="flex items-start justify-between gap-4 rounded-xl bg-base-200/60 p-3">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">{{ 'consent_cat_necessary' | transloco }}</p>
+              <p class="text-xs text-base-content/60">{{ 'consent_cat_necessary_text' | transloco }}</p>
+            </div>
+            <span class="badge badge-sm badge-ghost shrink-0 mt-0.5">{{ 'consent_always_on' | transloco }}</span>
+          </li>
+          <li class="flex items-start justify-between gap-4 rounded-xl bg-base-200/60 p-3">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">{{ 'consent_cat_analytics' | transloco }}</p>
+              <p class="text-xs text-base-content/60">{{ 'consent_cat_analytics_text' | transloco }}</p>
+            </div>
+            <input
+              type="checkbox"
+              class="toggle toggle-secondary toggle-sm shrink-0 mt-0.5"
+              [checked]="analyticsChoice()"
+              (change)="toggleAnalytics($event)"
+              [attr.aria-label]="'consent_cat_analytics' | transloco"
+            />
+          </li>
+        </ul>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button type="button" class="btn btn-sm btn-ghost" (click)="necessaryOnly()">{{ 'consent_necessary_only' | transloco }}</button>
+          <button type="button" class="btn btn-sm btn-secondary" (click)="saveChoice()">{{ 'consent_save' | transloco }}</button>
+        </div>
+      } @else {
+        <div class="flex flex-wrap justify-end gap-2">
+          <button type="button" class="btn btn-sm btn-ghost" (click)="openSettings()">{{ 'consent_settings' | transloco }}</button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="necessaryOnly()">{{ 'consent_necessary_only' | transloco }}</button>
+          <button type="button" class="btn btn-sm btn-secondary" (click)="acceptAll()">{{ 'consent_accept_all' | transloco }}</button>
+        </div>
+      }
+    </div>
+  </section>
+}

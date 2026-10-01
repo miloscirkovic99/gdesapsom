@@ -29,14 +29,7 @@
 } @else {
   @if (shop(); as s) {
   <article class="max-w-5xl mx-auto py-6 sm:py-10 space-y-8 sm:space-y-10">
-    <!-- ── Breadcrumb ── -->
-    <nav [attr.aria-label]="'breadcrumb' | transloco" class="text-sm text-base-content/60">
-      <ol class="flex flex-wrap items-center gap-1.5">
-        <li><a [routerLink]="'/' + routes.petShops" class="link link-hover">{{ 'pet_shops_title' | transloco }}</a></li>
-        <li aria-hidden="true">/</li>
-        <li class="text-base-content/80" aria-current="page">{{ s.name }}</li>
-      </ol>
-    </nav>
+    <app-breadcrumb [items]="breadcrumbs()" />
 
     <header class="grid gap-6 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:gap-10">
       <div class="space-y-4">

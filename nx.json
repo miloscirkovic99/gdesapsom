@@ -58,5 +58,6 @@
       "linter": "eslint",
       "unitTestRunner": "jest"
     }
-  }
+  },
+  "analytics": false
 }

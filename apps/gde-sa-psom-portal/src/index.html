@@ -29,22 +29,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Inter:wght@400;500;600;700&display=swap" />
 
-    <meta
-      name="title"
-      content="Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji"
-    />
+    <!--
+      Only tags search engines read (no keywords, revisit-after or name="title").
+      SeoService rewrites the title, description and robots tag per route; the
+      description carries no counts because a hardcoded number goes stale.
+    -->
     <meta
       name="description"
-      content="Pronađite gde su psi dobrodošli u Srbiji! Pretražite 100+ pet-friendly restorana, kafića, hotela, parkova za pse i veterinarskih klinika u Beogradu, Novom Sadu, Nišu i širom Srbije. Besplatna platforma za sve vlasnike ljubimaca."
-    />
-    <meta
-      name="keywords"
-      content="gde sa psom, pet friendly restoran beograd, pet friendly kafić beograd, pet friendly hotel srbija, parkovi za pse beograd, parkovi za pse novi sad, veterinar beograd, gde sa psom u beograd, kafić sa psom, restoran sa psom, hotel sa psom srbija, pet friendly mesta srbija, psi dozvoljeni restoran, psi dozvoljeni kafić, šetanje psa beograd, pet friendly srbija, dog friendly belgrade, pet friendly novi sad, pet friendly niš, veterinarska ambulanta, gde prošetati psa, pet friendly lokacije, izlazak sa psom, ljubimci dobrodošli"
+      content="Pronađite gde su psi dobrodošli u Srbiji! Pretražite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Beogradu, Novom Sadu, Nišu i širom Srbije."
     />
     <meta name="author" content="Gde sa psom" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="language" content="Serbian" />
-    <meta name="revisit-after" content="3 days" />
     <meta name="application-name" content="Gde sa psom" />
     <meta name="geo.region" content="RS" />
     <meta name="geo.placename" content="Serbia" />
@@ -58,16 +54,21 @@
       hreflang is gone because Transloco switches language in place: there is one
       URL per page, so there is no alternate language URL to point at.
     -->
-    <!-- Open Graph Tags (Social Media) -->
+    <!--
+      Open Graph / Twitter. No og:url or twitter:url here on purpose: a hardcoded
+      homepage URL told link-preview crawlers that /spots/21 or /blog/x "is" the
+      homepage. SeoService sets both per route; a crawler that runs no JavaScript
+      falls back to the request URL, which is right. The logo stays as the
+      no-JavaScript fallback image.
+    -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.gdesapsom.com/" />
     <meta
       property="og:title"
       content="Gde sa psom - Pronađite Pet-Friendly Mesta u Srbiji"
     />
     <meta
       property="og:description"
-      content="Pronađite gde su vaši ljubimci dobrodošli! 100+ pet-friendly lokacija u Srbiji - restorani, kafići, hoteli, parkovi za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije."
+      content="Pronađite gde su vaši ljubimci dobrodošli! Pet-friendly restorani, kafići, hoteli, parkovi za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije."
     />
     <meta
       property="og:image"
@@ -82,7 +83,6 @@
     
     <!-- Twitter Card Tags -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://www.gdesapsom.com/" />
     <meta
       property="twitter:title"
       content="Gde sa psom - Pet-Friendly Restorani, Kafići i Hoteli u Srbiji"
@@ -108,6 +108,7 @@
       {
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://www.gdesapsom.com/#org",
         "name": "Gde sa psom",
         "url": "https://www.gdesapsom.com",
         "logo": "https://www.gdesapsom.com/assets/logo-big.png",
@@ -133,64 +134,28 @@
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": "https://www.gdesapsom.com/#website",
         "name": "Gde sa psom",
         "alternateName": "Gde Sa Psom - Pet Friendly Srbija",
         "url": "https://www.gdesapsom.com",
         "description": "Pronađite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Srbiji",
         "inLanguage": ["sr", "en"],
+        "publisher": { "@id": "https://www.gdesapsom.com/#org" },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://www.gdesapsom.com/all-spots?spotType={search_term_string}",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://www.gdesapsom.com/all-spots?word={search_term_string}"
+          },
           "query-input": "required name=search_term_string"
         }
       }
     </script>
-
-    <!-- Schema Markup - CollectionPage -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "name": "Pet-Friendly Mesta u Srbiji",
-        "description": "Pronađite gde su psi i mačke dobrodošli - restorani, kafići, hoteli, parkovi za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije",
-        "url": "https://www.gdesapsom.com",
-        "mainEntity": {
-          "@type": "ItemList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Pet-Friendly Restorani u Srbiji",
-              "url": "https://www.gdesapsom.com/all-spots?spotType=Restoran"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Pet-Friendly Kafići u Srbiji",
-              "url": "https://www.gdesapsom.com/all-spots?spotType=Kafić"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Pet-Friendly Hoteli u Srbiji",
-              "url": "https://www.gdesapsom.com/all-spots?spotType=Hotel"
-            },
-            {
-              "@type": "ListItem",
-              "position": 4,
-              "name": "Parkovi za Pse",
-              "url": "https://www.gdesapsom.com/pet-parks"
-            },
-            {
-              "@type": "ListItem",
-              "position": 5,
-              "name": "Veterinarske Klinike",
-              "url": "https://www.gdesapsom.com/vet-clinics"
-            }
-          ]
-        }
-      }
-    </script>
+    <!--
+      Site-wide schema ends here. The homepage's CollectionPage is rendered by
+      LandingPageComponent so that it appears on "/" only: here it shipped on
+      every spot and blog page too.
+    -->
   </head>
   <body>
     <app-root></app-root>

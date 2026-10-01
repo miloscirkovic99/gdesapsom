@@ -15,6 +15,11 @@ const DEFAULT_IMAGE = SITE_LOGO;
 
 const MAX_DESCRIPTION_LENGTH = 160;
 
+/** Mirrors the robots meta tag index.html ships with. */
+const ROBOTS_INDEX = 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
+/** Still "follow": the not-found page links to the main sections. */
+const ROBOTS_NOINDEX = 'noindex, follow';
+
 export interface SeoMetadata {
   title?: string | null;
   description?: string | null;
@@ -23,6 +28,12 @@ export interface SeoMetadata {
   /** Absolute or site-relative image URL. Base64 data URIs are ignored. */
   image?: string | null;
   type?: 'website' | 'article';
+  /**
+   * Keeps the page out of the index: the not-found page, and detail pages
+   * whose entity the API does not have. The SPA still answers such URLs with
+   * HTTP 200, so this tag is what tells Google there is no page here.
+   */
+  noindex?: boolean;
 }
 
 /**
@@ -45,10 +56,11 @@ export class SeoService {
     const url = this.toAbsoluteUrl(metadata.path);
     const image = this.toImageUrl(metadata.image);
     const type = metadata.type ?? 'website';
+    const noindex = metadata.noindex === true;
 
     this.title.setTitle(title);
-    this.meta.updateTag({ name: 'title', content: title });
     this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ name: 'robots', content: noindex ? ROBOTS_NOINDEX : ROBOTS_INDEX });
 
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
@@ -61,7 +73,8 @@ export class SeoService {
     this.meta.updateTag({ property: 'twitter:image', content: image });
     if (url) this.meta.updateTag({ property: 'twitter:url', content: url });
 
-    this.setCanonical(url);
+    // A canonical on a noindex page is a contradictory signal, so it goes.
+    this.setCanonical(noindex ? null : url);
   }
 
   /**

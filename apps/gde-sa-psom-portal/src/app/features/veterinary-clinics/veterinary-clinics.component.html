@@ -1,5 +1,8 @@
 <div class="py-8 space-y-8">
-  <h1 class="font-display text-4xl text-center font-bold max-sm:text-3xl">{{ 'search_vet_clinics' | transloco }}</h1>
+  <div class="space-y-4">
+    <app-breadcrumb [items]="[{ labelKey: 'vet_clinics' }]" />
+    <h1 class="font-display text-4xl text-center font-bold max-sm:text-3xl">{{ 'search_vet_clinics' | transloco }}</h1>
+  </div>
 
   <div class="flex flex-col items-center gap-6">
     <form [formGroup]="form" class="w-full max-w-3xl space-y-6">

@@ -4,5 +4,6 @@ Disallow: /admin
 Disallow: /login
 Disallow: /spots/new
 Disallow: /parks/new
+Disallow: /api/
 
 Sitemap: https://www.gdesapsom.com/sitemap.xml

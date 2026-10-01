@@ -42,3 +42,9 @@ Prepared 2026-10-01 from the source code in this repository, the committed sitem
 1. Developer: read `01`, `07`, `03`, `08`, then the table in `10` (section 14.8) and work top-down.
 2. Editor: read `02` (sections 2.3–2.4), `05`, `06`; start the October batch now on current URLs.
 3. Owner: read `10`, run the live checks in `07` (9.4), set up Search Console, and start `09` section 12.6 week 1.
+
+## Implementation log
+
+Items refer to the prioritized table in `10-roadmap-and-final-strategy.md`, section 14.8.
+
+- **2026-10-01** — Items 2–5 and the counts half of 6 implemented in the portal: single-hop `301` to `https://www.` plus `X-Robots-Tag: noindex` on `/api/` and a real `404` for paths outside the app's routes (root `.htaccess`; **must be verified on the live host**, see `DEPLOYMENT_CHECKLIST.md`); `**` route renders a not-found page with `noindex` instead of redirecting home, and detail pages whose entity is missing do the same; list cards link to `/spots/:id` with real `<a href>`; visible breadcrumbs with `BreadcrumbList` JSON-LD on all detail and list pages; `/all-spots` got an H1; `index.html` lost the site-wide `CollectionPage`, `meta keywords`, `revisit-after`, `meta name="title"` and the hardcoded `og:url`, and the `SearchAction` now targets the real search (`/all-spots?word=`); the homepage renders its own `CollectionPage`; the "1.000+" / "100+" claims are gone. Not done: path pagination (belongs with item 11) and the "Provereno" date (needs a backend field, item 7).

@@ -32,6 +32,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 
 type PetSpotsForm = {
   ops_id: FormControl<number[] | null>;
@@ -52,7 +53,8 @@ type PetSpotsForm = {
     CardComponent,
     NgxMatSelectSearchModule,
     TranslocoModule,
-    AsyncPipe
+    AsyncPipe,
+    BreadcrumbComponent,
   ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
