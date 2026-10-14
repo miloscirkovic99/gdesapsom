@@ -12,7 +12,7 @@
         <a [routerLink]="['/', routeConstants.allSpots]" class="btn btn-secondary lp-btn">
           {{ 'lp_hero_cta' | transloco }}
         </a>
-        <a [routerLink]="['/', routeConstants.addSpot]" class="btn btn-ghost lp-btn lp-btn--quiet">
+        <a [routerLink]="'/' + routeConstants.addSpot" class="btn btn-ghost lp-btn lp-btn--quiet">
           {{ 'lp_hero_secondary' | transloco }}
         </a>
       </div>
@@ -230,7 +230,7 @@
     <div class="lp-community__panel lp-community__panel--tint">
       <h2 class="lp-h2 lp-h2--sm">{{ 'lp_add_title' | transloco }}</h2>
       <p class="lp-body">{{ 'lp_add_lead' | transloco }}</p>
-      <a [routerLink]="['/', routeConstants.addSpot]" class="btn btn-outline lp-btn lp-btn--sm lp-community__cta">
+      <a [routerLink]="'/' + routeConstants.addSpot" class="btn btn-outline lp-btn lp-btn--sm lp-community__cta">
         {{ 'lp_add_cta' | transloco }}
       </a>
     </div>
