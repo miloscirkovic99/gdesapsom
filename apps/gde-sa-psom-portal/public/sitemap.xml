@@ -3,23 +3,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.gdesapsom.com/</loc>
-    <lastmod>2026-04-30</lastmod>
+    <lastmod>2026-10-15</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/all-spots</loc>
-    <lastmod>2026-04-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/pet-parks</loc>
-    <lastmod>2026-04-06</lastmod>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/vet-clinics</loc>
-    <lastmod>2026-04-06</lastmod>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food</loc>
+    <lastmod>2026-10-01</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/pet-shops</loc>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/blog</loc>
-    <lastmod>2026-04-30</lastmod>
+    <lastmod>2026-09-27</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/about-us</loc>
@@ -27,19 +35,31 @@
   </url>
   <url>
     <loc>https://www.gdesapsom.com/for-business</loc>
-    <lastmod>2026-05-01</lastmod>
+    <lastmod>2026-09-26</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/cookies-policy</loc>
-    <lastmod>2026-04-06</lastmod>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
-    <loc>https://www.gdesapsom.com/privacy-policy</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://www.gdesapsom.com/blog/20-najboljih-izleta-sa-psom-u-srbiji</loc>
+    <lastmod>2026-08-10</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/blog/gde-sa-psom-na-kupanje-u-srbiji</loc>
+    <lastmod>2026-08-10</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/blog/gde-sa-psom-u-nisu</loc>
+    <lastmod>2026-08-10</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/blog/gde-sa-psom-za-prvi-maj-srbija</loc>
     <lastmod>2026-04-29</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/blog/how-to-travel-to-serbia-with-a-dog</loc>
+    <lastmod>2026-08-10</lastmod>
   </url>
   <url>
     <loc>https://www.gdesapsom.com/blog/nova-eu-pravila-putovanje-pas-april-2026</loc>
@@ -320,9 +340,6 @@
     <loc>https://www.gdesapsom.com/spots/112</loc>
   </url>
   <url>
-    <loc>https://www.gdesapsom.com/spots/113</loc>
-  </url>
-  <url>
     <loc>https://www.gdesapsom.com/spots/114</loc>
   </url>
   <url>
@@ -441,5 +458,93 @@
   </url>
   <url>
     <loc>https://www.gdesapsom.com/spots/153</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/154</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/155</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/156</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/157</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/158</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/159</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/160</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/spots/161</loc>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-buster-juneca-srca-i-papalina-100g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-buster-pileca-srca-i-papalina-100g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-file-premium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-file-premium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-file-superpremium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-file-superpremium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-junetina-premium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-junetina-premium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-junetina-superpremium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-junetina-superpremium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-karabatak-premium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-karabatak-premium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-karabatak-superpremium-300g</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-karabatak-superpremium-500g-100g-buster</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/dog-food/pseca-kasika-kolagenski-bujon</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://www.gdesapsom.com/pet-shops/pseca-kasika-savski-venac</loc>
+    <lastmod>2026-09-06</lastmod>
   </url>
 </urlset>

@@ -2,7 +2,9 @@
   "name": "@gde-sa-psom/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "generate-sitemap": "nx run gde-sa-psom-portal:generate-sitemap"
+  },
   "private": true,
   "dependencies": {
     "@angular-architects/ngrx-toolkit": "^19.0.2",
