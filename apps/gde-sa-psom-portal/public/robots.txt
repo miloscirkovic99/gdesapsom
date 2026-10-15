@@ -4,6 +4,9 @@ Disallow: /admin
 Disallow: /login
 Disallow: /spots/new
 Disallow: /parks/new
-Disallow: /api/
+# Never disallow /api/: every page loads its content from it, and Google does
+# not fetch robots-blocked URLs while rendering, so blocked pages render empty
+# (and spot and blog pages used to answer that with noindex). API responses
+# are kept out of the index with the X-Robots-Tag: noindex header instead.
 
 Sitemap: https://www.gdesapsom.com/sitemap.xml

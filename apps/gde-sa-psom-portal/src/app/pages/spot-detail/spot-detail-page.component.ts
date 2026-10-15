@@ -68,6 +68,8 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('startLocationInput') startLocationInput!: ElementRef<HTMLInputElement>;
 
   readonly showDirectionsModal = signal(false);
+  /** The request failed (network, server, blocked); says nothing about whether the spot exists. */
+  readonly loadFailed = signal(false);
   readonly showInlineRoute = signal(false);
   readonly spot = signal<any>(null);
   readonly isLoading = signal(false);
@@ -168,7 +170,17 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
 
+    this.loadSpot(id);
+  }
+
+  retry(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) this.loadSpot(id);
+  }
+
+  private loadSpot(id: string): void {
     this.isLoading.set(true);
+    this.loadFailed.set(false);
     this.spotsStore.getSpotById(
       id,
       (response) => {
@@ -185,9 +197,12 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
           this.showNotFound();
         }
       },
+      // The API answers an unknown id with an empty list (handled above), so
+      // an error is an outage, not a missing spot: noindex here de-indexed live
+      // pages whenever Googlebot could not reach the API.
       () => {
         this.isLoading.set(false);
-        this.showNotFound();
+        this.loadFailed.set(true);
       }
     );
   }

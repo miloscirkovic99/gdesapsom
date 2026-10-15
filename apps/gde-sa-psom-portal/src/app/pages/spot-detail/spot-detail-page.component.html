@@ -4,6 +4,11 @@
   </div>
 } @else if (notFound()) {
   <app-not-found titleKey="spot_not_found" textKey="spot_not_found_text" />
+} @else if (loadFailed()) {
+  <div class="max-w-xl mx-auto py-16 px-4 text-center space-y-4" role="status">
+    <p class="text-base-content/70">{{ 'catalog_error' | transloco }}</p>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="retry()">{{ 'try_again' | transloco }}</button>
+  </div>
 } @else {
 @if (spot(); as data) {
   <div class="max-w-3xl mx-auto py-6 sm:py-10 px-4 space-y-6 sm:space-y-8">

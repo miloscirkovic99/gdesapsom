@@ -86,10 +86,13 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
         });
         if (structuredData) this.seoService.setStructuredData(STRUCTURED_DATA_ID, structuredData);
       },
+      // An unknown slug comes back as an empty list (handled above), so an
+      // error is an outage: no noindex, or every failed fetch by Googlebot
+      // would de-index a live article.
       error: (err) => {
         this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
         this.ucitavanje.set(false);
-        this.showNotFound();
+        this.greska.set('Članak trenutno ne može da se učita. Pokušajte ponovo za nekoliko trenutaka.');
         console.error('Blog post loading error:', err);
       }
     });

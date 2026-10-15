@@ -68,3 +68,24 @@ Items refer to the prioritized table in `10-roadmap-and-final-strategy.md`, sect
 2. **Sitemap.** The committed `sitemap.xml` only gained `/privacy-policy` and the six national and city hubs. Run `yarn generate-sitemap` where the API is reachable: it adds the city × category pages that pass the threshold and drops a hub without listings.
 3. **Check live:** `curl -I https://www.gdesapsom.com/smestaj`, `/novi-sad` and `/novi-sad/kafici` answer `200`; `/novi-sad/teretane` answers `404`.
 4. **Search Console:** resubmit the sitemap and request indexing (URL Inspection) for `/smestaj`, `/novi-sad`, `/beograd`. Recheck the queries above after 2–4 weeks.
+
+- **2026-10-16** — Search Console ("Why pages aren't indexed") showed live pages excluded by `noindex`, among them the site's most visited article (`/blog/nova-eu-pravila-putovanje-pas-april-2026`, crawled 9 Oct) and `/spots/16`, plus apex and www copies of the same pages as "Duplicate without user-selected canonical". Cause of the first: `Disallow: /api/`, added to `robots.txt` on 1 Oct. Google does not fetch robots-blocked URLs while rendering, so every API call failed for Googlebot, and the spot and blog pages answered any failed request with "not found" + `noindex`. Clicks fell from 31 in September to 2 in the first half of October. Fixed: `/api/` is crawlable again (API responses stay out of the index through the `X-Robots-Tag: noindex` header), and spot and blog pages only set `noindex` when the API answers that the item does not exist; a failed request shows a retry and stays indexable, as the catalogue pages already did. A unit test keeps `/api/` out of `robots.txt`. Cause of the second: `https://gdesapsom.com/…` was still answering 200 on 13 Oct, so the single 301 to `https://www.` from 1 Oct is not active on the live host (see below).
+
+### After deploying the robots.txt fix (2026-10-16)
+
+1. Check the redirect on the live host. Each of these must answer a single `301` with `Location: https://www.gdesapsom.com/…`:
+   `curl -sI https://gdesapsom.com/spots/142`, `curl -sI http://gdesapsom.com/pet-parks`, `curl -sI http://www.gdesapsom.com/spots/148`.
+   If not, add this at the top of the root `.htaccess`. The API stays on the apex host, and a 301 would turn its POST requests into GETs, so `/api/` is excluded:
+
+   ```apache
+   RewriteEngine On
+   RewriteCond %{REQUEST_URI} !^/api/
+   RewriteCond %{HTTPS} off [OR]
+   RewriteCond %{HTTP_HOST} !^www\.gdesapsom\.com$ [NC]
+   RewriteRule ^(.*)$ https://www.gdesapsom.com/$1 [R=301,L]
+   ```
+
+   If the host terminates TLS in front of Apache and this loops, replace `%{HTTPS} off` with `%{HTTP:X-Forwarded-Proto} !https`.
+2. Old URLs from earlier versions of the site still get crawled: `/onama` and `/about` can 301 to `/about-us`; `/kafic/{id}` can 301 to `/spots/{id}` only if the ids are the same (check one in the admin first).
+3. Search Console: Settings → robots.txt → request a recrawl of `https://www.gdesapsom.com/robots.txt` and `https://gdesapsom.com/robots.txt`. Then URL Inspection → Test live URL on the EU article, `/spots/16`, `/spots/142` and `/all-spots`: under "Page resources" nothing may be "blocked by robots.txt", the screenshot must show the content and "Indexing allowed" must be Yes. Request indexing for each, then "Validate fix" on "Excluded by 'noindex' tag" and "Duplicate without user-selected canonical".
+
