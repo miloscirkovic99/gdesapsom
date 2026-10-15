@@ -2,7 +2,9 @@ import { Post } from '@gde/shared/data-access';
 import {
   blogPostingStructuredData,
   breadcrumbListStructuredData,
+  faqPageStructuredData,
   homeCollectionStructuredData,
+  hubCollectionStructuredData,
   SpotSchemaSource,
   spotStructuredData,
 } from './structured-data';
@@ -243,5 +245,74 @@ describe('homeCollectionStructuredData', () => {
         ],
       },
     });
+  });
+});
+
+describe('hubCollectionStructuredData', () => {
+  const page = {
+    name: 'Pet friendly kafići u Novom Sadu',
+    description: 'Kafići u Novom Sadu u koje možete sa psom.',
+    url: 'https://www.gdesapsom.com/novi-sad/kafici',
+    inLanguage: 'sr-Latn',
+    about: { '@type': 'City', name: 'Novi Sad' },
+  };
+
+  it('describes the hub and lists its venues, counting the ones not loaded yet', () => {
+    expect(
+      hubCollectionStructuredData({
+        ...page,
+        total: 14,
+        items: [
+          { name: 'Kafić Liman', url: 'https://www.gdesapsom.com/spots/1' },
+          { name: 'Kafić Kej', url: 'https://www.gdesapsom.com/spots/2' },
+        ],
+      }),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Pet friendly kafići u Novom Sadu',
+      description: 'Kafići u Novom Sadu u koje možete sa psom.',
+      url: 'https://www.gdesapsom.com/novi-sad/kafici',
+      inLanguage: 'sr-Latn',
+      isPartOf: { '@id': 'https://www.gdesapsom.com/#website' },
+      about: { '@type': 'City', name: 'Novi Sad' },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: 14,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Kafić Liman', url: 'https://www.gdesapsom.com/spots/1' },
+          { '@type': 'ListItem', position: 2, name: 'Kafić Kej', url: 'https://www.gdesapsom.com/spots/2' },
+        ],
+      },
+    });
+  });
+
+  it('is null for a hub with no venues', () => {
+    expect(hubCollectionStructuredData({ ...page, total: 0, items: [] })).toBeNull();
+  });
+});
+
+describe('faqPageStructuredData', () => {
+  it('turns the questions on the page into an FAQPage', () => {
+    expect(
+      faqPageStructuredData([
+        { question: 'Da li psi smeju unutra?', answer: ' Zavisi od kafića. ' },
+        { question: ' ', answer: 'Bez pitanja se preskače.' },
+      ]),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Da li psi smeju unutra?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Zavisi od kafića.' },
+        },
+      ],
+    });
+  });
+
+  it('is null without questions', () => {
+    expect(faqPageStructuredData([])).toBeNull();
   });
 });

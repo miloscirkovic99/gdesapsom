@@ -13,4 +13,5 @@ export * from './lib/pipes/local-name.pipe';
 export * from './lib/pipes/package-weight.pipe';
 export * from './lib/pipes/rsd-price.pipe';
 export * from './lib/text/api-text';
+export * from './lib/text/place-name';
 export * from './lib/text/plural';

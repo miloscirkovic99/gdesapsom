@@ -9,6 +9,11 @@
  *
  * Output is a pure function of the API data plus git history: no timestamps are
  * baked in, so re-running with unchanged data produces a byte-identical file.
+ *
+ * The pet-friendly hubs (/smestaj, /novi-sad, /novi-sad/kafici, ...) come from
+ * the same pet-friendly-taxonomy.json the portal routes are built from. A hub
+ * is listed only when it has as many venues as its `minListingsToIndex`, the
+ * threshold below which the page marks itself noindex.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -45,11 +50,17 @@ const STATIC_ROUTES = [
   { loc: '/about-us', src: 'src/app/pages/about-us', seed: '2026-04-06' },
   { loc: '/for-business', src: 'src/app/pages/business-page', seed: '2026-05-01' },
   { loc: '/cookies-policy', src: 'src/app/pages/cookies-page', seed: '2026-04-06' },
+  { loc: '/privacy-policy', src: 'src/app/pages/privacy-policy-page', seed: '2026-09-26' },
 ];
 
 const APP_DIR = 'apps/gde-sa-psom-portal';
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_FILE = join(REPO_ROOT, APP_DIR, 'public/sitemap.xml');
+
+// Which hub pages exist, which venue types and cities feed them, and their thresholds.
+const HUB_SRC = 'src/app/features/pet-friendly';
+const HUB_SEED = '2026-10-15';
+const TAXONOMY = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, HUB_SRC, 'pet-friendly-taxonomy.json'), 'utf8'));
 
 const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has('--dry-run');
@@ -66,6 +77,20 @@ function xmlEscape(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+/**
+ * Same folding as `foldPlaceName` in libs/shared/util: "Niš", "nis" and
+ * " NIS " compare equal, and đ is spelled "dj".
+ */
+function foldName(value) {
+  return String(value ?? '')
+    .replace(/[đĐ]/g, 'dj')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Percent-encode the path, then XML-escape. Both layers are required. */
@@ -179,8 +204,10 @@ async function getBlogEntries() {
   };
 }
 
-async function getSpotIds() {
+/** Ids of every spot, plus the city and venue type the hub counts need. */
+async function getSpots() {
   const ids = new Set();
+  const places = new Map();
   let offset = 0;
   let total = null;
   let pages = 0;
@@ -210,7 +237,10 @@ async function getSpotIds() {
 
     for (const spot of data.spotsList) {
       const id = Number(spot?.iuo_id);
-      if (Number.isInteger(id) && id > 0) ids.add(id);
+      if (Number.isInteger(id) && id > 0) {
+        ids.add(id);
+        places.set(id, { city: spot?.grd_ime ?? null, type: spot?.ugo_ime ?? null });
+      }
     }
 
     const received = data.spotsList.length;
@@ -229,7 +259,45 @@ async function getSpotIds() {
 
   // The API returns spots unsorted and ids are non-contiguous; without this the
   // file reshuffles on every run and the diff is meaningless.
-  return [...ids].sort((a, b) => a - b);
+  return {
+    ids: [...ids].sort((a, b) => a - b),
+    places: [...places.values()],
+  };
+}
+
+/**
+ * Hub pages with enough venues to be indexed, in the order the portal builds
+ * them (pet-friendly-pages.ts): national categories, then each city followed
+ * by its categories.
+ */
+function getHubEntries(places, lastmod) {
+  const cityFor = (name) => TAXONOMY.cities.find((city) => city.names.some((n) => foldName(n) === foldName(name)));
+  const categoryFor = (type) =>
+    TAXONOMY.categories.find((category) => category.spotTypes.some((t) => foldName(t) === foldName(type)));
+
+  const counts = new Map();
+  const count = (path) => counts.set(path, (counts.get(path) ?? 0) + 1);
+
+  for (const place of places) {
+    const city = cityFor(place.city);
+    const category = categoryFor(place.type);
+    if (category) count(`/${category.slug}`);
+    if (city) count(`/${city.slug}`);
+    if (city && category) count(`/${city.slug}/${category.slug}`);
+  }
+
+  const limits = TAXONOMY.minListingsToIndex;
+  const candidates = [
+    ...TAXONOMY.categories.map((category) => ({ loc: `/${category.slug}`, min: limits.category })),
+    ...TAXONOMY.cities.flatMap((city) => [
+      { loc: `/${city.slug}`, min: limits.city },
+      ...TAXONOMY.categories.map((category) => ({ loc: `/${city.slug}/${category.slug}`, min: limits.cityCategory })),
+    ]),
+  ];
+
+  return candidates
+    .filter((candidate) => (counts.get(candidate.loc) ?? 0) >= candidate.min)
+    .map((candidate) => ({ loc: candidate.loc, lastmod }));
 }
 
 /**
@@ -304,14 +372,17 @@ function normalize(text) {
 async function main() {
   console.log(`Generating sitemap from ${API_BASE}`);
 
-  const [blog, spotIds, dogFood, petShops] = await Promise.all([
+  const [blog, spots, dogFood, petShops] = await Promise.all([
     getBlogEntries(),
-    getSpotIds(),
+    getSpots(),
     getCatalogEntries('dog-food', 'dog-food'),
     getCatalogEntries('pet-shops', 'pet-shops'),
   ]);
+  const hubs = getHubEntries(spots.places, gitLastmod(HUB_SRC, HUB_SEED));
+
   console.log(`  blog posts: ${blog.entries.length}`);
-  console.log(`  spots:      ${spotIds.length}`);
+  console.log(`  spots:      ${spots.ids.length}`);
+  console.log(`  hubs:       ${hubs.length} (${hubs.map((hub) => hub.loc).join(' ') || 'none above threshold'})`);
   console.log(`  dog food:   ${dogFood.length}`);
   console.log(`  pet shops:  ${petShops.length}`);
 
@@ -324,8 +395,9 @@ async function main() {
       }
       return { loc: route.loc, lastmod };
     }),
+    ...hubs,
     ...blog.entries,
-    ...spotIds.map((id) => ({ loc: `/spots/${id}`, lastmod: null })), // API has no date field for spots
+    ...spots.ids.map((id) => ({ loc: `/spots/${id}`, lastmod: null })), // API has no date field for spots
     ...dogFood,
     ...petShops,
   ];

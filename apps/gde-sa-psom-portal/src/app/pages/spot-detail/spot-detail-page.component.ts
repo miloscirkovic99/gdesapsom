@@ -10,10 +10,20 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot, RouteConstants, cleanApiText, venueLinkType } from '@gde/shared/util';
+import {
+  descriptionToKeyMap,
+  descriptionToKeyMapGarden,
+  descriptionToKeyMapSpot,
+  RouteConstants,
+  cleanApiText,
+  injectActiveLang,
+  LocalNamePipe,
+  placeLocative,
+  venueLinkType,
+} from '@gde/shared/util';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
@@ -21,15 +31,22 @@ import { SpotsStore } from '@gde/shared/data-access';
 import { spotStructuredData } from '../../shared/utils/structured-data';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
+import { hubLinksForSpot, relatedHubLinksForSpot } from '../../features/pet-friendly/pet-friendly-pages';
 import { ChangeDetectionStrategy } from '@angular/core';
 import * as L from 'leaflet';
 
 const STRUCTURED_DATA_ID = 'spot';
 
+/** "kafić", "hotel"...: the venue type as a common noun; "Ostalo" reads as "mesto". */
+function spotKind(type: string | null): string {
+  if (!type || type.toLowerCase() === 'ostalo') return 'mesto';
+  return type.toLowerCase();
+}
+
 @Component({
   selector: 'app-spot-detail-page',
   standalone: true,
-  imports: [CommonModule, TranslocoModule, BreadcrumbComponent, NotFoundComponent],
+  imports: [CommonModule, TranslocoModule, BreadcrumbComponent, NotFoundComponent, RouterLink, LocalNamePipe],
   templateUrl: './spot-detail-page.component.html',
   styleUrl: './spot-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,11 +88,25 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
   /** Null for spots saved with the literal description "null". */
   readonly spotDescription = computed(() => cleanApiText(this.spot()?.iuo_opis));
 
-  /** Početna › Pet-friendly objekti › {spot}; also published as BreadcrumbList. */
-  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => [
-    { labelKey: 'breadcrumb_spots', link: ['/', RouteConstants.allSpots] },
-    { label: cleanApiText(this.spot()?.iuo_ime) },
-  ]);
+  readonly lang = injectActiveLang();
+
+  /**
+   * Početna › Pet friendly Novi Sad › Kafići › {spot}, through the hubs the
+   * venue belongs to; venues outside every hub keep Početna › Pet-friendly
+   * objekti › {spot}. Also published as BreadcrumbList.
+   */
+  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => {
+    const spot = this.spot();
+    const english = this.lang().startsWith('en');
+    const hubs = hubLinksForSpot(spot);
+    const trail: BreadcrumbItem[] = hubs.length
+      ? hubs.map((hub) => ({ label: english ? hub.label.nameEn : hub.label.nameSr, link: hub.path }))
+      : [{ labelKey: 'breadcrumb_spots', link: ['/', RouteConstants.allSpots] }];
+    return [...trail, { label: cleanApiText(spot?.iuo_ime) }];
+  });
+
+  /** "Pet friendly kafići u Novom Sadu", "Pet friendly Novi Sad": the lists this venue is on. */
+  readonly relatedHubs = computed(() => relatedHubLinksForSpot(this.spot()));
 
   /** "lat,lon" for the map apps; null when the spot has no coordinates. */
   private readonly coordinates = computed<string | null>(() => {
@@ -185,24 +216,28 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
     if (!name) return;
 
     const city = cleanApiText(spot?.grd_ime);
-    const type = cleanApiText(spot?.ugo_ime);
     const address = cleanApiText(spot?.iuo_adressa);
     const allowed = cleanApiText(spot?.sta_ime);
     const path = `/spots/${id}`;
 
-    const title = [name, type && city ? `${type} u ${city}` : type || city]
-      .filter(Boolean)
-      .join(' - ');
+    // "u Novom Sadu", not "u Novi Sad": the nominative after "u" read as an
+    // error in every title. Places without a known locative get "kafić, Ruma".
+    const locative = placeLocative(city);
+    const where = locative ? ` ${locative}` : city ? `, ${city}` : '';
+    const kind = spotKind(cleanApiText(spot?.ugo_ime));
+
+    // "Witch Bar – pet friendly bar u Beogradu": the words people search with.
+    const title = `${name} – pet friendly ${kind}${where}`;
 
     const description =
       cleanApiText(spot?.iuo_opis) ||
       [
-        `${name} je pet-friendly ${(type || 'objekat').toLowerCase()}`,
-        [address, city].filter(Boolean).join(', '),
-        allowed ? `Dozvoljeni ljubimci: ${allowed}.` : '',
+        `${name} je pet friendly ${kind}${where}${address ? ` (${address})` : ''}.`,
+        allowed ? `Dozvoljeni psi: ${allowed}.` : '',
+        'Adresa, kontakt i mapa na Gde sa psom.',
       ]
         .filter(Boolean)
-        .join(' - ');
+        .join(' ');
 
     this.seoService.update({
       title: `${title} | Gde sa psom`,

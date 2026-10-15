@@ -169,6 +169,73 @@ export function breadcrumbListStructuredData(
   };
 }
 
+/** A listing on a hub page. */
+export interface CollectionItem {
+  name: string;
+  /** Absolute URL of the listing's own page. */
+  url: string;
+}
+
+/**
+ * schema.org CollectionPage for a pet-friendly hub (/smestaj, /novi-sad,
+ * /novi-sad/kafici): the page, the place it is about, and the listings shown
+ * on it as an ItemList. `numberOfItems` is the full count, which can be larger
+ * than the listings loaded so far.
+ */
+export function hubCollectionStructuredData(page: {
+  name: string;
+  description: string;
+  url: string;
+  inLanguage: string;
+  about: Record<string, unknown> | null;
+  total: number | null;
+  items: readonly CollectionItem[];
+}): Record<string, unknown> | null {
+  if (!page.items.length) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    inLanguage: page.inLanguage,
+    isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+    about: page.about ?? undefined,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: Math.max(page.total ?? 0, page.items.length),
+      itemListElement: page.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        url: item.url,
+      })),
+    },
+  };
+}
+
+/**
+ * schema.org FAQPage for the questions a page shows. Answers are plain text
+ * and must match what is visible on the page. Null when there are none.
+ */
+export function faqPageStructuredData(
+  items: readonly { question: string; answer: string }[],
+): Record<string, unknown> | null {
+  const entries = items.filter((item) => item.question.trim() && item.answer.trim());
+  if (!entries.length) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entries.map((item) => ({
+      '@type': 'Question',
+      name: item.question.trim(),
+      acceptedAnswer: { '@type': 'Answer', text: item.answer.trim() },
+    })),
+  };
+}
+
 /** A list page the homepage points to. */
 export interface HomeSection {
   name: string;

@@ -5,6 +5,14 @@
   <header class="bg-base-100 px-4 pt-5 pb-3 space-y-2">
     <app-breadcrumb [items]="[{ labelKey: 'breadcrumb_spots' }]" />
     <h1 class="font-display text-2xl sm:text-3xl font-bold leading-tight">{{ 'spots_page_title' | transloco }}</h1>
+    <nav [attr.aria-label]="'spots_browse_hubs' | transloco" class="pt-1">
+      <ul class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm">
+        <li class="text-base-content/60">{{ 'spots_browse_hubs' | transloco }}:</li>
+        @for (hub of hubs; track hub.path) {
+          <li><a [routerLink]="hub.path" class="link link-hover text-base-content/80">{{ hub.label | localName: lang() }}</a></li>
+        }
+      </ul>
+    </nav>
   </header>
 
   <!-- ── Sticky top bar ── -->

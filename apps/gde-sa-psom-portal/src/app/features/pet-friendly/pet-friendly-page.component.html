@@ -1,0 +1,202 @@
+@let text = copy();
+@let chrome = ui();
+
+<article class="pf">
+  <!-- ── Hero: what this page is about, readable before any data arrives ── -->
+  <header class="pf-hero">
+    <app-breadcrumb [items]="breadcrumbs()" />
+    <h1 class="pf-h1">{{ text.h1 }}</h1>
+    <p class="pf-lead">{{ text.lead }}</p>
+    @if (countLine(); as line) {
+      <p class="pf-count">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="pf-count__icon" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+        {{ line }}
+      </p>
+    }
+  </header>
+
+  <!-- ── Categories of the city, cities of the category, or sibling categories ── -->
+  @if (subnav().length) {
+    <nav class="pf-subnav" [attr.aria-label]="subnavTitle()">
+      <h2 class="pf-subnav__title">{{ subnavTitle() }}</h2>
+      <ul class="pf-subnav__list">
+        @for (link of subnav(); track link.path) {
+          <li>
+            @if (link.current) {
+              <span class="pf-chip pf-chip--current" aria-current="page">{{ link.label }}</span>
+            } @else {
+              <a class="pf-chip" [routerLink]="link.path">{{ link.label }}</a>
+            }
+          </li>
+        }
+      </ul>
+    </nav>
+  }
+
+  <section class="pf-intro">
+    @for (paragraph of text.intro; track $index) {
+      <p>{{ paragraph }}</p>
+    }
+  </section>
+
+  <!-- ── Listings ── -->
+  <section class="pf-section" aria-labelledby="pf-list-title">
+    <h2 id="pf-list-title" class="pf-h2">{{ text.listHeading }}</h2>
+
+    @switch (status()) {
+      @case ('loading') {
+        <app-card [data]="[]" [isLoading]="true" />
+      }
+      @case ('error') {
+        <div class="pf-notice" role="status">
+          <p>{{ chrome.listError }}</p>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="retry()">{{ chrome.retry }}</button>
+        </div>
+      }
+      @default {
+        @if (spots().length) {
+          <app-card [data]="spots()" />
+
+          @if (hasMore()) {
+            <div class="pf-more">
+              <button type="button" class="btn btn-secondary btn-sm w-full sm:w-auto" (click)="loadMore()" [disabled]="loadingMore()">
+                @if (loadingMore()) {
+                  <span class="loading loading-spinner loading-sm"></span>
+                } @else {
+                  {{ chrome.loadMore }}
+                }
+              </button>
+              @if (loadMoreFailed()) {
+                <p class="pf-more__error" role="status">{{ chrome.listError }}</p>
+              }
+            </div>
+          }
+        } @else {
+          <div class="pf-notice">
+            <p>{{ text.emptyText }}</p>
+            <a [routerLink]="paths.addSpot" class="btn btn-secondary btn-sm">{{ chrome.addCta }}</a>
+          </div>
+        }
+      }
+    }
+  </section>
+
+  <!-- ── City hub only: parks and vets, so the page answers more than "where to eat" ── -->
+  @if (page.kind === 'city' && page.city; as city) {
+    @if (shownParks().length) {
+      <section class="pf-section" aria-labelledby="pf-parks-title">
+        <div class="pf-section__head">
+          <h2 id="pf-parks-title" class="pf-h2">{{ chrome.parksTitle(city) }}</h2>
+          <a [routerLink]="paths.parks" class="pf-link">{{ chrome.allParks }}</a>
+        </div>
+        <ul class="pf-places">
+          @for (park of shownParks(); track park.par_id) {
+            <li class="pf-place">
+              <span class="pf-place__name">{{ park.par_ime }}</span>
+              <a
+                class="pf-place__meta link link-hover"
+                [href]="parkMapsUrl(park)"
+                target="_blank"
+                rel="noopener"
+                data-link-type="venue_maps"
+                [attr.data-venue-slug]="parkSlug(park)"
+              >{{ park.par_lokacija }}, {{ park.ops_ime }}</a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    @if (vets().length) {
+      <section class="pf-section" aria-labelledby="pf-vets-title">
+        <div class="pf-section__head">
+          <h2 id="pf-vets-title" class="pf-h2">{{ chrome.vetsTitle(city) }}</h2>
+          <a [routerLink]="paths.vets" class="pf-link">{{ chrome.allVets }}</a>
+        </div>
+        <ul class="pf-places">
+          @for (clinic of vets(); track clinic.vetc_id) {
+            <li class="pf-place">
+              <span class="pf-place__name">{{ clinic.vetc_naziv }}</span>
+              @if (vetAddress(clinic)) {
+                <span class="pf-place__meta">{{ vetAddress(clinic) }}</span>
+              }
+              @if (vetPhone(clinic); as phone) {
+                <a
+                  class="pf-place__meta link link-hover"
+                  [href]="'tel:' + phone"
+                  data-link-type="venue_phone"
+                  [attr.data-venue-slug]="vetSlug(clinic)"
+                >{{ phone }}</a>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+
+  <!-- ── Practical tips for the category ── -->
+  @if (text.tips; as tips) {
+    <section class="pf-section pf-tips" aria-labelledby="pf-tips-title">
+      <h2 id="pf-tips-title" class="pf-h2">{{ tips.heading }}</h2>
+      <ul class="pf-tips__list">
+        @for (tip of tips.items; track $index) {
+          <li>{{ tip }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  <!-- ── FAQ (also published as FAQPage) ── -->
+  @if (faq().length) {
+    <section class="pf-section" aria-labelledby="pf-faq-title">
+      <h2 id="pf-faq-title" class="pf-h2">{{ chrome.faqTitle }}</h2>
+      <div class="pf-faq">
+        @for (item of faq(); track item.question; let first = $first) {
+          <details class="pf-faq__item" [open]="first">
+            <summary class="pf-faq__q">{{ item.question }}</summary>
+            <div class="pf-faq__a">
+              <p>{{ item.answer }}</p>
+              @if (item.link; as link) {
+                <a [routerLink]="link.path" class="pf-link">{{ link.label }}</a>
+              }
+            </div>
+          </details>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── Neighbouring hubs: every level links to every other ── -->
+  <nav class="pf-section" [attr.aria-label]="chrome.moreTitle">
+    <h2 class="pf-h2">{{ chrome.moreTitle }}</h2>
+    <div class="pf-groups">
+      @for (group of linkGroups(); track group.title) {
+        <div>
+          <h3 class="pf-groups__title">{{ group.title }}</h3>
+          <ul class="pf-groups__list">
+            @for (link of group.links; track link.path) {
+              <li><a [routerLink]="link.path" class="pf-link pf-link--strong">{{ link.label }}</a></li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </nav>
+
+  <!-- ── Contribute ── -->
+  <section class="pf-section pf-cta" [attr.aria-label]="chrome.addTitle">
+    <div class="pf-cta__panel pf-cta__panel--tint">
+      <h2 class="pf-h3">{{ chrome.addTitle }}</h2>
+      <p class="pf-body">{{ chrome.addLead }}</p>
+      <a [routerLink]="paths.addSpot" class="btn btn-secondary btn-sm">{{ chrome.addCta }}</a>
+    </div>
+    <div class="pf-cta__panel">
+      <h2 class="pf-h3">{{ chrome.businessTitle }}</h2>
+      <p class="pf-body">{{ chrome.businessLead }}</p>
+      <a [routerLink]="paths.business" class="pf-link pf-link--strong">{{ chrome.businessCta }}</a>
+    </div>
+  </section>
+</article>

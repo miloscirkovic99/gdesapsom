@@ -1,0 +1,17 @@
+{
+  "categories": [
+    { "slug": "kafici", "spotTypes": ["Kafić", "Kafeterija"] },
+    { "slug": "restorani", "spotTypes": ["Restoran", "Splav"] },
+    { "slug": "barovi", "spotTypes": ["Bar", "Pab"] },
+    { "slug": "smestaj", "spotTypes": ["Hotel", "Motel", "Apartman"] }
+  ],
+  "cities": [
+    { "slug": "beograd", "names": ["Beograd"] },
+    { "slug": "novi-sad", "names": ["Novi Sad"] }
+  ],
+  "minListingsToIndex": {
+    "category": 1,
+    "city": 1,
+    "cityCategory": 3
+  }
+}

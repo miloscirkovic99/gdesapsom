@@ -7,7 +7,16 @@ import { CardComponent } from '../../shared/components/card/card.component';
 import { SeoService } from '../../core/services/seo.service';
 import { homeCollectionStructuredData } from '../../shared/utils/structured-data';
 import { SpotsStore, ParksStore, VetClinicsStore } from '@gde/shared/data-access';
-import { RouteConstants, descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
+import {
+  RouteConstants,
+  descriptionToKeyMap,
+  descriptionToKeyMapGarden,
+  descriptionToKeyMapSpot,
+  injectActiveLang,
+  LocalizedName,
+  LocalNamePipe,
+} from '@gde/shared/util';
+import { cityHubLink, nationalHubLink, STAYS_HUB_PATH } from '../../features/pet-friendly/pet-friendly-pages';
 
 type CategoryIcon = 'restaurant' | 'cafe' | 'hotel' | 'park' | 'vet' | 'food' | 'shop';
 
@@ -16,6 +25,13 @@ interface Category {
   icon: CategoryIcon;
   link: string[];
   queryParams?: Record<string, string>;
+}
+
+/** A hub page the homepage features, with a one-line description (translation key). */
+interface HomeHub {
+  label: LocalizedName;
+  descriptionKey: string;
+  path: string;
 }
 
 const HOME_STRUCTURED_DATA_ID = 'home';
@@ -33,9 +49,20 @@ const HOME_SECTIONS = [
   { labelKey: 'pet_shops_title', path: RouteConstants.petShops },
 ];
 
+/**
+ * The hubs for the searches the homepage alone could not answer ("pet
+ * friendly novi sad", "pet friendly smeštaj srbija"). Linked from the
+ * strongest page of the site so they are found and ranked.
+ */
+const HOME_HUBS: readonly HomeHub[] = [
+  { ...cityHubLink('beograd'), descriptionKey: 'lp_hub_beograd' },
+  { ...cityHubLink('novi-sad'), descriptionKey: 'lp_hub_novi_sad' },
+  { ...nationalHubLink('smestaj'), descriptionKey: 'lp_hub_smestaj' },
+];
+
 @Component({
   selector: 'app-landing-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent],
+  imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent, LocalNamePipe],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +75,8 @@ export class LandingPageComponent implements OnDestroy {
   readonly #router = inject(Router);
   readonly #seo = inject(SeoService);
   readonly #transloco = inject(TranslocoService);
+  readonly lang = injectActiveLang();
+  readonly hubs = HOME_HUBS;
 
   /** Section names in the active language, once translations have loaded. */
   readonly #sectionNames = toSignal(
@@ -79,10 +108,12 @@ export class LandingPageComponent implements OnDestroy {
     vets: this.vetClinicsStore.totalCount(),
   }));
 
+  // Restaurants, cafés and stays open their hub pages: the old `/all-spots?spotType=`
+  // links canonicalised to the unfiltered list, so the category had no page of its own.
   readonly categories: Category[] = [
-    { label: 'lp_cat_restaurants', icon: 'restaurant', link: ['/', RouteConstants.allSpots], queryParams: { spotType: 'Restoran' } },
-    { label: 'lp_cat_cafes', icon: 'cafe', link: ['/', RouteConstants.allSpots], queryParams: { spotType: 'Kafić' } },
-    { label: 'lp_cat_hotels', icon: 'hotel', link: ['/', RouteConstants.allSpots], queryParams: { spotType: 'Hotel' } },
+    { label: 'lp_cat_restaurants', icon: 'restaurant', link: [nationalHubLink('restorani').path] },
+    { label: 'lp_cat_cafes', icon: 'cafe', link: [nationalHubLink('kafici').path] },
+    { label: 'lp_cat_hotels', icon: 'hotel', link: [STAYS_HUB_PATH] },
     { label: 'lp_cat_parks', icon: 'park', link: ['/', RouteConstants.petParks] },
     { label: 'lp_cat_vets', icon: 'vet', link: ['/', RouteConstants.vet_clinics] },
     { label: 'lp_cat_food', icon: 'food', link: ['/', RouteConstants.dogFood] },
@@ -109,9 +140,13 @@ export class LandingPageComponent implements OnDestroy {
     effect(() => {
       const names = this.#sectionNames();
       if (!names) return;
+      const english = this.lang().startsWith('en');
       this.#seo.setStructuredData(
         HOME_STRUCTURED_DATA_ID,
-        homeCollectionStructuredData(HOME_SECTIONS.map((section, index) => ({ name: names[index], path: section.path }))),
+        homeCollectionStructuredData([
+          ...HOME_SECTIONS.map((section, index) => ({ name: names[index], path: section.path })),
+          ...HOME_HUBS.map((hub) => ({ name: english ? hub.label.nameEn : hub.label.nameSr, path: hub.path })),
+        ]),
       );
     });
   }

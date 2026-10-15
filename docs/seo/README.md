@@ -48,3 +48,23 @@ Prepared 2026-10-01 from the source code in this repository, the committed sitem
 Items refer to the prioritized table in `10-roadmap-and-final-strategy.md`, section 14.8.
 
 - **2026-10-01** — Items 2–5 and the counts half of 6 implemented in the portal: single-hop `301` to `https://www.` plus `X-Robots-Tag: noindex` on `/api/` and a real `404` for paths outside the app's routes (root `.htaccess`; **must be verified on the live host**, see `DEPLOYMENT_CHECKLIST.md`); `**` route renders a not-found page with `noindex` instead of redirecting home, and detail pages whose entity is missing do the same; list cards link to `/spots/:id` with real `<a href>`; visible breadcrumbs with `BreadcrumbList` JSON-LD on all detail and list pages; `/all-spots` got an H1; `index.html` lost the site-wide `CollectionPage`, `meta keywords`, `revisit-after`, `meta name="title"` and the hardcoded `og:url`, and the `SearchAction` now targets the real search (`/all-spots?word=`); the homepage renders its own `CollectionPage`; the "1.000+" / "100+" claims are gone. Not done: path pagination (belongs with item 11) and the "Provereno" date (needs a backend field, item 7).
+
+- **2026-10-15** — Hub pages for the queries Search Console showed the site had no page for: "pet friendly smeštaj srbija" (average position 50–62), "pet friendly novi sad" (54.5), "pet friendly kafići/restorani novi sad" (16–23), "hoteli koji primaju kućne ljubimce – novi sad/beograd" (16–27). Part of items 11, 12, 14 and 18, on the final URL scheme of section 3.2 so they need no redirect later: national hubs `/smestaj`, `/kafici`, `/restorani`, `/barovi`, city hubs `/beograd`, `/novi-sad`, and every city × category page (`/novi-sad/kafici`, `/beograd/smestaj`, …). The list lives in `apps/gde-sa-psom-portal/src/app/features/pet-friendly/pet-friendly-taxonomy.json`, which the router and `tools/generate-sitemap.mjs` both read. Each page has its own Serbian title and description, an H1 with both phrasings ("pet friendly kafići u Novom Sadu" / "kafići u koje možete sa psom"), an introduction, the live listings from `pet-friendly-spots/search-query`, practical tips, an FAQ with live counts and names (`FAQPage`), `CollectionPage` + `ItemList` and `BreadcrumbList`; city hubs also list the city's dog parks and vets. A city × category page with fewer than 3 listings, or a hub with none, renders `noindex` and stays out of the sitemap. The hubs are linked from the navbar (smeštaj), the footer (all hubs), the homepage (category chips and a cities/smeštaj row, which replaced the `/all-spots?spotType=` links), `/all-spots`, and every spot page (breadcrumb through city and category, "Još pet friendly mesta" links). Spot titles read "X – pet friendly kafić u Novom Sadu" instead of "X - Kafić u Novi Sad". The API circuit breaker no longer counts a 404 "no results" answer as an outage (five empty searches used to switch spot search off for a minute). Not done: prerendering (item 9), which would put this content into the initial HTML.
+
+### Deploying the hub pages (2026-10-15)
+
+1. **`.htaccess` (required).** The host only falls back to `index.html` for the paths in its SPA list and answers everything else with a real 404, so the hubs must be added to that list or they will 404 live. Add next to the existing fallback rules, and extend both lists when a city or category is added to the taxonomy:
+
+   ```apache
+   # Pet-friendly hubs (pet-friendly-taxonomy.json)
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteRule ^(kafici|restorani|barovi|smestaj|beograd|novi-sad)$ /index.html [L]
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteRule ^(beograd|novi-sad)/(kafici|restorani|barovi|smestaj)$ /index.html [L]
+   ```
+
+2. **Sitemap.** The committed `sitemap.xml` only gained `/privacy-policy` and the six national and city hubs. Run `yarn generate-sitemap` where the API is reachable: it adds the city × category pages that pass the threshold and drops a hub without listings.
+3. **Check live:** `curl -I https://www.gdesapsom.com/smestaj`, `/novi-sad` and `/novi-sad/kafici` answer `200`; `/novi-sad/teretane` answers `404`.
+4. **Search Console:** resubmit the sitemap and request indexing (URL Inspection) for `/smestaj`, `/novi-sad`, `/beograd`. Recheck the queries above after 2–4 weeks.

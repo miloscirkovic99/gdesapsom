@@ -238,6 +238,32 @@
   @apply h-5 w-5 shrink-0 text-base-content/60 transition-colors;
 }
 
+/* ── Hubs: city and accommodation pages ── */
+.lp-hubs {
+  @apply pt-8 md:pt-10;
+}
+
+.lp-hubs__list {
+  @apply grid gap-2 sm:grid-cols-3 sm:gap-3;
+}
+
+.lp-hub {
+  @apply flex h-full flex-col gap-1 rounded-xl border border-base-300 bg-base-100 px-4 py-4 transition-colors;
+
+  &:hover,
+  &:focus-visible {
+    @apply border-secondary bg-secondary/5;
+  }
+}
+
+.lp-hub__name {
+  @apply font-display text-lg font-bold text-base-content;
+}
+
+.lp-hub__desc {
+  @apply text-sm text-base-content/70;
+}
+
 /* ── The question ── */
 .lp-problem {
   @apply max-w-3xl;

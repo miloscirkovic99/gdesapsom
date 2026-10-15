@@ -704,5 +704,13 @@
   "mobile_sent_title": "Hvala, primili smo predlog",
   "mobile_sent_lead": "Proverimo podatke i objavimo mesto. Sledeći vlasnik psa neće morati da pita da li sme unutra.",
   "mobile_sent_another": "Dodaj još jedno mesto",
-  "mobile_sent_home": "Nazad na početnu"
+  "mobile_sent_home": "Nazad na početnu",
+  "find_pet_stays": "Pronađite pet friendly smeštaj",
+  "footer_hubs_title": "Pet friendly mesta",
+  "spot_more_places": "Još pet friendly mesta",
+  "spots_browse_hubs": "Po gradu i vrsti objekta",
+  "lp_hubs_title": "Pet friendly gradovi i smeštaj",
+  "lp_hub_beograd": "Kafići, restorani, splavovi i smeštaj u Beogradu",
+  "lp_hub_novi_sad": "Kafići, restorani, barovi i smeštaj u Novom Sadu",
+  "lp_hub_smestaj": "Hoteli i apartmani u Srbiji koji primaju pse"
 }

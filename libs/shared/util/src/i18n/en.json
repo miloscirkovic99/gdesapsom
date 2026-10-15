@@ -720,5 +720,13 @@
   "mobile_sent_title": "Thanks, we have your suggestion",
   "mobile_sent_lead": "We check the details and publish the place, so the next dog owner does not have to ask.",
   "mobile_sent_another": "Add another place",
-  "mobile_sent_home": "Back to home"
+  "mobile_sent_home": "Back to home",
+  "find_pet_stays": "Find pet-friendly places to stay",
+  "footer_hubs_title": "Pet-friendly places",
+  "spot_more_places": "More pet-friendly places",
+  "spots_browse_hubs": "By city and type of place",
+  "lp_hubs_title": "Pet-friendly cities and places to stay",
+  "lp_hub_beograd": "Cafés, restaurants, river rafts and places to stay in Belgrade",
+  "lp_hub_novi_sad": "Cafés, restaurants, bars and places to stay in Novi Sad",
+  "lp_hub_smestaj": "Hotels and apartments in Serbia that welcome dogs"
 }

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { RouteConstants } from '@gde/shared/util';
 import { authGuard } from './core/guards/auth.guard';
+import { petFriendlyRoutes } from './features/pet-friendly/pet-friendly-pages';
 
 export const appRoutes: Route[] = [
   {
@@ -12,7 +13,7 @@ export const appRoutes: Route[] = [
     },
     title:'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji',
     data:{
-      description:'Pronađite gde su psi dobrodošli u Srbiji! Pretražite pet-friendly restorane, kafiće, hotele, parkove za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije.'
+      description:'Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu i širom Srbije.'
     }
 
   },
@@ -289,6 +290,14 @@ export const appRoutes: Route[] = [
       );
     },
    },
+  // Pet-friendly hubs: /smestaj, /kafici, ..., /beograd, /novi-sad and
+  // /<city>/<category>. One route per page from pet-friendly-taxonomy.json;
+  // title and description per page are set in pet-friendly-pages.ts.
+  ...petFriendlyRoutes(() =>
+    import('./features/pet-friendly/pet-friendly-page.component').then(
+      (m) => m.PetFriendlyPageComponent
+    )
+  ),
   {
     // A real not-found page instead of a redirect to the homepage: redirecting
     // made every mistyped or removed URL look like a copy of "/" (a soft 404).

@@ -79,7 +79,7 @@ describe('SeoService', () => {
     it('falls back to the site description when a post has none', () => {
       service.update({ path: '/blog/x', description: null });
 
-      expect(meta.getTag('name="description"')?.content).toContain('pet-friendly');
+      expect(meta.getTag('name="description"')?.content).toContain('Pronađite gde su psi dobrodošli u Srbiji');
     });
   });
 

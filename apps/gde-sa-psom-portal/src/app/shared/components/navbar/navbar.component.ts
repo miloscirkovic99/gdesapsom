@@ -15,6 +15,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../../features/auth/auth.service';
+import { STAYS_HUB_PATH } from '../../../features/pet-friendly/pet-friendly-pages';
 
 @Component({
   selector: 'app-navbar',
@@ -35,6 +36,8 @@ export class NavbarComponent {
   suggestDropdownOpen = false;
   public themeColor: string = 'dark';
   routeConstants = RouteConstants;
+  /** The accommodation hub sits next to the other "explore" links. */
+  readonly staysPath = STAYS_HUB_PATH;
   @ViewChild('mobileMenu') mobileMenu: ElementRef | undefined;
   @ViewChild('hamburgerBtn') hamburgerBtn: ElementRef | undefined;
   @ViewChild('suggestDropdown') suggestDropdown: ElementRef | undefined;

@@ -121,6 +121,21 @@
     </ul>
   </nav>
 
+  <!-- ── Hubs: cities and accommodation ── -->
+  <section class="lp-hubs" aria-labelledby="lp-hubs-title">
+    <h2 id="lp-hubs-title" class="lp-cats__title">{{ 'lp_hubs_title' | transloco }}</h2>
+    <ul class="lp-hubs__list">
+      @for (hub of hubs; track hub.path) {
+        <li>
+          <a class="lp-hub" [routerLink]="hub.path">
+            <span class="lp-hub__name">{{ hub.label | localName: lang() }}</span>
+            <span class="lp-hub__desc">{{ hub.descriptionKey | transloco }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+
   <!-- ── The question every dog owner asks ── -->
   <section class="lp-section lp-problem" aria-labelledby="lp-problem-title">
     <h2 id="lp-problem-title" class="lp-problem__q">{{ 'lp_problem_title' | transloco }}</h2>

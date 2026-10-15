@@ -26,13 +26,16 @@ import {
   descriptionToKeyMap,
   descriptionToKeyMapSpot,
   filterTownshipsMulti,
+  injectActiveLang,
+  LocalNamePipe,
   SEARCH_TRACKING_DEBOUNCE_MS,
 } from '@gde/shared/util';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { allHubLinks } from '../pet-friendly/pet-friendly-pages';
 
 type PetSpotsForm = {
   ops_id: FormControl<number[] | null>;
@@ -55,6 +58,8 @@ type PetSpotsForm = {
     TranslocoModule,
     AsyncPipe,
     BreadcrumbComponent,
+    RouterLink,
+    LocalNamePipe,
   ],
   templateUrl: './pet-spots-facilities.component.html',
   styleUrl: './pet-spots-facilities.component.scss',
@@ -68,6 +73,10 @@ export class PetSpotsFacilitiesComponent {
   private  readonly route       = inject(ActivatedRoute);
   private  readonly destroyRef  = inject(DestroyRef);
   private  readonly analytics   = inject(AnalyticsService);
+
+  /** City and category hubs: this page ranks, so it passes visitors and crawlers on to them. */
+  readonly hubs = allHubLinks();
+  readonly lang = injectActiveLang();
 
   // ── Maps ──────────────────────────────────────────────────────────────────
   readonly descriptionToKeyMap     = descriptionToKeyMap;
