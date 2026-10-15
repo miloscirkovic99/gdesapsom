@@ -728,5 +728,15 @@
   "lp_hubs_title": "Pet-friendly cities and places to stay",
   "lp_hub_beograd": "Cafés, restaurants, river rafts and places to stay in Belgrade",
   "lp_hub_novi_sad": "Cafés, restaurants, bars and places to stay in Novi Sad",
-  "lp_hub_smestaj": "Hotels and apartments in Serbia that welcome dogs"
+  "lp_hub_smestaj": "Hotels and apartments in Serbia that welcome dogs",
+  "back_to_blog": "Back to the blog",
+  "blog_post_loading": "Loading the article...",
+  "blog_post_not_found_title": "Article not found",
+  "blog_post_not_found": "Article not found. It may have been removed or the link is wrong.",
+  "blog_post_load_error": "The article cannot be loaded right now. Please try again in a moment.",
+  "blog_tags": "Tags:",
+  "blog_published_on": "This article was published on {{date}}",
+  "blog_comments_one": "and has {{count}} comment.",
+  "blog_comments_few": "and has {{count}} comments.",
+  "blog_comments_many": "and has {{count}} comments."
 }

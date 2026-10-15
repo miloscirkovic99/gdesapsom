@@ -712,5 +712,15 @@
   "lp_hubs_title": "Pet friendly gradovi i smeštaj",
   "lp_hub_beograd": "Kafići, restorani, splavovi i smeštaj u Beogradu",
   "lp_hub_novi_sad": "Kafići, restorani, barovi i smeštaj u Novom Sadu",
-  "lp_hub_smestaj": "Hoteli i apartmani u Srbiji koji primaju pse"
+  "lp_hub_smestaj": "Hoteli i apartmani u Srbiji koji primaju pse",
+  "back_to_blog": "Nazad na blog",
+  "blog_post_loading": "Učitavanje članka...",
+  "blog_post_not_found_title": "Članak nije pronađen",
+  "blog_post_not_found": "Članak nije pronađen. Možda je uklonjen ili je link pogrešan.",
+  "blog_post_load_error": "Članak trenutno ne može da se učita. Pokušajte ponovo za nekoliko trenutaka.",
+  "blog_tags": "Oznake:",
+  "blog_published_on": "Ovaj članak je objavljen {{date}}",
+  "blog_comments_one": "i ima {{count}} komentar.",
+  "blog_comments_few": "i ima {{count}} komentara.",
+  "blog_comments_many": "i ima {{count}} komentara."
 }

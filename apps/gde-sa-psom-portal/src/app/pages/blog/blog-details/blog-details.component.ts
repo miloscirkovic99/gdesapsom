@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
-import { RouteConstants } from '@gde/shared/util';
+import { injectActiveLang, pluralKey, RouteConstants } from '@gde/shared/util';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
 import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../../shared/components/breadcrumb/breadcrumb.component';
@@ -12,7 +13,7 @@ const STRUCTURED_DATA_ID = 'blog-post';
 @Component({
   selector: 'app-blog-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, BreadcrumbComponent],
+  imports: [CommonModule, RouterModule, BreadcrumbComponent, TranslocoModule],
   templateUrl: './blog-details.component.html',
   styleUrl: './blog-details.component.scss',
 })
@@ -21,10 +22,18 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
   private route       = inject(ActivatedRoute);
   private router      = inject(Router);
   private seoService  = inject(SeoService);
+  private transloco   = inject(TranslocoService);
+  readonly lang       = injectActiveLang();
 
   post       = signal<Post | null>(null);
   ucitavanje = signal(false);
+  /** Translation key of the message shown instead of the article; empty when there is none. */
   greska     = signal('');
+
+  /** blog_comments_one / _few / _many: "1 komentar", "3 komentara", "5 komentara". */
+  readonly commentsKey = computed(() =>
+    pluralKey('blog_comments', Number(this.post()?.broj_komentara ?? 0), this.lang()),
+  );
 
   // Uvek vraća stabilan niz — nikad undefined
   tagovi = computed<string[]>(() => {
@@ -92,7 +101,7 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.seoService.clearStructuredData(STRUCTURED_DATA_ID);
         this.ucitavanje.set(false);
-        this.greska.set('Članak trenutno ne može da se učita. Pokušajte ponovo za nekoliko trenutaka.');
+        this.greska.set('blog_post_load_error');
         console.error('Blog post loading error:', err);
       }
     });
@@ -104,8 +113,11 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
    * tag is what keeps a dead post URL out of the index.
    */
   private showNotFound() {
-    this.greska.set('Članak nije pronađen ili je došlo do greške. Vrati se na blog.');
-    this.seoService.update({ title: 'Članak nije pronađen - Gde sa psom Blog', noindex: true });
+    this.greska.set('blog_post_not_found');
+    this.seoService.update({
+      title: `${this.transloco.translate('blog_post_not_found_title')} - Gde sa psom Blog`,
+      noindex: true,
+    });
   }
 
   getReadingTime(htmlContent: string = ''): number {

@@ -17,7 +17,15 @@ describe('BlogDetailsComponent indexing', () => {
       imports: [
         BlogDetailsComponent,
         TranslocoTestingModule.forRoot({
-          langs: { rs: {} },
+          langs: {
+            rs: {
+              blog_post_not_found: 'Članak nije pronađen. Možda je uklonjen ili je link pogrešan.',
+              blog_post_load_error: 'Članak trenutno ne može da se učita. Pokušajte ponovo za nekoliko trenutaka.',
+              blog_comments_one: 'i ima {{count}} komentar.',
+              blog_comments_few: 'i ima {{count}} komentara.',
+              blog_comments_many: 'i ima {{count}} komentara.',
+            },
+          },
           translocoConfig: { availableLangs: ['rs'], defaultLang: 'rs' },
           preloadLangs: true,
         }),
@@ -42,6 +50,7 @@ describe('BlogDetailsComponent indexing', () => {
     await render();
 
     expect(robots()).toBe('noindex, follow');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Članak nije pronađen.');
   });
 
   it('keeps the article indexable when the request fails', async () => {
@@ -51,5 +60,17 @@ describe('BlogDetailsComponent indexing', () => {
 
     expect(robots()).not.toBe('noindex, follow');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Članak trenutno ne može da se učita');
+  });
+
+  it('counts the comments with the right Serbian plural', async () => {
+    response = () =>
+      of({
+        blogPostSingle: [
+          { naslov: 'Naslov', slug: 'naslov', sadrzaj: '<p>Tekst</p>', objavljen_u: '2026-04-29 01:03:21', broj_komentara: 3 },
+        ],
+      });
+    await render();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('i ima 3 komentara.');
   });
 });

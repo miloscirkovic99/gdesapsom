@@ -1,14 +1,14 @@
 <div class="container mx-auto px-4 py-8 min-h-screen">
     <!-- Back Button -->
-    <button class="btn btn-ghost gap-2 mb-6" (click)="goBack()" title="Nazad na blog">
+    <button class="btn btn-ghost gap-2 mb-6" (click)="goBack()" [title]="'back_to_blog' | transloco">
         <span class="text-lg">←</span>
-        Nazad na blog
+        {{ 'back_to_blog' | transloco }}
     </button>
 
     @if (ucitavanje()) {
     <div class="flex flex-col items-center justify-center min-h-[500px] gap-4">
         <span class="loading loading-spinner loading-lg text-error"></span>
-        <p class="text-lg text-gray-600 font-medium">Učitavanje članka...</p>
+        <p class="text-lg text-gray-600 font-medium">{{ 'blog_post_loading' | transloco }}</p>
     </div>
     } @else {
     @if (greska()) {
@@ -17,9 +17,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 9v2m0 4v2m0 4v2M8.228 4.228a2.228 2.228 0 1 1 3.142 3.142m-6.284 6.284a2.228 2.228 0 1 1 3.142 3.142m0 0a2.228 2.228 0 1 1 3.142 3.142M3.228 3.228a2.228 2.228 0 1 1 3.142 3.142" />
         </svg>
-        <span>{{ greska() }}</span>
+        <span>{{ greska() | transloco }}</span>
     </div>
-    <button class="btn btn-s mt-4" (click)="goBack()">Nazad na blog</button>
+    <button class="btn btn-s mt-4" (click)="goBack()">{{ 'back_to_blog' | transloco }}</button>
     } @else if (post()) {
     <div class="max-w-4xl mx-auto mb-6">
         <app-breadcrumb [items]="breadcrumbs()" />
@@ -68,7 +68,7 @@
         <!-- Tags -->
    @if (tagovi().length > 0) {
   <div class="my-8 p-6 bg-base-100 rounded-lg border border-base-200">
-    <h3 class="text-lg font-bold mb-3">Oznake:</h3>
+    <h3 class="text-lg font-bold mb-3">{{ 'blog_tags' | transloco }}</h3>
     <div class="flex flex-wrap gap-2">
       @for (tag of tagovi(); track tag) {
          <a
@@ -86,9 +86,9 @@
         <footer
             class="my-8 p-6 bg-gradient-to-r from-base-100 to-base-200 rounded-lg border border-base-200 text-center">
             <p class="text-sm text-gray-600">
-                ℹ️ Ovaj članak je objavljen {{ post()?.objavljen_u | date: 'd. MMMM yyyy.' }}
+                ℹ️ {{ 'blog_published_on' | transloco: { date: (post()?.objavljen_u | date: 'd. MMMM yyyy.') } }}
                 @if ((post()?.broj_komentara || 0) > 0) {
-                i ima {{ post()?.broj_komentara }} komentara.
+                {{ commentsKey() | transloco: { count: post()?.broj_komentara } }}
                 }
             </p>
         </footer>
