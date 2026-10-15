@@ -93,6 +93,9 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "prebundle": false
+      },
       "configurations": {
         "production": {
           "buildTarget": "gde-sa-psom-portal:build:production"
