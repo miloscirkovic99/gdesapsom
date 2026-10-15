@@ -4,6 +4,15 @@
   height: 0;
 }
 
+/* Covers the status bar's strip (the page draws under it); content scrolls away beneath. */
+.status-scrim {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 10;
+  height: var(--app-safe-area-top);
+  background: var(--app-bg);
+}
+
 /* ── Hero: brand, a headline and the search, straight on the page ── */
 .hero {
   padding: calc(var(--ion-safe-area-top, 0px) + 12px) var(--app-gutter) 0;

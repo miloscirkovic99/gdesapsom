@@ -43,10 +43,14 @@ interface Tab {
     </ion-tabs>
   `,
   styles: `
+    /*
+     * The bar runs under the system navigation (Android's buttons or gesture bar,
+     * the iPhone home indicator). Ionic's own padding for it is kept, our 6px on top.
+     */
     ion-tab-bar {
       height: 64px;
       padding-top: 6px;
-      padding-bottom: 6px;
+      padding-bottom: calc(6px + var(--ion-safe-area-bottom, 0px));
     }
     ion-tab-button {
       --ripple-color: transparent;

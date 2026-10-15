@@ -1,4 +1,7 @@
 <ion-content [fullscreen]="true">
+  <!-- Home has no toolbar: once the page scrolls, this keeps the status bar on a plain background. -->
+  <div slot="fixed" class="status-scrim" aria-hidden="true"></div>
+
   <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
     <ion-refresher-content />
   </ion-refresher>

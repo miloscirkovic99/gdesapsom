@@ -80,9 +80,14 @@ cd apps/gde-sa-psom-mobile && npx capacitor-assets generate --android --assetPat
    ```
 2. **Version.** Raise `versionCode` (integer, +1 every upload) and `versionName` in
    `android/app/build.gradle`.
-3. **Build.** `npx nx run gde-sa-psom-mobile:cap-sync:production`, then in Android Studio
+3. **Build.** `npx nx run gde-sa-psom-mobile:cap-sync:production --skip-nx-cache` (Nx does
+   not hash the gitignored env files, so a cached build can be stale), then in Android Studio
    (`cap-open-android`) *Build > Generate Signed App Bundle*, or from `android/`:
    `gradlew bundleRelease` -> `app/build/outputs/bundle/release/app-release.aab`.
+   An APK to install directly (your phone, testers): `gradlew assembleRelease` ->
+   `app/build/outputs/apk/release/app-release.apk`. Without `keystore.properties` Gradle
+   writes `app-release-unsigned.apk`, which Android refuses to install. A phone that has a
+   build signed with another key (an earlier debug APK) must uninstall it first.
 4. **Play Console.** Create the app, enrol in Play App Signing, upload the `.aab` to the
    *Internal testing* track first. Fill in *App content* as described in
    [Google Play: Data safety and App content](#google-play-data-safety-and-app-content).
@@ -211,3 +216,28 @@ and the shared patterns every screen reuses. Use them before writing new compone
   `.app-block`, `.app-eyebrow`, `.group-label`, `.thumb-placeholder`, `.stock`, `.app-tag`.
 - Detail pages show the toolbar title only after the headline has scrolled away
   (`shared/title-reveal.ts`).
+
+### Edge to edge (status bar, navigation bar, notch)
+
+The app draws under the system bars on every Android version (`EdgeToEdge.enable` in
+`MainActivity`; Android 15+ enforces it anyway) and on iOS (`viewport-fit=cover`). On
+Android, Capacitor's SystemBars plugin passes the bar sizes to the page as
+`--safe-area-inset-*`; Ionic's `--ion-safe-area-*` read those first and fall back to
+`env(safe-area-inset-*)` (iOS).
+
+- Ionic pads its own bars: toolbars in `ion-header`, `ion-tab-bar`, `ion-footer`, action
+  sheets. Never replace their `padding-top`/`padding-bottom` without adding the inset back:
+  `padding-bottom: 6px` on the tab bar put it under Android's navigation buttons.
+- Custom UI that touches a screen edge (Home's status-bar strip, the consent sheet) uses
+  `--app-safe-area-*` from `styles.scss`. Ionic re-scopes its variables inside modals and
+  content; these keep the screen's values.
+- Landscape: a navigation bar or the camera cutout takes a strip at the side. `ion-content`
+  is inset from it in `styles.scss`; a page that sets its own `--padding-start`/`--padding-end`
+  adds `--app-safe-area-left`/`-right` (see `suggest.scss`).
+- Status and navigation bar icons follow the app theme through `SystemBars.setStyle`
+  (`@capacitor/core`, `AppSettingsService`). `@capacitor/status-bar` is not used: it
+  changes the status bar only and resets it to the phone's theme on rotation.
+
+To check a layout in a desktop browser, set the insets Capacitor would set, e.g.
+`document.documentElement.style.setProperty('--safe-area-inset-bottom', '48px')`
+(Android 3-button navigation; gesture navigation is about 24px, the status bar about 36px).

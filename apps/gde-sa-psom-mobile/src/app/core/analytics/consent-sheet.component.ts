@@ -41,8 +41,16 @@ import { AnalyticsConsent } from './analytics-consent.service';
     </div>
   `,
   styles: `
+    /*
+     * Clear of the navigation bar from the first frame (Ionic zeroes the modal's
+     * own inset while it slides in), and scrollable where it is taller than the
+     * screen (landscape): only its buttons close it.
+     */
     .sheet {
-      padding: 28px var(--app-gutter) calc(12px + var(--ion-safe-area-bottom, 0px));
+      max-height: calc(100vh - var(--app-safe-area-top));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 28px var(--app-gutter) calc(12px + var(--app-safe-area-bottom));
       background: var(--app-surface-raised);
       color: var(--app-text);
     }

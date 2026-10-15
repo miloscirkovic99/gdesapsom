@@ -1,7 +1,7 @@
-/* Shared by the suggest-a-place forms. */
+/* Shared by the suggest-a-place forms. Replaces the side insets ion-content gets in styles.scss, so it adds them back. */
 .form-content {
-  --padding-start: var(--app-gutter);
-  --padding-end: var(--app-gutter);
+  --padding-start: calc(var(--app-gutter) + var(--app-safe-area-left));
+  --padding-end: calc(var(--app-gutter) + var(--app-safe-area-right));
   --padding-top: 8px;
   --padding-bottom: 32px;
 }

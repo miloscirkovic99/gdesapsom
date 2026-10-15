@@ -88,6 +88,17 @@
   --app-radius-xl: 24px;
   --app-gutter: 20px;
 
+  /*
+   * System bars and camera cutouts (see "Edge to edge" below), as Ionic reads
+   * them: Capacitor's --safe-area-inset-* on Android, env() on iOS. Resolved
+   * here once, so they keep the screen's values inside modals and content,
+   * where Ionic re-scopes its own --ion-safe-area-*.
+   */
+  --app-safe-area-top: var(--ion-safe-area-top, 0px);
+  --app-safe-area-right: var(--ion-safe-area-right, 0px);
+  --app-safe-area-bottom: var(--ion-safe-area-bottom, 0px);
+  --app-safe-area-left: var(--ion-safe-area-left, 0px);
+
   /* Ionic */
   --ion-font-family: var(--app-font-body);
   --ion-background-color: var(--app-bg);
@@ -211,6 +222,25 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 1rem;
   line-height: 1.5;
+}
+
+/*
+ * ═══ Edge to edge ═══
+ *
+ * The app draws under the status bar, the navigation bar (Android's buttons or
+ * gesture bar, the iPhone home indicator) and camera cutouts, on Android and iOS.
+ * Ionic pads its own bars (toolbars, tab bar, footers, action sheets); anything
+ * custom that touches a screen edge pads itself with --app-safe-area-*.
+ *
+ * In landscape a navigation bar or a cutout takes a strip at the side. Page
+ * content keeps clear of it here, and Ionic's side padding is switched off
+ * inside content so lists are not inset twice.
+ */
+ion-content {
+  --padding-start: var(--app-safe-area-left);
+  --padding-end: var(--app-safe-area-right);
+  --ion-safe-area-left: 0px;
+  --ion-safe-area-right: 0px;
 }
 
 /* ═══ Typography ═══ */
@@ -669,13 +699,17 @@ ion-modal {
   --backdrop-opacity: 0.4;
 }
 
+/*
+ * Sheets span the screen's width, and Ionic switches off the side insets in
+ * them: their bars add a landscape navigation bar or cutout themselves.
+ */
 ion-modal.modal-sheet {
   --background: var(--app-surface-raised);
 
   ion-header ion-toolbar {
     --background: var(--app-surface-raised);
-    --padding-start: 12px;
-    --padding-end: 8px;
+    --padding-start: calc(12px + var(--app-safe-area-left));
+    --padding-end: calc(8px + var(--app-safe-area-right));
     --border-width: 0 !important;
     padding-top: 8px;
   }
@@ -693,9 +727,14 @@ ion-modal.modal-sheet {
   ion-footer ion-toolbar {
     --background: var(--app-surface-raised);
     --border-width: 1px 0 0 !important;
-    --padding-start: var(--app-gutter);
-    --padding-end: var(--app-gutter);
+    --padding-start: calc(var(--app-gutter) + var(--app-safe-area-left));
+    --padding-end: calc(var(--app-gutter) + var(--app-safe-area-right));
     padding-block: 12px;
+  }
+
+  /* Ionic swaps the bottom padding for the navigation bar's height (not while the keyboard is up): keep our 12px above it. */
+  ion-footer.footer-toolbar-padding ion-toolbar:last-of-type {
+    padding-bottom: calc(12px + var(--ion-safe-area-bottom, 0px));
   }
 }
 
@@ -755,11 +794,12 @@ ion-alert {
   --max-width: 340px;
 }
 
+/* Toasts sit above the tab bar (ToastNotifier); sideways they keep clear of a landscape navigation bar or cutout. */
 ion-toast {
   --border-radius: var(--app-radius-md);
   --box-shadow: var(--app-shadow-2);
-  --start: 12px;
-  --end: 12px;
+  --start: calc(12px + var(--app-safe-area-left));
+  --end: calc(12px + var(--app-safe-area-right));
   font-weight: 500;
 }
 

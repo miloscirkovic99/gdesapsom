@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
+import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { TranslocoService } from '@ngneat/transloco';
 import { LanguageService } from '@gde/shared/util';
@@ -8,6 +9,12 @@ import { AppSettingsService } from './app-settings.service';
 
 jest.mock('@capacitor/preferences', () => ({
   Preferences: { get: jest.fn(), set: jest.fn() },
+}));
+
+jest.mock('@capacitor/core', () => ({
+  ...jest.requireActual('@capacitor/core'),
+  Capacitor: { isNativePlatform: jest.fn(() => false) },
+  SystemBars: { setStyle: jest.fn(() => Promise.resolve()) },
 }));
 
 const prefs = Preferences as jest.Mocked<typeof Preferences>;
@@ -65,5 +72,25 @@ describe('AppSettingsService', () => {
     expect(doc.documentElement.classList.contains('ion-palette-dark')).toBe(false);
     expect(prefs.set).toHaveBeenCalledWith({ key: 'currentTheme', value: 'light' });
     expect(prefs.set).toHaveBeenCalledWith({ key: 'language', value: 'en' });
+  });
+
+  it('on a device, gives the status and navigation bars icons for the app theme', () => {
+    jest.mocked(Capacitor.isNativePlatform).mockReturnValue(true);
+    const { settings } = setup({});
+
+    settings.setTheme('dark');
+    expect(SystemBars.setStyle).toHaveBeenLastCalledWith({ style: SystemBarsStyle.Dark });
+
+    settings.setTheme('light');
+    expect(SystemBars.setStyle).toHaveBeenLastCalledWith({ style: SystemBarsStyle.Light });
+  });
+
+  it('leaves the bars alone in a browser', () => {
+    jest.mocked(Capacitor.isNativePlatform).mockReturnValue(false);
+    const { settings } = setup({});
+
+    settings.setTheme('dark');
+
+    expect(SystemBars.setStyle).not.toHaveBeenCalled();
   });
 });
