@@ -9,6 +9,12 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError, timeout } from 'rxjs/operators';
 
+/** Network errors, timeouts, rate limiting and 5xx: signs the service is struggling. */
+function isServiceFailure(error: unknown): boolean {
+  if (!(error instanceof HttpErrorResponse)) return true;
+  return error.status === 0 || error.status === 429 || error.status >= 500;
+}
+
 
 @Injectable()
 export class DdosProtectionInterceptor implements HttpInterceptor {
@@ -71,8 +77,12 @@ export class DdosProtectionInterceptor implements HttpInterceptor {
 
       // Error handling
       catchError((error) => {
-        // Track failed requests for circuit breaker
-        this.trackFailedRequest(requestKey);
+        // Only outages count towards the circuit breaker. A 4xx is an answer:
+        // the search endpoints reply 404 to "no results", and five empty
+        // searches used to switch spot search off for a minute.
+        if (isServiceFailure(error)) {
+          this.trackFailedRequest(requestKey);
+        }
 
         // Log security-relevant errors
         if (error instanceof HttpErrorResponse) {
