@@ -21,13 +21,14 @@ import { CardComponent } from '../../shared/components/card/card.component';
 import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import {
   descriptionToKeyMap,
   descriptionToKeyMapSpot,
   filterTownshipsMulti,
   injectActiveLang,
   LocalNamePipe,
+  pluralKey,
   SEARCH_TRACKING_DEBOUNCE_MS,
 } from '@gde/shared/util';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -36,6 +37,9 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { allHubLinks } from '../pet-friendly/pet-friendly-pages';
+
+/** A filter chip shows its own `label`, or `labelKey` translated with `params`. */
+type FilterChip = { key: string; label?: string; labelKey?: string; params?: Record<string, unknown> };
 
 type PetSpotsForm = {
   ops_id: FormControl<number[] | null>;
@@ -73,6 +77,7 @@ export class PetSpotsFacilitiesComponent {
   private  readonly route       = inject(ActivatedRoute);
   private  readonly destroyRef  = inject(DestroyRef);
   private  readonly analytics   = inject(AnalyticsService);
+  private  readonly transloco   = inject(TranslocoService);
 
   /** City and category hubs: this page ranks, so it passes visitors and crawlers on to them. */
   readonly hubs = allHubLinks();
@@ -122,22 +127,30 @@ readonly formValue = toSignal(
   const v = this.formValue();
   const loc = this.userLocation();
 
-  const chips: { key: string; label: string }[] = [];
+  const chips: FilterChip[] = [];
 
+  // A size or type the maps do not know yet shows its name from the API.
   if (v.sta_id) {
     const match = this.spotsStore.allowed()
       .find((i: any) => i.id === v.sta_id);
-    if (match) chips.push({ key: 'sta_id', label: descriptionToKeyMap[match.ime] });
+    if (match) {
+      const labelKey = descriptionToKeyMap[match.ime];
+      chips.push(labelKey ? { key: 'sta_id', labelKey } : { key: 'sta_id', label: match.ime });
+    }
   }
 
   if (v.ugo_id) {
     const match = this.sharedStore.spotTypes()
       .find((i: any) => i.id === v.ugo_id);
-    if (match) chips.push({ key: 'ugo_id', label: descriptionToKeyMapSpot[match.ime] });
+    if (match) {
+      const labelKey = descriptionToKeyMapSpot[match.ime];
+      chips.push(labelKey ? { key: 'ugo_id', labelKey } : { key: 'ugo_id', label: match.ime });
+    }
   }
 
   if (v.ops_id?.length) {
-    chips.push({ key: 'ops_id', label: `${v.ops_id.length} cities` });
+    const count = v.ops_id.length;
+    chips.push({ key: 'ops_id', labelKey: pluralKey('filter_townships_count', count, this.lang()), params: { count } });
   }
 
   if (loc) {
@@ -197,7 +210,7 @@ readonly formValue = toSignal(
 
   getCurrentLocation(): void {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      alert(this.transloco.translate('near_me_no_geolocation'));
       return;
     }
 
@@ -217,7 +230,7 @@ readonly formValue = toSignal(
       (error) => {
         console.error('Geolocation error:', error);
         this.isLoadingLocation.set(false);
-        alert('Unable to get your location. Please enable location services.');
+        alert(this.transloco.translate('near_me_no_location'));
       },
       { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
     );

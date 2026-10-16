@@ -62,6 +62,16 @@ describe('ParksStore', () => {
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });
 
+  it('reports a failed load in the active language', () => {
+    store.petParks();
+    httpMock
+      .expectOne((r) => r.url === 'pet-friendly-parks/list')
+      .flush('x', { status: 500, statusText: 'Server Error' });
+
+    expect(TestBed.inject(Notifier).notify).toHaveBeenCalledWith('error_global', 'error', 'close');
+    expect(store.parksStatus()).toBe('error');
+  });
+
   it('keeps pending parks out of the public list', () => {
     store.petParks(0);
     answerList(0, [park(9, 0)]);

@@ -39,13 +39,7 @@ export const ParksStore = signalStore(
     const contactFormService=inject(ContactFormService)
 
     const handleError = (error: any) => {
-      const translatedButton = translocoService.translate('close');
-
-      notifier.notify(
-        'Oops... Something went wrong, please check your fields and try again',
-        'error',
-        translatedButton
-      );
+      notifier.notify(translocoService.translate('error_global'), 'error', translocoService.translate('close'));
     };
     return {
       petParks(par_accepted = 1) {

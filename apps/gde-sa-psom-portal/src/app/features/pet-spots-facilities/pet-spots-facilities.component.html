@@ -68,7 +68,7 @@
       @for (chip of activeFilterChips(); track chip.key) {
       <div class="badge badge-secondary gap-1 shrink-0 cursor-pointer py-3 rounded-full"
         (click)="removeFilter(chip.key)">
-        {{ chip.label }}
+        {{ chip.label ?? ((chip.labelKey ?? '') | transloco: chip.params) }}
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
           stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

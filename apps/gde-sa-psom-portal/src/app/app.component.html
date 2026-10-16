@@ -1,5 +1,5 @@
 <a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] btn btn-primary btn-sm" href="#main-content">
-  Skip to content
+  {{ 'skip_to_content' | transloco }}
 </a>
 <app-navbar></app-navbar>
 <main id="main-content" class="min-h-screen">
@@ -26,7 +26,7 @@
   <button
     class="fixed bottom-6 right-6 btn btn-secondary btn-circle shadow-lg z-40 hover:scale-110 transition-transform"
     (click)="scrollToTop()"
-    aria-label="Scroll to top"
+    [attr.aria-label]="'scroll_to_top' | transloco"
   >
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />

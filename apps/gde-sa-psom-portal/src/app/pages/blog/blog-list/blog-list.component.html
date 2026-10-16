@@ -2,7 +2,7 @@
   @if (ucitavanje()) {
     <div class="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <span class="loading loading-spinner loading-lg text-error"></span>
-      <p class="text-lg text-gray-600 font-medium">Učitavanje članaka...</p>
+      <p class="text-lg text-gray-600 font-medium">{{ 'blog_list_loading' | transloco }}</p>
     </div>
   } @else {
     @if (greska()) {
@@ -10,12 +10,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2M8.228 4.228a2.228 2.228 0 1 1 3.142 3.142m-6.284 6.284a2.228 2.228 0 1 1 3.142 3.142m0 0a2.228 2.228 0 1 1 3.142 3.142M3.228 3.228a2.228 2.228 0 1 1 3.142 3.142" />
         </svg>
-        <span>{{ greska() }}</span>
+        <span>{{ greska() | transloco }}</span>
       </div>
     } @else {
       @if (postovi().length === 0) {
         <div class="flex items-center justify-center min-h-[400px] text-center">
-          <p class="text-xl text-gray-500 font-medium">📚 Nema objavljenih članaka za sada. Pratite nas za nove sadržaje!</p>
+          <p class="text-xl text-gray-500 font-medium">📚 {{ 'blog_list_empty' | transloco }}</p>
         </div>
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -44,7 +44,7 @@
               </figure>
 
               <div class="card-body">
-                <div class="badge badge-success badge-outline">{{ post.kategorija || 'Ostalo' }}</div>
+                <div class="badge badge-success badge-outline">{{ post.kategorija || ('other' | transloco) }}</div>
                 <h2 class="card-title text-lg font-bold line-clamp-2 hover:text-success transition-colors">
                   {{ post.naslov }}
                 </h2>

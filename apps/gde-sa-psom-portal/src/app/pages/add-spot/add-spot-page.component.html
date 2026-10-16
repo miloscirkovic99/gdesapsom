@@ -46,12 +46,12 @@
       } @else {
         <div class="relative rounded-xl overflow-hidden">
           <button type="button" (click)="removeImage('iuo_slika')"
-            class="btn btn-circle btn-error btn-sm absolute top-2 right-2 z-10" aria-label="Remove">
+            class="btn btn-circle btn-error btn-sm absolute top-2 right-2 z-10" [attr.aria-label]="'remove_photo' | transloco">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
-          <img [src]="imageSrc()" alt="Image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
+          <img [src]="imageSrc()" [alt]="'photo_preview' | transloco" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
         </div>
       }
     </div>
@@ -72,12 +72,12 @@
       } @else {
         <div class="relative rounded-xl overflow-hidden">
           <button type="button" (click)="removeImage('iuo_slika_unutra')"
-            class="btn btn-circle btn-error btn-sm absolute top-2 right-2 z-10" aria-label="Remove">
+            class="btn btn-circle btn-error btn-sm absolute top-2 right-2 z-10" [attr.aria-label]="'remove_photo' | transloco">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
-          <img [src]="imageSrcAdditional()" alt="Additional image preview" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
+          <img [src]="imageSrcAdditional()" [alt]="'additional_photo_preview' | transloco" class="w-full h-48 sm:h-72 object-cover rounded-xl" loading="lazy" />
         </div>
       }
     </div>

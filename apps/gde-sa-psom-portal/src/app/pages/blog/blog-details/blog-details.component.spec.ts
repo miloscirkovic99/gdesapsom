@@ -24,6 +24,9 @@ describe('BlogDetailsComponent indexing', () => {
               blog_comments_one: 'i ima {{count}} komentar.',
               blog_comments_few: 'i ima {{count}} komentara.',
               blog_comments_many: 'i ima {{count}} komentara.',
+              blog_reading_time: '{{minutes}} min čitanja',
+              blog_unknown_author: 'Nepoznat autor',
+              other: 'Ostalo',
             },
           },
           translocoConfig: { availableLangs: ['rs'], defaultLang: 'rs' },
@@ -72,5 +75,16 @@ describe('BlogDetailsComponent indexing', () => {
     await render();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('i ima 3 komentara.');
+  });
+
+  it('shows the reading time, category and author fallbacks in the active language', async () => {
+    response = () =>
+      of({ blogPostSingle: [{ naslov: 'Naslov', slug: 'naslov', sadrzaj: '<p>Tekst</p>', objavljen_u: '2026-04-29 01:03:21' }] });
+    await render();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent;
+    expect(text).toContain('1 min čitanja');
+    expect(text).toContain('Ostalo');
+    expect(text).toContain('Nepoznat autor');
   });
 });

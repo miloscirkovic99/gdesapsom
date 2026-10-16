@@ -722,6 +722,8 @@ export interface UiCopy {
   faqTitle: string;
   moreTitle: string;
   forYourDogTitle: string;
+  dogParks: string;
+  vets: string;
   /** City hub: "Šta tražite u Novom Sadu?"; national hub: "Kafići po gradovima". */
   subnavTitle(page: PetFriendlyPage): string;
   sameCityTitle(city: PetFriendlyCity): string;
@@ -749,6 +751,8 @@ const UI: Record<CopyLang, UiCopy> = {
     faqTitle: 'Česta pitanja',
     moreTitle: 'Pretražite dalje',
     forYourDogTitle: 'Za vašeg psa',
+    dogParks: 'Parkovi za pse',
+    vets: 'Veterinari',
     subnavTitle: (page) =>
       page.kind === 'city' && page.city
         ? `Šta tražite ${page.city.locative.nameSr}?`
@@ -776,6 +780,8 @@ const UI: Record<CopyLang, UiCopy> = {
     faqTitle: 'Frequently asked questions',
     moreTitle: 'Keep exploring',
     forYourDogTitle: 'For your dog',
+    dogParks: 'Dog parks',
+    vets: 'Vets',
     subnavTitle: (page) =>
       page.kind === 'city' && page.city
         ? `What are you looking for ${page.city.locative.nameEn}?`

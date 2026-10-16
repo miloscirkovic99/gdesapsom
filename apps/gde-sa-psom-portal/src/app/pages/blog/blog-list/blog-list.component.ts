@@ -15,6 +15,7 @@ export class BlogListComponent implements OnInit {
 
   postovi = signal<any[]>([]);
   ucitavanje = signal(false);
+  /** Translation key of the error shown instead of the list; empty when there is none. */
   greska = signal('');
 
   ngOnInit() {
@@ -31,7 +32,7 @@ export class BlogListComponent implements OnInit {
         this.ucitavanje.set(false);
       },
       error: (err) => {
-        this.greska.set('Greška pri učitavanju članaka. Molimo pokušajte ponovno.');
+        this.greska.set('blog_list_load_error');
         this.ucitavanje.set(false);
         console.error('Blog loading error:', err);
       }

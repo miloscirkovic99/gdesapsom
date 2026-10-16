@@ -8,6 +8,7 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
+import { TranslocoService } from '@ngneat/transloco';
 import { Subject, take, takeUntil } from 'rxjs';
 import { Notifier } from '../platform/notifier';
 import { City, Country, GardenType, SpotType, Township } from '../models/places.models';
@@ -43,13 +44,10 @@ export const SharedStore = signalStore(
   withMethods((store) => {
     const http = inject(HttpClient);
     const notifier = inject(Notifier);
+    const translocoService = inject(TranslocoService);
 
     const handleError = (error: any) => {
-      notifier.notify(
-        'Oops... Something went wrong, please check your fields and try again',
-        'error',
-        'Close'
-      );
+      notifier.notify(translocoService.translate('error_global'), 'error', translocoService.translate('close'));
     };
     return {
       getSpotTypes() {
@@ -114,7 +112,7 @@ export const SharedStore = signalStore(
           .subscribe({
             next: (result) => {
               this.getTownships();
-              notifier.notify(result.success, 'success', 'Close');
+              notifier.notify(result.success, 'success', translocoService.translate('close'));
             },
             error: handleError,
           });
@@ -126,7 +124,7 @@ export const SharedStore = signalStore(
           .subscribe({
             next: (result) => {
               this.getCityandState();
-              notifier.notify(result.success, 'success', 'Close');
+              notifier.notify(result.success, 'success', translocoService.translate('close'));
             },
             error: handleError,
           });

@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
@@ -9,6 +10,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, Location, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -43,6 +45,27 @@ function spotKind(type: string | null): string {
   return type.toLowerCase();
 }
 
+/** API text placed into the HTML of a Leaflet popup. */
+function escapeHtml(text: string): string {
+  return text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+}
+
+/**
+ * The map popup: address, dog size and garden, like the details card. A size
+ * or garden the maps do not know shows as the API sends it.
+ */
+export function spotPopupHtml(address: string, spot: any, t: (key: string) => string): string {
+  const sizeKey = descriptionToKeyMap[spot?.sta_ime];
+  const gardenKey = descriptionToKeyMapGarden[spot?.bas_naziv];
+  return [
+    [t('address'), address],
+    [t('pet_size'), sizeKey ? t(sizeKey) : spot?.sta_ime],
+    [t('garden'), gardenKey ? t(gardenKey) : spot?.bas_naziv],
+  ]
+    .map(([label, value]) => `<b>${escapeHtml(label)}:</b> ${escapeHtml(value ?? '')}`)
+    .join(' <br> ');
+}
+
 @Component({
   selector: 'app-spot-detail-page',
   standalone: true,
@@ -62,6 +85,7 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
   private seoService = inject(SeoService);
   private sanitizer = inject(DomSanitizer);
   private analytics = inject(AnalyticsService);
+  private destroyRef = inject(DestroyRef);
   private map: L.Map | undefined;
   private routeLayers: L.Layer[] = [];
 
@@ -336,10 +360,17 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
       const marker = L.marker([lat, lon], { icon: LeafIcon })
         .addTo(this.map)
-        .bindPopup(
-          `<b>Adresa:</b> ${address} <br> <b>Velicina:</b> ${spot?.sta_ime} <br> <b>Basta:</b> ${spot?.bas_naziv}`
-        )
-        .openPopup();
+        .bindPopup('');
+
+      // Leaflet keeps the popup as HTML, so it is filled again once the
+      // translations load and whenever the language changes.
+      this.translocoService
+        .selectTranslation()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() =>
+          marker.setPopupContent(spotPopupHtml(address, spot, (key) => this.translocoService.translate(key))),
+        );
+      marker.openPopup();
 
       // Ensure marker is centered and visible
       this.map.flyTo([lat, lon], 18, {

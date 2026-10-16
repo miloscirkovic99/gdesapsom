@@ -17,6 +17,7 @@ import { VersionUpdateService } from './core/services/version-update.service';
 import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/pwa-install-dialog.component';
 import { BottomNavigationComponent } from './shared/components/bottom-navigation/bottom-navigation.component';
 import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
+import { TranslocoModule } from '@ngneat/transloco';
 @Component({
   imports: [
     RouterModule,
@@ -27,6 +28,7 @@ import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-
     PwaInstallDialogComponent,
     BottomNavigationComponent,
     CookieBannerComponent,
+    TranslocoModule,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

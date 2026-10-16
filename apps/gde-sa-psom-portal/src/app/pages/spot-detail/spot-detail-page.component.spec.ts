@@ -4,7 +4,7 @@ import { SpotsStore } from '@gde/shared/data-access';
 import { TranslocoTestingModule } from '@ngneat/transloco';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
-import { SpotDetailPageComponent } from './spot-detail-page.component';
+import { SpotDetailPageComponent, spotPopupHtml } from './spot-detail-page.component';
 
 type Answer = (onSuccess: (spot: unknown) => void, onError: () => void) => void;
 
@@ -63,5 +63,31 @@ describe('SpotDetailPageComponent indexing', () => {
 
     retry?.click();
     expect(getSpotById).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('spotPopupHtml', () => {
+  const sr: Record<string, string> = {
+    address: 'Adresa',
+    pet_size: 'Veličina psa',
+    garden: 'Bašta',
+    small_dog: 'Mali psi',
+    with_garden: 'Sa baštom',
+  };
+  const t = (key: string) => sr[key] ?? key;
+
+  it('labels the popup in the active language', () => {
+    expect(spotPopupHtml('Zmaj Jovina 1,Novi Sad', { sta_ime: 'Mali pas', bas_naziv: 'sa baštom' }, t)).toBe(
+      '<b>Adresa:</b> Zmaj Jovina 1,Novi Sad <br> <b>Veličina psa:</b> Mali psi <br> <b>Bašta:</b> Sa baštom',
+    );
+  });
+
+  it('escapes the API text, which Leaflet inserts as HTML', () => {
+    const popup = spotPopupHtml('<img src=x onerror=alert(1)>,Novi Sad', { sta_ime: 'Svi "psi"', bas_naziv: null }, t);
+
+    expect(popup).not.toContain('<img');
+    expect(popup).toContain('&#60;img src=x onerror=alert(1)&#62;,Novi Sad');
+    expect(popup).toContain('<b>Veličina psa:</b> Svi &#34;psi&#34;');
+    expect(popup).toMatch(/<b>Bašta:<\/b> $/);
   });
 });

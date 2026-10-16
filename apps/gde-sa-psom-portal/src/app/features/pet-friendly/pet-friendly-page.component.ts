@@ -234,8 +234,8 @@ export class PetFriendlyPageComponent implements OnDestroy {
     groups.push({
       title: ui.forYourDogTitle,
       links: [
-        { label: lang === 'en' ? 'Dog parks' : 'Parkovi za pse', path: this.paths.parks },
-        { label: lang === 'en' ? 'Vets' : 'Veterinari', path: this.paths.vets },
+        { label: ui.dogParks, path: this.paths.parks },
+        { label: ui.vets, path: this.paths.vets },
         { label: ui.allSpots, path: this.paths.allSpots },
       ],
     });

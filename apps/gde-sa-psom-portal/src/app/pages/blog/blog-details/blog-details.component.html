@@ -28,10 +28,10 @@
         <!-- Article Header -->
         <header class="mb-8 pb-6 border-b-2 border-base-200">
             <div class="flex items-center gap-3 mb-4">
-                <span class="badge badge-success badge-outline">{{ post()?.kategorija || 'Ostalo' }}</span>
+                <span class="badge badge-success badge-outline">{{ post()?.kategorija || ('other' | transloco) }}</span>
                 <div class="flex gap-3 text-sm text-gray-600">
                     <span class="flex items-center gap-1">
-                        ⏱️ {{ getReadingTime(post()?.sadrzaj) }} min čitanja
+                        ⏱️ {{ 'blog_reading_time' | transloco: { minutes: getReadingTime(post()?.sadrzaj) } }}
                     </span>
                     <span class="flex items-center gap-1">
                         📅 {{ post()?.objavljen_u | date: 'd. MMMM yyyy.' }}
@@ -48,7 +48,7 @@
               </div>
             </div> -->
                 <div>
-                    <p class="font-semibold">{{ post()?.autor || 'Nepoznat autor' }}</p>
+                    <p class="font-semibold">{{ post()?.autor || ('blog_unknown_author' | transloco) }}</p>
                     <p class="text-sm text-gray-600">{{ post()?.autor_email || '' }}</p>
                 </div>
             </div>
