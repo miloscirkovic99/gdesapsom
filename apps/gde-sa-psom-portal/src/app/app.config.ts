@@ -3,6 +3,7 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideAppTransloco } from '@gde/shared/util';
 import { BrowserAnimationsModule, provideAnimations, } from '@angular/platform-browser/animations';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideApiHttp, provideAppConfig, Notifier } from '@gde/shared/data-access/core';
 import { SnackbarNotifier } from './core/services/snackbar-notifier';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -13,6 +14,9 @@ import { environment } from '../env/env.dev';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Prerendered pages (app.routes.server.ts) keep their HTML instead of being
+    // wiped and redrawn; client-rendered routes have nothing to hydrate.
+    provideClientHydration(withEventReplay()),
     provideAppConfig({
       apiUrl: environment.apiUrl,
       production: environment.production,

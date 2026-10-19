@@ -1,3 +1,4 @@
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { CONSENT_STORAGE_KEY, ConsentService } from './consent.service';
 
@@ -38,6 +39,16 @@ describe('ConsentService', () => {
     expect(service.status()).toBe('denied');
     expect(service.measurementAllowed()).toBe(false);
     expect(stored()).toMatchObject({ analytics: false });
+  });
+
+  it('while prerendering: no stored choice is read and no banner goes into the HTML', () => {
+    localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ v: 1, analytics: false, at: '2026-10-01T10:00:00.000Z' }));
+    TestBed.overrideProvider(PLATFORM_ID, { useValue: 'server' });
+
+    const service = TestBed.inject(ConsentService);
+
+    expect(service.status()).toBe('pending');
+    expect(service.bannerOpen()).toBe(false);
   });
 
   it('restores a saved choice without showing the banner', () => {

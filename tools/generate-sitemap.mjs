@@ -14,6 +14,9 @@
  * the same pet-friendly-taxonomy.json the portal routes are built from. A hub
  * is listed only when it has as many venues as its `minListingsToIndex`, the
  * threshold below which the page marks itself noindex.
+ *
+ * The winter pages come from winter-data.json and winter-content.json, under
+ * the same rule that makes them index or noindex (winter-seo.ts).
  */
 
 import { spawnSync } from 'node:child_process';
@@ -61,6 +64,14 @@ const OUT_FILE = join(REPO_ROOT, APP_DIR, 'public/sitemap.xml');
 const HUB_SRC = 'src/app/features/pet-friendly';
 const HUB_SEED = '2026-10-15';
 const TAXONOMY = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, HUB_SRC, 'pet-friendly-taxonomy.json'), 'utf8'));
+
+// The winter pages (/zimovanje-sa-psom, /zimovanje-sa-psom/<destination>,
+// /putovanje-sa-psom-u-eu) render from a build-time snapshot and editor copy;
+// the sitemap reads the same two files.
+const WINTER_SRC = 'src/app/features/winter';
+const WINTER_SEED = '2026-11-01';
+const WINTER_DATA = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, WINTER_SRC, 'winter-data.json'), 'utf8'));
+const WINTER_CONTENT = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, WINTER_SRC, 'winter-content.json'), 'utf8'));
 
 const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has('--dry-run');
@@ -301,6 +312,28 @@ function getHubEntries(places, lastmod) {
 }
 
 /**
+ * The winter pages that are ready to be indexed, by the rule of
+ * isWinterPageIndexable (winter-seo.ts): a destination with at least one stay,
+ * the hub when any destination qualifies, the EU guide once it has sections.
+ * Pages that fail it render as noindex, so they stay out of the sitemap too.
+ */
+function getWinterEntries() {
+  const lastmod = [gitLastmod(WINTER_SRC, WINTER_SEED), WINTER_DATA.generatedAt]
+    .filter((date) => ISO_DATE.test(date ?? ''))
+    .sort()
+    .pop();
+  const destinations = Object.entries(WINTER_DATA.destinations)
+    .filter(([, data]) => (data.stays ?? []).length > 0)
+    .map(([slug]) => ({ loc: `/zimovanje-sa-psom/${slug}`, lastmod }));
+
+  return [
+    ...(destinations.length ? [{ loc: '/zimovanje-sa-psom', lastmod }] : []),
+    ...destinations,
+    ...((WINTER_CONTENT.euTravel?.sections ?? []).length ? [{ loc: '/putovanje-sa-psom-u-eu', lastmod: gitLastmod(WINTER_SRC, WINTER_SEED) }] : []),
+  ];
+}
+
+/**
  * `dog-food/all?fields=sitemap` and `pet-shops/all?fields=sitemap` return
  * `{ data: [{ slug, updatedAt }] }` - slugs only, no images, so one request
  * covers the whole catalog.
@@ -379,10 +412,12 @@ async function main() {
     getCatalogEntries('pet-shops', 'pet-shops'),
   ]);
   const hubs = getHubEntries(spots.places, gitLastmod(HUB_SRC, HUB_SEED));
+  const winter = getWinterEntries();
 
   console.log(`  blog posts: ${blog.entries.length}`);
   console.log(`  spots:      ${spots.ids.length}`);
   console.log(`  hubs:       ${hubs.length} (${hubs.map((hub) => hub.loc).join(' ') || 'none above threshold'})`);
+  console.log(`  winter:     ${winter.length} (${winter.map((page) => page.loc).join(' ') || 'none ready'})`);
   console.log(`  dog food:   ${dogFood.length}`);
   console.log(`  pet shops:  ${petShops.length}`);
 
@@ -396,6 +431,7 @@ async function main() {
       return { loc: route.loc, lastmod };
     }),
     ...hubs,
+    ...winter,
     ...blog.entries,
     ...spots.ids.map((id) => ({ loc: `/spots/${id}`, lastmod: null })), // API has no date field for spots
     ...dogFood,

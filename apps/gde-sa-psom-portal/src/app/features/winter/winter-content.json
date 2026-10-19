@@ -1,0 +1,14 @@
+{
+  "_readme": "Tekstove u ovom fajlu piše urednik. Svaki pasus je jedan string. Prazna lista znači da se uvod ne prikazuje. Stranica /putovanje-sa-psom-u-eu je noindex i van sitemapa dok euTravel.sections ne dobije sadržaj.",
+  "intros": {
+    "hub": [],
+    "kopaonik": [],
+    "zlatibor": [],
+    "tara": []
+  },
+  "euTravel": {
+    "intro": [],
+    "sections": [],
+    "faq": []
+  }
+}

@@ -1,0 +1,214 @@
+@let place = destination.locative;
+
+<article class="wp">
+  <header class="wp-hero">
+    <app-breadcrumb [items]="breadcrumbs" />
+    <h1 class="wp-h1">{{ h1 }}</h1>
+    @for (paragraph of intro; track $index) {
+      <p class="wp-lead">{{ paragraph }}</p>
+    }
+    <nav class="wp-jump" aria-label="Na ovoj stranici">
+      <a class="wp-chip" [href]="page.path + '#smestaj'">Smeštaj</a>
+      @if (data().restaurants.length) {
+        <a class="wp-chip" [href]="page.path + '#restorani'">Restorani</a>
+      }
+      @if (data().trails.length) {
+        <a class="wp-chip" [href]="page.path + '#staze'">Šetnje</a>
+      }
+      @if (gondola() || skiLifts()) {
+        <a class="wp-chip" [href]="page.path + '#gondole'">Gondole i žičare</a>
+      }
+      @if (data().vet) {
+        <a class="wp-chip" [href]="page.path + '#veterinar'">Veterinar</a>
+      }
+      <a class="wp-chip" [href]="page.path + '#pakovanje'">Pakovanje</a>
+    </nav>
+  </header>
+
+  <!-- 1. Stays: always present, the main thing the page is about -->
+  <section id="smestaj" class="wp-section" aria-labelledby="wp-stays-title">
+    <h2 id="wp-stays-title" class="wp-h2">Smeštaj {{ place }} koji prima pse</h2>
+    @if (data().stays.length) {
+      <ul class="wp-cards">
+        @for (stay of data().stays; track stay.id) {
+          <li class="wp-card">
+            <a class="wp-card__name" [routerLink]="['/spots', stay.id]">{{ stay.name }}</a>
+            @if (stay.address) {
+              <p class="wp-meta">{{ stay.address }}</p>
+            }
+            <dl class="wp-facts">
+              @if (stay.dogFee; as fee) {
+                <div><dt>Doplata za psa:</dt><dd>{{ formatFee(fee) }}</dd></div>
+              }
+              @if (stay.maxDogs !== null) {
+                <div><dt>Najviše pasa:</dt><dd>{{ stay.maxDogs }}</dd></div>
+              }
+              @if (stay.dogMayStayAlone !== null) {
+                <div><dt>Pas sme sam u sobi:</dt><dd>{{ stay.dogMayStayAlone ? 'da' : 'ne' }}</dd></div>
+              }
+              @if (stay.maxDogSize) {
+                <div><dt>Veličina:</dt><dd>{{ dogSizeLabel(stay.maxDogSize) }}</dd></div>
+              }
+            </dl>
+            <div class="wp-card__actions">
+              @if (stay.affiliateUrl) {
+                <a
+                  class="btn btn-secondary btn-sm"
+                  [href]="stay.affiliateUrl"
+                  target="_blank"
+                  rel="sponsored nofollow"
+                  data-link-type="affiliate_booking"
+                  [attr.data-venue-slug]="venueSlug(stay.id)"
+                >Proveri dostupnost</a>
+              }
+              <a class="wp-link" [routerLink]="['/spots', stay.id]">Detalji</a>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="wp-notice">
+        <p>Još nemamo proveren smeštaj {{ place }} koji prima pse. Znaš neki? Predloži ga i pomozi drugim vlasnicima pasa.</p>
+        <a class="btn btn-secondary btn-sm" [routerLink]="paths.addSpot">Predloži smeštaj</a>
+      </div>
+    }
+  </section>
+
+  <!-- 2. Restaurants where dogs may come inside -->
+  @if (data().restaurants.length) {
+    <section id="restorani" class="wp-section" aria-labelledby="wp-food-title">
+      <h2 id="wp-food-title" class="wp-h2">Restorani {{ place }} gde psi smeju unutra</h2>
+      <ul class="wp-places">
+        @for (restaurant of data().restaurants; track restaurant.id) {
+          <li class="wp-place">
+            <a class="wp-place__name" [routerLink]="['/spots', restaurant.id]">{{ restaurant.name }}</a>
+            @if (restaurant.address) {
+              <span class="wp-meta">{{ restaurant.address }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <!-- 3. Winter walks -->
+  @if (data().trails.length) {
+    <section id="staze" class="wp-section" aria-labelledby="wp-trails-title">
+      <h2 id="wp-trails-title" class="wp-h2">Šetne staze zimi</h2>
+      <ul class="wp-places">
+        @for (trail of data().trails; track trail.id) {
+          <li class="wp-place">
+            <span class="wp-place__name">{{ trail.name }}</span>
+            @if (trail.lengthKm !== null) {
+              <span class="wp-meta">Dužina: {{ formatKm(trail.lengthKm) }}</span>
+            }
+            @if (trail.description) {
+              <span class="wp-meta">{{ trail.description }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <!-- 4. Gondolas and ski lifts: only what has been checked -->
+  @if (gondola() || skiLifts()) {
+    <section id="gondole" class="wp-section" aria-labelledby="wp-lifts-title">
+      <h2 id="wp-lifts-title" class="wp-h2">Gondole i žičare: da li primaju pse</h2>
+      <ul class="wp-places">
+        @if (gondola(); as gondolaStatus) {
+          <li class="wp-place">
+            <span class="wp-place__name">Gondola</span>
+            <span class="wp-meta">{{ gondolaStatus }}</span>
+          </li>
+        }
+        @if (skiLifts(); as skiLiftStatus) {
+          <li class="wp-place">
+            <span class="wp-place__name">Žičare</span>
+            <span class="wp-meta">{{ skiLiftStatus }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <!-- 5. Nearest vet -->
+  @if (data().vet; as vet) {
+    <section id="veterinar" class="wp-section" aria-labelledby="wp-vet-title">
+      <h2 id="wp-vet-title" class="wp-h2">Najbliži veterinar</h2>
+      <div class="wp-places">
+        <div class="wp-place">
+          <span class="wp-place__name">{{ vet.name }}</span>
+          @if (vet.address) {
+            <span class="wp-meta">{{ vet.address }}</span>
+          }
+          @if (vet.phone) {
+            <a class="wp-meta link link-hover" [href]="'tel:' + vet.phone" data-link-type="venue_phone" [attr.data-venue-slug]="'vet-' + vet.id">{{ vet.phone }}</a>
+          }
+          @if (vet.distanceKm !== null) {
+            <span class="wp-meta">Oko {{ formatKm(vet.distanceKm) }} od centra</span>
+          }
+        </div>
+      </div>
+      <p class="wp-section__lead"><a class="wp-link" [routerLink]="paths.vets">Svi veterinari na Gde sa psom</a></p>
+    </section>
+  }
+
+  <!-- 6. Packing list (static) -->
+  <section id="pakovanje" class="wp-section" aria-labelledby="wp-pack-title">
+    <h2 id="wp-pack-title" class="wp-h2">Šta spakovati psu za zimovanje</h2>
+    <ul class="wp-checklist">
+      @for (item of packingList; track $index) {
+        <li>{{ item }}</li>
+      }
+    </ul>
+  </section>
+
+  @if (plannerPath) {
+    <section class="wp-section">
+      <div class="wp-cta">
+        <h2 class="wp-h3">Napravi plan zimovanja sa psom</h2>
+        <p class="wp-meta">Planer predloži smeštaj, šetnje i restorane {{ place }} prema tvom psu i prognozi.</p>
+        <a class="btn btn-secondary btn-sm" [routerLink]="plannerPath">Otvori planer</a>
+      </div>
+    </section>
+  }
+
+  <!-- 7. FAQ (also published as FAQPage) -->
+  <section class="wp-section" aria-labelledby="wp-faq-title">
+    <h2 id="wp-faq-title" class="wp-h2">Česta pitanja</h2>
+    <div class="wp-faq">
+      @for (item of faq(); track item.question; let first = $first) {
+        <details class="wp-faq__item" [open]="first">
+          <summary class="wp-faq__q">{{ item.question }}</summary>
+          <p class="wp-faq__a">{{ item.answer }}</p>
+        </details>
+      }
+    </div>
+  </section>
+
+  <nav class="wp-section" aria-label="Još za zimovanje sa psom">
+    <h2 class="wp-h2">Još za zimovanje sa psom</h2>
+    <div class="wp-links">
+      <div>
+        <h3 class="wp-links__title">Druge destinacije</h3>
+        <ul class="wp-links__list">
+          @for (link of otherDestinations; track link.path) {
+            <li><a class="wp-link" [routerLink]="link.path">{{ link.label }}</a></li>
+          }
+          <li><a class="wp-link" [routerLink]="paths.hub">Zimovanje sa psom u Srbiji</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="wp-links__title">Putovanje sa psom</h3>
+        <ul class="wp-links__list">
+          <li><a class="wp-link" [routerLink]="paths.stays">Pet friendly smeštaj u Srbiji</a></li>
+          <li><a class="wp-link" [routerLink]="paths.euTravel">Putovanje sa psom u EU</a></li>
+          @if (plannerPath) {
+            <li><a class="wp-link" [routerLink]="plannerPath">Planer sa psom</a></li>
+          }
+        </ul>
+      </div>
+    </div>
+  </nav>
+</article>

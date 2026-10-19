@@ -219,6 +219,35 @@ export function hubCollectionStructuredData(page: {
  * schema.org FAQPage for the questions a page shows. Answers are plain text
  * and must match what is visible on the page. Null when there are none.
  */
+/**
+ * schema.org Article for an editorial page (the winter guides). The site is
+ * author and publisher; `dateModified` is when its data was last refreshed.
+ */
+export function articleStructuredData(page: {
+  headline: string;
+  description: string;
+  url: string;
+  dateModified: string | null;
+  about?: Record<string, unknown> | null;
+}): Record<string, unknown> | null {
+  const headline = page.headline.trim();
+  if (!headline) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline,
+    description: page.description,
+    url: page.url,
+    mainEntityOfPage: page.url,
+    inLanguage: 'sr-Latn',
+    dateModified: page.dateModified ?? undefined,
+    author: PUBLISHER,
+    publisher: PUBLISHER,
+    about: page.about ?? undefined,
+  };
+}
+
 export function faqPageStructuredData(
   items: readonly { question: string; answer: string }[],
 ): Record<string, unknown> | null {

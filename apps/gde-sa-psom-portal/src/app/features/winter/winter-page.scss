@@ -1,0 +1,205 @@
+/*
+ * Shared layout of the winter pages (hub, destination, EU guide). Same type
+ * scale and daisyUI colours as the pet-friendly hubs, so light and dark work.
+ */
+:host {
+  display: block;
+}
+
+.wp {
+  @apply mx-auto max-w-5xl pb-10 pt-6 sm:pt-10;
+}
+
+.wp-hero {
+  @apply space-y-4;
+}
+
+.wp-h1 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.wp-h2 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.wp-h3 {
+  @apply font-display text-xl font-bold text-base-content;
+  line-height: 1.2;
+}
+
+.wp-lead {
+  @apply text-base-content/75 leading-relaxed;
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+  max-width: 66ch;
+}
+
+.wp-jump {
+  @apply flex flex-wrap gap-2 pt-2;
+}
+
+.wp-chip {
+  @apply inline-flex items-center rounded-full border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition-colors;
+
+  &:hover {
+    @apply border-secondary text-secondary;
+  }
+}
+
+.wp-section {
+  @apply pt-14 md:pt-20;
+  scroll-margin-top: 5rem;
+}
+
+.wp-section__lead {
+  @apply mt-2 text-base-content/70 leading-relaxed;
+  max-width: 66ch;
+}
+
+/* ── Cards (stays, destinations) ── */
+.wp-cards {
+  @apply mt-6 grid gap-4 sm:grid-cols-2;
+}
+
+.wp-card {
+  @apply flex flex-col gap-3 rounded-2xl border border-base-300/70 bg-base-100 p-5;
+}
+
+.wp-card__name {
+  @apply font-display text-xl font-bold text-base-content underline-offset-4;
+
+  &:hover {
+    @apply underline;
+  }
+}
+
+.wp-meta {
+  @apply text-sm text-base-content/70;
+}
+
+.wp-facts {
+  @apply grid gap-1.5 text-sm;
+
+  > div {
+    @apply flex flex-wrap gap-x-2;
+  }
+
+  dt {
+    @apply text-base-content/60;
+  }
+
+  dd {
+    @apply font-medium text-base-content;
+  }
+}
+
+.wp-card__actions {
+  @apply mt-auto flex flex-wrap items-center gap-3 pt-1;
+}
+
+/* ── Plain lists (restaurants, trails, vet, lifts) ── */
+.wp-places {
+  @apply mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.wp-place {
+  @apply flex flex-col gap-1 rounded-2xl border border-base-300/70 bg-base-100 p-4;
+}
+
+.wp-place__name {
+  @apply font-display text-lg font-semibold text-base-content;
+}
+
+a.wp-place__name:hover {
+  @apply underline underline-offset-4;
+}
+
+.wp-notice {
+  @apply mt-6 flex flex-col items-start gap-4 rounded-2xl border border-base-300 bg-base-200 p-6 text-base-content/80;
+}
+
+/* ── Packing list ── */
+.wp-checklist {
+  @apply mt-6 grid gap-3 sm:grid-cols-2;
+
+  > li {
+    @apply relative rounded-2xl bg-base-200 p-4 pl-11 text-base-content/80 leading-relaxed;
+
+    &::before {
+      @apply absolute left-4 top-[1.15rem] h-3 w-3 rounded-full bg-secondary;
+      content: '';
+    }
+  }
+}
+
+/* ── Text sections (EU guide) ── */
+.wp-prose {
+  @apply mt-4 space-y-4 text-base-content/80 leading-relaxed;
+  max-width: 68ch;
+
+  ul {
+    @apply list-disc space-y-2 pl-6;
+  }
+}
+
+/* ── FAQ ── */
+.wp-faq {
+  @apply mt-6 divide-y divide-base-300 rounded-2xl border border-base-300 bg-base-100;
+}
+
+.wp-faq__item {
+  @apply px-5;
+
+  &[open] .wp-faq__q::after {
+    transform: rotate(45deg);
+  }
+}
+
+.wp-faq__q {
+  @apply flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold text-base-content;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    @apply shrink-0 text-xl font-normal text-secondary transition-transform;
+    content: '+';
+  }
+}
+
+.wp-faq__a {
+  @apply pb-5 text-base-content/75 leading-relaxed;
+  max-width: 70ch;
+}
+
+/* ── Planner call to action and onward links ── */
+.wp-cta {
+  @apply flex flex-col items-start gap-3 rounded-2xl bg-secondary/10 p-6;
+}
+
+.wp-links {
+  @apply mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.wp-links__title {
+  @apply mb-3 text-sm font-semibold uppercase tracking-wide text-base-content/60;
+}
+
+.wp-links__list {
+  @apply space-y-2;
+}
+
+.wp-link {
+  @apply text-sm font-medium text-base-content/70 underline-offset-4;
+
+  &:hover {
+    @apply text-base-content underline;
+  }
+}

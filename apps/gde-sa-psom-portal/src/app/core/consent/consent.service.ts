@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { deleteCookie, readCookie } from './cookies';
 
 export type ConsentStatus = 'pending' | 'granted' | 'denied';
@@ -30,13 +30,15 @@ interface StoredConsent {
 @Injectable({ providedIn: 'root' })
 export class ConsentService {
   readonly #document = inject(DOCUMENT);
+  /** False while prerendering: no visitor, so no stored choice and no banner in the HTML. */
+  readonly #isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly status = signal<ConsentStatus>(this.#restore());
   /** Page views and users in GA. Off only after an explicit no. */
   readonly measurementAllowed = computed(() => this.status() !== 'denied');
   /** Search terms, venue slugs, outbound links. Only after an explicit yes. */
   readonly detailedEventsAllowed = computed(() => this.status() === 'granted');
-  readonly bannerOpen = signal(this.status() === 'pending');
+  readonly bannerOpen = signal(this.#isBrowser && this.status() === 'pending');
 
   acceptAll(): void {
     this.save(true);
@@ -58,6 +60,7 @@ export class ConsentService {
   }
 
   #restore(): ConsentStatus {
+    if (!this.#isBrowser) return 'pending';
     const storage = this.#storage();
 
     try {

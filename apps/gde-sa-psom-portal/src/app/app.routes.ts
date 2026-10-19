@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { RouteConstants } from '@gde/shared/util';
 import { authGuard } from './core/guards/auth.guard';
 import { petFriendlyRoutes } from './features/pet-friendly/pet-friendly-pages';
+import { winterRoutes } from './features/winter/winter-pages';
 
 export const appRoutes: Route[] = [
   {
@@ -298,6 +299,14 @@ export const appRoutes: Route[] = [
       (m) => m.PetFriendlyPageComponent
     )
   ),
+  // Winter pages: /zimovanje-sa-psom, /zimovanje-sa-psom/<destination> and
+  // /putovanje-sa-psom-u-eu. Prerendered at build time (app.routes.server.ts).
+  ...winterRoutes({
+    hub: () => import('./features/winter/winter-hub-page.component').then((m) => m.WinterHubPageComponent),
+    destination: () =>
+      import('./features/winter/winter-destination-page.component').then((m) => m.WinterDestinationPageComponent),
+    euTravel: () => import('./features/winter/eu-travel-page.component').then((m) => m.EuTravelPageComponent),
+  }),
   {
     // A real not-found page instead of a redirect to the homepage: redirecting
     // made every mistyped or removed URL look like a copy of "/" (a soft 404).

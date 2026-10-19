@@ -5,9 +5,10 @@ import {
   ElementRef,
   HostListener,
   inject,
+  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { RouteConstants, LanguageService } from '@gde/shared/util';
@@ -46,7 +47,10 @@ export class NavbarComponent {
   private analytics = inject(AnalyticsService);
 
   authService=inject(AuthService)
+  /** False while prerendering: theme and language are the visitor's, kept in localStorage. */
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   ngOnInit() {
+    if (!this.isBrowser) return;
     this.initializeTheme();
     if (localStorage.getItem('language')) {
       this.languageService.switchLanguage(

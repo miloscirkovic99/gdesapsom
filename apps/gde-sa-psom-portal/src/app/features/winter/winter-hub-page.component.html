@@ -1,0 +1,79 @@
+<article class="wp">
+  <header class="wp-hero">
+    <app-breadcrumb [items]="breadcrumbs" />
+    <h1 class="wp-h1">{{ h1 }}</h1>
+    @for (paragraph of intro; track $index) {
+      <p class="wp-lead">{{ paragraph }}</p>
+    }
+  </header>
+
+  <section class="wp-section" aria-labelledby="wp-dest-title">
+    <h2 id="wp-dest-title" class="wp-h2">Destinacije</h2>
+    <ul class="wp-cards">
+      @for (destination of destinations(); track destination.path) {
+        <li class="wp-card">
+          <a class="wp-card__name" [routerLink]="destination.path">{{ destination.name }} sa psom</a>
+          @if (destination.facts.length) {
+            <ul class="wp-facts">
+              @for (fact of destination.facts; track $index) {
+                <li class="wp-meta">{{ fact }}</li>
+              }
+            </ul>
+          }
+          <div class="wp-card__actions">
+            <a class="btn btn-secondary btn-sm" [routerLink]="destination.path">Pogledaj {{ destination.name }}</a>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="wp-section" aria-labelledby="wp-pack-title">
+    <h2 id="wp-pack-title" class="wp-h2">Šta spakovati psu za zimovanje</h2>
+    <ul class="wp-checklist">
+      @for (item of packingList; track $index) {
+        <li>{{ item }}</li>
+      }
+    </ul>
+  </section>
+
+  @if (plannerPath) {
+    <section class="wp-section">
+      <div class="wp-cta">
+        <h2 class="wp-h3">Napravi plan zimovanja sa psom</h2>
+        <p class="wp-meta">Planer predloži smeštaj, šetnje i restorane prema tvom psu i prognozi.</p>
+        <a class="btn btn-secondary btn-sm" [routerLink]="plannerPath">Otvori planer</a>
+      </div>
+    </section>
+  }
+
+  <section class="wp-section" aria-labelledby="wp-eu-title">
+    <h2 id="wp-eu-title" class="wp-h2">Putuješ sa psom u inostranstvo?</h2>
+    <p class="wp-section__lead">
+      Za put u Evropsku uniju psu trebaju posebna dokumenta, pa ih proveri na vreme.
+      <a class="wp-link" [routerLink]="paths.euTravel">Putovanje sa psom u EU</a>
+    </p>
+  </section>
+
+  <section class="wp-section" aria-labelledby="wp-faq-title">
+    <h2 id="wp-faq-title" class="wp-h2">Česta pitanja</h2>
+    <div class="wp-faq">
+      @for (item of faq(); track item.question; let first = $first) {
+        <details class="wp-faq__item" [open]="first">
+          <summary class="wp-faq__q">{{ item.question }}</summary>
+          <p class="wp-faq__a">{{ item.answer }}</p>
+        </details>
+      }
+    </div>
+  </section>
+
+  <nav class="wp-section" aria-label="Još o putovanju sa psom">
+    <h2 class="wp-h2">Još o putovanju sa psom</h2>
+    <ul class="wp-links__list mt-6">
+      <li><a class="wp-link" [routerLink]="paths.stays">Pet friendly smeštaj u Srbiji</a></li>
+      @if (plannerPath) {
+        <li><a class="wp-link" [routerLink]="plannerPath">Planer sa psom</a></li>
+      }
+    </ul>
+  </nav>
+</article>

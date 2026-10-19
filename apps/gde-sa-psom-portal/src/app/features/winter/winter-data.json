@@ -1,0 +1,47 @@
+{
+  "generatedAt": null,
+  "destinations": {
+    "kopaonik": {
+      "stays": [],
+      "restaurants": [],
+      "trails": [],
+      "gondola": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "skiLifts": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "vet": null
+    },
+    "zlatibor": {
+      "stays": [],
+      "restaurants": [],
+      "trails": [],
+      "gondola": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "skiLifts": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "vet": null
+    },
+    "tara": {
+      "stays": [],
+      "restaurants": [],
+      "trails": [],
+      "gondola": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "skiLifts": {
+        "dogsAllowed": null,
+        "checkedAt": null
+      },
+      "vet": null
+    }
+  }
+}

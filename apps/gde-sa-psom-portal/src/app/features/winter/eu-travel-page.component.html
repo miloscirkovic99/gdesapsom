@@ -1,0 +1,54 @@
+<article class="wp">
+  <header class="wp-hero">
+    <app-breadcrumb [items]="breadcrumbs" />
+    <h1 class="wp-h1">{{ h1 }}</h1>
+    @for (paragraph of content.intro; track $index) {
+      <p class="wp-lead">{{ paragraph }}</p>
+    }
+  </header>
+
+  @for (section of content.sections; track $index) {
+    <section class="wp-section">
+      <h2 class="wp-h2">{{ section.heading }}</h2>
+      <div class="wp-prose">
+        @for (paragraph of section.paragraphs ?? []; track $index) {
+          <p>{{ paragraph }}</p>
+        }
+        @if (section.items?.length) {
+          <ul>
+            @for (item of section.items; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+  } @empty {
+    <div class="wp-notice">
+      <p>Vodič kroz pravila za ulazak psa u EU pripremamo. Do tada pročitaj naš članak o novim pravilima.</p>
+      <a class="btn btn-secondary btn-sm" [routerLink]="paths.rulesPost">Nova EU pravila za putovanje sa psom</a>
+    </div>
+  }
+
+  @if (content.faq.length) {
+    <section class="wp-section" aria-labelledby="wp-faq-title">
+      <h2 id="wp-faq-title" class="wp-h2">Česta pitanja</h2>
+      <div class="wp-faq">
+        @for (item of content.faq; track item.question; let first = $first) {
+          <details class="wp-faq__item" [open]="first">
+            <summary class="wp-faq__q">{{ item.question }}</summary>
+            <p class="wp-faq__a">{{ item.answer }}</p>
+          </details>
+        }
+      </div>
+    </section>
+  }
+
+  <nav class="wp-section" aria-label="Još o putovanju sa psom">
+    <h2 class="wp-h2">Još o putovanju sa psom</h2>
+    <ul class="wp-links__list mt-6">
+      <li><a class="wp-link" [routerLink]="paths.rulesPost">Nova EU pravila za putovanje sa psom (blog)</a></li>
+      <li><a class="wp-link" [routerLink]="paths.hub">Zimovanje sa psom u Srbiji</a></li>
+    </ul>
+  </nav>
+</article>
