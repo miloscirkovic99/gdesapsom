@@ -9,6 +9,7 @@ browser DB manager, pa su ovo fajlovi koje lepiš i pokrećeš **ručno, redom**
 03_indexes.sql       indeksi
 04_seed_pet_shops.sql  prve prodavnice (opciono; radi i kroz admin)
 05_seed_dog_food_pseca_kasika.sql  katalog Pseće Kašike + cene
+06_planer_i_zimovanje.sql  detalji lokala i smeštaja, destinacije, staze, planer
 ```
 
 **Napravi backup pre pokretanja.** Nema `down` skripte.
@@ -255,3 +256,60 @@ Očekivano: `key` je `ix_dog_food_filter` ili `ix_dog_food_name`, bez
 
 U DevTools Network tabu, odgovor liste treba da bude **reda desetina KB, ne
 megabajta** — to je test da li je razdvajanje slika odradilo posao.
+
+---
+
+## 06 — zimovanje i planer
+
+`06_planer_i_zimovanje.sql` je ponovljiv (može da se pusti ponovo bez štete).
+Nasleđene tabele ne menja: nova polja žive u tabelama detalja, a pogled
+`planner_mesta` ih spaja sa onim što već postoji.
+
+| Tabela | Šta | Ključ |
+|---|---|---|
+| `lokal_detalji` | lokali i smeštaj: koordinate, kvart, radno vreme, psi unutra/bašta, veličina psa, voda, ograđeno, hlad, cenovni rang, kratak opis, premium, poslednja provera; smeštaj još doplata, broj pasa, pas sam u sobi, affiliate link, destinacija | `iuo_id` (1:1 `info_ug_obj`) |
+| `destinacija` | Kopaonik, Zlatibor, Tara: centar, gondola/žičare sa datumom provere, napomena o stazama | `id`, `slug` |
+| `staza` | šetne staze (zimske i gradske) sa koordinatama | `id` |
+| `park_detalji`, `veterinar_detalji` | koordinate (i za parkove ograđeno, hlad, voda) | `par_id`, `vetc_id` |
+| `planner_plans`, `planner_feedback`, `planner_quota`, `planner_weather_cache` | planer | |
+
+### Kako se unosi
+
+- **Ništa nije obavezno.** Polje koje nije upisano (`NULL`) znači „ne znamo" i
+  sajt ga ne prikazuje; planer ga ne pominje.
+- **Koordinate:** `lokal_detalji.lat/lng` imaju prednost; bez njih pogled čita
+  postojeće `info_ug_obj.latitude/longitude` (tekst, i sa decimalnom zapetom),
+  ako su brojevi unutar Srbije.
+- **Veličina psa:** `max_velicina_psa` je najveći pas koji sme (`mali`,
+  `srednji`, `veliki`, `svi`). Bez nje pogled koristi `starost`
+  („Svi psi" → `svi`, „Mali pas…" → `mali`).
+- **Radno vreme** (`radno_vreme`, JSON): ključevi `pon uto sre cet pet sub ned`,
+  vrednost je lista intervala `["HH:MM","HH:MM"]`. Prazna lista je neradni dan;
+  dan koji nije naveden je nepoznat. Interval preko ponoći: `["18:00","02:00"]`.
+
+  ```json
+  {"pon":[["08:00","23:00"]],"uto":[["08:00","23:00"]],"sre":[["08:00","23:00"]],
+   "cet":[["08:00","23:00"]],"pet":[["08:00","01:00"]],"sub":[["09:00","01:00"]],"ned":[]}
+  ```
+- **Doplata za psa:** iznos, valuta (`RSD`/`EUR`) i `doplata_po` (`noc`/`boravak`)
+  se upisuju zajedno ili nijedno (CHECK u tabeli).
+- **Affiliate link:** pun `https://` URL sa tracking parametrima. Sajt ga uvek
+  prikazuje sa `rel="sponsored nofollow"`.
+- **Smeštaj na destinaciji:** `lokal_detalji.destinacija_id` (Kopaonik = `id`
+  iz tabele `destinacija`). Destinacija se ne izvodi iz opštine: Tara je u
+  opštini Bajina Bašta, Kopaonik u Raški i Brusu.
+- **Gondola i žičare:** `destinacija.gondola_psi` / `zicare_psi` (1 = psi smeju,
+  0 = ne smeju) i datum provere u `*_provereno`.
+- **Premium** utiče samo na redosled između mesta koja su inače jednako dobra.
+
+### `lokacija_id` u planeru
+
+Planer i zimske stranice vide sva mesta kroz `planner_mesta`, pod jednim
+brojem: lokal = `iuo_id`, park = 1 000 000 + `par_id`, veterinar =
+2 000 000 + `vetc_id`, staza = 3 000 000 + `staza.id`.
+
+### Posle unosa
+
+Zimske stranice se prerenderuju iz snimka podataka: posle izmena pokreni
+`node tools/fetch-winter-data.mjs` (PowerShell isto) pa build. U browseru se
+lista osvežava sa API-ja, pa obrisan lokal nestaje i pre novog builda.
