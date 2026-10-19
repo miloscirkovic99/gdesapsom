@@ -1,0 +1,405 @@
+{
+  "_readme": "20 scenarija za eval. Prognoza je fiksna da bi poređenje modela bilo ponovljivo. Kandidate dodaje build-scenarios.mjs iz izvoza baze.",
+  "scenarios": [
+    {
+      "id": "dan-01",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2026-11-21",
+        "velicina": "srednji",
+        "energija": "srednja",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "mesovit"
+      },
+      "weather": {
+        "date": "2026-11-21",
+        "tMin": 6,
+        "tMax": 13,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-02",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2026-11-22",
+        "velicina": "veliki",
+        "energija": "visoka",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "aktivan"
+      },
+      "weather": {
+        "date": "2026-11-22",
+        "tMin": 3,
+        "tMax": 9,
+        "precipitationMm": 6.5,
+        "rainy": true
+      }
+    },
+    {
+      "id": "dan-03",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2026-11-24",
+        "velicina": "mali",
+        "energija": "niska",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "opusten"
+      },
+      "weather": {
+        "date": "2026-11-24",
+        "tMin": -4,
+        "tMax": 2,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-04",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2027-07-17",
+        "velicina": "srednji",
+        "energija": "visoka",
+        "osetljiv_na_vrucinu": true,
+        "tip_dana": "aktivan"
+      },
+      "weather": {
+        "date": "2027-07-17",
+        "tMin": 22,
+        "tMax": 33,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-05",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2027-07-18",
+        "velicina": "veliki",
+        "energija": "srednja",
+        "osetljiv_na_vrucinu": true,
+        "tip_dana": "mesovit"
+      },
+      "weather": {
+        "date": "2027-07-18",
+        "tMin": 20,
+        "tMax": 30,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-06",
+      "area": "beograd",
+      "params": {
+        "mode": "dan",
+        "grad": "beograd",
+        "datum": "2027-05-08",
+        "velicina": "mali",
+        "energija": "srednja",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "opusten"
+      },
+      "weather": {
+        "date": "2027-05-08",
+        "tMin": 12,
+        "tMax": 21,
+        "precipitationMm": 2.4,
+        "rainy": true
+      }
+    },
+    {
+      "id": "dan-07",
+      "area": "novi-sad",
+      "params": {
+        "mode": "dan",
+        "grad": "novi-sad",
+        "datum": "2026-11-28",
+        "velicina": "srednji",
+        "energija": "srednja",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "opusten"
+      },
+      "weather": {
+        "date": "2026-11-28",
+        "tMin": 4,
+        "tMax": 10,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-08",
+      "area": "novi-sad",
+      "params": {
+        "mode": "dan",
+        "grad": "novi-sad",
+        "datum": "2026-11-29",
+        "velicina": "veliki",
+        "energija": "visoka",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "aktivan"
+      },
+      "weather": {
+        "date": "2026-11-29",
+        "tMin": 1,
+        "tMax": 4,
+        "precipitationMm": 1.8,
+        "rainy": true
+      }
+    },
+    {
+      "id": "dan-09",
+      "area": "novi-sad",
+      "params": {
+        "mode": "dan",
+        "grad": "novi-sad",
+        "datum": "2027-07-24",
+        "velicina": "mali",
+        "energija": "niska",
+        "osetljiv_na_vrucinu": true,
+        "tip_dana": "mesovit"
+      },
+      "weather": {
+        "date": "2027-07-24",
+        "tMin": 21,
+        "tMax": 31,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "dan-10",
+      "area": "novi-sad",
+      "params": {
+        "mode": "dan",
+        "grad": "novi-sad",
+        "datum": "2027-04-10",
+        "velicina": "srednji",
+        "energija": "visoka",
+        "osetljiv_na_vrucinu": false,
+        "tip_dana": "aktivan"
+      },
+      "weather": {
+        "date": "2027-04-10",
+        "tMin": 9,
+        "tMax": 18,
+        "precipitationMm": 0,
+        "rainy": false
+      }
+    },
+    {
+      "id": "zim-01",
+      "area": "kopaonik",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "kopaonik",
+        "broj_noci": 3,
+        "velicina": "srednji",
+        "dlaka": "kratka",
+        "neko_skija": true,
+        "pas_sme_sam": true
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -9,
+        "tMax": -3
+      }
+    },
+    {
+      "id": "zim-02",
+      "area": "kopaonik",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "kopaonik",
+        "broj_noci": 7,
+        "velicina": "veliki",
+        "dlaka": "duga",
+        "neko_skija": true,
+        "pas_sme_sam": false
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -12,
+        "tMax": -5
+      }
+    },
+    {
+      "id": "zim-03",
+      "area": "kopaonik",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "kopaonik",
+        "broj_noci": 1,
+        "velicina": "mali",
+        "dlaka": "kratka",
+        "neko_skija": false,
+        "pas_sme_sam": false
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -6,
+        "tMax": 0
+      }
+    },
+    {
+      "id": "zim-04",
+      "area": "kopaonik",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "kopaonik",
+        "broj_noci": 5,
+        "velicina": "srednji",
+        "dlaka": "srednja",
+        "neko_skija": true,
+        "pas_sme_sam": true
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -4,
+        "tMax": 2
+      }
+    },
+    {
+      "id": "zim-05",
+      "area": "zlatibor",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "zlatibor",
+        "broj_noci": 2,
+        "velicina": "veliki",
+        "dlaka": "duga",
+        "neko_skija": false,
+        "pas_sme_sam": false
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -5,
+        "tMax": 1
+      }
+    },
+    {
+      "id": "zim-06",
+      "area": "zlatibor",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "zlatibor",
+        "broj_noci": 4,
+        "velicina": "mali",
+        "dlaka": "kratka",
+        "neko_skija": true,
+        "pas_sme_sam": true
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -8,
+        "tMax": -2
+      }
+    },
+    {
+      "id": "zim-07",
+      "area": "zlatibor",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "zlatibor",
+        "broj_noci": 6,
+        "velicina": "srednji",
+        "dlaka": "srednja",
+        "neko_skija": false,
+        "pas_sme_sam": true
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -3,
+        "tMax": 4
+      }
+    },
+    {
+      "id": "zim-08",
+      "area": "tara",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "tara",
+        "broj_noci": 3,
+        "velicina": "srednji",
+        "dlaka": "duga",
+        "neko_skija": false,
+        "pas_sme_sam": false
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -7,
+        "tMax": -1
+      }
+    },
+    {
+      "id": "zim-09",
+      "area": "tara",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "tara",
+        "broj_noci": 2,
+        "velicina": "veliki",
+        "dlaka": "kratka",
+        "neko_skija": true,
+        "pas_sme_sam": false
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -10,
+        "tMax": -4
+      }
+    },
+    {
+      "id": "zim-10",
+      "area": "tara",
+      "params": {
+        "mode": "zimovanje",
+        "destinacija": "tara",
+        "broj_noci": 5,
+        "velicina": "mali",
+        "dlaka": "srednja",
+        "neko_skija": false,
+        "pas_sme_sam": true
+      },
+      "weather": {
+        "date": null,
+        "precipitationMm": 0,
+        "rainy": false,
+        "tMin": -2,
+        "tMax": 3
+      }
+    }
+  ]
+}
