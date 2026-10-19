@@ -73,6 +73,12 @@ const WINTER_SEED = '2026-11-01';
 const WINTER_DATA = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, WINTER_SRC, 'winter-data.json'), 'utf8'));
 const WINTER_CONTENT = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, WINTER_SRC, 'winter-content.json'), 'utf8'));
 
+// The planner form (/planer, /planer/<city>) is listed once planner-launch.json
+// says it is live; saved plans (/plan/:id) are noindex and never listed.
+const PLANNER_SRC = 'src/app/features/planner';
+const PLANNER_SEED = '2026-11-29';
+const PLANNER_LAUNCH = JSON.parse(readFileSync(join(REPO_ROOT, APP_DIR, PLANNER_SRC, 'planner-launch.json'), 'utf8'));
+
 const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has('--dry-run');
 const CHECK_ONLY = args.has('--check');
@@ -333,6 +339,12 @@ function getWinterEntries() {
   ];
 }
 
+function getPlannerEntries() {
+  if (PLANNER_LAUNCH.live !== true) return [];
+  const lastmod = gitLastmod(PLANNER_SRC, PLANNER_SEED);
+  return ['/planer', ...TAXONOMY.cities.map((city) => `/planer/${city.slug}`)].map((loc) => ({ loc, lastmod }));
+}
+
 /**
  * `dog-food/all?fields=sitemap` and `pet-shops/all?fields=sitemap` return
  * `{ data: [{ slug, updatedAt }] }` - slugs only, no images, so one request
@@ -413,6 +425,7 @@ async function main() {
   ]);
   const hubs = getHubEntries(spots.places, gitLastmod(HUB_SRC, HUB_SEED));
   const winter = getWinterEntries();
+  const planner = getPlannerEntries();
 
   console.log(`  blog posts: ${blog.entries.length}`);
   console.log(`  spots:      ${spots.ids.length}`);
@@ -432,6 +445,7 @@ async function main() {
     }),
     ...hubs,
     ...winter,
+    ...planner,
     ...blog.entries,
     ...spots.ids.map((id) => ({ loc: `/spots/${id}`, lastmod: null })), // API has no date field for spots
     ...dogFood,

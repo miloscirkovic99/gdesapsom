@@ -1,0 +1,196 @@
+<article class="pl">
+  <header class="pl-hero">
+    <app-breadcrumb [items]="breadcrumbs" />
+    <h1 class="pl-h1">{{ h1 }}</h1>
+    <p class="pl-lead">{{ intro }}</p>
+  </header>
+
+  <section class="pl-card" aria-labelledby="planner-form-title">
+    <h2 id="planner-form-title" class="sr-only">Napravi plan</h2>
+
+    <div class="pl-tabs" role="tablist" aria-label="Vrsta plana">
+      <button
+        id="planner-tab-dan"
+        type="button"
+        role="tab"
+        class="pl-tab"
+        [class.pl-tab--active]="tab() === 'dan'"
+        [attr.aria-selected]="tab() === 'dan'"
+        aria-controls="planner-panel-dan"
+        [attr.tabindex]="tab() === 'dan' ? 0 : -1"
+        (click)="selectTab('dan')"
+        (keydown)="onTabKey($event)"
+      >Dan u gradu</button>
+      <button
+        id="planner-tab-zimovanje"
+        type="button"
+        role="tab"
+        class="pl-tab"
+        [class.pl-tab--active]="tab() === 'zimovanje'"
+        [attr.aria-selected]="tab() === 'zimovanje'"
+        aria-controls="planner-panel-zimovanje"
+        [attr.tabindex]="tab() === 'zimovanje' ? 0 : -1"
+        (click)="selectTab('zimovanje')"
+        (keydown)="onTabKey($event)"
+      >Zimovanje</button>
+    </div>
+
+    <form class="pl-form" (submit)="$event.preventDefault(); submit()" novalidate>
+      <div class="pl-field">
+        <label for="planner-dog-name" class="pl-label">Ime psa <span class="pl-optional">(opciono)</span></label>
+        <input id="planner-dog-name" type="text" class="input input-bordered w-full" maxlength="40" autocomplete="off" [formControl]="dogName" aria-describedby="planner-dog-name-hint" />
+        <p id="planner-dog-name-hint" class="pl-hint">Ime ostaje samo u tvom pregledaču i ne šalje se nikome.</p>
+      </div>
+
+      <!-- ── Dan u gradu ── -->
+      <div id="planner-panel-dan" role="tabpanel" aria-labelledby="planner-tab-dan" [hidden]="tab() !== 'dan'" [formGroup]="danForm" (focusin)="onFormFocus('dan')">
+        <div class="pl-grid">
+          <div class="pl-field">
+            <label for="planner-grad" class="pl-label">Grad</label>
+            <select id="planner-grad" class="select select-bordered w-full" formControlName="grad">
+              @for (city of cities; track city.slug) {
+                <option [value]="city.slug">{{ city.name.nameSr }}</option>
+              }
+            </select>
+          </div>
+          <div class="pl-field">
+            <label for="planner-datum" class="pl-label">Datum</label>
+            <input id="planner-datum" type="date" class="input input-bordered w-full" formControlName="datum" [attr.min]="minDate() || null" [attr.max]="maxDate() || null" required />
+          </div>
+        </div>
+
+        <fieldset class="pl-fieldset">
+          <legend class="pl-label">Veličina psa</legend>
+          <div class="pl-choices">
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="mali" /> Mali</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="srednji" /> Srednji</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="veliki" /> Veliki</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="pl-fieldset">
+          <legend class="pl-label">Energija</legend>
+          <div class="pl-choices">
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="energija" value="niska" /> Mirna</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="energija" value="srednja" /> Umerena</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="energija" value="visoka" /> Puna energije</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="pl-fieldset">
+          <legend class="pl-label">Kakav dan želite</legend>
+          <div class="pl-choices">
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="tip_dana" value="opusten" /> Opušten</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="tip_dana" value="aktivan" /> Aktivan</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="tip_dana" value="mesovit" /> Malo od svega</label>
+          </div>
+        </fieldset>
+
+        <label class="pl-check"><input type="checkbox" class="checkbox checkbox-sm" formControlName="osetljiv_na_vrucinu" /> Pas teško podnosi vrućinu</label>
+      </div>
+
+      <!-- ── Zimovanje ── -->
+      <div id="planner-panel-zimovanje" role="tabpanel" aria-labelledby="planner-tab-zimovanje" [hidden]="tab() !== 'zimovanje'" [formGroup]="zimForm" (focusin)="onFormFocus('zimovanje')">
+        <div class="pl-grid">
+          <div class="pl-field">
+            <label for="planner-destinacija" class="pl-label">Destinacija</label>
+            <select id="planner-destinacija" class="select select-bordered w-full" formControlName="destinacija">
+              @for (destination of destinations; track destination.slug) {
+                <option [value]="destination.slug">{{ destination.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="pl-field">
+            <label for="planner-noci" class="pl-label">Broj noći</label>
+            <select id="planner-noci" class="select select-bordered w-full" formControlName="broj_noci">
+              @for (n of nights; track n) {
+                <option [ngValue]="n">{{ n }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <fieldset class="pl-fieldset">
+          <legend class="pl-label">Veličina psa</legend>
+          <div class="pl-choices">
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="mali" /> Mali</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="srednji" /> Srednji</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="velicina" value="veliki" /> Veliki</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="pl-fieldset">
+          <legend class="pl-label">Dlaka</legend>
+          <div class="pl-choices">
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="dlaka" value="kratka" /> Kratka</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="dlaka" value="srednja" /> Srednja</label>
+            <label class="pl-choice"><input type="radio" class="radio radio-sm" formControlName="dlaka" value="duga" /> Duga</label>
+          </div>
+        </fieldset>
+
+        <label class="pl-check"><input type="checkbox" class="checkbox checkbox-sm" formControlName="neko_skija" /> Neko od nas skija</label>
+        <label class="pl-check"><input type="checkbox" class="checkbox checkbox-sm" formControlName="pas_sme_sam" /> Pas može da ostane sam u sobi</label>
+      </div>
+
+      @if (siteKey) {
+        <div #turnstile class="pl-captcha"></div>
+      }
+
+      <div class="pl-submit">
+        <button type="submit" class="btn btn-secondary w-full sm:w-auto" [disabled]="status() === 'loading' || !siteKey || !captchaReady()">
+          Napravi plan
+        </button>
+        @if (quotaLine(); as line) {
+          <p class="pl-quota">{{ line }}</p>
+        }
+      </div>
+
+      <div aria-live="polite">
+        @if (status() === 'loading') {
+          <div class="pl-loading">
+            <p class="pl-loading__text">{{ loadingText }}</p>
+            <div class="pl-skeletons" aria-hidden="true">
+              @for (i of [1, 2, 3]; track i) {
+                <div class="pl-skeleton">
+                  <div class="skeleton h-4 w-16"></div>
+                  <div class="skeleton h-5 w-2/3"></div>
+                  <div class="skeleton h-4 w-full"></div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (!siteKey) {
+          <p class="pl-error" role="alert">Planer trenutno nije dostupan.</p>
+        }
+        @if (error(); as message) {
+          <p class="pl-error" role="alert">{{ message }}</p>
+        }
+        @if (limitText(); as message) {
+          <div class="pl-limit" role="alert">
+            <p>{{ message }}</p>
+            <ul class="pl-limit__links">
+              <li><a class="pl-link" [routerLink]="hubPath">Zimovanje sa psom: Kopaonik, Zlatibor i Tara</a></li>
+              @for (ready of readyPlans; track ready.planId) {
+                <li><a class="pl-link" [routerLink]="[planPath, ready.planId]">{{ ready.label }}</a></li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section class="pl-section" aria-labelledby="planner-faq-title">
+    <h2 id="planner-faq-title" class="pl-h2">Česta pitanja</h2>
+    <div class="pl-faq">
+      @for (item of faq; track item.question; let first = $first) {
+        <details class="pl-faq__item" [open]="first">
+          <summary class="pl-faq__q">{{ item.question }}</summary>
+          <p class="pl-faq__a">{{ item.answer }}</p>
+        </details>
+      }
+    </div>
+  </section>
+</article>

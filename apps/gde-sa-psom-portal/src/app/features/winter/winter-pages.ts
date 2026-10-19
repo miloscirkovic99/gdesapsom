@@ -40,9 +40,8 @@ export const WINTER_PAGE_DATA = 'winterPage';
 export const WINTER_HUB_PATH = '/zimovanje-sa-psom';
 export const EU_TRAVEL_PATH = '/putovanje-sa-psom-u-eu';
 
-/** The planner the winter pages will point to; its links stay hidden until it exists. */
-export const PLANNER_LIVE = false;
-export const PLANNER_PATH = '/planer';
+/** The planner the winter pages point to; its links show only once it is live (planner-launch.json). */
+export { PLANNER_LIVE, PLANNER_PATH } from '../planner/planner-pages';
 
 const TITLE_SUFFIX = ' | Gde sa psom';
 

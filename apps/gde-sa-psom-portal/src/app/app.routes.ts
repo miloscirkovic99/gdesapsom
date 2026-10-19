@@ -3,6 +3,7 @@ import { RouteConstants } from '@gde/shared/util';
 import { authGuard } from './core/guards/auth.guard';
 import { petFriendlyRoutes } from './features/pet-friendly/pet-friendly-pages';
 import { winterRoutes } from './features/winter/winter-pages';
+import { plannerRoutes } from './features/planner/planner-pages';
 
 export const appRoutes: Route[] = [
   {
@@ -306,6 +307,11 @@ export const appRoutes: Route[] = [
     destination: () =>
       import('./features/winter/winter-destination-page.component').then((m) => m.WinterDestinationPageComponent),
     euTravel: () => import('./features/winter/eu-travel-page.component').then((m) => m.EuTravelPageComponent),
+  }),
+  // Dog planner: /planer, /planer/<city> and /plan/:id, once planner-launch.json says it is live.
+  ...plannerRoutes({
+    planner: () => import('./features/planner/planner-page.component').then((m) => m.PlannerPageComponent),
+    plan: () => import('./features/planner/plan-page.component').then((m) => m.PlanPageComponent),
   }),
   {
     // A real not-found page instead of a redirect to the homepage: redirecting

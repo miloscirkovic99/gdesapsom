@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import {
+  HttpContextToken,
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
@@ -9,10 +10,27 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError, timeout } from 'rxjs/operators';
 
+export interface RequestProtection {
+  /** Repeat the request after a 5xx. Never for a request that spends something (a plan, a quota slot). */
+  retry: boolean;
+  timeoutMs: number;
+  /** Whether a 429 is an outage. For quota answers it is a normal reply, not a sign of trouble. */
+  rateLimitIsFailure: boolean;
+}
+
+const DEFAULT_PROTECTION: RequestProtection = { retry: true, timeoutMs: 30000, rateLimitIsFailure: true };
+
+/**
+ * Per-request override of the defaults below, e.g. for the planner, whose
+ * POST runs several AI providers in turn and must not be sent twice:
+ * `http.post(url, body, { context: new HttpContext().set(REQUEST_PROTECTION, {...}) })`.
+ */
+export const REQUEST_PROTECTION = new HttpContextToken<RequestProtection>(() => DEFAULT_PROTECTION);
+
 /** Network errors, timeouts, rate limiting and 5xx: signs the service is struggling. */
-function isServiceFailure(error: unknown): boolean {
+function isServiceFailure(error: unknown, protection: RequestProtection): boolean {
   if (!(error instanceof HttpErrorResponse)) return true;
-  return error.status === 0 || error.status === 429 || error.status >= 500;
+  return error.status === 0 || (error.status === 429 && protection.rateLimitIsFailure) || error.status >= 500;
 }
 
 
@@ -22,7 +40,6 @@ export class DdosProtectionInterceptor implements HttpInterceptor {
   private failedRequests = new Map<string, number>();
   private readonly CACHE_DURATION = 5000; // 5 seconds
   private readonly MAX_RETRIES = 3;
-  private readonly REQUEST_TIMEOUT = 30000; // 30 seconds
   private readonly CIRCUIT_BREAK_THRESHOLD = 5; // Circuit breaks after 5 failures
   private readonly CIRCUIT_BREAK_DURATION = 60000; // 1 minute
 
@@ -31,6 +48,7 @@ export class DdosProtectionInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const requestKey = `${req.method}:${req.url}`;
+    const protection = req.context.get(REQUEST_PROTECTION);
 
     // Check if request is in circuit breaker state
     if (this.isCircuitBreakerOpen(requestKey)) {
@@ -52,12 +70,12 @@ export class DdosProtectionInterceptor implements HttpInterceptor {
 
     // Execute request with protection mechanisms
     const request$ = next.handle(secureReq).pipe(
-      // Timeout protection: requests must complete within 30 seconds
-      timeout(this.REQUEST_TIMEOUT),
+      // Timeout protection: requests must complete within 30 seconds (or their own limit)
+      timeout(protection.timeoutMs),
 
       // Automatic retry with exponential backoff
       retry({
-        count: this.MAX_RETRIES,
+        count: protection.retry ? this.MAX_RETRIES : 0,
         delay: (error, retryCount) => {
           // Only retry on specific errors (5xx, network errors)
           if (
@@ -80,7 +98,7 @@ export class DdosProtectionInterceptor implements HttpInterceptor {
         // Only outages count towards the circuit breaker. A 4xx is an answer:
         // the search endpoints reply 404 to "no results", and five empty
         // searches used to switch spot search off for a minute.
-        if (isServiceFailure(error)) {
+        if (isServiceFailure(error, protection)) {
           this.trackFailedRequest(requestKey);
         }
 

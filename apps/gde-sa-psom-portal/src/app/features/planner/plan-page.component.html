@@ -1,0 +1,189 @@
+<article class="pl">
+  @switch (status()) {
+    @case ('loading') {
+      <div class="pl-loading" aria-live="polite">
+        <p class="pl-loading__text">Učitavamo plan…</p>
+        <div class="pl-skeletons" aria-hidden="true">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="pl-skeleton">
+              <div class="skeleton h-4 w-16"></div>
+              <div class="skeleton h-5 w-2/3"></div>
+              <div class="skeleton h-4 w-full"></div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @case ('error') {
+      <div class="pl-card">
+        <p class="pl-error" role="alert">{{ error() }}</p>
+        <a class="btn btn-secondary btn-sm" [routerLink]="plannerPath">Napravi novi plan</a>
+      </div>
+    }
+    @default {
+      @let plan = result()!;
+      <header class="pl-hero">
+        <h1 class="pl-h1">{{ title() }}</h1>
+        @if (plan.source === 'rules') {
+          <p class="pl-badge">{{ rulesBadge }}</p>
+        }
+      </header>
+
+      <!-- Stays of a winter plan, with their dog rules and the booking link -->
+      @if (stays().length) {
+        <section class="pl-section" aria-labelledby="plan-stays-title">
+          <h2 id="plan-stays-title" class="pl-h2">Smeštaj</h2>
+          <ul class="pl-stops">
+            @for (stay of stays(); track stay.key) {
+              <li class="pl-stop">
+                @if (stay.place.url) {
+                  <a class="pl-stop__name" [routerLink]="stay.place.url" (click)="venueClicked(stay.place)">{{ stay.place.naziv }}</a>
+                } @else {
+                  <span class="pl-stop__name">{{ stay.place.naziv }}</span>
+                }
+                @if (stay.place.adresa) {
+                  <p class="pl-meta">{{ stay.place.adresa }}</p>
+                }
+                <p class="pl-why">{{ stay.why }}</p>
+                <dl class="pl-facts">
+                  @if (stay.place.doplata_za_psa; as fee) {
+                    <div><dt>Doplata za psa:</dt><dd>{{ formatFee(fee) }}</dd></div>
+                  }
+                  @if (stay.place.max_pasa !== null && stay.place.max_pasa !== undefined) {
+                    <div><dt>Najviše pasa:</dt><dd>{{ stay.place.max_pasa }}</dd></div>
+                  }
+                  @if (stay.place.pas_sme_sam_u_sobi !== null && stay.place.pas_sme_sam_u_sobi !== undefined) {
+                    <div><dt>Pas sme sam u sobi:</dt><dd>{{ stay.place.pas_sme_sam_u_sobi ? 'da' : 'ne' }}</dd></div>
+                  }
+                </dl>
+                <div class="pl-actions">
+                  @if (stay.place.affiliate_url) {
+                    <a
+                      class="btn btn-secondary btn-sm"
+                      [href]="stay.place.affiliate_url"
+                      target="_blank"
+                      rel="sponsored nofollow"
+                      data-link-type="affiliate_booking"
+                      [attr.data-venue-slug]="'spot-' + stay.place.id"
+                      (click)="bookingClicked(stay.place)"
+                    >Proveri dostupnost</a>
+                  }
+                  <button type="button" class="btn btn-ghost btn-sm" [disabled]="swapping() !== null" (click)="swap(stay)">
+                    {{ swapping() === stay.key ? 'Menjamo…' : 'Zameni' }}
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- The day (or each winter day): stops in order, with the walking route -->
+      @for (day of days(); track $index) {
+        <section class="pl-section" [attr.aria-label]="day.title ?? 'Plan dana'">
+          <div class="pl-section__head">
+            @if (day.title) {
+              <h2 class="pl-h2">{{ day.title }}</h2>
+            }
+            @if (day.routeUrl) {
+              <a class="pl-link" [href]="day.routeUrl" target="_blank" rel="noopener" data-link-type="venue_maps">Ruta u Google mapama</a>
+            }
+          </div>
+          <ol class="pl-stops">
+            @for (stop of day.stops; track stop.key) {
+              <li class="pl-stop">
+                <div class="pl-stop__head">
+                  <span class="pl-time">{{ stop.time }}</span>
+                  <span class="pl-category">{{ categoryLabels[stop.place.kategorija] }}</span>
+                </div>
+                @if (stop.place.url) {
+                  <a class="pl-stop__name" [routerLink]="stop.place.url" (click)="venueClicked(stop.place)">{{ stop.place.naziv }}</a>
+                } @else {
+                  <span class="pl-stop__name">{{ stop.place.naziv }}</span>
+                }
+                @if (stop.place.adresa) {
+                  <p class="pl-meta">{{ stop.place.adresa }}</p>
+                }
+                <p class="pl-why">{{ stop.why }}</p>
+                <p class="pl-tip">{{ stop.tip }}</p>
+                <div class="pl-actions">
+                  <button type="button" class="btn btn-ghost btn-sm" [disabled]="swapping() !== null" (click)="swap(stop)">
+                    {{ swapping() === stop.key ? 'Menjamo…' : 'Zameni' }}
+                  </button>
+                  @if (reported().has(stop.place.id)) {
+                    <span class="pl-meta">Hvala, proverićemo.</span>
+                  } @else {
+                    <button type="button" class="btn btn-ghost btn-sm" [attr.aria-expanded]="reportFor() === stop.place.id" (click)="openReport(stop.place.id)">Prijavi grešku</button>
+                  }
+                </div>
+                @if (reportFor() === stop.place.id) {
+                  <form class="pl-report" (submit)="$event.preventDefault(); sendReport(stop.place.id)">
+                    <label class="pl-label" [for]="'report-' + stop.key">Šta nije tačno za {{ stop.place.naziv }}?</label>
+                    <textarea
+                      class="textarea textarea-bordered w-full"
+                      [id]="'report-' + stop.key"
+                      maxlength="500"
+                      rows="3"
+                      [value]="reportText()"
+                      (input)="reportText.set($any($event.target).value)"
+                    ></textarea>
+                    <button type="submit" class="btn btn-secondary btn-sm" [disabled]="!reportText().trim()">Pošalji</button>
+                  </form>
+                }
+              </li>
+            }
+          </ol>
+        </section>
+      }
+
+      @if (swapError(); as message) {
+        <p class="pl-error" role="alert">{{ message }}</p>
+      }
+
+      @if (vet(); as clinic) {
+        <section class="pl-section" aria-labelledby="plan-vet-title">
+          <h2 id="plan-vet-title" class="pl-h2">Najbliži veterinar</h2>
+          <div class="pl-stop">
+            <span class="pl-stop__name">{{ clinic.naziv }}</span>
+            @if (clinic.adresa) {
+              <p class="pl-meta">{{ clinic.adresa }}</p>
+            }
+            @if (clinic.telefon) {
+              <a class="pl-link" [href]="'tel:' + clinic.telefon" data-link-type="venue_phone">{{ clinic.telefon }}</a>
+            }
+          </div>
+        </section>
+      }
+
+      @if (notes().length) {
+        <section class="pl-section" aria-labelledby="plan-notes-title">
+          <h2 id="plan-notes-title" class="pl-h2">Napomene</h2>
+          <ul class="pl-notes">
+            @for (note of notes(); track $index) {
+              <li>{{ note }}</li>
+            }
+          </ul>
+        </section>
+      }
+
+      <section class="pl-section pl-footer">
+        <div class="pl-actions">
+          <button type="button" class="btn btn-secondary btn-sm" (click)="share()">Podeli plan</button>
+          <span class="pl-meta">Da li ti se plan dopada?</span>
+          <button type="button" class="btn btn-ghost btn-sm" aria-label="Plan mi se dopada" [attr.aria-pressed]="rating() === 1" [disabled]="rating() !== null" (click)="rate(1)">👍</button>
+          <button type="button" class="btn btn-ghost btn-sm" aria-label="Plan mi se ne dopada" [attr.aria-pressed]="rating() === -1" [disabled]="rating() !== null" (click)="rate(-1)">👎</button>
+        </div>
+        @if (shareNote(); as note) {
+          <p class="pl-meta" role="status">{{ note }}</p>
+        }
+        @if (plan.weather_attribution; as credit) {
+          <p class="pl-credit">
+            <a [href]="credit.url" target="_blank" rel="noopener">{{ credit.text }}</a>,
+            licenca <a [href]="credit.license_url" target="_blank" rel="noopener license">{{ credit.license }}</a>
+          </p>
+        }
+        <a class="pl-link" [routerLink]="plannerPath">Napravi novi plan</a>
+      </section>
+    }
+  }
+</article>

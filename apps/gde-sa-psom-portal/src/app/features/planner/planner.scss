@@ -1,0 +1,269 @@
+/*
+ * Planner form and plan view. Same type scale and daisyUI colours as the
+ * hub and winter pages; mobile first, two columns from `sm`.
+ */
+:host {
+  display: block;
+}
+
+.pl {
+  @apply mx-auto max-w-3xl pb-10 pt-6 sm:pt-10;
+}
+
+.pl-hero {
+  @apply space-y-4;
+}
+
+.pl-h1 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.pl-h2 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+  line-height: 1.15;
+}
+
+.pl-lead {
+  @apply text-base-content/75 leading-relaxed;
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+  max-width: 62ch;
+}
+
+.pl-section {
+  @apply pt-10 md:pt-14;
+}
+
+.pl-section__head {
+  @apply mb-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2;
+}
+
+/* ── Form ── */
+.pl-card {
+  @apply mt-8 space-y-5 rounded-2xl border border-base-300 bg-base-100 p-4 sm:p-6;
+}
+
+.pl-tabs {
+  @apply grid grid-cols-2 gap-1 rounded-xl bg-base-200 p-1;
+}
+
+.pl-tab {
+  @apply min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-base-content/70 transition-colors;
+
+  &:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-secondary;
+  }
+}
+
+.pl-tab--active {
+  @apply bg-base-100 text-base-content shadow-sm;
+}
+
+.pl-form {
+  @apply space-y-5;
+}
+
+.pl-grid {
+  @apply grid gap-4 sm:grid-cols-2;
+}
+
+.pl-field {
+  @apply flex flex-col gap-1.5;
+}
+
+.pl-fieldset {
+  @apply mt-4 border-0 p-0;
+}
+
+.pl-label {
+  @apply text-sm font-semibold text-base-content;
+}
+
+.pl-optional,
+.pl-hint {
+  @apply text-sm font-normal text-base-content/60;
+}
+
+.pl-choices {
+  @apply mt-2 flex flex-wrap gap-2;
+}
+
+.pl-choice {
+  @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-base-300 px-4 py-2 text-sm;
+
+  &:has(input:checked) {
+    @apply border-secondary bg-secondary/10;
+  }
+}
+
+.pl-check {
+  @apply mt-4 flex min-h-11 cursor-pointer items-center gap-3 text-sm;
+}
+
+.pl-captcha {
+  @apply min-h-[65px];
+}
+
+.pl-submit {
+  @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4;
+}
+
+.pl-quota {
+  @apply text-sm text-base-content/70;
+}
+
+.pl-error {
+  @apply mt-3 rounded-xl bg-error/10 p-3 text-sm text-base-content;
+}
+
+.pl-limit {
+  @apply mt-3 space-y-3 rounded-xl bg-warning/10 p-4 text-sm text-base-content;
+}
+
+.pl-limit__links {
+  @apply space-y-1;
+}
+
+/* ── Waiting ── */
+.pl-loading {
+  @apply mt-4 space-y-4;
+}
+
+.pl-loading__text {
+  @apply font-semibold text-base-content/80;
+}
+
+.pl-skeletons {
+  @apply grid gap-3;
+}
+
+.pl-skeleton {
+  @apply flex flex-col gap-2 rounded-2xl border border-base-300/70 p-4;
+}
+
+/* ── Plan ── */
+.pl-badge {
+  @apply inline-flex rounded-full bg-base-200 px-3 py-1 text-sm font-medium text-base-content/80;
+}
+
+.pl-stops {
+  @apply grid gap-3;
+}
+
+.pl-stop {
+  @apply flex flex-col gap-1.5 rounded-2xl border border-base-300/70 bg-base-100 p-4;
+}
+
+.pl-stop__head {
+  @apply flex items-center gap-3;
+}
+
+.pl-time {
+  @apply font-display text-lg font-bold text-secondary;
+}
+
+.pl-category {
+  @apply text-xs font-semibold uppercase tracking-wide text-base-content/60;
+}
+
+.pl-stop__name {
+  @apply font-display text-xl font-semibold text-base-content underline-offset-4;
+}
+
+a.pl-stop__name:hover {
+  @apply underline;
+}
+
+.pl-meta {
+  @apply text-sm text-base-content/70;
+}
+
+.pl-why {
+  @apply text-base-content/80 leading-relaxed;
+}
+
+.pl-tip {
+  @apply text-sm text-base-content/70 leading-relaxed;
+}
+
+.pl-facts {
+  @apply grid gap-1 text-sm;
+
+  > div {
+    @apply flex flex-wrap gap-x-2;
+  }
+
+  dt {
+    @apply text-base-content/60;
+  }
+
+  dd {
+    @apply font-medium;
+  }
+}
+
+.pl-actions {
+  @apply mt-1 flex flex-wrap items-center gap-2;
+}
+
+.pl-report {
+  @apply mt-2 flex flex-col items-start gap-2;
+}
+
+.pl-notes {
+  @apply list-disc space-y-2 pl-6 text-base-content/80;
+}
+
+.pl-footer {
+  @apply space-y-3;
+}
+
+.pl-credit {
+  @apply text-xs text-base-content/60;
+
+  a {
+    @apply underline underline-offset-2;
+  }
+}
+
+.pl-link {
+  @apply text-sm font-medium text-base-content/70 underline underline-offset-4;
+
+  &:hover {
+    @apply text-base-content;
+  }
+}
+
+/* ── FAQ ── */
+.pl-faq {
+  @apply mt-6 divide-y divide-base-300 rounded-2xl border border-base-300 bg-base-100;
+}
+
+.pl-faq__item {
+  @apply px-5;
+
+  &[open] .pl-faq__q::after {
+    transform: rotate(45deg);
+  }
+}
+
+.pl-faq__q {
+  @apply flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold text-base-content;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    @apply shrink-0 text-xl font-normal text-secondary transition-transform;
+    content: '+';
+  }
+}
+
+.pl-faq__a {
+  @apply pb-5 text-base-content/75 leading-relaxed;
+}

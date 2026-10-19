@@ -113,3 +113,10 @@ Items refer to the prioritized table in `10-roadmap-and-final-strategy.md`, sect
 
    The existing SPA fallback rules keep their path lists (so unknown URLs stay a real 404); only their target changes from `/index.html` to `/index.csr.html`, e.g. `RewriteRule ^(kafici|restorani|barovi|smestaj|beograd|novi-sad)$ /index.csr.html [L]`. The root `/` also needs `DirectoryIndex index.csr.html` (or a rule for `^$`).
 3. **Check live:** `curl -s https://www.gdesapsom.com/zimovanje-sa-psom/kopaonik | grep -o '<h1[^<]*</h1>'` shows the H1 without JavaScript, `curl -sI` answers `200` with no redirect, and `/about-us` still loads the app.
+
+### Launching the planner (draft)
+
+- `apps/gde-sa-psom-portal/src/app/features/planner/planner-launch.json` → `"live": true` registers `/planer`, `/planer/<city>` and `/plan/:id`, prerenders the first two, shows the planner links on the winter pages and adds `/planer*` to the sitemap. Keep it `false` until the planner API is deployed.
+- The env file needs `turnstileSiteKey` (public key). Without it a production build shows "Planer trenutno nije dostupan" instead of the form; a development build uses Cloudflare's always-passing test key.
+- `/plan/:id` is client-rendered: the host's SPA fallback list needs `^plan/[^/]+$ → /index.csr.html`. It is `noindex`.
+- The Turnstile script (`challenges.cloudflare.com`) is loaded only on `/planer*`; `index.html`'s CSP allows it in `script-src` and `frame-src`.

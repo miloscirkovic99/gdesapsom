@@ -1,0 +1,4 @@
+{
+  "_readme": "true kad je backend planera živ. Uključuje rute /planer, /planer/<grad>, /plan/:id, njihov prerender, linkove sa zimskih stranica i stavke u sitemapu.",
+  "live": false
+}
