@@ -93,6 +93,79 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 
 ---
 
+### `winter` i `planner` — generisani fajlovi
+
+Ovi handleri se **ne pišu u `v2/` ručno**. Izvor je `apps/api/handlers/*.js`
+(tanak sloj) i `apps/api/lib/` (logika, sa testovima). Fajlovi u `v2/winter/`,
+`v2/planner.POST.js`, `v2/planner/` i `events/` prave se komandom (radi isto
+i u PowerShell-u):
+
+```
+node tools/build-mars-api.mjs           # napravi / osveži fajlove
+node tools/build-mars-api.mjs --check   # izlaz 2 ako su zastareli (to proverava i test)
+```
+
+Svaki generisani fajl je samostalan (bez `require`), pa se ceo lepi u Mars kao
+i ostali. Sistemski prompt planera (`docs/planer-sistemski-prompt.md`) ulazi u
+`planner.POST.js` pri ovom koraku: izmena prompta = ponovo build + ponovo
+lepljenje tog fajla.
+
+| Metod | Putanja | Fajl | Vraća |
+|---|---|---|---|
+| GET | `winter/destinations` | `v2/winter/destinations.GET.js` | `{ generatedAt, destinations }` — podaci zimskih stranica |
+| POST | `planner` | `v2/planner.POST.js` | `{ plan_id, mode, plan, places, remaining, next_at, source, weather_attribution }`; 400 / 403 `captcha` / 429 `{ reason: device\|network\|cooldown, next_at }` / 503 |
+| GET | `planner/plan/:id` | `v2/planner/plan/_id.GET.js` | isto bez `remaining` / `next_at`; 404 |
+| POST | `planner/swap` | `v2/planner/swap.POST.js` | nov plan sa jednom zamenjenom stavkom (nov `plan_id`); 409 `no_alternative` |
+| POST | `planner/feedback` | `v2/planner/feedback.POST.js` | `201 { ok }` — palac (`rating` 1/-1) i/ili prijava (`venue_id`, `comment`) |
+| GET | `planner/quota` | `v2/planner/quota.GET.js` | `{ remaining, next_at }` za `gsp_device` kolačić |
+| GET | `planner/selftest` | `v2/planner/selftest.GET.js` | admin — šta je planer našao na Mars hostu (bez tajni) |
+| GET | `planner/candidates-export` | `v2/planner/candidates-export.GET.js` | admin — kandidati za `eval/build-scenarios.mjs` |
+| POST | `planner/cleanup` | `v2/planner/cleanup.POST.js` | dnevno čišćenje; header `X-Cleanup-Token` ili admin |
+| event | — | `events/planner-cleanup.js` | isto čišćenje kao zakazani Mars event, jednom dnevno |
+
+Env varijable (samo na serveru): `GEMINI_API_KEY`, `CF_ACCOUNT_ID`,
+`CF_AI_API_TOKEN`, `ANTHROPIC_API_KEY`, `TURNSTILE_SECRET_KEY`,
+`PLANNER_HMAC_SECRET` (najmanje 32 znaka), `MET_NO_USER_AGENT`,
+`PLANNER_DAILY_BUDGET_USD=0.30`. Opcione:
+
+- `PLANNER_CLIENT_IP_HEADER` / `PLANNER_TRUSTED_HOPS` — odakle se čita adresa
+  klijenta. Podrazumevano `X-Forwarded-For` i 1 proksi: uzima se adresa koju
+  je upisao **naš** poslednji proksi (sa desna), nikad prva vrednost. Ako ivica
+  (npr. Cloudflare) šalje jednu adresu u svom headeru, upiši ime tog headera.
+- `PLANNER_ALLOWED_ORIGINS` — dodatni origin-i za CORS sa kolačićem (npr. lokalni dev).
+- `PLANNER_CORS=engine` — ako Mars sam šalje CORS headere koji već dozvoljavaju
+  `credentials`; inače handler šalje tačan origin (dva `Access-Control-Allow-Origin`
+  headera browser odbija).
+- `PLANNER_CLEANUP_TOKEN` — za `planner/cleanup` iz spoljnog crona (32+ znaka).
+
+Pre puštanja planera (redom):
+
+1. `db/06_planer_i_zimovanje.sql` na bazi (vidi `db/README.md`).
+2. Env varijable iznad.
+3. Nalepi generisane fajlove (`_id` → `:id` u imenu).
+4. `GET planner/selftest` kao admin: `mars.*` sve `true` (posebno `http`,
+   `env`, `remoteAddress` ili `network.header_present`), `network.detected:
+   true`, `crypto: true`, sve `tables` `true`, `system_prompt_chars` > 0.
+   `?live=1` pita MET Norway jednom (`met_status: 200`). `module_requests` koji
+   raste od poziva do poziva znači da memorija modula traje između zahteva;
+   ako ostaje 1, cooldown radi samo preko baze (i to je u redu).
+5. Zakaži `events/planner-cleanup.js` jednom dnevno (ili spoljni cron na
+   `POST planner/cleanup` sa `X-Cleanup-Token`).
+6. Iz browsera sa `https://www.gdesapsom.com`: `GET planner/quota` mora da prođe
+   CORS sa kolačićem (Network tab: odgovor ima tačan origin i
+   `Access-Control-Allow-Credentials: true`).
+7. Frontend: `turnstileSiteKey` u env fajlu i `"live": true` u
+   `features/planner/planner-launch.json`.
+
+Neprovereni delovi Mars API-ja (odlazni HTTP, env, headeri, adresa klijenta,
+`db.commit`) traže se samo u `apps/api/lib/mars.js`; ako selftest pokaže da
+nešto fali, popravlja se tu i ponovi build.
+
+Testovi: `npx jest -c apps/api/jest.config.js`. Integracioni testovi dižu
+privremenu bazu (`legacy-stub.sql` + `db/06` + `seed.sql` iz `test/fixtures`)
+preko `mysql` klijenta i preskaču se bez servera; drugi server:
+`MYSQL_TEST_ARGS="-h 127.0.0.1 -u root -psecret"`.
+
 ## Admin panel
 
 Frontend: `/admin/pet-shops` i `/admin/dog-food`

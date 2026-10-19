@@ -93,6 +93,8 @@ logs/
 !db/**/*.sql
 !db/**/*.md
 !docs/**/*.md
+# Izmisljeni podaci za integracione testove API-ja (apps/api/test)
+!apps/api/test/fixtures/*.sql
 
 # Mobile app signing (apps/gde-sa-psom-mobile). Upload keys never go in the repo.
 *.jks
