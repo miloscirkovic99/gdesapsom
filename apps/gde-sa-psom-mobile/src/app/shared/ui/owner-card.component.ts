@@ -31,16 +31,13 @@ import { addCircle } from 'ionicons/icons';
     :host {
       display: block;
     }
-    /* The brand's one dark surface; the tennis-ball yellow marks its single action. */
+    /* The website's slate neutral, dark in both themes; the emerald marks its single action. */
     .owner {
       margin: 0 16px;
       padding: 24px 20px 8px;
       border-radius: var(--app-radius-xl);
-      background: var(--app-owner-bg, #0f5a48);
-      color: #ffffff;
-    }
-    :host-context(.ion-palette-dark) .owner {
-      --app-owner-bg: #163d33;
+      background: var(--app-neutral);
+      color: var(--app-on-neutral);
     }
     h2 {
       margin: 0 0 8px;
@@ -49,20 +46,21 @@ import { addCircle } from 'ionicons/icons';
     }
     p {
       margin: 0 0 20px;
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(248, 250, 252, 0.8);
       font-size: 0.9375rem;
       line-height: 1.5;
     }
+    /* The dark theme's emerald and its dark text, which read best on slate in both themes. */
     .cta {
-      --background: var(--app-accent);
-      --background-activated: var(--app-accent-pressed);
+      --background: #34d399;
+      --background-activated: #10b981;
       --background-activated-opacity: 1;
-      --color: var(--app-on-accent);
+      --color: #022c22;
       margin: 0;
     }
     .how {
-      --color: #ffffff;
-      --background-activated: #ffffff;
+      --color: var(--app-on-neutral);
+      --background-activated: var(--app-on-neutral);
       --background-activated-opacity: 0.1;
       height: 48px;
       margin: 4px 0 0;

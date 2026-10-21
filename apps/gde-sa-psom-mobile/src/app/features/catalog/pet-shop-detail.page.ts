@@ -48,6 +48,7 @@ import {
   LocalNamePipe,
   PackageWeightPipe,
   parseCoordinates,
+  pluralKey,
   RsdPricePipe,
   venueLinkType,
 } from '@gde/shared/util';
@@ -56,6 +57,7 @@ import { ShareService } from '../../core/platform/share.service';
 import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { DeliveryLinksComponent } from '../../shared/ui/delivery-links.component';
 import { MapViewComponent } from '../../shared/ui/map-view.component';
+import { groupAssortment } from './assortment';
 
 @Component({
   selector: 'app-pet-shop-detail',
@@ -107,6 +109,11 @@ export class PetShopDetailPage implements ViewWillEnter {
     return detail && detail.slug === this.slug() ? detail : null;
   });
   readonly description = computed(() => cleanApiText(this.shop()?.description));
+  /** 'Vračar, Beograd': the municipality and city, once when they share a name. */
+  readonly place = computed(() => {
+    const s = this.shop();
+    return s ? [...new Set([s.townshipName, s.cityName].filter(Boolean))].join(', ') : '';
+  });
   readonly coords = computed(() => {
     const s = this.shop();
     return s ? parseCoordinates(s.latitude, s.longitude) : null;
@@ -120,12 +127,8 @@ export class PetShopDetailPage implements ViewWillEnter {
     if (!s) return null;
     return this.directionsUrl() ?? googleMapsSearchUrl(`${s.name}, ${s.address}, ${s.cityName ?? ''}`);
   });
-  readonly assortment = computed(() => {
-    const offers = this.shop()?.offers ?? [];
-    const q = this.assortmentQuery().trim().toLowerCase();
-    if (!q) return offers;
-    return offers.filter((o) => `${o.food.brandName} ${o.food.name}`.toLowerCase().includes(q));
-  });
+  /** The assortment by food type, as on the website, narrowed by the search box. */
+  readonly groups = computed(() => groupAssortment(this.shop()?.offers ?? [], this.assortmentQuery()));
 
   constructor() {
     addIcons({
@@ -149,6 +152,10 @@ export class PetShopDetailPage implements ViewWillEnter {
 
   reload(): void {
     this.shops.loadDetail(this.slug());
+  }
+
+  countKey(base: string, count: number): string {
+    return pluralKey(base, count, this.lang());
   }
 
   openWebsite(): void {

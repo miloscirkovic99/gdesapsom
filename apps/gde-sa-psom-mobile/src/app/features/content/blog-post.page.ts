@@ -10,7 +10,6 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { SlicePipe } from '@angular/common';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
@@ -24,10 +23,11 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, shareSocialOutline } from 'ionicons/icons';
 import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
-import { SITE_ORIGIN } from '@gde/shared/util';
+import { injectActiveLang, SITE_ORIGIN } from '@gde/shared/util';
 import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
 import { revealTitleOnScroll } from '../../shared/title-reveal';
+import { PostDatePipe, postTags } from './post-meta';
 import { readingMinutes } from './reading-time';
 
 @Component({
@@ -43,13 +43,13 @@ import { readingMinutes } from './reading-time';
     IonContent,
     IonSkeletonText,
     TranslocoPipe,
-    SlicePipe,
+    PostDatePipe,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tabs/more/blog" text="" />
+          <ion-back-button defaultHref="/tabs/more/blog" text="" [attr.aria-label]="'back' | transloco" />
         </ion-buttons>
         <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ post()?.naslov }}</ion-title>
         @if (post()) {
@@ -86,10 +86,21 @@ import { readingMinutes } from './reading-time';
             @if (cover(); as src) {
               <img class="cover" [src]="src" [alt]="p.naslov" />
             }
-            <p class="app-eyebrow">{{ p.kategorija }} · {{ minutes() }} min · {{ p.objavljen_u | slice: 0 : 10 }}</p>
+            <p class="app-eyebrow">{{ p.kategorija || ('other' | transloco) }} · {{ minutes() }} min</p>
             <h1 #headline>{{ p.naslov }}</h1>
+            <p class="byline">
+              {{ p.autor || ('blog_unknown_author' | transloco) }} · {{ p.objavljen_u | postDate: lang() }}
+            </p>
             <!-- Sanitised by Angular. Links open in an in-app browser tab (see onContentClick). -->
             <div class="body" [innerHTML]="p.sadrzaj" (click)="onContentClick($event)"></div>
+            @if (tags().length) {
+              <div class="tags">
+                <span class="tags-label">{{ 'blog_tags' | transloco }}</span>
+                @for (tag of tags(); track tag) {
+                  <span class="tag">#{{ tag }}</span>
+                }
+              </div>
+            }
           </article>
         }
       }
@@ -109,7 +120,13 @@ import { readingMinutes } from './reading-time';
       background: var(--app-surface-sunken);
     }
     h1 {
-      margin: 0 0 20px;
+      margin: 0 0 8px;
+    }
+    .byline {
+      margin: 0 0 24px;
+      color: var(--app-text-2);
+      font-size: 0.875rem;
+      font-weight: 500;
     }
     .body {
       color: var(--app-text);
@@ -136,9 +153,32 @@ import { readingMinutes } from './reading-time';
       border-radius: var(--app-radius-md);
     }
     .body ::ng-deep a {
-      color: var(--app-primary);
+      color: var(--app-primary-text);
       font-weight: 500;
       text-underline-offset: 2px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--app-border);
+    }
+    .tags-label {
+      margin-inline-end: 4px;
+      color: var(--app-text-2);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+    .tag {
+      padding: 4px 10px;
+      border-radius: var(--app-radius-xs);
+      background: var(--app-surface-sunken);
+      color: var(--app-text-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
     }
     .skeleton {
       padding: 16px var(--app-gutter) 0;
@@ -161,6 +201,8 @@ export class BlogPostPage {
   readonly post = signal<Post | null>(null);
   readonly status = signal<'loading' | 'loaded' | 'error'>('loading');
   readonly minutes = computed(() => readingMinutes(this.post()?.sadrzaj));
+  readonly tags = computed(() => postTags(this.post()?.tagovi));
+  readonly lang = injectActiveLang();
   /** A legacy file name on the website or a full URL from the admin form, as in the portal. */
   readonly cover = computed(() => postCoverUrl(this.post()?.slika_naslovna, SITE_ORIGIN));
   private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');

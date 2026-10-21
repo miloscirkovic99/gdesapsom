@@ -32,4 +32,26 @@ describe('VetClinicsStore', () => {
     req.flush({ vetClinics: [], totalResults: 0, totalCount: 1 });
     httpMock.verify();
   }));
+
+  it('says "no vets" for an empty search (404) and "could not load" for a failure', fakeAsync(() => {
+    const notify = jest.fn();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Notifier, useValue: { notify } },
+        { provide: TranslocoService, useValue: { translate: (key: string) => key } },
+      ],
+    });
+    const store = TestBed.inject(VetClinicsStore);
+    const httpMock = TestBed.inject(HttpTestingController);
+    tick(300);
+    httpMock.expectOne('veterinary-clinics/list').flush({ message: 'nema' }, { status: 404, statusText: 'Not Found' });
+    expect(notify).toHaveBeenLastCalledWith('vets_no_results', 'error', 'close');
+
+    store.loadVetclinics({ data: { word: 'x', resetOffset: true } });
+    tick(300);
+    httpMock.expectOne('veterinary-clinics/list').flush('boom', { status: 500, statusText: 'Server Error' });
+    expect(notify).toHaveBeenLastCalledWith('error_load', 'error', 'close');
+  }));
 });

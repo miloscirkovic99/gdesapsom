@@ -115,8 +115,9 @@ export const SpotsStore = signalStore(
               offset,
               limit,
             }).pipe(
-              catchError(() => {
-                showError('spots_error404');
+              // The search answers "nothing found" with a 404.
+              catchError((error: { status?: number }) => {
+                showError(error?.status === 404 ? 'spots_error404' : 'error_load');
                 return EMPTY;
               })
             );
@@ -189,16 +190,17 @@ export const SpotsStore = signalStore(
               // A new random set replaces the old one (pull-to-refresh on mobile).
               patchState(store, { random: response.randomSpots });
             },
-            error: () => showError(),
+            error: () => showError('error_load'),
           });
       },
-      suggestSpot(form: SuggestSpotPayload, onSuccess?: () => void, onError?: () => void) {
+      /** `notifySuccess: false` leaves the confirmation to the caller (the app's thank-you screen). */
+      suggestSpot(form: SuggestSpotPayload, onSuccess?: () => void, onError?: () => void, notifySuccess = true) {
         http
           .post<unknown>('pet-friendly-spots/pending', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
-              showSuccess('success_add');
+              if (notifySuccess) showSuccess('success_add');
               if (config.production) {
                 contactFormService.sendEmail({
                   from: 'noreply@gdesapsom.com',
@@ -294,7 +296,7 @@ export const SpotsStore = signalStore(
             next: (response) => {
               patchState(store, { allowed: response.allowed });
             },
-            error: () => showError(),
+            error: () => showError('error_load'),
           });
       },
     };

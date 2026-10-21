@@ -7,7 +7,7 @@ import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-/** The portal's "O nama" page, same texts. */
+/** The portal's "O nama" page, same texts except where the website's talk about the website. */
 @Component({
   selector: 'app-about',
   imports: [IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, TranslocoPipe],
@@ -15,7 +15,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tabs/more" text="" />
+          <ion-back-button defaultHref="/tabs/more" text="" [attr.aria-label]="'back' | transloco" />
         </ion-buttons>
         <ion-title>{{ 'about' | transloco }}</ion-title>
       </ion-toolbar>
@@ -66,7 +66,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
 export class AboutPage {
   readonly sections = [
     { title: 'free_use', body: 'free_use_description' },
-    { title: 'how_to_suggest', body: 'how_to_suggest_description' },
-    { title: 'important_to_know', body: 'important_to_know_description' },
+    { title: 'how_to_suggest', body: 'mobile_how_to_suggest_description' },
+    { title: 'important_to_know', body: 'mobile_important_to_know_description' },
   ];
 }

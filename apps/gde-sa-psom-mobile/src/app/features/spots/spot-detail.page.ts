@@ -10,6 +10,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
@@ -26,12 +27,16 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
+  bedOutline,
+  beerOutline,
+  cafeOutline,
   callOutline,
   globeOutline,
   leafOutline,
   locationOutline,
   navigateOutline,
   paw,
+  restaurantOutline,
   shareSocialOutline,
 } from 'ionicons/icons';
 import { Spot, SpotsStore } from '@gde/shared/data-access';
@@ -51,8 +56,21 @@ import { ShareService } from '../../core/platform/share.service';
 import { RecentActivityService } from '../../core/recent/recent-activity.service';
 import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { MapViewComponent } from '../../shared/ui/map-view.component';
+import { categoryForSpotType } from '../places/place-groups';
+import { freshLink, placesQueryParams } from '../places/place-links';
 
 type LoadStatus = 'loading' | 'loaded' | 'error';
+
+/** A link to the venue list, filtered to the venue's category and/or city. */
+interface RelatedLink {
+  icon: string;
+  /** Translation key: the category, or "All places". */
+  titleKey: string;
+  /** The city as the API names it; null when `placeKey` says "All of Serbia". */
+  place: string | null;
+  placeKey: string | null;
+  queryParams: Record<string, string>;
+}
 
 @Component({
   selector: 'app-spot-detail',
@@ -84,6 +102,7 @@ export class SpotDetailPage {
   private readonly links = inject(ExternalLinkService);
   private readonly sharing = inject(ShareService);
   private readonly recent = inject(RecentActivityService);
+  private readonly router = inject(Router);
 
   readonly spot = signal<Spot | null>(null);
   readonly status = signal<LoadStatus>('loading');
@@ -115,6 +134,46 @@ export class SpotDetailPage {
     const c = this.coords();
     return c ? wazeDirectionsUrl(c) : null;
   });
+  /**
+   * "More places like this", as the website's relatedHubLinksForSpot: the
+   * category in the city, the whole city, the category in all of Serbia.
+   * Unlike the website, any city works: the app filters townships itself.
+   */
+  readonly related = computed<RelatedLink[]>(() => {
+    const s = this.spot();
+    if (!s) return [];
+    const category = categoryForSpotType(s.ugo_ime);
+    const city = s.grd_ime?.trim() || null;
+    const links: RelatedLink[] = [];
+    if (category && city) {
+      links.push({
+        icon: category.icon,
+        titleKey: category.labelKey,
+        place: city,
+        placeKey: null,
+        queryParams: placesQueryParams({ category: category.slug, city }),
+      });
+    }
+    if (city) {
+      links.push({
+        icon: 'location-outline',
+        titleKey: 'mobile_all_places',
+        place: city,
+        placeKey: null,
+        queryParams: placesQueryParams({ city }),
+      });
+    }
+    if (category) {
+      links.push({
+        icon: category.icon,
+        titleKey: category.labelKey,
+        place: null,
+        placeKey: 'mobile_all_of_serbia',
+        queryParams: placesQueryParams({ category: category.slug }),
+      });
+    }
+    return links;
+  });
   readonly addressUrl = computed(() => {
     const s = this.spot();
     if (!s) return null;
@@ -125,12 +184,16 @@ export class SpotDetailPage {
   constructor() {
     addIcons({
       alertCircleOutline,
+      bedOutline,
+      beerOutline,
+      cafeOutline,
       callOutline,
       globeOutline,
       leafOutline,
       locationOutline,
       navigateOutline,
       paw,
+      restaurantOutline,
       shareSocialOutline,
     });
     effect(() => {
@@ -155,6 +218,10 @@ export class SpotDetailPage {
   share(): void {
     const s = this.spot();
     if (s) void this.sharing.share(s.iuo_ime, `/spots/${s.iuo_id}`, { type: 'spot', id: `spot-${s.iuo_id}` });
+  }
+
+  openPlaces(link: RelatedLink): void {
+    void this.router.navigate(['/tabs/places'], { queryParams: freshLink(link.queryParams) });
   }
 
   openWebsite(): void {

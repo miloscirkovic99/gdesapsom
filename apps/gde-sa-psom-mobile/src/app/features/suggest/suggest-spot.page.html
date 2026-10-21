@@ -1,139 +1,270 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/more" text="" />
+      <!-- Not ion-back-button: back goes to the previous step before it leaves the form. -->
+      <ion-button (click)="back()" [attr.aria-label]="(!sent() && step() > 0 ? 'mobile_previous' : 'back') | transloco">
+        <ion-icon slot="icon-only" name="arrow-back-sharp" aria-hidden="true" />
+      </ion-button>
     </ion-buttons>
-    <ion-title>{{ 'add_spot' | transloco }}</ion-title>
+    <ion-title>{{ 'mobile_add_place_short' | transloco }}</ion-title>
   </ion-toolbar>
+  @if (!sent()) {
+    <ion-toolbar class="sub-toolbar">
+      <div class="progress">
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-valuemin="1"
+          [attr.aria-valuemax]="steps.length"
+          [attr.aria-valuenow]="step() + 1"
+          [attr.aria-valuetext]="('mobile_step_of' | transloco: { current: step() + 1, total: steps.length }) + ', ' + (current().label | transloco)"
+        >
+          @for (s of steps; track s.id; let i = $index) {
+            <span class="segment" [class.done]="i <= step()"></span>
+          }
+        </div>
+        <p class="progress-label" aria-hidden="true">
+          {{ 'mobile_step_of' | transloco: { current: step() + 1, total: steps.length } }}
+          <span class="dot">·</span>
+          <strong>{{ current().label | transloco }}</strong>
+        </p>
+      </div>
+    </ion-toolbar>
+  }
 </ion-header>
 
 <ion-content class="form-content">
   @if (sent()) {
     <app-sent-view (home)="goHome()" (another)="addAnother()" />
   } @else {
-  <p class="lead">{{ 'lp_add_lead' | transloco }}</p>
-
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <ion-input
-      formControlName="iuo_ime"
-      [label]="('spot_name' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      autocapitalize="sentences"
-      [errorText]="'required' | transloco"
-    />
-    <ion-input
-      formControlName="iuo_adressa"
-      [label]="('address' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      autocapitalize="words"
-      [errorText]="'required' | transloco"
-    />
-
-    <ion-item
-      button
-      detail="true"
-      lines="none"
-      class="picker"
-      [class.picker-invalid]="submitted() && form.controls.ops_id.invalid"
-      (click)="pickTownship()"
-    >
-      <ion-label>
-        <p>{{ 'township' | transloco }} *</p>
-        <h3>{{ townshipName() ?? ('select_city' | transloco) }}</h3>
-      </ion-label>
-    </ion-item>
-    @if (submitted() && form.controls.ops_id.invalid) {
-      <ion-note color="danger" class="field-error">{{ 'required' | transloco }}</ion-note>
+    @if (restored()) {
+      <div class="restored" role="status">
+        <p>{{ 'mobile_draft_restored' | transloco }}</p>
+        <button type="button" class="app-text-button" (click)="startOver()">
+          <ion-icon name="refresh-outline" aria-hidden="true" />
+          {{ 'mobile_start_over' | transloco }}
+        </button>
+      </div>
     }
 
-    <ion-select
-      formControlName="ugo_id"
-      [label]="('spot_type' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      interface="action-sheet"
-      [cancelText]="'mobile_cancel' | transloco"
-      [errorText]="'required' | transloco"
-    >
-      @for (t of shared.spotTypes(); track t.id) {
-        <ion-select-option [value]="t.id">{{ spotTypeKey[t.ime] ? (spotTypeKey[t.ime] | transloco) : t.ime }}</ion-select-option>
+    <h2 class="step-title" tabindex="-1" #stepTitle>{{ current().title | transloco }}</h2>
+    <p class="lead">{{ current().lead | transloco }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="next()">
+      @switch (current().id) {
+        @case ('place') {
+          <ion-input
+            formControlName="iuo_ime"
+            [label]="('spot_name' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            autocapitalize="sentences"
+            enterkeyhint="next"
+            [errorText]="'required' | transloco"
+          />
+          <ion-select
+            formControlName="ugo_id"
+            [label]="('spot_type' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            interface="action-sheet"
+            [placeholder]="'mobile_choose' | transloco"
+            [cancelText]="'mobile_cancel' | transloco"
+            [errorText]="'required' | transloco"
+          >
+            @for (t of shared.spotTypes(); track t.id) {
+              <ion-select-option [value]="t.id">{{ spotTypeKey[t.ime] ? (spotTypeKey[t.ime] | transloco) : t.ime }}</ion-select-option>
+            }
+          </ion-select>
+          <ion-input
+            formControlName="iuo_adressa"
+            [label]="('address' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            autocapitalize="words"
+            enterkeyhint="done"
+            [errorText]="'required' | transloco"
+          />
+          <ion-item
+            button
+            detail="true"
+            lines="none"
+            class="picker"
+            [class.picker-invalid]="showErrors() && form.controls.ops_id.invalid"
+            (click)="pickTownship()"
+          >
+            <ion-label>
+              <p>{{ 'township' | transloco }} *</p>
+              <h3>{{ townshipName() ?? ('mobile_choose_township' | transloco) }}</h3>
+            </ion-label>
+          </ion-item>
+          @if (showErrors() && form.controls.ops_id.invalid) {
+            <ion-note color="danger" class="field-error">{{ 'required' | transloco }}</ion-note>
+          }
+        }
+
+        @case ('dogs') {
+          <ion-select
+            formControlName="sta_id"
+            [label]="('pet_size' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            interface="action-sheet"
+            [placeholder]="'mobile_choose' | transloco"
+            [cancelText]="'mobile_cancel' | transloco"
+            [errorText]="'required' | transloco"
+          >
+            @for (s of spots.allowed(); track s.id) {
+              <ion-select-option [value]="s.id">{{ petSizeKey[s.ime] ? (petSizeKey[s.ime] | transloco) : s.ime }}</ion-select-option>
+            }
+          </ion-select>
+          <ion-select
+            formControlName="bas_id"
+            [label]="('garden' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            interface="action-sheet"
+            [placeholder]="'mobile_choose' | transloco"
+            [cancelText]="'mobile_cancel' | transloco"
+            [errorText]="'required' | transloco"
+          >
+            @for (g of shared.gardens(); track g.id) {
+              <ion-select-option [value]="g.id">{{ gardenKey[g.ime] ? (gardenKey[g.ime] | transloco) : g.ime }}</ion-select-option>
+            }
+          </ion-select>
+          <ion-textarea
+            formControlName="iuo_opis"
+            [label]="'short_description' | transloco"
+            labelPlacement="stacked"
+            fill="outline"
+            [autoGrow]="true"
+            [rows]="4"
+            autocapitalize="sentences"
+            [helperText]="'mobile_optional' | transloco"
+          />
+        }
+
+        @case ('contact') {
+          <ion-input
+            formControlName="iuo_link_web"
+            [label]="('site_network' | transloco) + ' *'"
+            labelPlacement="stacked"
+            fill="outline"
+            type="url"
+            inputmode="url"
+            autocapitalize="off"
+            autocorrect="off"
+            enterkeyhint="next"
+            placeholder="instagram.com/..."
+            [clearInput]="true"
+            [errorText]="'required' | transloco"
+          />
+          <ion-input
+            formControlName="iuo_telefon"
+            [label]="'phone' | transloco"
+            labelPlacement="stacked"
+            fill="outline"
+            type="tel"
+            inputmode="tel"
+            autocomplete="off"
+            enterkeyhint="done"
+            [helperText]="'mobile_optional' | transloco"
+          />
+        }
+
+        @case ('photos') {
+          <app-photo-field
+            class="first-photo"
+            label="mobile_photo_outside"
+            [required]="true"
+            [showError]="showErrors() && !photoOutside()"
+            [photo]="photoOutside()"
+            (photoChange)="setPhoto('outside', $event)"
+          />
+          <app-photo-field
+            label="mobile_photo_inside"
+            [photo]="photoInside()"
+            (photoChange)="setPhoto('inside', $event)"
+          />
+        }
+
+        @case ('review') {
+          @for (section of review(); track section.step) {
+            <section class="review-section">
+              <div class="review-head">
+                <h3>{{ section.label | transloco }}</h3>
+                <button
+                  type="button"
+                  class="app-text-button"
+                  [attr.aria-label]="'mobile_edit_section' | transloco: { section: (section.label | transloco) }"
+                  (click)="edit(section.step)"
+                >
+                  {{ 'mobile_edit' | transloco }}
+                </button>
+              </div>
+              <dl>
+                @for (row of section.rows; track row.label) {
+                  <div class="review-row">
+                    <dt>{{ row.label | transloco }}</dt>
+                    @if (!row.value) {
+                      <dd class="empty">{{ 'mobile_not_provided' | transloco }}</dd>
+                    } @else if (row.translate) {
+                      <dd>{{ row.value | transloco }}</dd>
+                    } @else {
+                      <dd>{{ row.value }}</dd>
+                    }
+                  </div>
+                }
+              </dl>
+            </section>
+          }
+          <section class="review-section">
+            <div class="review-head">
+              <h3>{{ 'mobile_step_photos' | transloco }}</h3>
+              <button
+                type="button"
+                class="app-text-button"
+                [attr.aria-label]="'mobile_edit_section' | transloco: { section: ('mobile_step_photos' | transloco) }"
+                (click)="edit(3)"
+              >
+                {{ 'mobile_edit' | transloco }}
+              </button>
+            </div>
+            <div class="review-photos">
+              @if (photoOutside(); as src) {
+                <img [src]="src" [alt]="'mobile_photo_outside' | transloco" />
+              }
+              @if (photoInside(); as src) {
+                <img [src]="src" [alt]="'mobile_photo_inside' | transloco" />
+              }
+            </div>
+          </section>
+        }
       }
-    </ion-select>
-
-    <ion-select
-      formControlName="sta_id"
-      [label]="('pet_size' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      interface="action-sheet"
-      [cancelText]="'mobile_cancel' | transloco"
-      [errorText]="'required' | transloco"
-    >
-      @for (s of spots.allowed(); track s.id) {
-        <ion-select-option [value]="s.id">{{ petSizeKey[s.ime] ? (petSizeKey[s.ime] | transloco) : s.ime }}</ion-select-option>
-      }
-    </ion-select>
-
-    <ion-select
-      formControlName="bas_id"
-      [label]="('garden' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      interface="action-sheet"
-      [cancelText]="'mobile_cancel' | transloco"
-      [errorText]="'required' | transloco"
-    >
-      @for (g of shared.gardens(); track g.id) {
-        <ion-select-option [value]="g.id">{{ gardenKey[g.ime] ? (gardenKey[g.ime] | transloco) : g.ime }}</ion-select-option>
-      }
-    </ion-select>
-
-    <ion-input
-      formControlName="iuo_link_web"
-      [label]="('site_network' | transloco) + ' *'"
-      labelPlacement="stacked"
-      fill="outline"
-      type="url"
-      inputmode="url"
-      autocapitalize="off"
-      placeholder="instagram.com/..."
-      [errorText]="'required' | transloco"
-    />
-    <ion-input
-      formControlName="iuo_telefon"
-      [label]="'phone' | transloco"
-      labelPlacement="stacked"
-      fill="outline"
-      type="tel"
-      inputmode="tel"
-    />
-    <ion-textarea
-      formControlName="iuo_opis"
-      [label]="'short_description' | transloco"
-      labelPlacement="stacked"
-      fill="outline"
-      [autoGrow]="true"
-      [rows]="3"
-      autocapitalize="sentences"
-    />
-
-    <app-photo-field
-      label="mobile_photo_outside"
-      [required]="true"
-      [showError]="submitted() && !photoOutside()"
-      [(photo)]="photoOutside"
-    />
-    <app-photo-field label="mobile_photo_inside" [(photo)]="photoInside" />
-
-    <ion-button type="submit" expand="block" class="submit" [disabled]="submitting()">
-      @if (submitting()) {
-        <ion-spinner name="dots" />
-      } @else {
-        {{ 'mobile_send' | transloco }}
-      }
-    </ion-button>
-  </form>
+    </form>
   }
 </ion-content>
+
+@if (!sent()) {
+  <ion-footer>
+    <ion-toolbar class="step-actions">
+      <div class="actions">
+        @if (step() > 0) {
+          <ion-button fill="outline" (click)="back()">{{ 'mobile_previous' | transloco }}</ion-button>
+        }
+        <!-- color: a solid button in a toolbar otherwise takes the toolbar's colours. -->
+        <ion-button class="primary" color="primary" [disabled]="submitting()" (click)="next()">
+          @if (submitting()) {
+            <ion-spinner name="dots" />
+          } @else if (isReview()) {
+            {{ 'mobile_send' | transloco }}
+          } @else if (reviewSeen()) {
+            {{ 'mobile_to_review' | transloco }}
+          } @else {
+            {{ 'mobile_next' | transloco }}
+          }
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+}

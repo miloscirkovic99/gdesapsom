@@ -39,6 +39,14 @@
                 <data android:pathPrefix="/dog-food" />
                 <data android:pathPrefix="/pet-shops" />
                 <data android:pathPrefix="/blog" />
+                <!-- Pet-friendly hubs (portal pet-friendly-taxonomy.json): categories,
+                     and cities with their /<city>/<category> pages. -->
+                <data android:path="/kafici" />
+                <data android:path="/restorani" />
+                <data android:path="/barovi" />
+                <data android:path="/smestaj" />
+                <data android:pathPrefix="/beograd" />
+                <data android:pathPrefix="/novi-sad" />
             </intent-filter>
         </activity>
 

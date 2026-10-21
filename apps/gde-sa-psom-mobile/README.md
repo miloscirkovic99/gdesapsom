@@ -142,7 +142,7 @@ The privacy policy promises at most 14 months.
 
 ## Google Play: Data safety and App content
 
-The answers follow from the code as of 2026-09-26. Change them whenever a plugin, SDK or
+The answers follow from the code as of 2026-10-21. Change them whenever a plugin, SDK or
 form that sends data off the phone is added. The privacy policy page on the website
 (`/privacy-policy`, portal `pages/privacy-policy-page`, keys `privacy_*`) must say the same.
 
@@ -154,26 +154,33 @@ submitting: the page is new, and the app links to it from More.
 | Question | Answer |
 |---|---|
 | Does your app collect or share any of the required user data types? | Yes |
-| Is all of the user data collected by your app encrypted in transit? | Yes (API, Firebase and map tiles are HTTPS only) |
+| Is all of the user data collected by your app encrypted in transit? | Yes (API, contact form, Firebase and map tiles are HTTPS only) |
 | Which methods of account creation does your app support? | None: the app has no accounts |
-| Do you provide a way for users to request that their data is deleted? | Yes: the website contact form, and the Usage statistics switch deletes on-device analytics data |
+| Do you provide a way for users to request that their data is deleted? | Yes: the contact form (More > Contact, or on the website), and the Usage statistics switch deletes on-device analytics data |
 
 **Data types.** For every row: *Shared* = No (Google, the hosting provider and Gmail process
 data on our behalf as service providers), *Required or optional* = Optional.
 
 | Category | Data type | Ephemeral | Purposes | Where it comes from |
 |---|---|---|---|---|
+| Personal info | Email address | No | Developer communications | Contact form (More > Contact): the address the reply goes to, emailed to the team |
 | Location | Approximate location | No | App functionality, Analytics | "Near me" with only coarse permission; Firebase derives the city from the IP |
 | Location | Precise location | Yes | App functionality | "Near me": coordinates go to the search API and are not stored |
 | Photos and videos | Photos | No | App functionality | Photos attached to a suggested place |
 | App activity | App interactions | No | Analytics | Screens, filters, taps on links, shares (Firebase, after consent) |
 | App activity | In-app search history | No | App functionality, Analytics | Search terms: sent to the API for results and, after consent, as `search_term` |
-| App activity | Other user-generated content | No | App functionality | Name, address, description and contact details of a suggested place or park |
+| App activity | Other user-generated content | No | App functionality, Developer communications | Name, address, description and contact details of a suggested place or park; subject and message of the contact form |
 | Device or other IDs | Device or other IDs | No | Analytics | Firebase app-instance ID (after consent); no advertising ID, no Android ID |
 
-Not collected: personal info (name, email, phone), financial info, health, messages,
-contacts, calendar, audio, files, app info and performance, web browsing. The app has no
-contact form, and recent searches and viewed places stay on the phone.
+The contact form's message goes to the team's mailbox (Gmail) through the API, like the
+website's "Javite nam se" form; nobody else gets it, and it is kept until the conversation
+is over (privacy policy, `privacy_contact_*` and `privacy_retention_text`). It is counted
+under *Other user-generated content* rather than *Messages*, which Play describes as
+the user's own emails, SMS and chats.
+
+Not collected: name, phone number and other personal info, financial info, health,
+messages, contacts, calendar, audio, files, app info and performance, web browsing.
+Recent searches and viewed places stay on the phone.
 
 **Other App content answers**
 
@@ -199,6 +206,26 @@ contact form, and recent searches and viewed places stay on the phone.
   `@ionic/angular` / `@capacitor/*`; type errors are caught by `nx build` and lint.
 - No Tailwind or daisyUI: Ionic components plus the CSS variables in `src/styles.scss`.
 
+## Forms: drafts and leaving
+
+The suggest-a-place (a stepper: place, dogs, contact, photos, review) and suggest-a-park
+forms must not lose what was typed:
+
+- **Leaving the app** (to copy a link from Instagram, say) is not a navigation. The input is
+  saved as a draft in Preferences (`core/forms/form-draft.service.ts`) while typing and when
+  the app is paused; photos sit under keys of their own. If Android ends the app meanwhile,
+  `AppComponent` reopens the form at the next launch (draft under an hour old) and the form
+  restores the input. A form opened later (within 7 days) restores it too, with a
+  "start over" link.
+- **Leaving the form inside the app** (toolbar or Android back, another tab, a link opened
+  from outside) goes through `leaveFormGuard` (`core/forms/leave-form.ts`): with input on
+  screen it asks "Discard this suggestion?". Discarding clears the draft and takes the form
+  off the More stack, so More opens on its own list next time. Android back on a later step
+  of the stepper goes to the previous step first.
+- The draft is cleared when the form is sent or discarded. New forms with the same needs
+  implement `GuardedForm`, add their id to `FormDraftService` and put `leaveFormGuard` on
+  their route.
+
 ## Design system
 
 `src/styles.scss` holds the tokens (`--app-*`: colours with dark variants, radius, gutter)
@@ -208,8 +235,11 @@ and the shared patterns every screen reuses. Use them before writing new compone
   for the rest. Weights 400 / 500 / 600 / 700 only.
 - Spacing on a 4 px grid, screen gutter `--app-gutter` (20 px). Radius: 6 tags, 10 small
   controls, 12 fields and buttons, 16 photos and grouped surfaces, 24 sheets.
-- Colour: `--app-primary` is the one interactive colour; `--app-primary-soft` marks selected
-  and dog-policy states; `--app-accent` (tennis-ball yellow) is only for the owner CTA.
+- Colour: the website's daisyUI themes (`apps/gde-sa-psom-portal/tailwind.config.js`), kept in
+  step by hand. `--app-primary` (the website's emerald `secondary`) is the one interactive
+  colour for fills; text in that colour uses `--app-primary-text`, a darker emerald that reads
+  on white. `--app-primary-soft` marks selected and dog-policy states; `--app-neutral` (slate)
+  is only for the owner CTA card.
 - Buttons: filled = primary action, `fill="outline"` = secondary, `fill="clear"` = tertiary.
 - Patterns: `.search-row` + `.filter-button` (search with filters), `.app-state` (empty and
   error states), `.skeleton-row` and `ion-skeleton-text` (loading), `.app-section-head`,

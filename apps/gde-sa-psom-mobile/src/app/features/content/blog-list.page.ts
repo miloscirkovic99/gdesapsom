@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonBackButton } from '@ionic/angular/ion-back-button';
 import { IonButton } from '@ionic/angular/ion-button';
@@ -14,14 +13,29 @@ import { IonRefresherContent } from '@ionic/angular/ion-refresher-content';
 import { IonRouterLink } from '@ionic/angular/ion-router-link';
 import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
+import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { RefresherCustomEvent } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { cloudOfflineOutline } from 'ionicons/icons';
-import { BlogService, Post } from '@gde/shared/data-access';
+import { cloudOfflineOutline, newspaperOutline } from 'ionicons/icons';
+import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
+import { injectActiveLang, SITE_ORIGIN } from '@gde/shared/util';
+import { PostDatePipe, postTags } from './post-meta';
 import { readingMinutes } from './reading-time';
+
+/** A row shows this many tags; the rest are counted ("+7"). */
+const TAGS_SHOWN = 3;
+
+/** A post as a list row reads it. */
+interface PostRow {
+  post: Post;
+  cover: string | null;
+  minutes: number;
+  tags: string[];
+  moreTags: number;
+}
 
 @Component({
   selector: 'app-blog-list',
@@ -39,17 +53,18 @@ import { readingMinutes } from './reading-time';
     IonList,
     IonItem,
     IonLabel,
+    IonThumbnail,
     IonSkeletonText,
     IonIcon,
     IonButton,
     TranslocoPipe,
-    SlicePipe,
+    PostDatePipe,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tabs/more" text="" />
+          <ion-back-button defaultHref="/tabs/more" text="" [attr.aria-label]="'back' | transloco" />
         </ion-buttons>
         <ion-title>{{ 'blog' | transloco }}</ion-title>
       </ion-toolbar>
@@ -63,10 +78,11 @@ import { readingMinutes } from './reading-time';
           <div class="list-skeleton" aria-hidden="true">
             @for (i of [1, 2, 3, 4]; track i) {
               <div class="skeleton-row">
+                <ion-skeleton-text [animated]="true" class="skeleton-thumb" />
                 <div class="skeleton-lines">
                   <ion-skeleton-text [animated]="true" style="width: 30%" />
                   <ion-skeleton-text [animated]="true" style="width: 85%; height: 16px" />
-                  <ion-skeleton-text [animated]="true" style="width: 25%" />
+                  <ion-skeleton-text [animated]="true" style="width: 45%" />
                 </div>
               </div>
             }
@@ -81,14 +97,41 @@ import { readingMinutes } from './reading-time';
         }
         @default {
           <ion-list lines="inset" class="posts">
-            @for (post of posts(); track post.post_id) {
-              <ion-item [routerLink]="['/tabs/more/blog', post.slug]" detail="true">
+            @for (row of rows(); track row.post.post_id) {
+              <ion-item [routerLink]="['/tabs/more/blog', row.post.slug]" detail="false">
+                <ion-thumbnail slot="start" class="cover">
+                  @if (row.cover) {
+                    <img [src]="row.cover" alt="" loading="lazy" />
+                  } @else {
+                    <span class="thumb-placeholder"><ion-icon name="newspaper-outline" aria-hidden="true" /></span>
+                  }
+                </ion-thumbnail>
                 <ion-label class="ion-text-wrap">
-                  <p class="app-eyebrow">{{ post.kategorija }} · {{ minutes(post) }} min</p>
-                  <h2>{{ post.naslov }}</h2>
-                  <p class="date">{{ post.objavljen_u | slice: 0 : 10 }}</p>
+                  <p class="app-eyebrow">
+                    {{ row.post.kategorija || ('other' | transloco) }} · {{ row.minutes }} min
+                  </p>
+                  <h2>{{ row.post.naslov }}</h2>
+                  <p class="meta">
+                    {{ row.post.objavljen_u | postDate: lang() }} ·
+                    {{ row.post.autor || ('blog_unknown_author' | transloco) }}
+                  </p>
+                  @if (row.tags.length) {
+                    <span class="tags">
+                      @for (tag of row.tags; track tag) {
+                        <span class="tag">#{{ tag }}</span>
+                      }
+                      @if (row.moreTags) {
+                        <span class="tag more">+{{ row.moreTags }}</span>
+                      }
+                    </span>
+                  }
                 </ion-label>
               </ion-item>
+            } @empty {
+              <div class="app-state">
+                <ion-icon name="newspaper-outline" aria-hidden="true" />
+                <p>{{ 'blog_list_empty' | transloco }}</p>
+              </div>
             }
           </ion-list>
         }
@@ -101,7 +144,7 @@ import { readingMinutes } from './reading-time';
       padding-top: 8px;
     }
     .posts ion-item {
-      --min-height: 96px;
+      --min-height: 104px;
     }
     .posts ion-label {
       margin-block: 14px;
@@ -111,9 +154,38 @@ import { readingMinutes } from './reading-time';
       font-size: 1.0625rem;
       line-height: 1.35;
     }
-    .date {
+    /* Covers are wide photos: a square crop keeps the titles in one column. */
+    ion-thumbnail.cover {
+      --size: 72px;
+      align-self: flex-start;
+      margin: 16px 16px 16px 0;
+    }
+    ion-thumbnail.cover img {
+      border-radius: var(--app-radius-sm);
+      object-fit: cover;
+      background: var(--app-surface-sunken);
+    }
+    .meta {
       color: var(--app-text-2);
       font-size: 0.8125rem !important;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .tag {
+      padding: 2px 8px;
+      border-radius: var(--app-radius-xs);
+      background: var(--app-surface-sunken);
+      color: var(--app-text-2);
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .tag.more {
+      font-weight: 600;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -121,11 +193,12 @@ import { readingMinutes } from './reading-time';
 export class BlogListPage {
   private readonly blog = inject(BlogService);
 
-  readonly posts = signal<Post[]>([]);
+  readonly lang = injectActiveLang();
+  readonly rows = signal<PostRow[]>([]);
   readonly status = signal<'loading' | 'loaded' | 'error'>('loading');
 
   constructor() {
-    addIcons({ cloudOfflineOutline });
+    addIcons({ cloudOfflineOutline, newspaperOutline });
     this.load();
   }
 
@@ -133,7 +206,7 @@ export class BlogListPage {
     if (!event) this.status.set('loading');
     this.blog.list().subscribe({
       next: (posts) => {
-        this.posts.set(posts);
+        this.rows.set(posts.map((post) => this.#toRow(post)));
         this.status.set('loaded');
         void event?.target.complete();
       },
@@ -144,7 +217,15 @@ export class BlogListPage {
     });
   }
 
-  minutes(post: Post): number {
-    return readingMinutes(post.sadrzaj);
+  #toRow(post: Post): PostRow {
+    const tags = postTags(post.tagovi);
+    return {
+      post,
+      // A legacy file name on the website or a full URL from the admin form, as in the portal.
+      cover: postCoverUrl(post.slika_naslovna, SITE_ORIGIN),
+      minutes: readingMinutes(post.sadrzaj),
+      tags: tags.slice(0, TAGS_SHOWN),
+      moreTags: Math.max(0, tags.length - TAGS_SHOWN),
+    };
   }
 }

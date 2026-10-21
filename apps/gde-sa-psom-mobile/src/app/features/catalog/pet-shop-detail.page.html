@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/catalog" text="" />
+      <ion-back-button defaultHref="/tabs/catalog" text="" [attr.aria-label]="'back' | transloco" />
     </ion-buttons>
     <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ shop()?.name }}</ion-title>
     @if (shop()) {
@@ -22,9 +22,21 @@
       }
       <div>
         <h1 #headline>{{ s.name }}</h1>
-        <p class="where">{{ s.townshipName ?? s.cityName }}</p>
+        @if (place()) {
+          <p class="where">{{ place() }}</p>
+        }
       </div>
     </section>
+
+    @if (s.summary.offerCount > 0) {
+      <ul class="summary" [attr.aria-label]="'assortment' | transloco">
+        <li>{{ countKey('item_count', s.summary.offerCount) | transloco: { count: s.summary.offerCount } }}</li>
+        <li>{{ countKey('brand_count', s.summary.brandCount) | transloco: { count: s.summary.brandCount } }}</li>
+        @if (s.summary.lowPrice !== null) {
+          <li>{{ 'price_from' | transloco: { price: (s.summary.lowPrice | rsdPrice: lang()) } }}</li>
+        }
+      </ul>
+    }
 
     @if (s.woltUrl || s.glovoUrl) {
       <div class="delivery">
@@ -102,42 +114,52 @@
         <div class="search-row">
           <ion-searchbar
             [placeholder]="'assortment_search' | transloco"
+            [attr.aria-label]="'assortment_search' | transloco"
             [debounce]="200"
             (ionInput)="assortmentQuery.set($event.detail.value ?? '')"
           />
         </div>
       }
-      <ion-list lines="inset" class="products">
-        @for (offer of assortment(); track offer.offerId) {
-          <ion-item [routerLink]="['/tabs/catalog/food', offer.food.slug]" detail="false">
-            <ion-thumbnail slot="start" class="product">
-              @if (offer.food.thumbnail) {
-                <img [src]="offer.food.thumbnail" alt="" loading="lazy" />
-              } @else {
-                <span class="thumb-placeholder"><ion-icon name="image-outline" aria-hidden="true" /></span>
-              }
-            </ion-thumbnail>
-            <ion-label class="ion-text-wrap">
-              <p class="app-eyebrow">{{ offer.food.brandName }}</p>
-              <h3>{{ offer.food.name }}</h3>
-              <p>
-                {{ offer.food.foodType | localName: lang() }}
-                @if (offer.food.packageWeightG) {
-                  · {{ offer.food.packageWeightG | packageWeight: lang() }}
+      @for (group of groups(); track group.type.code) {
+        <h3 class="group-label type-head">
+          {{ group.type | localName: lang() }} <span>({{ group.offers.length }})</span>
+        </h3>
+        <ion-list lines="inset" class="products">
+          @for (offer of group.offers; track offer.offerId) {
+            <ion-item [routerLink]="['/tabs/catalog/food', offer.food.slug]" detail="false">
+              <ion-thumbnail slot="start" class="product">
+                @if (offer.food.thumbnail) {
+                  <img [src]="offer.food.thumbnail" alt="" loading="lazy" />
+                } @else {
+                  <span class="thumb-placeholder"><ion-icon name="image-outline" aria-hidden="true" /></span>
                 }
-              </p>
-            </ion-label>
-            <ion-note slot="end" class="offer-price">
-              <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
-              <span class="stock" [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
-                {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
-              </span>
-            </ion-note>
-          </ion-item>
-        } @empty {
-          <p class="app-block muted">{{ 'no_results' | transloco }}</p>
-        }
-      </ion-list>
+              </ion-thumbnail>
+              <ion-label class="ion-text-wrap">
+                <p class="app-eyebrow">{{ offer.food.brandName }}</p>
+                <h3>{{ offer.food.name }}</h3>
+                <!-- The type is the group's; per item the website shows weight, life stage and grain-free. -->
+                <p>
+                  @if (offer.food.packageWeightG) {
+                    {{ offer.food.packageWeightG | packageWeight: lang() }} ·
+                  }
+                  {{ offer.food.lifeStage | localName: lang() }}
+                  @if (offer.food.isGrainFree) {
+                    · {{ 'grain_free' | transloco }}
+                  }
+                </p>
+              </ion-label>
+              <ion-note slot="end" class="offer-price">
+                <strong>{{ offer.price !== null ? (offer.price | rsdPrice: lang()) : ('price_unknown' | transloco) }}</strong>
+                <span class="stock" [class.in]="offer.isInStock" [class.out]="!offer.isInStock">
+                  {{ (offer.isInStock ? 'in_stock' : 'out_of_stock') | transloco }}
+                </span>
+              </ion-note>
+            </ion-item>
+          }
+        </ion-list>
+      } @empty {
+        <p class="app-block muted">{{ 'no_results' | transloco }}</p>
+      }
     } @else {
       <p class="app-block muted">{{ 'assortment_soon_text' | transloco }}</p>
     }

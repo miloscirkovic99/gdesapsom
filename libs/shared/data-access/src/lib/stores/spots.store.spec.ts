@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TranslocoService } from '@ngneat/transloco';
 import { APP_CONFIG } from '../config/app-config';
 import { ContactFormService } from '../contact/contact-form.service';
@@ -79,6 +79,35 @@ describe('SpotsStore', () => {
       expect(notifier.notify).toHaveBeenCalledWith('error_global', 'error', 'close');
       expect(onError).toHaveBeenCalledTimes(1);
     });
+
+    it('leaves the confirmation to the caller when asked to', () => {
+      const { store, httpMock, notifier } = setup({ production: false });
+      const onSuccess = jest.fn();
+
+      store.suggestSpot(suggestion('Kafić Test'), onSuccess, undefined, false);
+      httpMock.expectOne({ method: 'POST', url: 'pet-friendly-spots/pending' }).flush({});
+
+      expect(notifier.notify).not.toHaveBeenCalled();
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('loadSpots', () => {
+    it('tells "nothing found" (404) apart from a failed request', fakeAsync(() => {
+      const { store, httpMock, notifier } = setup({ production: false });
+      tick(300);
+      httpMock
+        .expectOne('pet-friendly-spots/search-query')
+        .flush({ message: 'nema' }, { status: 404, statusText: 'Not Found' });
+      expect(notifier.notify).toHaveBeenLastCalledWith('spots_error404', 'error', 'close');
+
+      store.loadInitialData();
+      tick(300);
+      httpMock
+        .expectOne('pet-friendly-spots/search-query')
+        .flush('boom', { status: 500, statusText: 'Server Error' });
+      expect(notifier.notify).toHaveBeenLastCalledWith('error_load', 'error', 'close');
+    }));
   });
 
   describe('updateSpot', () => {

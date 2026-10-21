@@ -23,7 +23,9 @@ export class ShareService {
     const url = `${SITE_ORIGIN}${path}`;
     try {
       if ((await Share.canShare()).value) {
-        const { activityType } = await Share.share({ title, text: title, url, dialogTitle: title });
+        // The text goes before the link in chats: 'Kafić Lajka na Gde sa psom'.
+        const text = this.transloco.translate('mobile_share_text', { title });
+        const { activityType } = await Share.share({ title, text, url, dialogTitle: title });
         // Android names the app picked in the share sheet (its package); '' when it cannot tell.
         this.analytics.trackShare(activityType || 'share_sheet', item.type, item.id);
         return;

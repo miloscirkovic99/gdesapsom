@@ -15,6 +15,7 @@ import { IonSearchbar } from '@ionic/angular/ion-searchbar';
 import { IonSelect } from '@ionic/angular/ion-select';
 import { IonSelectOption } from '@ionic/angular/ion-select-option';
 import { IonSkeletonText } from '@ionic/angular/ion-skeleton-text';
+import { IonThumbnail } from '@ionic/angular/ion-thumbnail';
 import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { ModalController } from '@ionic/angular/modal-controller';
@@ -27,6 +28,7 @@ import { googleMapsSearchUrl } from '@gde/shared/util';
 import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
 import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './vet-filters';
+import { vetLogoUrl } from './vet-logo';
 
 @Component({
   selector: 'app-vets',
@@ -49,6 +51,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
     IonSelect,
     IonSelectOption,
     IonSkeletonText,
+    IonThumbnail,
     TranslocoPipe,
   ],
   template: `
@@ -61,6 +64,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
           <ion-searchbar
             [value]="filters().word"
             [placeholder]="'search_name' | transloco"
+            [attr.aria-label]="'search_name' | transloco"
             [debounce]="400"
             enterkeyhint="search"
             (ionInput)="setWord($event.detail.value)"
@@ -97,6 +101,12 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
       <ion-list lines="inset" class="clinics">
         @for (clinic of vets.vetClinicsList(); track clinic.vetc_id) {
           <ion-item>
+            <!-- Only a clinic's own logo: the website's stock photo on every row would say nothing. -->
+            @if (logo(clinic); as src) {
+              <ion-thumbnail slot="start" class="logo">
+                <img [src]="src" alt="" loading="lazy" (error)="dropLogo(clinic.vetc_id)" />
+              </ion-thumbnail>
+            }
             <ion-label class="ion-text-wrap">
               <h2>{{ clinic.vetc_naziv }}</h2>
               @if (clinic.vetc_adresa) {
@@ -216,6 +226,15 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
     .area {
       font-size: 0.8125rem !important;
     }
+    ion-thumbnail.logo {
+      --size: 48px;
+      margin-inline-end: 16px;
+    }
+    ion-thumbnail.logo img {
+      border-radius: var(--app-radius-sm);
+      object-fit: contain;
+      background: var(--app-surface-sunken);
+    }
     /* Call and map: round, filled, thumb-sized. */
     .clinics ion-buttons {
       gap: 8px;
@@ -226,7 +245,7 @@ import { NO_VET_FILTERS, toVetSearchParams, VetFilters, vetFilterKeys } from './
       --background-activated: var(--app-primary-soft);
       --background-activated-opacity: 1;
       --border-radius: 50%;
-      --color: var(--app-primary);
+      --color: var(--app-primary-text);
       --padding-start: 0;
       --padding-end: 0;
       width: 44px;
@@ -257,6 +276,8 @@ export class VetsPage {
   });
 
   #pending: { complete(): Promise<void> | void } | null = null;
+  /** Clinics whose logo failed to load: their rows go without one. */
+  readonly #brokenLogos = signal<ReadonlySet<number>>(new Set());
 
   constructor() {
     addIcons({ callOutline, chevronDown, locationOutline, searchOutline });
@@ -317,6 +338,14 @@ export class VetsPage {
   refresh(event: RefresherCustomEvent): void {
     this.#pending = event.target;
     this.search();
+  }
+
+  logo(clinic: VetClinic): string | null {
+    return this.#brokenLogos().has(clinic.vetc_id) ? null : vetLogoUrl(clinic.vetc_logo);
+  }
+
+  dropLogo(id: number): void {
+    this.#brokenLogos.update((ids) => new Set(ids).add(id));
   }
 
   mapUrl(clinic: VetClinic): string {

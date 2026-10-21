@@ -94,3 +94,87 @@
   margin-top: 2px;
   font-size: 0.8125rem !important;
 }
+
+/* Parks: a city filter under the segments, like the one on Vets. */
+.place-row {
+  display: flex;
+  gap: 8px;
+  padding: 4px var(--app-gutter) 12px;
+}
+
+.city {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface-sunken);
+  font-size: 0.9375rem;
+}
+
+.city::part(label) {
+  color: var(--app-text-2);
+  font-weight: 500;
+}
+
+.city::part(text) {
+  font-weight: 600;
+}
+
+/* A page that did not load while scrolling: say so where the list stops. */
+.more-failed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 24px var(--app-gutter) 0;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: var(--app-text-2);
+    font-size: 0.9375rem;
+  }
+
+  ion-button {
+    margin: 0;
+  }
+}
+
+.park-description {
+  margin-top: 6px !important;
+  color: var(--app-text) !important;
+}
+
+/* The website's park rules, under the list. */
+.rules {
+  margin-bottom: 32px;
+
+  ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--app-text);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0.6em;
+      left: 2px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--app-primary);
+    }
+  }
+}

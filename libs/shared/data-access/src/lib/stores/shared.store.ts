@@ -49,6 +49,10 @@ export const SharedStore = signalStore(
     const handleError = (error: any) => {
       notifier.notify(translocoService.translate('error_global'), 'error', translocoService.translate('close'));
     };
+    /** Lookup lists that failed to load: nothing the user typed is at fault. */
+    const handleLoadError = () => {
+      notifier.notify(translocoService.translate('error_load'), 'error', translocoService.translate('close'));
+    };
     return {
       getSpotTypes() {
         http
@@ -60,7 +64,7 @@ export const SharedStore = signalStore(
                 spotTypes: response.spotTypes,
               }));
             },
-            error: handleError,
+            error: handleLoadError,
           });
       },
 
@@ -74,7 +78,7 @@ export const SharedStore = signalStore(
                 townships: response.township,
               }));
             },
-            error: handleError,
+            error: handleLoadError,
           });
       },
       getTownshipsByCity(id: number | string) {
@@ -88,7 +92,7 @@ export const SharedStore = signalStore(
                 townshipsByCity: response.township_by_city,
               }));
             },
-            error: handleError,
+            error: handleLoadError,
           });
       },
       getCityandState(){
@@ -102,7 +106,7 @@ export const SharedStore = signalStore(
               state:response.state
             }));
           },
-          error: handleError,
+          error: handleLoadError,
         });
       },
       addTownship(params: { ops_ime: string; grd_id: number }) {
@@ -139,7 +143,7 @@ export const SharedStore = signalStore(
                 gardenTypes: response.gardenTypes,
               }));
             },
-            error: handleError,
+            error: handleLoadError,
           });
       },
     };

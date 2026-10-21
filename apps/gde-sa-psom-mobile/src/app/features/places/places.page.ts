@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
@@ -29,11 +29,12 @@ import { IonToggle } from '@ionic/angular/ion-toggle';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { add, leafOutline, openOutline, optionsOutline, searchOutline } from 'ionicons/icons';
+import { add, alertCircleOutline, leafOutline, openOutline, optionsOutline, searchOutline } from 'ionicons/icons';
 import { Park, ParksStore, SharedStore, SpotsStore, Township } from '@gde/shared/data-access';
 import {
+  cleanApiText,
   descriptionToKeyMap,
   descriptionToKeyMapSpot,
   googleMapsSearchUrl,
@@ -41,9 +42,26 @@ import {
 } from '@gde/shared/util';
 import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { GeolocationService } from '../../core/platform/geolocation.service';
+import { formatDistance } from '../../shared/format-distance';
+import { FilterChip, FilterChipsComponent } from '../../shared/ui/filter-chips.component';
 import { SpotCardComponent } from '../../shared/ui/spot-card.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
-import { activeSpotFilterCount, NO_SPOT_FILTERS, SpotFilters, spotFilterKeys, toSpotSearchParams } from './spot-filters';
+import { linkKey, linkNeeds, PlacesLink, readPlacesLink, resolvePlacesLink } from './place-links';
+import {
+  activeSpotFilterCount,
+  ChipSpec,
+  NO_SPOT_FILTERS,
+  orderSpotTypes,
+  placeLabels,
+  RADIUS_OPTIONS,
+  SpotFilterLookups,
+  SpotFilters,
+  spotFilterChips,
+  spotFilterKeys,
+  spotTypeLabels,
+  withoutChip,
+} from './spot-filters';
+import { SpotSearch } from './spot-search';
 
 type Segment = 'venues' | 'parks';
 
@@ -51,6 +69,9 @@ type Segment = 'venues' | 'parks';
 interface Completable {
   complete(): Promise<void> | void;
 }
+
+/** The park rules the website lists (keys rule_1 … rule_13). */
+const PARK_RULES = Array.from({ length: 13 }, (_, i) => `rule_${i + 1}`);
 
 @Component({
   selector: 'app-places',
@@ -84,12 +105,16 @@ interface Completable {
     IonRouterLink,
     TranslocoPipe,
     SpotCardComponent,
+    FilterChipsComponent,
   ],
+  providers: [SpotSearch],
   templateUrl: './places.page.html',
   styleUrl: './places.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlacesPage {
+  readonly list = inject(SpotSearch);
+  /** For the pet sizes (`allowed`). */
   readonly spots = inject(SpotsStore);
   readonly parks = inject(ParksStore);
   readonly shared = inject(SharedStore);
@@ -98,8 +123,10 @@ export class PlacesPage {
   private readonly modals = inject(ModalController);
   private readonly geolocation = inject(GeolocationService);
   private readonly analytics = inject(AnalyticsService);
+  private readonly transloco = inject(TranslocoService);
 
-  readonly radiusOptions = [1000, 2000, 3000, 5000, 10000];
+  readonly radiusOptions = RADIUS_OPTIONS;
+  readonly parkRules = PARK_RULES;
   readonly petSizeKey = descriptionToKeyMap;
   readonly spotTypeKey = descriptionToKeyMapSpot;
 
@@ -110,34 +137,74 @@ export class PlacesPage {
   readonly draft = signal<SpotFilters>(NO_SPOT_FILTERS);
   readonly sheetOpen = signal(false);
   readonly locating = signal(false);
-  /** Venue type name from `?spotType=`, resolved once the types have loaded. */
-  private readonly pendingSpotType = signal<string | null>(null);
+  /** A link (Home, a venue page, a website URL) waiting for the venue types or townships it names. */
+  readonly pendingLink = signal<PlacesLink | null>(null);
+  /** City of the parks list; 0 = every city. */
+  readonly parkCityId = signal(0);
+
+  /** Re-labels the chips when the language changes or its file arrives. */
+  readonly #translation = toSignal(this.transloco.selectTranslation());
+
+  /** Venue types with each category's types side by side. */
+  readonly spotTypes = computed(() => orderSpotTypes(this.shared.spotTypes()));
+  readonly #lookups = computed<SpotFilterLookups>(() => ({
+    spotTypes: this.shared.spotTypes(),
+    townships: this.shared.townships() as Township[],
+    petSizes: this.spots.allowed(),
+  }));
 
   readonly activeFilterCount = computed(() => activeSpotFilterCount(this.filters()));
-
-  readonly canLoadMore = computed(() => {
-    const shown = this.spots.spotsList().length;
-    return shown > 0 && shown < this.spots.totalResult();
+  readonly chips = computed<FilterChip[]>(() => {
+    this.#translation();
+    return spotFilterChips(this.filters(), this.#lookups(), this.lang()).map((c) => ({
+      id: c.id,
+      label: this.#label(c),
+    }));
+  });
+  /** The sheet's venue type field: "Kafići" for a whole category. */
+  readonly draftTypes = computed(() => {
+    this.#translation();
+    return spotTypeLabels(this.draft().spotTypeIds, this.shared.spotTypes())
+      .map((c) => this.#label(c))
+      .join(', ');
+  });
+  readonly draftPlaces = computed(() => {
+    this.#translation();
+    return placeLabels(this.draft().townshipIds, this.shared.townships() as Township[], this.lang(), false)
+      .map((c) => this.#label(c))
+      .join(', ');
   });
 
-  readonly draftTownships = computed(() => {
-    const ids = new Set(this.draft().townshipIds);
-    return this.shared
-      .townships()
-      .filter((t) => ids.has(t.id))
-      .map((t) => t.ime)
-      .join(', ');
+  /** Placeholders until the first results: also while locating or resolving a link. */
+  readonly listPending = computed(
+    () =>
+      !this.list.spots().length &&
+      (this.list.status() === 'loading' || this.list.status() === 'idle' || this.locating() || !!this.pendingLink()),
+  );
+
+  /** Cities that have parks, by name, for the parks filter. */
+  readonly parkCities = computed(() => {
+    const byId = new Map<number, string>();
+    for (const park of this.parks.parks()) byId.set(Number(park.grd_id), park.grd_ime);
+    return [...byId].map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name, 'sr'));
+  });
+  readonly visibleParks = computed(() => {
+    const cityId = this.parkCityId();
+    const parks = this.parks.parks();
+    return cityId ? parks.filter((p) => Number(p.grd_id) === cityId) : parks;
   });
 
   #pendingSpots: Completable | null = null;
   #pendingParks: Completable | null = null;
+  /** `linkKey` of the last link followed. */
+  #appliedLink: string | null = null;
 
   constructor() {
-    addIcons({ add, leafOutline, openOutline, optionsOutline, searchOutline });
+    addIcons({ add, alertCircleOutline, leafOutline, openOutline, optionsOutline, searchOutline });
 
-    // Finish pull-to-refresh / infinite scroll once the store is done.
+    // Finish pull-to-refresh / infinite scroll once the list is done.
     effect(() => {
-      const busy = this.spots.isLoading();
+      const busy = this.list.status() === 'loading' || this.list.loadingMore();
       untracked(() => {
         if (!busy && this.#pendingSpots) {
           void this.#pendingSpots.complete();
@@ -155,20 +222,32 @@ export class PlacesPage {
       });
     });
 
-    // Links from Home: ?segment=parks, ?word=..., ?spotType=Restoran
+    // Links from Home, venue pages and the website: ?segment=parks, ?near=1, ?category=kafici&city=novi-sad …
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => this.#applyQueryParams(params));
 
+    // A link becomes filters once the venue types and townships it names have loaded.
     effect(() => {
-      const name = this.pendingSpotType();
-      const types = this.shared.spotTypes();
-      if (!name || !types.length) return;
+      const link = this.pendingLink();
+      if (!link) return;
+      const needs = linkNeeds(link);
+      const spotTypes = this.shared.spotTypes();
+      const townships = this.shared.townships() as Township[];
+      if ((needs.spotTypes && !spotTypes.length) || (needs.townships && !townships.length)) return;
       untracked(() => {
-        const match = types.find((t) => t.ime === name);
-        this.pendingSpotType.set(null);
-        this.filters.update((f) => ({ ...f, spotTypeId: match?.id ?? 0 }));
+        this.pendingLink.set(null);
+        const resolved = resolvePlacesLink(link, spotTypes, townships);
+        this.filters.set({
+          ...NO_SPOT_FILTERS,
+          word: resolved.word,
+          spotTypeIds: resolved.spotTypeIds,
+          townshipIds: resolved.townshipIds,
+        });
         this.search();
       });
     });
+
+    // Opened without a link: everything.
+    if (this.list.status() === 'idle' && !this.pendingLink() && !this.locating()) this.search();
   }
 
   setSegment(value: unknown): void {
@@ -185,14 +264,15 @@ export class PlacesPage {
     this.analytics.trackSearch('spots', word);
   }
 
-  /** `reset` starts a new list; otherwise the next page is appended. */
-  search(reset = true): void {
-    this.spots.loadSpots({ data: toSpotSearchParams(this.filters(), reset) });
+  /** A new list for the filters on screen. */
+  search(): void {
+    this.list.search(this.filters());
   }
 
   loadMore(event: InfiniteScrollCustomEvent): void {
-    this.#pendingSpots = event.target;
-    this.search(false);
+    this.list.loadMore();
+    if (this.list.loadingMore()) this.#pendingSpots = event.target;
+    else void event.target.complete();
   }
 
   refresh(event: RefresherCustomEvent): void {
@@ -205,6 +285,11 @@ export class PlacesPage {
     }
   }
 
+  removeChip(id: string): void {
+    this.filters.set(withoutChip(this.filters(), id, this.#lookups()));
+    this.search();
+  }
+
   // ── Filter sheet ────────────────────────────────────────────────────────
   openFilters(): void {
     this.draft.set(this.filters());
@@ -215,6 +300,10 @@ export class PlacesPage {
     this.draft.update((d) => ({ ...d, ...patch }));
   }
 
+  setDraftTypes(value: unknown): void {
+    this.patchDraft({ spotTypeIds: Array.isArray(value) ? value.map(Number) : [] });
+  }
+
   async pickTownships(): Promise<void> {
     const modal = await this.modals.create({
       component: TownshipPickerComponent,
@@ -222,7 +311,7 @@ export class PlacesPage {
         townships: this.shared.townships() as Township[],
         selected: this.draft().townshipIds,
         multiple: true,
-        title: 'township',
+        title: 'mobile_city_or_township',
       },
     });
     await modal.present();
@@ -262,11 +351,33 @@ export class PlacesPage {
     this.search();
   }
 
+  radiusLabel(metres: number): string {
+    return formatDistance(metres, this.lang()) ?? '';
+  }
+
+  // ── Parks ───────────────────────────────────────────────────────────────
+  setParkCity(value: unknown): void {
+    this.parkCityId.set(typeof value === 'number' ? value : 0);
+  }
+
+  parkDescription(park: Park): string | null {
+    return cleanApiText(park.par_opis);
+  }
+
   parkMapUrl(park: Park): string {
     return googleMapsSearchUrl([park.par_ime, park.par_lokacija, park.grd_ime].filter(Boolean).join(', '));
   }
 
+  #label(chip: ChipSpec): string {
+    return chip.text ?? this.transloco.translate(chip.key ?? '', chip.params);
+  }
+
   #applyQueryParams(params: ParamMap): void {
+    // Coming back from a venue or another tab brings the same params again: keep what the user changed since.
+    const key = linkKey(params);
+    if (key === this.#appliedLink) return;
+    this.#appliedLink = key;
+
     const segment = params.get('segment');
     if (segment === 'venues' || segment === 'parks') this.segment.set(segment);
 
@@ -275,18 +386,11 @@ export class PlacesPage {
       return;
     }
 
-    const word = params.get('word');
-    const spotType = params.get('spotType');
-    if (word === null && spotType === null) return;
-
-    this.filters.set({ ...NO_SPOT_FILTERS, word: word?.trim() || null });
+    const link = readPlacesLink(params);
+    if (!link) return;
     // A search typed on Home.
-    this.analytics.trackSearch('spots', word);
-    if (spotType) {
-      this.pendingSpotType.set(spotType);
-    } else {
-      this.search();
-    }
+    if (link.word) this.analytics.trackSearch('spots', link.word);
+    this.pendingLink.set(link);
   }
 
   /** "Near me" from Home: venues around the phone, other filters cleared. */
@@ -294,10 +398,12 @@ export class PlacesPage {
     this.locating.set(true);
     const near = await this.geolocation.current();
     this.locating.set(false);
-    if (!near) return;
-    this.analytics.trackNearMe('spots');
-    this.filters.set({ ...NO_SPOT_FILTERS, near });
-    this.search();
+    if (near) {
+      this.analytics.trackNearMe('spots');
+      this.filters.set({ ...NO_SPOT_FILTERS, near });
+      this.search();
+    } else if (this.list.status() === 'idle') {
+      this.search();
+    }
   }
 }
-

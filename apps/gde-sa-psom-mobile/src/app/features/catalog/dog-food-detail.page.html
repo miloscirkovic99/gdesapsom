@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/catalog" text="" />
+      <ion-back-button defaultHref="/tabs/catalog" text="" [attr.aria-label]="'back' | transloco" />
     </ion-buttons>
     <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ product()?.name }}</ion-title>
     @if (product()) {
@@ -25,18 +25,38 @@
     }
 
     <section class="intro">
-      <p class="app-eyebrow">{{ p.brand.name }}</p>
+      @if (p.brand.websiteUrl) {
+        <button
+          type="button"
+          class="app-eyebrow brand-link"
+          (click)="openBrandSite()"
+          [attr.aria-label]="'mobile_brand_website' | transloco: { name: p.brand.name }"
+        >
+          {{ p.brand.name }}
+          <ion-icon name="open-outline" aria-hidden="true" />
+        </button>
+      } @else {
+        <p class="app-eyebrow">{{ p.brand.name }}</p>
+      }
       <h1 #headline>{{ p.name }}</h1>
-      <p class="price">
-        @if (p.aggregate.lowPrice !== null) {
+      <!-- As on the website: the price and how many shops have it, else why there is none. -->
+      @if (p.aggregate.lowPrice !== null) {
+        <p class="price">
           <strong>{{ 'price_from' | transloco: { price: (p.aggregate.lowPrice | rsdPrice: lang()) } }}</strong>
+        </p>
+        <p class="price-note">
+          {{ countKey('offer_count', p.aggregate.offerCount) | transloco: { count: p.aggregate.offerCount } }}
           @if (p.aggregate.highPrice !== null && p.aggregate.highPrice !== p.aggregate.lowPrice) {
-            <span>· {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}</span>
+            · {{ 'price_up_to' | transloco: { price: (p.aggregate.highPrice | rsdPrice: lang()) } }}
           }
-        } @else {
-          <span>{{ 'price_unknown' | transloco }}</span>
-        }
-      </p>
+        </p>
+      } @else if (inStockOffers() > 0) {
+        <p class="price"><strong>{{ 'price_unknown' | transloco }}</strong></p>
+        <p class="price-note">{{ 'price_unknown_hint' | transloco }}</p>
+      } @else {
+        <p class="price"><strong>{{ 'no_offers' | transloco }}</strong></p>
+        <p class="price-note">{{ 'no_offers_hint' | transloco }}</p>
+      }
     </section>
 
     <dl class="specs">
@@ -69,10 +89,11 @@
       </section>
     }
 
-    <section class="app-block list-head">
-      <h2 class="app-section-title">{{ 'available_at' | transloco }}</h2>
-    </section>
+    <!-- No offers at all: the price line above already says so. -->
     @if (p.offers.length) {
+      <section class="app-block list-head">
+        <h2 class="app-section-title">{{ 'available_at' | transloco }}</h2>
+      </section>
       <ion-list lines="inset" class="offers">
         @for (offer of p.offers; track offer.id) {
           <ion-item [routerLink]="['/tabs/catalog/shops', offer.shop.slug]" detail="true" lines="none">
@@ -112,8 +133,6 @@
           </ion-item>
         }
       </ion-list>
-    } @else {
-      <p class="app-block muted">{{ 'no_offers_hint' | transloco }}</p>
     }
 
     @if (ingredients(); as i) {

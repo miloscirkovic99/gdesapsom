@@ -47,6 +47,25 @@ h1 {
   font-size: 0.9375rem;
 }
 
+/* The brand above the product name, linking to its website: the eyebrow's look, a fingertip's height. */
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  margin: -8px 0 -4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--app-primary-text);
+  font-family: inherit;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
 .price {
   margin: 0;
   color: var(--app-text-2);
@@ -57,9 +76,45 @@ h1 {
     font-size: 1.125rem;
     font-weight: 600;
   }
+}
 
-  strong + span {
-    margin-inline-start: 4px;
+/* How many shops have it, or why there is no price. */
+.price-note {
+  margin: 2px 0 0;
+  color: var(--app-text-2);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+/* A shop's assortment at a glance: items, brands, lowest price. */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px var(--app-gutter) 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--app-radius-xs);
+    background: var(--app-surface-sunken);
+    color: var(--app-text);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+}
+
+/* Food type over its part of the assortment, with a count. */
+.type-head {
+  margin-top: 20px;
+
+  span {
+    color: var(--app-text-3);
+    font-weight: 500;
   }
 }
 

@@ -23,9 +23,12 @@ import {
   add,
   basketOutline,
   bedOutline,
+  beerOutline,
   cafeOutline,
+  chevronForward,
   imageOutline,
   leafOutline,
+  locationOutline,
   medkitOutline,
   navigateOutline,
   restaurantOutline,
@@ -38,12 +41,19 @@ import { descriptionToKeyMapSpot, injectActiveLang } from '@gde/shared/util';
 import { RecentActivityService } from '../../core/recent/recent-activity.service';
 import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
 import { SpotCardComponent } from '../../shared/ui/spot-card.component';
+import { HUB_CITIES, SPOT_CATEGORIES } from '../places/place-groups';
+import { freshLink, placesQueryParams } from '../places/place-links';
 
 interface Category {
   label: string;
   icon: string;
   commands: string[];
   queryParams?: Record<string, string>;
+}
+
+/** A city or the accommodation list, as in the website's hubs section. */
+interface Hub extends Category {
+  description: string;
 }
 
 @Component({
@@ -77,15 +87,43 @@ export class HomePage {
   /** True from a tap on "Shuffle" until the new set arrives. */
   readonly shuffling = signal(false);
 
+  /** The website's categories (several venue types each, labelled for what they open), then the other tabs. */
   readonly categories: Category[] = [
-    { label: 'lp_cat_restaurants', icon: 'restaurant-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Restoran' } },
-    { label: 'lp_cat_cafes', icon: 'cafe-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Kafić' } },
-    { label: 'lp_cat_hotels', icon: 'bed-outline', commands: ['/tabs/places'], queryParams: { spotType: 'Hotel' } },
+    ...SPOT_CATEGORIES.map((c) => ({
+      label: c.labelKey,
+      icon: c.icon,
+      commands: ['/tabs/places'],
+      queryParams: placesQueryParams({ category: c.slug }),
+    })),
     { label: 'lp_cat_parks', icon: 'leaf-outline', commands: ['/tabs/places'], queryParams: { segment: 'parks' } },
     { label: 'lp_cat_vets', icon: 'medkit-outline', commands: ['/tabs/vets'] },
     { label: 'lp_cat_food', icon: 'basket-outline', commands: ['/tabs/catalog'], queryParams: { segment: 'food' } },
     { label: 'lp_cat_shops', icon: 'storefront-outline', commands: ['/tabs/catalog'], queryParams: { segment: 'shops' } },
-    { label: 'mobile_near_me', icon: 'navigate-outline', commands: ['/tabs/places'], queryParams: { segment: 'venues', near: '1' } },
+  ];
+
+  readonly nearMe: Category = {
+    label: 'mobile_near_me',
+    icon: 'navigate-outline',
+    commands: ['/tabs/places'],
+    queryParams: { segment: 'venues', near: '1' },
+  };
+
+  /** Beograd, Novi Sad and accommodation, with the website's descriptions. */
+  readonly hubs: Hub[] = [
+    ...HUB_CITIES.map((city) => ({
+      label: city.labelKey,
+      description: city.descriptionKey,
+      icon: 'location-outline',
+      commands: ['/tabs/places'],
+      queryParams: placesQueryParams({ city: city.slug }),
+    })),
+    {
+      label: 'mobile_cat_stays',
+      description: 'lp_hub_smestaj',
+      icon: 'bed-outline',
+      commands: ['/tabs/places'],
+      queryParams: placesQueryParams({ category: 'smestaj' }),
+    },
   ];
 
   constructor() {
@@ -94,7 +132,10 @@ export class HomePage {
       restaurantOutline,
       cafeOutline,
       bedOutline,
+      beerOutline,
+      chevronForward,
       imageOutline,
+      locationOutline,
       leafOutline,
       medkitOutline,
       basketOutline,
@@ -118,11 +159,13 @@ export class HomePage {
   search(value: string | null | undefined): void {
     const word = (value ?? '').trim();
     if (word) this.recent.addSearch(word);
-    void this.router.navigate(['/tabs/places'], { queryParams: { segment: 'venues', word: word || null } });
+    void this.router.navigate(['/tabs/places'], { queryParams: freshLink({ segment: 'venues', word }) });
   }
 
+  /** Each tap is a new link, so the target screen applies it even when it followed the same one before. */
   open(category: Category): void {
-    void this.router.navigate(category.commands, { queryParams: category.queryParams ?? {} });
+    const params = category.queryParams;
+    void this.router.navigate(category.commands, { queryParams: params ? freshLink(params) : {} });
   }
 
   openRecent(id: number): void {

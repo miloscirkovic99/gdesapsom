@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/places" text="" />
+      <ion-back-button defaultHref="/tabs/places" text="" [attr.aria-label]="'back' | transloco" />
     </ion-buttons>
     <ion-title class="title-reveal" [class.revealed]="title.shown()">{{ spot()?.iuo_ime }}</ion-title>
     @if (spot()) {
@@ -59,7 +59,7 @@
           }
           @if (gardenKey()) {
             <div class="fact">
-              <dt><ion-icon name="leaf-outline" aria-hidden="true" />{{ 'lp_example_garden' | transloco }}</dt>
+              <dt><ion-icon name="leaf-outline" aria-hidden="true" />{{ 'garden' | transloco }}</dt>
               <dd>{{ gardenKey()! | transloco }}</dd>
             </div>
           }
@@ -146,6 +146,23 @@
             </ion-button>
           </div>
         </section>
+      }
+
+      @if (related().length) {
+        <section class="app-block related-head">
+          <h2 class="app-section-title">{{ 'mobile_more_like_this' | transloco }}</h2>
+        </section>
+        <ion-list lines="inset" class="facts related">
+          @for (link of related(); track $index) {
+            <ion-item button detail="true" (click)="openPlaces(link)">
+              <ion-icon slot="start" [name]="link.icon" aria-hidden="true" />
+              <ion-label class="ion-text-wrap">
+                <h3>{{ link.titleKey | transloco }}</h3>
+                <p>{{ link.place ?? (link.placeKey! | transloco) }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
       }
       <div class="end"></div>
     }

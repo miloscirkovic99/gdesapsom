@@ -27,7 +27,14 @@ import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import type { ViewWillEnter } from '@ionic/angular';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { alertCircleOutline, checkmarkCircle, imageOutline, navigateOutline, shareSocialOutline } from 'ionicons/icons';
+import {
+  alertCircleOutline,
+  checkmarkCircle,
+  imageOutline,
+  navigateOutline,
+  openOutline,
+  shareSocialOutline,
+} from 'ionicons/icons';
 import { DogFoodOffer, DogFoodStore } from '@gde/shared/data-access';
 import {
   cleanApiText,
@@ -36,8 +43,10 @@ import {
   LocalNamePipe,
   PackageWeightPipe,
   parseCoordinates,
+  pluralKey,
   RsdPricePipe,
 } from '@gde/shared/util';
+import { ExternalLinkService } from '../../core/platform/external-link.service';
 import { ShareService } from '../../core/platform/share.service';
 import { revealTitleOnScroll } from '../../shared/title-reveal';
 import { DeliveryLinksComponent } from '../../shared/ui/delivery-links.component';
@@ -77,6 +86,7 @@ export class DogFoodDetailPage implements ViewWillEnter {
 
   readonly food = inject(DogFoodStore);
   readonly lang = injectActiveLang();
+  private readonly links = inject(ExternalLinkService);
   private readonly sharing = inject(ShareService);
 
   /**
@@ -90,11 +100,13 @@ export class DogFoodDetailPage implements ViewWillEnter {
   readonly description = computed(() => cleanApiText(this.product()?.description));
   readonly ingredients = computed(() => cleanApiText(this.product()?.ingredients));
   readonly bestOfferId = computed(() => bestOfferId(this.product()?.offers ?? []));
+  /** Shops that have it, priced or not; decides between 'price on request' and 'no offers'. */
+  readonly inStockOffers = computed(() => (this.product()?.offers ?? []).filter((o) => o.isInStock).length);
   private readonly headline = viewChild<ElementRef<HTMLElement>>('headline');
   readonly title = revealTitleOnScroll(this.headline);
 
   constructor() {
-    addIcons({ alertCircleOutline, checkmarkCircle, imageOutline, navigateOutline, shareSocialOutline });
+    addIcons({ alertCircleOutline, checkmarkCircle, imageOutline, navigateOutline, openOutline, shareSocialOutline });
     effect(() => {
       const slug = this.slug();
       untracked(() => this.food.loadDetail(slug));
@@ -108,6 +120,15 @@ export class DogFoodDetailPage implements ViewWillEnter {
 
   reload(): void {
     this.food.loadDetail(this.slug());
+  }
+
+  countKey(base: string, count: number): string {
+    return pluralKey(base, count, this.lang());
+  }
+
+  openBrandSite(): void {
+    const url = this.product()?.brand.websiteUrl;
+    if (url) void this.links.openWeb(url, { type: 'other' });
   }
 
   locationOf(offer: DogFoodOffer): string {

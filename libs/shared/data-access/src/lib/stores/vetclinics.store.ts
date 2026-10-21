@@ -74,9 +74,11 @@ export const VetClinicsStore = signalStore(
               })
               .pipe(
                 // Handle errors inside switchMap to prevent stream completion
+                // The list answers "nothing found" with a 404.
                 catchError((error) => {
-                  const translatedMessage =
-                    translocoService.translate('spots_error404');
+                  const translatedMessage = translocoService.translate(
+                    error?.status === 404 ? 'vets_no_results' : 'error_load'
+                  );
                   const translatedButton = translocoService.translate('close');
 
                   notifier.notify(translatedMessage, 'error', translatedButton);

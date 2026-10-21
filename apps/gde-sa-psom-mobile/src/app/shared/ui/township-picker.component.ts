@@ -14,13 +14,18 @@ import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { ModalController } from '@ionic/angular/modal-controller';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { Township } from '@gde/shared/data-access';
-import { filterTownshipsMulti } from '@gde/shared/util';
+import { groupTownships, spansSeveralCities, TownshipGroup } from './township-groups';
+
+type CityState = 'none' | 'some' | 'all';
 
 /**
  * Searchable township list, opened with ModalController. Dismisses with the
  * chosen ids (role 'confirm'), or with no data when cancelled.
  *
  * `create({ component: TownshipPickerComponent, componentProps: { townships, selected, multiple, title } })`
+ *
+ * Townships of several cities are listed by city; with `multiple`, each city
+ * with several townships gets a "whole city" row that selects all of them.
  */
 @Component({
   selector: 'app-township-picker',
@@ -54,6 +59,7 @@ import { filterTownshipsMulti } from '@gde/shared/util';
         <div class="search-row">
           <ion-searchbar
             [placeholder]="'search' | transloco"
+            [attr.aria-label]="'search' | transloco"
             [debounce]="150"
             (ionInput)="query.set($any($event).detail.value ?? '')"
           />
@@ -62,29 +68,55 @@ import { filterTownshipsMulti } from '@gde/shared/util';
     </ion-header>
     <ion-content>
       @if (multiple) {
-        <ion-list>
-          @for (t of visible(); track t.id) {
-            <ion-item>
-              <ion-checkbox
-                justify="space-between"
-                [checked]="chosen().has(t.id)"
-                (ionChange)="toggle(t.id, $event.detail.checked)"
-              >
-                {{ t.ime }}
-              </ion-checkbox>
-            </ion-item>
+        @for (g of groups(); track g.key) {
+          @if (grouped()) {
+            <h2 class="group-label">{{ g.city ?? ('mobile_other_towns' | transloco) }}</h2>
           }
-        </ion-list>
-      } @else {
-        <ion-list>
-          <ion-radio-group [value]="first()" (ionChange)="pick($event.detail.value)">
-            @for (t of visible(); track t.id) {
+          <ion-list>
+            @if (grouped() && g.city !== null) {
               <ion-item>
-                <ion-radio [value]="t.id" justify="space-between">{{ t.ime }}</ion-radio>
+                <ion-checkbox
+                  class="whole-city"
+                  justify="space-between"
+                  [checked]="cityState(g) === 'all'"
+                  [indeterminate]="cityState(g) === 'some'"
+                  (ionChange)="toggleCity(g, $event.detail.checked)"
+                >
+                  {{ 'mobile_whole_city' | transloco }}
+                </ion-checkbox>
               </ion-item>
             }
-          </ion-radio-group>
-        </ion-list>
+            @for (t of g.rows; track t.id) {
+              <ion-item>
+                <ion-checkbox
+                  justify="space-between"
+                  [checked]="chosen().has(t.id)"
+                  (ionChange)="toggle(t.id, $event.detail.checked)"
+                >
+                  {{ t.name }}
+                </ion-checkbox>
+              </ion-item>
+            }
+          </ion-list>
+        }
+      } @else {
+        <ion-radio-group [value]="first()" (ionChange)="pick($event.detail.value)">
+          @for (g of groups(); track g.key) {
+            @if (grouped()) {
+              <h2 class="group-label">{{ g.city ?? ('mobile_other_towns' | transloco) }}</h2>
+            }
+            <ion-list>
+              @for (t of g.rows; track t.id) {
+                <ion-item>
+                  <ion-radio [value]="t.id" justify="space-between">{{ t.name }}</ion-radio>
+                </ion-item>
+              }
+            </ion-list>
+          }
+        </ion-radio-group>
+      }
+      @if (!groups().length) {
+        <p class="empty">{{ 'no_results_title' | transloco }}</p>
       }
     </ion-content>
   `,
@@ -96,8 +128,19 @@ import { filterTownshipsMulti } from '@gde/shared/util';
       --min-height: 52px;
     }
     ion-buttons ion-button[strong] {
-      --color: var(--app-primary);
+      --color: var(--app-primary-text);
       font-weight: 700;
+    }
+    .group-label:first-child {
+      margin-top: 16px;
+    }
+    .whole-city {
+      font-weight: 600;
+    }
+    .empty {
+      margin: 32px var(--app-gutter);
+      color: var(--app-text-2);
+      text-align: center;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,18 +157,36 @@ export class TownshipPickerComponent implements OnInit {
   readonly query = signal('');
   readonly chosen = signal(new Set<number>());
   readonly first = computed(() => [...this.chosen()][0] ?? null);
-  readonly visible = computed(() =>
-    filterTownshipsMulti({ townships: () => this.townships, townshipsByCity: () => [] }, this.query()),
-  );
+  /** Headers and "whole city" rows only when the list holds more than one city. */
+  readonly grouped = signal(false);
+  readonly groups = computed(() => this.#group(this.query()));
 
   ngOnInit(): void {
     this.chosen.set(new Set(this.selected));
+    this.grouped.set(spansSeveralCities(this.townships));
+  }
+
+  cityState(group: TownshipGroup): CityState {
+    const chosen = this.chosen();
+    const count = group.allIds.filter((id) => chosen.has(id)).length;
+    if (!count) return 'none';
+    return count === group.allIds.length ? 'all' : 'some';
   }
 
   toggle(id: number, checked: boolean): void {
     const next = new Set(this.chosen());
     if (checked) next.add(id);
     else next.delete(id);
+    this.chosen.set(next);
+  }
+
+  /** Every township of the city, including those the search hides. */
+  toggleCity(group: TownshipGroup, checked: boolean): void {
+    const next = new Set(this.chosen());
+    for (const id of group.allIds) {
+      if (checked) next.add(id);
+      else next.delete(id);
+    }
     this.chosen.set(next);
   }
 
@@ -142,5 +203,13 @@ export class TownshipPickerComponent implements OnInit {
 
   confirm(): void {
     void this.modalCtrl.dismiss([...this.chosen()], 'confirm');
+  }
+
+  #group(query: string): TownshipGroup[] {
+    const groups = groupTownships(this.townships, query);
+    if (this.grouped()) return groups;
+    // One city (the vets page passes the chosen city's townships): a plain list.
+    const rows = groups.flatMap((g) => g.rows).sort((a, b) => a.name.localeCompare(b.name, 'sr'));
+    return rows.length ? [{ key: 'all', city: null, allIds: rows.map((r) => r.id), rows }] : [];
   }
 }

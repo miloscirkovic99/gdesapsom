@@ -107,7 +107,8 @@ h1 {
   }
 }
 
-.recent-searches {
+/* One line under the search that scrolls sideways: "Near me", then recent searches. */
+.hero-chips {
   display: flex;
   gap: 8px;
   margin: 12px calc(-1 * var(--app-gutter)) 0;
@@ -120,7 +121,13 @@ h1 {
   }
 }
 
-.recent-search {
+.recent-searches {
+  display: flex;
+  flex: none;
+  gap: 8px;
+}
+
+.hero-chip {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -143,6 +150,16 @@ h1 {
 
   &:active {
     background: var(--app-surface-sunken);
+  }
+
+  /* "Near me" is an action, not history: the brand colour on its icon and text. */
+  &.near {
+    color: var(--app-primary-text);
+    font-weight: 600;
+
+    ion-icon {
+      color: var(--app-primary);
+    }
   }
 }
 
@@ -207,6 +224,71 @@ h1 {
   font-weight: 500;
   line-height: 1.25;
   text-align: center;
+}
+
+/* Cities and accommodation: a row each, with what the list holds. */
+.hubs {
+  display: grid;
+  gap: 8px;
+  padding: 0 var(--app-gutter);
+}
+
+.hub {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 12px 12px 14px;
+  border: 0;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface-sunken);
+  color: var(--app-text);
+  font: inherit;
+  text-align: start;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s ease;
+
+  &:active {
+    background: var(--app-surface-sunken-pressed);
+  }
+}
+
+.hub-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  color: var(--app-primary);
+  font-size: 20px;
+}
+
+.hub-text {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+
+  strong {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  span {
+    color: var(--app-text-2);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+}
+
+.hub-chevron {
+  flex: none;
+  color: var(--app-text-3);
+  font-size: 18px;
 }
 
 /* Horizontal rails. */

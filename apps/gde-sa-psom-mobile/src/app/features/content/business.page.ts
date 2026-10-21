@@ -14,7 +14,10 @@ import { IonTitle } from '@ionic/angular/ion-title';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-/** The portal's "Za biznise" page, same texts, condensed for a phone. */
+/**
+ * The portal's "Za biznise" page, same texts, condensed for a phone. The mobile_
+ * variants match the app: one photo is required, and there are no member accounts.
+ */
 @Component({
   selector: 'app-business',
   imports: [
@@ -37,7 +40,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tabs/more" text="" />
+          <ion-back-button defaultHref="/tabs/more" text="" [attr.aria-label]="'back' | transloco" />
         </ion-buttons>
         <ion-title>{{ 'for_business_nav' | transloco }}</ion-title>
       </ion-toolbar>
@@ -82,9 +85,13 @@ import { TranslocoPipe } from '@ngneat/transloco';
 
         <section class="ready">
           <h2>{{ 'business_ready_title' | transloco }}</h2>
-          <p>{{ 'business_reassurance_full' | transloco }}</p>
+          <p>{{ 'mobile_business_reassurance_full' | transloco }}</p>
           <ion-button expand="block" [routerLink]="['/tabs/more/suggest-spot']">
             {{ 'business_cta_primary' | transloco }}
+          </ion-button>
+          <!-- The website has its contact form under this page. -->
+          <ion-button expand="block" fill="clear" [routerLink]="['/tabs/more/contact']">
+            {{ 'contact_us' | transloco }}
           </ion-button>
         </section>
       </article>
@@ -198,6 +205,9 @@ export class BusinessPage {
     ][n - 1],
     body: `business_benefit_${n}_desc`,
   }));
-  readonly steps = [1, 2, 3].map((n) => ({ title: `business_step_${n}`, body: `business_step_${n}_desc` }));
+  readonly steps = [1, 2, 3].map((n) => {
+    const prefix = n === 2 ? 'mobile_' : '';
+    return { title: `${prefix}business_step_${n}`, body: `${prefix}business_step_${n}_desc` };
+  });
   readonly faq = [1, 2, 3].map((n) => ({ q: `faq_q${n}`, a: `faq_a${n}` }));
 }

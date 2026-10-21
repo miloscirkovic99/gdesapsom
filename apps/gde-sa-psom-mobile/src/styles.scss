@@ -22,9 +22,12 @@
 /*
  * ═══ Design tokens ═══
  *
- * Colour comes from the logo: its deep pine green is the one interactive colour,
- * the mint pin a quiet tint for selected and "dogs welcome" states, and the
- * tennis-ball yellow is kept for the single call to venue owners.
+ * Colour is the website's (daisyUI themes in apps/gde-sa-psom-portal/tailwind.config.js):
+ * its emerald `secondary` is the one interactive colour, on white and slate
+ * surfaces by day and navy ones at night; the slate `neutral` carries the single
+ * call to venue owners. Keep the two in step when the website's theme changes.
+ * Text in the brand colour uses --app-primary-text: the website's emerald is too
+ * light to read as small text on white.
  *
  * Pages sit on a plain background; content is separated by spacing and
  * hairlines rather than boxes and shadows. A filled (sunken) surface marks
@@ -39,42 +42,43 @@
  * 16 photos and grouped surfaces, 24 sheets; round only for icon buttons.
  */
 :root {
-  /* Colour: brand */
-  --app-primary: #0f5a48;
-  --app-primary-pressed: #0b4637;
+  /* Colour: brand (website `secondary`, `secondary-content`, `neutral`) */
+  --app-primary: #10b981;
+  --app-primary-pressed: #059669;
   --app-on-primary: #ffffff;
-  --app-primary-soft: #e3f2ed;
-  --app-on-primary-soft: #0f5a48;
+  --app-primary-text: #047857;
+  --app-primary-soft: #dbf4ec;
+  --app-on-primary-soft: #047857;
+  /* The logo's mint pin. */
   --app-secondary: #7ecbbd;
-  --app-accent: #ddee5f;
-  --app-accent-pressed: #cadc4e;
-  --app-on-accent: #1d2a06;
+  --app-neutral: #1e293b;
+  --app-on-neutral: #f8fafc;
 
-  /* Colour: surfaces */
+  /* Colour: surfaces (website base-100, base-200, base-300) */
   --app-bg: #ffffff;
   --app-surface: #ffffff;
   --app-surface-raised: #ffffff;
-  --app-surface-sunken: #f2f5f3;
-  --app-surface-sunken-pressed: #e6ebe8;
+  --app-surface-sunken: #f1f5f9;
+  --app-surface-sunken-pressed: #e2e8f0;
 
-  /* Colour: text and lines */
-  --app-text: #12241d;
-  --app-text-2: #475a51;
-  --app-text-3: #617269;
-  --app-border: rgba(18, 36, 29, 0.1);
-  --app-border-strong: rgba(18, 36, 29, 0.24);
+  /* Colour: text and lines (website base-content, at 70% and 60%) */
+  --app-text: #0f172a;
+  --app-text-2: #575d6a;
+  --app-text-3: #6f747f;
+  --app-border: #e2e8f0;
+  --app-border-strong: rgba(15, 23, 42, 0.2);
 
-  /* Colour: status */
-  --app-success: #1e7a4c;
-  --app-success-soft: #e4f3ea;
-  --app-warning: #9a5a06;
-  --app-warning-soft: #fcf0da;
-  --app-danger: #c0352b;
-  --app-danger-soft: #fbe9e7;
+  /* Colour: status (website success, warning, error; darker where they are text) */
+  --app-success: #047857;
+  --app-success-soft: #dbf4ec;
+  --app-warning: #b45309;
+  --app-warning-soft: #fef3c7;
+  --app-danger: #dc2626;
+  --app-danger-soft: #fee2e2;
 
   /* Elevation: only for what floats above the page. */
-  --app-shadow-1: 0 1px 2px rgba(18, 36, 29, 0.06), 0 2px 8px -2px rgba(18, 36, 29, 0.08);
-  --app-shadow-2: 0 12px 32px -12px rgba(18, 36, 29, 0.28);
+  --app-shadow-1: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 8px -2px rgba(15, 23, 42, 0.08);
+  --app-shadow-2: 0 12px 32px -12px rgba(15, 23, 42, 0.28);
 
   /* Type */
   --app-font-display: 'Bricolage Grotesque Variable', 'Figtree Variable', system-ui, sans-serif;
@@ -104,7 +108,7 @@
   --ion-background-color: var(--app-bg);
   --ion-background-color-rgb: 255, 255, 255;
   --ion-text-color: var(--app-text);
-  --ion-text-color-rgb: 18, 36, 29;
+  --ion-text-color-rgb: 15, 23, 42;
   --ion-text-color-step-400: var(--app-text-2);
   --ion-placeholder-color: var(--app-text-3);
   --ion-toolbar-background: var(--app-bg);
@@ -120,88 +124,90 @@
   --ion-border-color: var(--app-border);
   --ion-overlay-background-color: var(--app-surface-raised);
 
-  --ion-color-primary: #0f5a48;
-  --ion-color-primary-rgb: 15, 90, 72;
+  --ion-color-primary: #10b981;
+  --ion-color-primary-rgb: 16, 185, 129;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0b4637;
-  --ion-color-primary-tint: #276b5a;
+  --ion-color-primary-shade: #0ea371;
+  --ion-color-primary-tint: #28c08e;
 
-  --ion-color-success: #1e7a4c;
-  --ion-color-success-rgb: 30, 122, 76;
+  --ion-color-success: #047857;
+  --ion-color-success-rgb: 4, 120, 87;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #1a6b43;
-  --ion-color-success-tint: #35875e;
+  --ion-color-success-shade: #046a4d;
+  --ion-color-success-tint: #1d8668;
 
-  --ion-color-danger: #c0352b;
-  --ion-color-danger-rgb: 192, 53, 43;
+  --ion-color-danger: #dc2626;
+  --ion-color-danger-rgb: 220, 38, 38;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #a92f26;
-  --ion-color-danger-tint: #c64940;
+  --ion-color-danger-shade: #c22121;
+  --ion-color-danger-tint: #e03c3c;
 }
 
-/* The deep green is too dark to read on a dark background: the mint takes over. */
+/* The website's dark theme: navy surfaces, a lighter emerald with dark text on it. */
 :root.ion-palette-dark {
-  --app-primary: #7ecbbd;
-  --app-primary-pressed: #6ab8aa;
-  --app-on-primary: #06231b;
-  --app-primary-soft: #183a31;
-  --app-on-primary-soft: #a5e0d4;
-  --app-accent-pressed: #c4d64a;
+  --app-primary: #34d399;
+  --app-primary-pressed: #10b981;
+  --app-on-primary: #022c22;
+  --app-primary-text: #34d399;
+  --app-primary-soft: #122f34;
+  --app-on-primary-soft: #6ee7b7;
+  --app-neutral: #1e293b;
+  --app-on-neutral: #f1f5f9;
 
-  --app-bg: #0d1411;
-  --app-surface: #111a16;
-  --app-surface-raised: #17221d;
-  --app-surface-sunken: #1a2420;
-  --app-surface-sunken-pressed: #22302a;
+  --app-bg: #0c1222;
+  --app-surface: #0f172a;
+  --app-surface-raised: #162032;
+  --app-surface-sunken: #162032;
+  --app-surface-sunken-pressed: #1e3048;
 
-  --app-text: #e7f0eb;
-  --app-text-2: #a8bab2;
-  --app-text-3: #8a9d94;
-  --app-border: rgba(231, 240, 235, 0.1);
-  --app-border-strong: rgba(231, 240, 235, 0.26);
+  --app-text: #e2e8f0;
+  --app-text-2: #a2a8b2;
+  --app-text-3: #8c929e;
+  --app-border: #1e3048;
+  --app-border-strong: rgba(226, 232, 240, 0.24);
 
-  --app-success: #5cc58a;
-  --app-success-soft: #16301f;
-  --app-warning: #f0b35a;
-  --app-warning-soft: #33260f;
-  --app-danger: #ff8a7a;
-  --app-danger-soft: #3a1b17;
+  --app-success: #34d399;
+  --app-success-soft: #122f34;
+  --app-warning: #fbbf24;
+  --app-warning-soft: #33290f;
+  --app-danger: #f87171;
+  --app-danger-soft: #3b1a22;
 
   --app-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
   --app-shadow-2: 0 12px 32px -12px rgba(0, 0, 0, 0.8);
 
-  --ion-color-primary: #7ecbbd;
-  --ion-color-primary-rgb: 126, 203, 189;
-  --ion-color-primary-contrast: #06231b;
-  --ion-color-primary-contrast-rgb: 6, 35, 27;
-  --ion-color-primary-shade: #6fb3a6;
-  --ion-color-primary-tint: #8bd0c4;
+  --ion-color-primary: #34d399;
+  --ion-color-primary-rgb: 52, 211, 153;
+  --ion-color-primary-contrast: #022c22;
+  --ion-color-primary-contrast-rgb: 2, 44, 34;
+  --ion-color-primary-shade: #2eba87;
+  --ion-color-primary-tint: #48d7a3;
 
-  --ion-color-success: #5cc58a;
-  --ion-color-success-rgb: 92, 197, 138;
-  --ion-color-success-contrast: #06231b;
-  --ion-color-success-contrast-rgb: 6, 35, 27;
-  --ion-color-success-shade: #51ad79;
-  --ion-color-success-tint: #6ccb96;
+  --ion-color-success: #34d399;
+  --ion-color-success-rgb: 52, 211, 153;
+  --ion-color-success-contrast: #022c22;
+  --ion-color-success-contrast-rgb: 2, 44, 34;
+  --ion-color-success-shade: #2eba87;
+  --ion-color-success-tint: #48d7a3;
 
-  --ion-color-danger: #ff8a7a;
-  --ion-color-danger-rgb: 255, 138, 122;
-  --ion-color-danger-contrast: #2a0b07;
-  --ion-color-danger-contrast-rgb: 42, 11, 7;
-  --ion-color-danger-shade: #e0796b;
-  --ion-color-danger-tint: #ff9687;
+  --ion-color-danger: #f87171;
+  --ion-color-danger-rgb: 248, 113, 113;
+  --ion-color-danger-contrast: #2a0b0b;
+  --ion-color-danger-contrast-rgb: 42, 11, 11;
+  --ion-color-danger-shade: #da6363;
+  --ion-color-danger-tint: #f97f7f;
 }
 
 /* Beats the dark palette's own `.ion-palette-dark.md` surface colours. */
 :root.ion-palette-dark.md,
 :root.ion-palette-dark.ios {
   --ion-background-color: var(--app-bg);
-  --ion-background-color-rgb: 13, 20, 17;
+  --ion-background-color-rgb: 12, 18, 34;
   --ion-text-color: var(--app-text);
-  --ion-text-color-rgb: 231, 240, 235;
+  --ion-text-color-rgb: 226, 232, 240;
   --ion-text-color-step-400: var(--app-text-2);
   --ion-placeholder-color: var(--app-text-3);
   --ion-toolbar-background: var(--app-bg);
@@ -315,7 +321,7 @@ h3 {
   border: 0;
   border-radius: var(--app-radius-md);
   background: none;
-  color: var(--app-primary);
+  color: var(--app-primary-text);
   font: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -565,6 +571,11 @@ ion-button[fill='outline']:not(.ion-color) {
   --background-focused-opacity: 0.06;
 }
 
+/* Text buttons read in the darker emerald; :where() lets a component set its own colour. */
+:where(ion-button[fill='clear']:not(.ion-color)) {
+  --color: var(--app-primary-text);
+}
+
 ion-button.button-disabled {
   opacity: 0.45;
 }
@@ -786,12 +797,24 @@ ion-modal.consent-sheet {
 ion-action-sheet {
   --background: var(--app-surface-raised);
   --button-color: var(--app-text);
-  --button-color-selected: var(--app-primary);
+  --button-color-selected: var(--app-primary-text);
 }
 
 ion-alert {
   --background: var(--app-surface-raised);
   --max-width: 340px;
+}
+
+/* Alert buttons are text: the readable emerald, red for the one that throws input away (DiscardDialog). */
+ion-alert .alert-button-group .alert-button {
+  color: var(--app-primary-text);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+
+  &.alert-button-danger {
+    color: var(--app-danger);
+  }
 }
 
 /* Toasts sit above the tab bar (ToastNotifier); sideways they keep clear of a landscape navigation bar or cutout. */
@@ -953,7 +976,7 @@ ion-skeleton-text {
   padding: 2px 6px;
   border-top-left-radius: var(--app-radius-xs);
   background: rgba(255, 255, 255, 0.85);
-  color: #4d5f57;
+  color: #475569;
   font-size: 0.6875rem;
   line-height: 1.4;
 
@@ -968,11 +991,12 @@ ion-skeleton-text {
     display: block;
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 3px 4px rgba(18, 36, 29, 0.35));
+    filter: drop-shadow(0 3px 4px rgba(15, 23, 42, 0.35));
   }
 
+  /* The light theme's emerald in both themes: the white dot needs the contrast. */
   .pin-body {
-    fill: var(--app-primary);
+    fill: #10b981;
     stroke: #ffffff;
     stroke-width: 1.5;
   }
@@ -980,10 +1004,6 @@ ion-skeleton-text {
   .pin-dot {
     fill: #ffffff;
   }
-}
-
-:root.ion-palette-dark .app-map-pin .pin-body {
-  fill: #0f5a48;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -23,7 +23,7 @@ describe('SharedStore', () => {
     httpMock.expectOne('pet-friendly-spots-types/list').flush({ spotTypes: [] });
     httpMock.expectOne('countryandcities').flush({ city: [], state: [] });
 
-    expect(notify).toHaveBeenCalledWith('error_global', 'error', 'close');
+    expect(notify).toHaveBeenCalledWith('error_load', 'error', 'close');
     httpMock.verify();
   });
 });

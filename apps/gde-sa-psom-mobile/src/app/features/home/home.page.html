@@ -38,20 +38,28 @@
       #searchbar
       class="hero-search"
       [placeholder]="'lp_search_placeholder' | transloco"
+      [attr.aria-label]="'lp_search_placeholder' | transloco"
       enterkeyhint="search"
       (keyup.enter)="search(searchbar.value)"
     />
 
-    @if (recent.searches().length) {
-      <div class="recent-searches" role="group" [attr.aria-label]="'mobile_recent_searches' | transloco">
-        @for (word of recent.searches(); track word) {
-          <button type="button" class="recent-search" (click)="search(word)">
-            <ion-icon name="time-outline" aria-hidden="true" />
-            {{ word }}
-          </button>
-        }
-      </div>
-    }
+    <!-- Ways to search without typing: around the phone, or a recent search again. -->
+    <div class="hero-chips">
+      <button type="button" class="hero-chip near" (click)="open(nearMe)">
+        <ion-icon [name]="nearMe.icon" aria-hidden="true" />
+        {{ nearMe.label | transloco }}
+      </button>
+      @if (recent.searches().length) {
+        <div class="recent-searches" role="group" [attr.aria-label]="'mobile_recent_searches' | transloco">
+          @for (word of recent.searches(); track word) {
+            <button type="button" class="hero-chip" (click)="search(word)">
+              <ion-icon name="time-outline" aria-hidden="true" />
+              {{ word }}
+            </button>
+          }
+        </div>
+      }
+    </div>
   </header>
 
   <section class="section">
@@ -63,6 +71,24 @@
         <button type="button" class="cat" (click)="open(c)">
           <span class="cat-icon"><ion-icon [name]="c.icon" aria-hidden="true" /></span>
           <span class="cat-label">{{ c.label | transloco }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="app-section-head">
+      <h2 class="app-section-title">{{ 'lp_hubs_title' | transloco }}</h2>
+    </div>
+    <div class="hubs">
+      @for (hub of hubs; track hub.label) {
+        <button type="button" class="hub" (click)="open(hub)">
+          <span class="hub-icon"><ion-icon [name]="hub.icon" aria-hidden="true" /></span>
+          <span class="hub-text">
+            <strong>{{ hub.label | transloco }}</strong>
+            <span>{{ hub.description | transloco }}</span>
+          </span>
+          <ion-icon class="hub-chevron" name="chevron-forward" aria-hidden="true" />
         </button>
       }
     </div>

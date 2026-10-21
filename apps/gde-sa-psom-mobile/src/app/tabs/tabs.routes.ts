@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { leaveFormGuard } from '../core/forms/leave-form';
 import { TabsPage } from './tabs.page';
 
 const spotDetail = () => import('../features/spots/spot-detail.page').then((m) => m.SpotDetailPage);
@@ -30,10 +31,12 @@ export const TAB_ROUTES: Routes = [
       {
         path: 'more/suggest-spot',
         loadComponent: () => import('../features/suggest/suggest-spot.page').then((m) => m.SuggestSpotPage),
+        canDeactivate: [leaveFormGuard],
       },
       {
         path: 'more/suggest-park',
         loadComponent: () => import('../features/suggest/suggest-park.page').then((m) => m.SuggestParkPage),
+        canDeactivate: [leaveFormGuard],
       },
       { path: 'more/blog', loadComponent: () => import('../features/content/blog-list.page').then((m) => m.BlogListPage) },
       {
@@ -44,6 +47,11 @@ export const TAB_ROUTES: Routes = [
       {
         path: 'more/business',
         loadComponent: () => import('../features/content/business.page').then((m) => m.BusinessPage),
+      },
+      {
+        path: 'more/contact',
+        loadComponent: () => import('../features/contact/contact.page').then((m) => m.ContactPage),
+        canDeactivate: [leaveFormGuard],
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],

@@ -18,6 +18,7 @@
         <ion-searchbar
           [value]="food.filters().word"
           [placeholder]="'search_food_placeholder' | transloco"
+          [attr.aria-label]="'search_food_placeholder' | transloco"
           [debounce]="400"
           enterkeyhint="search"
           (ionInput)="setFoodWord($event.detail.value)"
@@ -38,6 +39,7 @@
         <ion-searchbar
           [value]="shops.filters().word"
           [placeholder]="'search_shop_placeholder' | transloco"
+          [attr.aria-label]="'search_shop_placeholder' | transloco"
           [debounce]="400"
           enterkeyhint="search"
           (ionInput)="setShopWord($event.detail.value)"
@@ -56,6 +58,11 @@
         </button>
       }
     </div>
+    @if (segment() === 'food') {
+      <app-filter-chips [chips]="foodChips()" (remove)="removeFoodChip($event)" (clear)="clearFoodChips()" />
+    } @else {
+      <app-filter-chips [chips]="shopChips()" (remove)="removeShopChip($event)" (clear)="clearShops()" />
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -87,15 +94,28 @@
                 · {{ item.packageWeightG | packageWeight: lang() }}
               }
             </p>
+            <!-- As the website's product card: shops with it in stock, or that nobody has it. -->
+            <p class="row-meta">
+              @if (item.isGrainFree) {
+                <span class="app-tag">{{ 'grain_free' | transloco }}</span>
+              }
+              @if (item.offerCount > 0) {
+                <span class="offers">{{ countKey('offer_count', item.offerCount) | transloco: { count: item.offerCount } }}</span>
+              } @else {
+                <span>{{ 'no_offers' | transloco }}</span>
+              }
+            </p>
           </ion-label>
-          <div slot="end" class="price">
-            @if (item.minPrice !== null) {
+          @if (item.minPrice !== null) {
+            <div slot="end" class="price">
               <small>{{ 'price_from_label' | transloco }}</small>
               <strong>{{ item.minPrice | rsdPrice: lang() }}</strong>
-            } @else {
+            </div>
+          } @else if (item.offerCount > 0) {
+            <div slot="end" class="price">
               <small>{{ 'price_unknown' | transloco }}</small>
-            }
-          </div>
+            </div>
+          }
         </ion-item>
       } @empty {
         @if (food.isLoading()) {
@@ -113,11 +133,16 @@
           <div class="app-state">
             <ion-icon name="cloud-offline-outline" aria-hidden="true" />
             <p>{{ 'catalog_error' | transloco }}</p>
+            <ion-button fill="outline" (click)="food.search(food.filters())">{{ 'try_again' | transloco }}</ion-button>
           </div>
         } @else {
           <div class="app-state">
             <ion-icon name="search-outline" aria-hidden="true" />
-            <h3>{{ 'no_results_title' | transloco }}</h3>
+            <h3>{{ 'no_food_results_title' | transloco }}</h3>
+            <p>{{ 'no_food_results' | transloco }}</p>
+            @if (foodHasQuery()) {
+              <ion-button fill="outline" (click)="resetFood()">{{ 'clear_filters' | transloco }}</ion-button>
+            }
           </div>
         }
       }
@@ -126,26 +151,57 @@
       <ion-infinite-scroll-content />
     </ion-infinite-scroll>
   } @else {
+    @if (shops.total() !== null && shops.items().length) {
+      <p class="count">{{ countKey('shop_count', shops.total()!) | transloco: { count: shops.total() } }}</p>
+    }
     <ion-list lines="inset" class="rows shops">
       @for (shop of shops.items(); track shop.id) {
-        <ion-item [routerLink]="['/tabs/catalog/shops', shop.slug]" detail="true">
+        @let actions = hasShopActions(shop);
+        <!-- Calls and delivery links get a row of their own: links inside a tappable row would also open the shop. -->
+        <ion-item
+          [routerLink]="['/tabs/catalog/shops', shop.slug]"
+          detail="true"
+          [lines]="actions ? 'none' : undefined"
+          [class.has-actions]="actions"
+        >
           <ion-label class="ion-text-wrap">
             <h2>{{ shop.name }}</h2>
             <p>{{ shop.address }}</p>
-            <p>{{ shop.townshipName ?? shop.cityName }}</p>
-            <p class="shop-meta">
-              @if (shop.offerCount) {
-                <span class="offers">{{ countKey('food_count', shop.offerCount) | transloco: { count: shop.offerCount } }}</span>
+            @if (placeOf(shop); as place) {
+              <p>{{ place }}</p>
+            }
+            <p class="row-meta">
+              @if (shop.offerCount > 0) {
+                <span class="offers">{{ countKey('item_count', shop.offerCount) | transloco: { count: shop.offerCount } }}</span>
+              } @else {
+                <span>{{ 'assortment_soon' | transloco }}</span>
               }
               @if (distance(shop.distanceM); as d) {
                 <span>{{ d }}</span>
               }
-              @if (shop.woltUrl || shop.glovoUrl) {
-                <span>{{ shop.woltUrl ? 'Wolt' : '' }}{{ shop.woltUrl && shop.glovoUrl ? ' · ' : '' }}{{ shop.glovoUrl ? 'Glovo' : '' }}</span>
-              }
             </p>
           </ion-label>
         </ion-item>
+        @if (actions) {
+          <ion-item class="row-actions">
+            <div class="actions">
+              @if (shop.phone; as phone) {
+                <ion-button
+                  size="small"
+                  fill="outline"
+                  [href]="'tel:' + phone"
+                  data-link-type="venue_phone"
+                  [attr.data-venue-slug]="shop.slug"
+                  [attr.aria-label]="'mobile_call_name' | transloco: { name: shop.name }"
+                >
+                  <ion-icon slot="start" name="call-outline" aria-hidden="true" />
+                  {{ 'mobile_call' | transloco }}
+                </ion-button>
+              }
+              <app-delivery-links [woltUrl]="shop.woltUrl" [glovoUrl]="shop.glovoUrl" [venueSlug]="shop.slug" />
+            </div>
+          </ion-item>
+        }
       } @empty {
         @if (shops.isLoading()) {
           @for (i of [1, 2, 3, 4, 5]; track i) {
@@ -161,12 +217,16 @@
           <div class="app-state">
             <ion-icon name="cloud-offline-outline" aria-hidden="true" />
             <p>{{ 'catalog_error' | transloco }}</p>
+            <ion-button fill="outline" (click)="shops.search(shops.filters())">{{ 'try_again' | transloco }}</ion-button>
           </div>
         } @else {
           <div class="app-state">
             <ion-icon name="search-outline" aria-hidden="true" />
-            <h3>{{ 'no_results_title' | transloco }}</h3>
-            <p>{{ 'no_entries' | transloco }}</p>
+            <h3>{{ 'no_shop_results_title' | transloco }}</h3>
+            <p>{{ 'no_shop_results' | transloco }}</p>
+            @if (shopsHaveQuery()) {
+              <ion-button fill="outline" (click)="resetShops()">{{ 'clear_filters' | transloco }}</ion-button>
+            }
           </div>
         }
       }
@@ -234,6 +294,43 @@
               }
             </ion-select>
           </ion-item>
+          <ion-item class="price-item">
+            <div class="price-field">
+              <p class="field-label" aria-hidden="true">{{ 'filter_price' | transloco }}</p>
+              <div class="price-inputs">
+                <ion-input
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="1"
+                  enterkeyhint="done"
+                  [value]="foodDraft().minPrice"
+                  [placeholder]="'filter_price_from' | transloco"
+                  [attr.aria-label]="'mobile_price_min' | transloco"
+                  (ionInput)="setFoodPrice('min', $event.detail.value)"
+                />
+                <span class="dash" aria-hidden="true">–</span>
+                <ion-input
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="1"
+                  enterkeyhint="done"
+                  [value]="foodDraft().maxPrice"
+                  [placeholder]="'filter_price_to' | transloco"
+                  [attr.aria-label]="'mobile_price_max' | transloco"
+                  (ionInput)="setFoodPrice('max', $event.detail.value)"
+                />
+              </div>
+              @if (lookups?.priceRange; as range) {
+                @if (range.minPrice !== null && range.maxPrice !== null) {
+                  <p class="price-hint">
+                    {{ 'price_range_hint' | transloco: { min: (range.minPrice | rsdPrice: lang()), max: (range.maxPrice | rsdPrice: lang()) } }}
+                  </p>
+                }
+              }
+            </div>
+          </ion-item>
           <ion-item>
             <ion-toggle [checked]="foodDraft().grainFree === true" (ionChange)="patchFood({ grainFree: $event.detail.checked ? true : null })">
               {{ 'filter_grain_free' | transloco }}
@@ -269,9 +366,9 @@
       <ion-content>
         <ion-list class="sheet-fields" lines="inset">
           <ion-item button detail="true" (click)="pickShopTownships()">
-            <ion-label class="picker-label">
+            <ion-label class="picker-label ion-text-wrap">
               <p>{{ 'filter_township' | transloco }}</p>
-              <h3>{{ shopDraft().townshipIds.length || ('filter_all' | transloco) }}</h3>
+              <h3>{{ draftTownships() ?? ('filter_all' | transloco) }}</h3>
             </ion-label>
           </ion-item>
           <ion-item>

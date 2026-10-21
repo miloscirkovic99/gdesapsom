@@ -36,7 +36,7 @@ export class CameraService {
     try {
       return await toUploadablePhoto(src);
     } catch {
-      this.notifier.notify(this.#t('error_global'), 'error', this.#t('close'));
+      this.notifier.notify(this.#t('mobile_photo_unusable'), 'error', this.#t('close'));
       return null;
     }
   }

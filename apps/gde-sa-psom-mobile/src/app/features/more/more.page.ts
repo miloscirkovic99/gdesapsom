@@ -25,6 +25,7 @@ import {
   informationCircleOutline,
   languageOutline,
   leafOutline,
+  mailOutline,
   moonOutline,
   newspaperOutline,
 } from 'ionicons/icons';
@@ -68,7 +69,7 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
       <ion-list [inset]="true">
         <ion-item [routerLink]="['/tabs/more/suggest-spot']" detail="true">
           <ion-icon slot="start" name="add-circle-outline" aria-hidden="true" />
-          <ion-label>{{ 'add_spot' | transloco }}</ion-label>
+          <ion-label>{{ 'mobile_add_place_short' | transloco }}</ion-label>
         </ion-item>
         <ion-item [routerLink]="['/tabs/more/suggest-park']" detail="true" lines="none">
           <ion-icon slot="start" name="leaf-outline" aria-hidden="true" />
@@ -86,9 +87,13 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
           <ion-icon slot="start" name="information-circle-outline" aria-hidden="true" />
           <ion-label>{{ 'about' | transloco }}</ion-label>
         </ion-item>
-        <ion-item [routerLink]="['/tabs/more/business']" detail="true" lines="none">
+        <ion-item [routerLink]="['/tabs/more/business']" detail="true">
           <ion-icon slot="start" name="briefcase-outline" aria-hidden="true" />
           <ion-label>{{ 'for_business_nav' | transloco }}</ion-label>
+        </ion-item>
+        <ion-item [routerLink]="['/tabs/more/contact']" detail="true" lines="none">
+          <ion-icon slot="start" name="mail-outline" aria-hidden="true" />
+          <ion-label>{{ 'contact' | transloco }}</ion-label>
         </ion-item>
       </ion-list>
 
@@ -144,7 +149,9 @@ import { OwnerCardComponent } from '../../shared/ui/owner-card.component';
     .owner {
       margin: 12px 0 0;
     }
-    .legal {
+    /* A group without a label above it; the mode classes outrank the inset lists' margin: 0 16px in styles.scss. */
+    ion-list.legal.list-inset.list-md,
+    ion-list.legal.list-inset.list-ios {
       margin-top: 24px;
       margin-bottom: 32px;
     }
@@ -180,6 +187,7 @@ export class MorePage {
       newspaperOutline,
       informationCircleOutline,
       briefcaseOutline,
+      mailOutline,
       languageOutline,
       moonOutline,
       documentTextOutline,

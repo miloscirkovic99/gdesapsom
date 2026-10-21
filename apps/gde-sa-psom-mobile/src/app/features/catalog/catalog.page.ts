@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/ion-button';
 import { IonButtons } from '@ionic/angular/ion-buttons';
 import { IonContent } from '@ionic/angular/ion-content';
@@ -9,6 +9,7 @@ import { IonHeader } from '@ionic/angular/ion-header';
 import { IonIcon } from '@ionic/angular/ion-icon';
 import { IonInfiniteScroll } from '@ionic/angular/ion-infinite-scroll';
 import { IonInfiniteScrollContent } from '@ionic/angular/ion-infinite-scroll-content';
+import { IonInput } from '@ionic/angular/ion-input';
 import { IonItem } from '@ionic/angular/ion-item';
 import { IonLabel } from '@ionic/angular/ion-label';
 import { IonList } from '@ionic/angular/ion-list';
@@ -29,9 +30,9 @@ import { IonToggle } from '@ionic/angular/ion-toggle';
 import { IonToolbar } from '@ionic/angular/ion-toolbar';
 import { ModalController } from '@ionic/angular/modal-controller';
 import type { InfiniteScrollCustomEvent, RefresherCustomEvent } from '@ionic/angular';
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { addIcons } from 'ionicons';
-import { cloudOfflineOutline, imageOutline, optionsOutline, searchOutline } from 'ionicons/icons';
+import { callOutline, cloudOfflineOutline, imageOutline, optionsOutline, searchOutline } from 'ionicons/icons';
 import {
   DogFoodFilters,
   DogFoodSort,
@@ -39,6 +40,7 @@ import {
   EMPTY_DOG_FOOD_FILTERS,
   EMPTY_PET_SHOP_FILTERS,
   PetShopFilters,
+  PetShopListItem,
   PetShopsStore,
   SharedStore,
 } from '@gde/shared/data-access';
@@ -46,8 +48,23 @@ import { injectActiveLang, LocalNamePipe, PackageWeightPipe, pluralKey, RsdPrice
 import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { GeolocationService } from '../../core/platform/geolocation.service';
 import { formatDistance } from '../../shared/format-distance';
+import { DeliveryLinksComponent } from '../../shared/ui/delivery-links.component';
+import { FilterChipsComponent } from '../../shared/ui/filter-chips.component';
 import { TownshipPickerComponent } from '../../shared/ui/township-picker.component';
-import { foodFilterKeys, shopFilterKeys } from './catalog-filters';
+import {
+  catalogEntry,
+  catalogParamsKey,
+  foodFilterChips,
+  foodFilterKeys,
+  parsePrice,
+  shopFilterChips,
+  shopFilterKeys,
+  townshipSummary,
+  Translate,
+  withOrderedPrices,
+  withoutFoodChip,
+  withoutShopChip,
+} from './catalog-filters';
 
 type Segment = 'food' | 'shops';
 
@@ -85,10 +102,13 @@ interface Completable {
     IonSelect,
     IonSelectOption,
     IonToggle,
+    IonInput,
     TranslocoPipe,
     LocalNamePipe,
     PackageWeightPipe,
     RsdPricePipe,
+    DeliveryLinksComponent,
+    FilterChipsComponent,
   ],
   templateUrl: './catalog.page.html',
   styleUrl: './catalog.page.scss',
@@ -103,6 +123,7 @@ export class CatalogPage {
   private readonly modals = inject(ModalController);
   private readonly geolocation = inject(GeolocationService);
   private readonly analytics = inject(AnalyticsService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly sortOptions: { value: DogFoodSort; key: string }[] = [
     { value: 'name', key: 'sort_name' },
@@ -118,11 +139,32 @@ export class CatalogPage {
   readonly shopSheetOpen = signal(false);
   readonly locating = signal(false);
 
+  /** Emits when translations load and on a language switch, so labels built in code follow. */
+  readonly #translation = toSignal(this.transloco.selectTranslation());
+  readonly #t: Translate = (key, params) => this.transloco.translate(key, params);
+
+  readonly foodChips = computed(() => {
+    this.#translation();
+    return foodFilterChips(this.food.filters(), this.food.lookups(), this.lang(), this.#t);
+  });
+  readonly shopChips = computed(() => {
+    this.#translation();
+    return shopFilterChips(this.shops.filters(), this.shared.townships(), this.#t);
+  });
+  /** The draft's municipalities for the sheet row, or null for "all". */
+  readonly draftTownships = computed(() => {
+    this.#translation();
+    return townshipSummary(this.shopDraft().townshipIds, this.shared.townships(), this.lang(), this.#t);
+  });
+  readonly foodHasQuery = computed(() => this.food.activeFilterCount() > 0 || !!this.food.filters().word);
+  readonly shopsHaveQuery = computed(() => this.shops.activeFilterCount() > 0 || !!this.shops.filters().word);
+
   #pendingFood: Completable | null = null;
   #pendingShops: Completable | null = null;
+  #appliedParams: string | null = null;
 
   constructor() {
-    addIcons({ cloudOfflineOutline, imageOutline, optionsOutline, searchOutline });
+    addIcons({ callOutline, cloudOfflineOutline, imageOutline, optionsOutline, searchOutline });
 
     this.food.search(EMPTY_DOG_FOOD_FILTERS);
 
@@ -145,11 +187,8 @@ export class CatalogPage {
       });
     });
 
-    // Home links here with ?segment=food|shops.
-    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
-      const segment = params.get('segment');
-      if (segment === 'food' || segment === 'shops') this.setSegment(segment);
-    });
+    // Home links here with ?segment=food|shops; website links bring their filters (catalogEntry).
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => this.#enter(params));
   }
 
   setSegment(value: unknown): void {
@@ -210,15 +249,37 @@ export class CatalogPage {
     this.foodDraft.update((f) => ({ ...f, ...patch }));
   }
 
-  applyFood(): void {
-    this.food.search(this.foodDraft());
-    this.foodSheetOpen.set(false);
-    this.analytics.trackFilterApplied('dog_food', foodFilterKeys(this.foodDraft()));
+  setFoodPrice(bound: 'min' | 'max', value: string | number | null | undefined): void {
+    const price = parsePrice(value);
+    this.patchFood(bound === 'min' ? { minPrice: price } : { maxPrice: price });
   }
 
+  applyFood(): void {
+    const filters = withOrderedPrices(this.foodDraft());
+    this.food.search(filters);
+    this.foodSheetOpen.set(false);
+    this.analytics.trackFilterApplied('dog_food', foodFilterKeys(filters));
+  }
+
+  /** The sheet's reset: every filter and the sort order; the search text stays. */
   clearFood(): void {
     this.food.search({ ...EMPTY_DOG_FOOD_FILTERS, word: this.food.filters().word });
     this.foodSheetOpen.set(false);
+  }
+
+  removeFoodChip(id: string): void {
+    this.food.search(withoutFoodChip(this.food.filters(), id));
+  }
+
+  /** The chips' "clear all": the filters they show, keeping the search text and sort order. */
+  clearFoodChips(): void {
+    const { word, sort } = this.food.filters();
+    this.food.search({ ...EMPTY_DOG_FOOD_FILTERS, word, sort });
+  }
+
+  /** The empty list's way out, as on the website: filters and search text, keeping the sort order. */
+  resetFood(): void {
+    this.food.search({ ...EMPTY_DOG_FOOD_FILTERS, sort: this.food.filters().sort });
   }
 
   // ── Shop filters ────────────────────────────────────────────────────────
@@ -278,6 +339,14 @@ export class CatalogPage {
     this.shopSheetOpen.set(false);
   }
 
+  removeShopChip(id: string): void {
+    this.shops.search(withoutShopChip(this.shops.filters(), id));
+  }
+
+  resetShops(): void {
+    this.shops.search(EMPTY_PET_SHOP_FILTERS);
+  }
+
   // ── Template helpers ────────────────────────────────────────────────────
   countKey(base: string, count: number): string {
     return pluralKey(base, count, this.lang());
@@ -285,5 +354,30 @@ export class CatalogPage {
 
   distance(metres: number | null): string | null {
     return formatDistance(metres, this.lang());
+  }
+
+  /** "Vračar, Beograd": the municipality and city, once when they share a name. */
+  placeOf(shop: PetShopListItem): string {
+    return [...new Set([shop.townshipName, shop.cityName].filter(Boolean))].join(', ');
+  }
+
+  hasShopActions(shop: PetShopListItem): boolean {
+    return !!(shop.phone || shop.woltUrl || shop.glovoUrl);
+  }
+
+  /**
+   * Ionic emits the route's params again whenever this page is shown again
+   * (back from a product, a tab switch); only a link with other params applies them,
+   * so returning never undoes what the user changed since.
+   */
+  #enter(params: ParamMap): void {
+    const key = catalogParamsKey(params);
+    if (key === this.#appliedParams) return;
+    this.#appliedParams = key;
+
+    const entry = catalogEntry(params);
+    if (entry.food) this.food.search(entry.food);
+    if (entry.shops) this.shops.search(entry.shops);
+    if (entry.segment) this.setSegment(entry.segment);
   }
 }

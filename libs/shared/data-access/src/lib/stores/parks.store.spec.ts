@@ -68,7 +68,7 @@ describe('ParksStore', () => {
       .expectOne((r) => r.url === 'pet-friendly-parks/list')
       .flush('x', { status: 500, statusText: 'Server Error' });
 
-    expect(TestBed.inject(Notifier).notify).toHaveBeenCalledWith('error_global', 'error', 'close');
+    expect(TestBed.inject(Notifier).notify).toHaveBeenCalledWith('error_load', 'error', 'close');
     expect(store.parksStatus()).toBe('error');
   });
 

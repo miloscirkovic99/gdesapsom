@@ -89,7 +89,8 @@ h1 {
   }
 }
 
-.contact-head {
+.contact-head,
+.related-head {
   margin-bottom: 4px;
 
   .app-section-title {
@@ -115,6 +116,11 @@ h1 {
     margin: 1px 0;
     font-weight: 500;
   }
+}
+
+/* "More places like this": the list it opens first, the area second. */
+.related h3 {
+  font-weight: 600;
 }
 
 app-map-view {

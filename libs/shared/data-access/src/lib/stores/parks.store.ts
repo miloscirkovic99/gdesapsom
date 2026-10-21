@@ -38,8 +38,8 @@ export const ParksStore = signalStore(
     const notifier = inject(Notifier);
     const contactFormService=inject(ContactFormService)
 
-    const handleError = (error: any) => {
-      notifier.notify(translocoService.translate('error_global'), 'error', translocoService.translate('close'));
+    const handleError = (error: any, messageKey = 'error_global') => {
+      notifier.notify(translocoService.translate(messageKey), 'error', translocoService.translate('close'));
     };
     return {
       petParks(par_accepted = 1) {
@@ -61,7 +61,7 @@ export const ParksStore = signalStore(
             },
             error: (error) => {
               if (isPublicList) patchState(store, { parksStatus: 'error' });
-              handleError(error);
+              handleError(error, 'error_load');
             },
           });
       },
@@ -77,16 +77,19 @@ export const ParksStore = signalStore(
             error: handleError,
           });
       },
-      addPark(form: SuggestParkPayload, onSuccess?: () => void, onError?: () => void) {
+      /** `notifySuccess: false` leaves the confirmation to the caller (the app's thank-you screen). */
+      addPark(form: SuggestParkPayload, onSuccess?: () => void, onError?: () => void, notifySuccess = true) {
         http
           .post<unknown>('pet-friendly-parks/create', form)
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: () => {
-              const translatedButton = translocoService.translate('close');
-              const translatedMessage =
-                translocoService.translate('success_add');
-              notifier.notify(translatedMessage, 'success', translatedButton);
+              if (notifySuccess) {
+                const translatedButton = translocoService.translate('close');
+                const translatedMessage =
+                  translocoService.translate('success_add');
+                notifier.notify(translatedMessage, 'success', translatedButton);
+              }
               const data={
                 from: 'noreply@gdesapsom.com',
                 subject: `Novi park ${form.par_ime}`,
