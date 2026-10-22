@@ -158,6 +158,19 @@
     -->
   </head>
   <body>
-    <app-root></app-root>
+    <app-root>
+      <!--
+        Fallback for crawlers that run no JavaScript: without it every route's
+        HTML is an empty <app-root> and audits find no call to action. Angular
+        clears it on bootstrap (no hydration), so visitors see it only until the
+        app starts. A plain GET to /all-spots?word= is the handover the landing
+        page search already uses; an empty search lists every place.
+      -->
+      <form action="/all-spots" method="get" role="search" class="flex gap-2 p-4">
+        <label for="static-search" class="sr-only">Pretraži pet-friendly mesta po imenu</label>
+        <input id="static-search" type="search" name="word" placeholder="Ime mesta, npr. Witch Bar" class="input input-bordered" />
+        <button type="submit" class="btn btn-secondary">Pronađi mesta</button>
+      </form>
+    </app-root>
   </body>
 </html>
