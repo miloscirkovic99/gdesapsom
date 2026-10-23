@@ -11,9 +11,9 @@ export const appRoutes: Route[] = [
         (m) => m.LandingPageComponent
       );
     },
-    title:'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji',
+    title:'Pet Friendly Mesta i Parkovi za Pse u Srbiji | Gde sa psom',
     data:{
-      description:'Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu i širom Srbije.'
+      description:'Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu, Nišu i širom Srbije.'
     }
 
   },
@@ -52,7 +52,7 @@ export const appRoutes: Route[] = [
     },
     title:'Parkovi za Pse u Beogradu i Srbiji - Gde sa psom',
     data:{
-      description:'Parkovi i ograđeni prostori za pse u Srbiji. Pronađite najbliži park za šetnju i trčanje sa vašim ljubimcem u Beogradu, Novom Sadu i širom zemlje.'
+      description:'Parkovi i ograđeni prostori za pse u Srbiji. Pronađite najbliži park za šetnju i trčanje sa vašim ljubimcem u Beogradu, Novom Sadu, Nišu i širom zemlje.'
     }
   },
   {
@@ -173,7 +173,7 @@ export const appRoutes: Route[] = [
         (m) => m.DogFoodCatalogComponent
       );
     },
-    title: 'Hrana za Pse - Uporedite Cene i Pronađite Prodavnicu - Gde sa psom',
+    title: 'Hrana za Pse - Uporedite Cene i Prodavnice - Gde sa psom',
     data:{
       description:'Katalog hrane za pse u Srbiji. Filtrirajte po brendu, tipu hrane, uzrastu i veličini rase, uporedite cene i pronađite prodavnicu u kojoj možete da kupite hranu za svog psa.'
     }
@@ -198,7 +198,7 @@ export const appRoutes: Route[] = [
         (m) => m.PetShopsComponent
       );
     },
-    title: 'Prodavnice za Ljubimce u Srbiji - Pet Shop u Blizini - Gde sa psom',
+    title: 'Pet Shop u Blizini - Prodavnice za Ljubimce - Gde sa psom',
     data:{
       description:'Pronađite pet shop u blizini. Adrese, kontakti, dostava preko Wolta i Glova i asortiman hrane za pse u prodavnicama za ljubimce širom Srbije.'
     }
@@ -290,7 +290,7 @@ export const appRoutes: Route[] = [
       );
     },
    },
-  // Pet-friendly hubs: /smestaj, /kafici, ..., /beograd, /novi-sad and
+  // Pet-friendly hubs: /smestaj, /kafici, ..., /beograd, /novi-sad, /nis and
   // /<city>/<category>. One route per page from pet-friendly-taxonomy.json;
   // title and description per page are set in pet-friendly-pages.ts.
   ...petFriendlyRoutes(() =>

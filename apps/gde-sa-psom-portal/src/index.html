@@ -2,7 +2,7 @@
 <html lang="sr" data-theme="dark">
   <head>
     <meta charset="utf-8" />
-    <title>Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji</title>
+    <title>Pet Friendly Mesta i Parkovi za Pse u Srbiji | Gde sa psom</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
     
@@ -36,7 +36,7 @@
     -->
     <meta
       name="description"
-      content="Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu i širom Srbije."
+      content="Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu, Nišu i širom Srbije."
     />
     <meta name="author" content="Gde sa psom" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -68,7 +68,7 @@
     />
     <meta
       property="og:description"
-      content="Pronađite gde su vaši ljubimci dobrodošli! Pet-friendly restorani, kafići, hoteli, parkovi za pse i veterinarske klinike u Beogradu, Novom Sadu i širom Srbije."
+      content="Pronađite gde su vaši ljubimci dobrodošli! Pet-friendly restorani, kafići, hoteli, parkovi za pse i veterinarske klinike u Beogradu, Novom Sadu, Nišu i širom Srbije."
     />
     <meta
       property="og:image"
@@ -156,6 +156,28 @@
       LandingPageComponent so that it appears on "/" only: here it shipped on
       every spot and blog page too.
     -->
+    <!--
+      Safety net for a host that answers every URL without a file of its own
+      with /index.html, which is now the prerendered homepage. Arriving at
+      /login or at a place added after the build, the page must not be hydrated
+      as "/": when the canonical SeoService wrote names another path than the
+      address bar, the prerendered state and page schema are dropped before the
+      app starts (module scripts run after readyState turns "interactive"), so
+      the requested page renders from scratch as it did before prerendering.
+      Never triggers when the host falls back to /index.csr.html.
+    -->
+    <script>
+      document.addEventListener('readystatechange', function () {
+        if (document.readyState !== 'interactive') return;
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) return;
+        var trim = function (path) { return path.replace(/\/+$/, '') || '/'; };
+        if (trim(new URL(canonical.href).pathname) === trim(location.pathname)) return;
+        document.querySelectorAll('#ng-state, script[data-seo-id], link[rel="canonical"]').forEach(function (node) {
+          node.remove();
+        });
+      });
+    </script>
   </head>
   <body>
     <app-root>

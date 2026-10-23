@@ -1,14 +1,18 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { SITE_ORIGIN } from '@gde/shared/util';
 
 export { SITE_ORIGIN };
 
-const DEFAULT_TITLE =
-  'Gde sa psom - Pet-Friendly Restorani, Kafići, Hoteli i Parkovi za Pse u Srbiji';
+const DEFAULT_TITLE = 'Pet Friendly Mesta i Parkovi za Pse u Srbiji | Gde sa psom';
+/** About what a search result shows of a title. */
+const MAX_TITLE_LENGTH = 60;
+/** The brand at the end of a title: " | Gde sa psom", " - Gde sa psom Blog", ... */
+const BRAND_SUFFIX = /\s+[|–—-]\s+Gde sa psom(?: Blog)?$/;
 const DEFAULT_DESCRIPTION =
-  'Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu i širom Srbije.';
+  'Pronađite gde su psi dobrodošli u Srbiji: pet friendly kafići, restorani, smeštaj, parkovi za pse i veterinari u Beogradu, Novom Sadu, Nišu i širom Srbije.';
 /** Default share image, and the publisher logo in JSON-LD. */
 export const SITE_LOGO = `${SITE_ORIGIN}/assets/logo-big.png`;
 const DEFAULT_IMAGE = SITE_LOGO;
@@ -19,6 +23,15 @@ const MAX_DESCRIPTION_LENGTH = 160;
 const ROBOTS_INDEX = 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
 /** Still "follow": the not-found page links to the main sections. */
 const ROBOTS_NOINDEX = 'noindex, follow';
+
+/**
+ * The brand goes first when a title is too long for a search result: the
+ * place, city or article it names is what has to stay readable. Share
+ * previews (og/twitter) keep the full title.
+ */
+export function searchTitle(title: string): string {
+  return title.length <= MAX_TITLE_LENGTH ? title : title.replace(BRAND_SUFFIX, '');
+}
 
 export interface SeoMetadata {
   title?: string | null;
@@ -58,7 +71,7 @@ export class SeoService {
     const type = metadata.type ?? 'website';
     const noindex = metadata.noindex === true;
 
-    this.title.setTitle(title);
+    this.title.setTitle(searchTitle(title));
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ name: 'robots', content: noindex ? ROBOTS_NOINDEX : ROBOTS_INDEX });
 
@@ -160,5 +173,20 @@ export class SeoService {
     }
 
     link.setAttribute('href', url);
+  }
+}
+
+/**
+ * Route titles (app.routes.ts, the hub pages) under the same length rule. The
+ * router sets them after NavigationEnd, so they would otherwise overwrite what
+ * SeoService.update just wrote.
+ */
+@Injectable({ providedIn: 'root' })
+export class SearchTitleStrategy extends TitleStrategy {
+  private readonly title = inject(Title);
+
+  override updateTitle(snapshot: RouterStateSnapshot): void {
+    const title = this.buildTitle(snapshot);
+    if (title !== undefined) this.title.setTitle(searchTitle(title));
   }
 }

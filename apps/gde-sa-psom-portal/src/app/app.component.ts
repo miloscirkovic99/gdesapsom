@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, HostListener, inject, PLATFORM_ID, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
@@ -7,7 +7,7 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ContactFormComponent } from './shared/components/contact-form/contact-form.component';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ConsentService } from './core/consent/consent.service';
 import { AnalyticsService } from './core/services/analytics.service';
 import { GoogleAnalyticsService } from './core/services/google-analytics.service';
@@ -47,6 +47,8 @@ export class AppComponent {
   private readonly consent = inject(ConsentService);
   isAdminMode = signal(false);
   private destroyRef = inject(DestroyRef);
+  /** False while the build prerenders a page: analytics and AOS only run for visitors. */
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   showTopButton=false;
 
   constructor() {
@@ -55,6 +57,7 @@ export class AppComponent {
     // later, from the footer) switches it off and deletes its cookies; a
     // visitor who had said no never gets the script at all.
     effect(() => {
+      if (!this.isBrowser) return;
       if (this.consent.measurementAllowed()) {
         this.googleAnalyticsService.initialize();
         this.googleAnalyticsService.setEnabled(true);
@@ -65,9 +68,11 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    AOS.init({
-      easing: 'linear',
-    });
+    if (this.isBrowser) {
+      AOS.init({
+        easing: 'linear',
+      });
+    }
 
     void this.versionUpdateService;
 
@@ -83,11 +88,12 @@ export class AppComponent {
           this.isAdminMode.set(true);
         }
         this.updateSeo(result.urlAfterRedirects);
+        if (!this.isBrowser) return;
         setTimeout(() => {
           AOS.refresh();
         }, 500);
       });
-    this.analyticsService.initOutboundTracking();
+    if (this.isBrowser) this.analyticsService.initOutboundTracking();
   }
 
   /**
@@ -112,6 +118,7 @@ export class AppComponent {
 
   @HostListener('window:scroll')
   onWindowScroll() {
+    if (!this.isBrowser) return;
     this.showTopButton = window.scrollY > 350;
   }
   scrollToTop() {

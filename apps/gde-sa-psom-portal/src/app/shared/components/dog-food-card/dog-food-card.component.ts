@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, pluralKey } from '@gde/shared/util';
 import { DogFoodListItem } from '@gde/shared/data-access';
+import { ClientImagePipe } from '../../utils/client-image.pipe';
 
 /** Product tile for catalog grids and "related products" strips. */
 @Component({
   selector: 'app-dog-food-card',
-  imports: [RouterLink, TranslocoModule, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
+  imports: [RouterLink, TranslocoModule, LocalNamePipe, PackageWeightPipe, RsdPricePipe, ClientImagePipe],
   templateUrl: './dog-food-card.component.html',
   host: { class: 'block h-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,

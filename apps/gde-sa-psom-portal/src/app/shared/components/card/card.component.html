@@ -21,7 +21,7 @@
       >
         <figure class="relative h-48 overflow-hidden">
           <img
-            [src]="item?.iuo_slika_base64 ? item?.iuo_slika_base64 : (item?.par_ime ? 'assets/park.jpg' : 'assets/logo-normal.png')"
+            [src]="(item?.iuo_slika_base64 ? item?.iuo_slika_base64 : (item?.par_ime ? 'assets/park.jpg' : 'assets/logo-normal.png')) | clientImage"
             [alt]="item.iuo_ime ?? item?.par_ime"
             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
             loading="lazy"

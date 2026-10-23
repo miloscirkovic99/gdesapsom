@@ -47,6 +47,7 @@
                 <data android:path="/smestaj" />
                 <data android:pathPrefix="/beograd" />
                 <data android:pathPrefix="/novi-sad" />
+                <data android:pathPrefix="/nis" />
             </intent-filter>
         </activity>
 

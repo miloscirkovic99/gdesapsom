@@ -66,7 +66,7 @@
           @for (spot of previewSpots(); track spot.iuo_id; let i = $index) {
             <li class="lp-row-wrap" [style.--d]="i">
               <a class="lp-row" [routerLink]="['/spots', spot.iuo_id]" [state]="{ spot: spot }">
-                <img [src]="spotImage(spot)" alt="" class="lp-row__img" width="72" height="72" />
+                <img [src]="spotImage(spot) | clientImage" alt="" class="lp-row__img" width="72" height="72" />
                 <div class="lp-row__body">
                   <div class="lp-row__top">
                     <span class="lp-row__name">{{ spot.iuo_ime }}</span>
@@ -174,7 +174,7 @@
     <div class="lp-answer__example">
       @if (exampleSpot(); as ex) {
         <figure class="lp-example">
-          <img [src]="spotImage(ex)" [alt]="ex.iuo_ime" class="lp-example__img" loading="lazy" />
+          <img [src]="spotImage(ex) | clientImage" [alt]="ex.iuo_ime" class="lp-example__img" loading="lazy" />
           <figcaption class="lp-example__body">
             <div class="lp-row__top">
               <span class="lp-example__name">{{ ex.iuo_ime }}</span>

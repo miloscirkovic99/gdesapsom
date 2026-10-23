@@ -111,6 +111,18 @@ describe('SeoService', () => {
     expect(meta.getTag('property="og:url"')?.content).toBe(`${SITE_ORIGIN}/spots/3`);
   });
 
+  it('drops the brand from a title too long for a search result, not from the share preview', () => {
+    service.update({ title: 'Pet Friendly Kafići Beograd – Kafići u Koje Možete sa Psom | Gde sa psom' });
+
+    expect(title.getTitle()).toBe('Pet Friendly Kafići Beograd – Kafići u Koje Možete sa Psom');
+    expect(meta.getTag('property="og:title"')?.content).toBe(
+      'Pet Friendly Kafići Beograd – Kafići u Koje Možete sa Psom | Gde sa psom',
+    );
+
+    service.update({ title: 'Gde sa psom u Nišu? Najbolja pet-friendly mesta za šetnju - Gde sa psom Blog' });
+    expect(title.getTitle()).toBe('Gde sa psom u Nišu? Najbolja pet-friendly mesta za šetnju');
+  });
+
   it('does not write a meta name="title" tag, which no search engine reads', () => {
     service.update({ title: 'Blog - Gde sa psom', path: '/blog' });
 

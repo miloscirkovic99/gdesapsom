@@ -6,8 +6,9 @@ import {
   HostListener,
   OnDestroy,
   inject,
+  PLATFORM_ID,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 
@@ -27,6 +28,8 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   isIOS = signal(false);
   private deferredPrompt: any;
   private readonly analytics = inject(AnalyticsService);
+  /** False while prerendering: the dialog is about the visitor's device. */
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   readonly PWA_FIRST_VISIT_KEY = 'pwa_first_visit';
   private beforeInstallHandler = (e: Event) => {
     e.preventDefault();
@@ -39,6 +42,7 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
+    if (!this.isBrowser) return;
     const platform = this.detectPlatform();
     // Desktop browsers get no install dialog, and neither does the installed app itself.
     if (!platform || this.isStandalone()) return;
@@ -49,6 +53,7 @@ export class PwaInstallDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (!this.isBrowser) return;
     window.removeEventListener('beforeinstallprompt', this.beforeInstallHandler);
     window.removeEventListener('appinstalled', this.appInstalledHandler);
   }

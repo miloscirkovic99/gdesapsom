@@ -48,7 +48,7 @@
               </div>
             </div> -->
                 <div>
-                    <p class="font-semibold">{{ post()?.autor || ('blog_unknown_author' | transloco) }}</p>
+                    <p class="font-semibold">{{ author() || ('blog_editorial_team' | transloco) }}</p>
                     <p class="text-sm text-gray-600">{{ post()?.autor_email || '' }}</p>
                 </div>
             </div>
@@ -81,6 +81,18 @@
     </div>
   </div>
 }
+
+        <!-- From the article to the directory -->
+        <nav class="not-prose my-8 p-6 bg-base-100 rounded-lg border border-base-200" aria-labelledby="blog-directory-title">
+            <h2 id="blog-directory-title" class="text-lg font-bold mb-1">{{ 'blog_directory_title' | transloco }}</h2>
+            <p class="text-sm text-base-content/70 mb-4">{{ 'blog_directory_lead' | transloco }}</p>
+            <ul class="flex flex-wrap gap-2">
+                @for (hub of directoryLinks; track hub.path) {
+                <li><a [routerLink]="hub.path" class="btn btn-sm btn-outline">{{ hub.label | localName: lang() }}</a></li>
+                }
+                <li><a [routerLink]="['/', routes.allSpots]" class="btn btn-sm btn-secondary">{{ 'lp_hero_cta' | transloco }}</a></li>
+            </ul>
+        </nav>
 
         <!-- Article Footer -->
         <footer

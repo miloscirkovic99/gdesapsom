@@ -1,10 +1,13 @@
 import {  ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, TitleStrategy, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideAppTransloco } from '@gde/shared/util';
 import { BrowserAnimationsModule, provideAnimations, } from '@angular/platform-browser/animations';
+import { provideClientHydration, withEventReplay, withHttpTransferCacheOptions } from '@angular/platform-browser';
+import { transferToBrowser } from './core/prerender/page-data';
 import { provideApiHttp, provideAppConfig, Notifier } from '@gde/shared/data-access/core';
 import { SnackbarNotifier } from './core/services/snackbar-notifier';
+import { SearchTitleStrategy } from './core/services/seo.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../env/env.dev';
 
@@ -13,6 +16,12 @@ import { environment } from '../env/env.dev';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Prerendered pages (app.routes.server.ts) keep their HTML instead of being
+    // wiped and redrawn; client-rendered routes have nothing to hydrate.
+    provideClientHydration(
+      withEventReplay(),
+      withHttpTransferCacheOptions({ includePostRequests: true, filter: transferToBrowser }),
+    ),
     provideAppConfig({
       apiUrl: environment.apiUrl,
       production: environment.production,
@@ -26,6 +35,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes,  withInMemoryScrolling({
       scrollPositionRestoration: 'top',
     }),),
+    { provide: TitleStrategy, useExisting: SearchTitleStrategy },
     importProvidersFrom(BrowserAnimationsModule),
      provideServiceWorker('ngsw-worker.js', {
       enabled:true,

@@ -6,6 +6,9 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SpotDetailPageComponent, spotPopupHtml } from './spot-detail-page.component';
 
+// No map in these tests: Leaflet never finishes loading.
+jest.mock('../../shared/utils/leaflet', () => ({ loadLeaflet: () => new Promise(() => undefined) }));
+
 type Answer = (onSuccess: (spot: unknown) => void, onError: () => void) => void;
 
 describe('SpotDetailPageComponent indexing', () => {
@@ -63,6 +66,21 @@ describe('SpotDetailPageComponent indexing', () => {
 
     retry?.click();
     expect(getSpotById).toHaveBeenCalledTimes(2);
+  });
+
+  it('fetches the photos a prerendered page left out, past the copy in the page', async () => {
+    answer = (onSuccess) => onSuccess({ iuo_id: 16, iuo_ime: 'Witch Bar', iuo_slika_base64: null, photosOmitted: true });
+    await render();
+
+    expect(getSpotById).toHaveBeenCalledTimes(2);
+    expect(getSpotById).toHaveBeenLastCalledWith('16', expect.any(Function), expect.any(Function), { fresh: true });
+  });
+
+  it('asks once when the spot came with its photos', async () => {
+    answer = (onSuccess) => onSuccess({ iuo_id: 16, iuo_ime: 'Witch Bar', iuo_slika_base64: 'data:image/jpeg;base64,AA==' });
+    await render();
+
+    expect(getSpotById).toHaveBeenCalledTimes(1);
   });
 });
 

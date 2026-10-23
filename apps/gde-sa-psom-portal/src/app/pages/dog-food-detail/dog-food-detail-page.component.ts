@@ -19,13 +19,14 @@ import { OfferListComponent } from '../../shared/components/offer-list/offer-lis
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { RouteConstants, LocalNamePipe, PackageWeightPipe, RsdPricePipe, injectActiveLang, pluralKey } from '@gde/shared/util';
 import { DogFoodDetail, DogFoodStore } from '@gde/shared/data-access';
+import { ClientImagePipe } from '../../shared/utils/client-image.pipe';
 
 const STRUCTURED_DATA_ID = 'dog-food-product';
 const INGREDIENTS_CLAMP_LENGTH = 220;
 
 @Component({
   selector: 'app-dog-food-detail-page',
-  imports: [RouterLink, TranslocoModule, OfferListComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
+  imports: [RouterLink, TranslocoModule, OfferListComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe, ClientImagePipe],
   templateUrl: './dog-food-detail-page.component.html',
   styleUrl: './dog-food-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -163,10 +164,14 @@ export class DogFoodDetailPageComponent implements OnInit, OnDestroy {
       .filter(Boolean)
       .join(', ');
 
-    const description = `${product.description?.trim() || fallbackDescription + '.'}${priceSentence}`;
+    const summary = `${product.description?.trim() || fallbackDescription + '.'}${priceSentence}`;
+    // A one-line summary says too little in a search result; the page's offer completes it.
+    const description = summary.length < 70 ? `${summary} Uporedite cene i pronađite prodavnicu na Gde sa psom.` : summary;
+    // The food type only while the name still fits a search result (about 60 characters).
+    const heading = `${fullName} - ${typeName}`.length <= 60 ? `${fullName} - ${typeName}` : fullName;
 
     this.seoService.update({
-      title: `${fullName} - ${typeName} | Gde sa psom`,
+      title: `${heading} | Gde sa psom`,
       description,
       path,
     });

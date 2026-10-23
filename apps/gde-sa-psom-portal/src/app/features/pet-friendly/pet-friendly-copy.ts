@@ -527,6 +527,22 @@ const CITY_COPY: Readonly<Record<string, Record<CopyLang, CityCopy>>> = {
       ],
     },
   },
+  nis: {
+    sr: {
+      lead: 'Gde sa psom u Nišu: kafići, restorani, barovi i smeštaj u kojima su psi dobrodošli, sa adresom, kontaktom i pravilima za ljubimce.',
+      intro: [
+        'Niš je lako obići sa psom: šetnja kroz Čair, uz Nišavu ili do Tvrđave, a za ceo dan u prirodi tu su Kamenički vis i Sićevačka i Jelašnička klisura. Kada posle šetnje poželite kafu, ručak ili prenoćište, ovde su mesta u Nišu u kojima je i pas dobrodošao.',
+        'Za svaki objekat piše koje veličine pasa su dobrodošle i da li ima baštu. Listu dopunjuju vlasnici pasa i sami objekti, pa ako znate niški kafić ili restoran koji prima pse, a nije na listi, dodajte ga.',
+      ],
+    },
+    en: {
+      lead: 'Where to go with your dog in Niš: cafés, restaurants, bars and places to stay that welcome dogs, with address, contact and pet rules.',
+      intro: [
+        'Niš is easy to explore with a dog: a walk through Čair park, along the Nišava or up to the Fortress, and for a whole day outdoors Kamenički Vis and the Sićevo and Jelašnica gorges. When you want coffee, lunch or a bed after the walk, here are the places in Niš where your dog is welcome too.',
+        'Each listing shows which dog sizes are welcome and whether there is outdoor seating. Dog owners and venues keep the list growing, so if you know a café or restaurant in Niš that welcomes dogs and is missing, add it.',
+      ],
+    },
+  },
 };
 
 /** Copy for a city that has a hub but no hand-written introduction yet. */

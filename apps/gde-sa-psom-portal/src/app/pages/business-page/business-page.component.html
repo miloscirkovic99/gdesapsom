@@ -17,13 +17,13 @@
 
         <!-- CTA Button -->
         <div class="pt-8">
-          <button
-            (click)="navigateToAddSpot()"
+          <a
+            [routerLink]="'/' + routeConstants.addSpot"
             class="btn btn-secondary btn-lg font-bold text-lg"
             data-aos="zoom-in"
           >
             {{ 'business_cta_primary' | transloco }}
-          </button>
+          </a>
           <p class="text-sm text-base-content/50 mt-4">
             {{ 'business_reassurance' | transloco }}
           </p>
@@ -206,13 +206,13 @@
         {{ 'business_reassurance_full' | transloco }}
       </p>
 
-      <button
-        (click)="navigateToAddSpot()"
+      <a
+        [routerLink]="'/' + routeConstants.addSpot"
         class="btn btn-secondary btn-lg font-bold text-lg"
         data-aos="zoom-in"
       >
         {{ 'business_cta_primary' | transloco }}
-      </button>
+      </a>
 
     
     </div>

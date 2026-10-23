@@ -25,7 +25,7 @@ describe('BlogDetailsComponent indexing', () => {
               blog_comments_few: 'i ima {{count}} komentara.',
               blog_comments_many: 'i ima {{count}} komentara.',
               blog_reading_time: '{{minutes}} min čitanja',
-              blog_unknown_author: 'Nepoznat autor',
+              blog_editorial_team: 'Redakcija Gde sa psom',
               other: 'Ostalo',
             },
           },
@@ -85,6 +85,30 @@ describe('BlogDetailsComponent indexing', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent;
     expect(text).toContain('1 min čitanja');
     expect(text).toContain('Ostalo');
-    expect(text).toContain('Nepoznat autor');
+    expect(text).toContain('Redakcija Gde sa psom');
+  });
+
+  it('signs posts from the admin account as the editorial team, and keeps a real name', async () => {
+    response = () => of({ blogPostSingle: [{ naslov: 'Naslov', slug: 'naslov', sadrzaj: '<p>Tekst</p>', autor: 'Admin' }] });
+    await render();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Redakcija Gde sa psom');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Admin');
+
+    TestBed.resetTestingModule();
+    response = () => of({ blogPostSingle: [{ naslov: 'Naslov', slug: 'naslov', sadrzaj: '<p>Tekst</p>', autor: 'Jelena Petrović' }] });
+    await render();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Jelena Petrović');
+  });
+
+  it('links the article to the city and category pages', async () => {
+    response = () => of({ blogPostSingle: [{ naslov: 'Naslov', slug: 'naslov', sadrzaj: '<p>Tekst</p>' }] });
+    await render();
+
+    const links = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('nav[aria-labelledby="blog-directory-title"] a'),
+    );
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(
+      expect.arrayContaining(['/beograd', '/novi-sad', '/kafici', '/smestaj', '/all-spots']),
+    );
   });
 });

@@ -1,4 +1,4 @@
-import { DOCUMENT, Location } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,12 +8,15 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import * as L from 'leaflet';
+import type * as Leaflet from 'leaflet';
+import { loadLeaflet } from '../../shared/utils/leaflet';
+import { ClientImagePipe } from '../../shared/utils/client-image.pipe';
 import { SeoService, SITE_ORIGIN } from '../../core/services/seo.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { DeliveryLinksComponent } from '../../shared/components/delivery-links/delivery-links.component';
@@ -31,7 +34,7 @@ interface AssortmentGroup {
 
 @Component({
   selector: 'app-pet-shop-detail-page',
-  imports: [RouterLink, TranslocoModule, DeliveryLinksComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe],
+  imports: [RouterLink, TranslocoModule, DeliveryLinksComponent, BreadcrumbComponent, LocalNamePipe, PackageWeightPipe, RsdPricePipe, ClientImagePipe],
   templateUrl: './pet-shop-detail-page.component.html',
   styleUrl: './pet-shop-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +51,9 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
   private readonly snackbarService = inject(SnackbarService);
   private readonly translocoService = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
-  private map: L.Map | undefined;
+  /** False while the build prerenders the page: no map without a browser. */
+  readonly #isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private map: Leaflet.Map | undefined;
 
   // ── UI state ──────────────────────────────────────────────────────────────
   readonly assortmentQuery = signal('');
@@ -110,7 +115,7 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
       this.#updateSeo(shop);
       // The map container is rendered by the same change detection pass that
       // reacts to `detail`, so Leaflet has to wait a tick for it to exist.
-      setTimeout(() => this.#initMap(shop));
+      if (this.#isBrowser) setTimeout(() => void this.#initMap(shop));
     });
   }
 
@@ -164,9 +169,10 @@ export class PetShopDetailPageComponent implements OnInit, OnDestroy {
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
-  #initMap(shop: PetShopDetail): void {
+  async #initMap(shop: PetShopDetail): Promise<void> {
     if (shop.latitude === null || shop.longitude === null) return;
 
+    const L = await loadLeaflet();
     const container = this.document.getElementById(MAP_ELEMENT_ID);
     if (!container) return;
 

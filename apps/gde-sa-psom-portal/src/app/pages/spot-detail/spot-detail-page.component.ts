@@ -7,11 +7,12 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   signal,
   ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule, Location, DOCUMENT } from '@angular/common';
+import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -35,7 +36,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/components/bre
 import { NotFoundComponent } from '../not-found/not-found.component';
 import { hubLinksForSpot, relatedHubLinksForSpot } from '../../features/pet-friendly/pet-friendly-pages';
 import { ChangeDetectionStrategy } from '@angular/core';
-import * as L from 'leaflet';
+import type * as Leaflet from 'leaflet';
+import { loadLeaflet, LeafletModule } from '../../shared/utils/leaflet';
+import { ClientImagePipe } from '../../shared/utils/client-image.pipe';
+import { photosOmitted } from '../../core/prerender/page-data';
 
 const STRUCTURED_DATA_ID = 'spot';
 
@@ -69,7 +73,7 @@ export function spotPopupHtml(address: string, spot: any, t: (key: string) => st
 @Component({
   selector: 'app-spot-detail-page',
   standalone: true,
-  imports: [CommonModule, TranslocoModule, BreadcrumbComponent, NotFoundComponent, RouterLink, LocalNamePipe],
+  imports: [CommonModule, TranslocoModule, BreadcrumbComponent, NotFoundComponent, RouterLink, LocalNamePipe, ClientImagePipe],
   templateUrl: './spot-detail-page.component.html',
   styleUrl: './spot-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,15 +83,18 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private spotsStore = inject(SpotsStore);
-  private document = inject(DOCUMENT);
+  /** False while the build prerenders the page: no map without a browser. */
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private snackbarService = inject(SnackbarService);
   private translocoService = inject(TranslocoService);
   private seoService = inject(SeoService);
   private sanitizer = inject(DomSanitizer);
   private analytics = inject(AnalyticsService);
   private destroyRef = inject(DestroyRef);
-  private map: L.Map | undefined;
-  private routeLayers: L.Layer[] = [];
+  private leaflet: LeafletModule | undefined;
+  private mapShown = false;
+  private map: Leaflet.Map | undefined;
+  private routeLayers: Leaflet.Layer[] = [];
 
   @ViewChild('startLocationInput') startLocationInput!: ElementRef<HTMLInputElement>;
 
@@ -212,10 +219,8 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
           this.spot.set(response);
           this.isLoading.set(false);
           this.updateSeo(response, id);
-          setTimeout(() => {
-            this.initializeMap();
-            this.geocodeAddress(`${response.iuo_adressa},${response.grd_ime}`);
-          });
+          setTimeout(() => void this.showMap(response));
+          if (this.isBrowser && photosOmitted(response)) this.loadPhotos(id);
         } else {
           this.isLoading.set(false);
           this.showNotFound();
@@ -228,6 +233,22 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
         this.isLoading.set(false);
         this.loadFailed.set(true);
       }
+    );
+  }
+
+  /**
+   * The prerendered page hydrates with the place minus its photos
+   * (core/prerender/page-data.ts), so the full place is fetched once more,
+   * past the page's own copy.
+   */
+  private loadPhotos(id: string): void {
+    this.spotsStore.getSpotById(
+      id,
+      (full) => {
+        if (full && this.route.snapshot.paramMap.get('id') === id) this.spot.set(full);
+      },
+      () => undefined,
+      { fresh: true },
     );
   }
 
@@ -268,15 +289,17 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
     // "Witch Bar – pet friendly bar u Beogradu": the words people search with.
     const title = `${name} – pet friendly ${kind}${where}`;
 
-    const description =
-      cleanApiText(spot?.iuo_opis) ||
-      [
-        `${name} je pet friendly ${kind}${where}${address ? ` (${address})` : ''}.`,
-        allowed ? `Dozvoljeni psi: ${allowed}.` : '',
-        'Adresa, kontakt i mapa na Gde sa psom.',
-      ]
-        .filter(Boolean)
-        .join(' ');
+    const generated = [
+      `${name} je pet friendly ${kind}${where}${address ? ` (${address})` : ''}.`,
+      allowed ? `Dozvoljeni psi: ${allowed}.` : '',
+      'Adresa, kontakt i mapa na Gde sa psom.',
+    ]
+      .filter(Boolean)
+      .join(' ');
+    // The venue's own text, unless it is a one-liner ("Pet friendly 🐾") that
+    // says too little in a search result: then the facts follow it.
+    const own = cleanApiText(spot?.iuo_opis);
+    const description = own && own.length >= 70 ? own : [own, generated].filter(Boolean).join(' ');
 
     this.seoService.update({
       title: `${title} | Gde sa psom`,
@@ -290,10 +313,17 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     const data = this.spot();
-    if (data) {
-      this.initializeMap();
-      this.geocodeAddress(`${data.iuo_adressa},${data.grd_ime}`);
-    }
+    if (data) void this.showMap(data);
+  }
+
+  /** In the browser only: Leaflet needs `window`, which the build-time prerenderer has not. */
+  private async showMap(spot: any): Promise<void> {
+    // A prerendered page has its place before the view exists, so both
+    // ngAfterViewInit and loadSpot get here; one map is enough.
+    if (!this.isBrowser || this.mapShown) return;
+    this.mapShown = true;
+    await this.initializeMap();
+    this.geocodeAddress(`${spot.iuo_adressa},${spot.grd_ime}`);
   }
 
   ngOnDestroy(): void {
@@ -309,8 +339,9 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
     this.location.back();
   }
 
+  /** The canonical address: the share links are in the prerendered HTML, where there is no visitor URL. */
   get spotUrl(): string {
-    return this.document.location.href;
+    return `${SITE_ORIGIN}/spots/${this.route.snapshot.paramMap.get('id') ?? ''}`;
   }
 
   copyLink(): void {
@@ -322,7 +353,8 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
-  private initializeMap(): void {
+  private async initializeMap(): Promise<void> {
+    const L = (this.leaflet ??= await loadLeaflet());
     this.map = L.map('map', {
       center: [51.505, -0.09],
       zoom: 13,
@@ -343,8 +375,9 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
     const lat = parseFloat(spot.latitude);
     const lon = parseFloat(spot.longitude);
+    const L = this.leaflet;
 
-    if (this.map) {
+    if (this.map && L) {
       this.map.setView([lat, lon], 20);
 
       const LeafIcon = new L.Icon({
@@ -458,15 +491,16 @@ export class SpotDetailPageComponent implements OnInit, AfterViewInit, OnDestroy
 
       // Ensure map is initialized
       if (!this.map) {
-        this.initializeMap();
+        await this.initializeMap();
       }
 
       // Get route from OSRM
       const route = await this.getRoute(startCoords.lat, startCoords.lon, data.latitude, data.longitude);
+      const L = this.leaflet;
 
-      if (route && this.map) {
+      if (route && this.map && L) {
         // Draw route on map
-        const coordinates = route.map((coord: [number, number]) => [coord[1], coord[0]] as L.LatLngExpression);
+        const coordinates = route.map((coord: [number, number]) => [coord[1], coord[0]] as Leaflet.LatLngExpression);
         const polyline = L.polyline(coordinates, {
           color: 'blue',
           weight: 4,

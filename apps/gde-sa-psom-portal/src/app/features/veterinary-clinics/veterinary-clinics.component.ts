@@ -17,10 +17,12 @@ import { filterTownshipsMulti, SEARCH_TRACKING_DEBOUNCE_MS } from '@gde/shared/u
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { refreshAosOn } from '../../core/aos/refresh-aos-on';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { ClientImagePipe } from '../../shared/utils/client-image.pipe';
 
 @Component({
   selector: 'app-veterinary-clinics',
   imports: [
+    ClientImagePipe,
     CommonModule,
     TranslocoModule,
     NgxMatSelectSearchModule,

@@ -16,16 +16,19 @@ export abstract class SessionStore {
   abstract clear(): void;
 }
 
+/** `localStorage`, or null while the build-time prerenderer runs (Node has none). */
+const storage = (): Storage | null => (typeof localStorage === 'undefined' ? null : localStorage);
+
 export class LocalStorageSessionStore extends SessionStore {
   getSid(): string | null {
-    return localStorage.getItem(SID_KEY);
+    return storage()?.getItem(SID_KEY) ?? null;
   }
 
   setSid(sid: string): void {
-    localStorage.setItem(SID_KEY, sid);
+    storage()?.setItem(SID_KEY, sid);
   }
 
   clear(): void {
-    localStorage.removeItem(SID_KEY);
+    storage()?.removeItem(SID_KEY);
   }
 }

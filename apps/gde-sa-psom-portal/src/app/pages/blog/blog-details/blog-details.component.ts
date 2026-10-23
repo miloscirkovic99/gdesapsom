@@ -2,18 +2,19 @@ import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BlogService, Post, postCoverUrl } from '@gde/shared/data-access';
-import { injectActiveLang, pluralKey, RouteConstants } from '@gde/shared/util';
+import { injectActiveLang, LocalNamePipe, pluralKey, RouteConstants } from '@gde/shared/util';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SeoService, SITE_ORIGIN } from '../../../core/services/seo.service';
-import { blogPostingStructuredData } from '../../../shared/utils/structured-data';
+import { blogPostingStructuredData, postAuthorName } from '../../../shared/utils/structured-data';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../../shared/components/breadcrumb/breadcrumb.component';
+import { allHubLinks } from '../../../features/pet-friendly/pet-friendly-pages';
 
 const STRUCTURED_DATA_ID = 'blog-post';
 
 @Component({
   selector: 'app-blog-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, BreadcrumbComponent, TranslocoModule],
+  imports: [CommonModule, RouterModule, BreadcrumbComponent, TranslocoModule, LocalNamePipe],
   templateUrl: './blog-details.component.html',
   styleUrl: './blog-details.component.scss',
 })
@@ -44,6 +45,16 @@ export class BlogDetailsComponent implements OnInit, OnDestroy {
 
   /** A legacy file name under /assets/slike/ or a full URL from the admin form. */
   coverUrl = computed(() => postCoverUrl(this.post()?.slika_naslovna));
+
+  /** Null for posts written from the admin account: those are signed by the editorial team. */
+  readonly author = computed(() => postAuthorName(this.post()?.autor));
+
+  /**
+   * From the article to the directory: the travel posts bring most of the
+   * search visitors, and these are the pages that answer where to go next.
+   */
+  readonly directoryLinks = allHubLinks();
+  readonly routes = RouteConstants;
 
   /** Početna › Blog › {naslov}; also published as BreadcrumbList. */
   breadcrumbs = computed<BreadcrumbItem[]>(() => [

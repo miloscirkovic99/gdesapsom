@@ -35,7 +35,7 @@
       <div class="space-y-4">
         <div class="flex items-start gap-4">
           @if (s.logo; as logo) {
-            <img [src]="logo" [alt]="s.name" class="w-16 h-16 rounded-2xl object-cover border border-base-300/50 shrink-0" />
+            <img [src]="logo | clientImage" [alt]="s.name" class="w-16 h-16 rounded-2xl object-cover border border-base-300/50 shrink-0" />
           } @else {
             <span class="w-16 h-16 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
@@ -170,7 +170,7 @@
                 <li class="p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
                   <a [routerLink]="['/' + routes.dogFood, offer.food.slug]" class="w-14 h-14 rounded-xl bg-base-200 overflow-hidden shrink-0" tabindex="-1" aria-hidden="true">
                     @if (offer.food.thumbnail; as thumbnail) {
-                      <img [src]="thumbnail" alt="" class="w-full h-full object-cover" loading="lazy" />
+                      <img [src]="thumbnail | clientImage" alt="" class="w-full h-full object-cover" loading="lazy" />
                     } @else {
                       <span class="w-full h-full flex items-center justify-center text-base-content/25">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor" class="w-7 h-7">

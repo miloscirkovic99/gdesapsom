@@ -38,10 +38,11 @@ export interface HubCity {
   descriptionKey: string;
 }
 
-/** Cities with a hub page on the website (/beograd, /novi-sad). Any city can be opened in the app. */
+/** Cities with a hub page on the website (/beograd, /novi-sad, /nis). Any city can be opened in the app. */
 export const HUB_CITIES: readonly HubCity[] = [
   { slug: 'beograd', name: 'Beograd', labelKey: 'mobile_city_beograd', descriptionKey: 'lp_hub_beograd' },
   { slug: 'novi-sad', name: 'Novi Sad', labelKey: 'mobile_city_novi_sad', descriptionKey: 'lp_hub_novi_sad' },
+  { slug: 'nis', name: 'Niš', labelKey: 'mobile_city_nis', descriptionKey: 'lp_hub_nis' },
 ];
 
 export function categoryBySlug(slug: string | null | undefined): SpotCategory | null {

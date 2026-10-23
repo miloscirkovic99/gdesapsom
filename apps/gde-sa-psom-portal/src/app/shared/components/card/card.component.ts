@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import AOS from 'aos';
 import { TranslocoModule } from '@ngneat/transloco';
 import { descriptionToKeyMap, descriptionToKeyMapGarden, descriptionToKeyMapSpot } from '@gde/shared/util';
+import { ClientImagePipe } from '../../utils/client-image.pipe';
 
 /** The park fields the address link needs; the card data itself is untyped. */
 interface CardPlace {
@@ -15,7 +16,7 @@ interface CardPlace {
 
 @Component({
   selector: 'app-card',
-  imports: [CommonModule, TranslocoModule, RouterLink],
+  imports: [CommonModule, TranslocoModule, RouterLink, ClientImagePipe],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

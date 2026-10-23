@@ -38,7 +38,7 @@
         <div class="carousel w-full rounded-xl overflow-hidden">
           <div class="carousel-item relative w-full" [class.hidden]="currentSlide !== 1">
             <img
-              [src]="data?.iuo_slika_base64 ? data?.iuo_slika_base64 : 'assets/logo-normal.png'"
+              [src]="(data?.iuo_slika_base64 ? data?.iuo_slika_base64 : 'assets/logo-normal.png') | clientImage"
               class="w-full h-48 sm:h-72 object-cover rounded-xl"
               loading="lazy"
               [alt]="data?.iuo_ime"
@@ -50,7 +50,7 @@
           </div>
           <div class="carousel-item relative w-full" [class.hidden]="currentSlide !== 2">
             <img
-              [src]="data?.iuo_slika_base64_unutra ? data?.iuo_slika_base64_unutra : 'assets/logo-normal.png'"
+              [src]="(data?.iuo_slika_base64_unutra ? data?.iuo_slika_base64_unutra : 'assets/logo-normal.png') | clientImage"
               class="w-full h-48 sm:h-72 object-cover rounded-xl"
               loading="lazy"
               [alt]="'photo_interior' | transloco: { name: data?.iuo_ime }"

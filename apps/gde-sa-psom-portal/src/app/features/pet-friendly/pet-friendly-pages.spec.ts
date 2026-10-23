@@ -92,6 +92,8 @@ describe('matching venues to hubs', () => {
     expect(cityForName('Novi Sad')?.slug).toBe('novi-sad');
     expect(cityForName('novi  sad')?.slug).toBe('novi-sad');
     expect(cityForName('Beograd')?.slug).toBe('beograd');
+    expect(cityForName('Niš')?.slug).toBe('nis');
+    expect(cityForName('Nis')?.slug).toBe('nis');
     expect(cityForName('Divčibare')).toBeNull();
   });
 

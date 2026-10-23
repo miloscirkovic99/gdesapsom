@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BlogService, postCoverUrl } from '@gde/shared/data-access';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { postAuthorName } from '../../../shared/utils/structured-data';
 
 @Component({
   selector: 'app-blog-list',
@@ -12,6 +13,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 })
 export class BlogListComponent implements OnInit {
   private blogService = inject(BlogService);
+  /** Null for posts written from the admin account: those are signed by the editorial team. */
+  readonly authorName = postAuthorName;
 
   postovi = signal<any[]>([]);
   ucitavanje = signal(false);

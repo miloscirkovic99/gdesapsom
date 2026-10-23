@@ -161,15 +161,25 @@ export const SpotsStore = signalStore(
       //     })
       //   )
       // ),
-      getSpotById(iuo_id: string, onSuccess: (spot: Spot | null) => void, onError: () => void) {
+      /** `fresh` asks the API even when a prerendered page carries this spot (Angular's transfer cache). */
+      getSpotById(
+        iuo_id: string,
+        onSuccess: (spot: Spot | null) => void,
+        onError: () => void,
+        options: { fresh?: boolean } = {},
+      ) {
         if (!iuo_id) {
           console.error('getSpotById: iuo_id is null or undefined', iuo_id);
           onError();
           return;
         }
-                
+
         http
-           .post<{ spotsListSingle?: Spot[] }>(`pet-friendly-spots/all/${iuo_id}`, { iuo_id })
+           .post<{ spotsListSingle?: Spot[] }>(
+             `pet-friendly-spots/all/${iuo_id}`,
+             { iuo_id },
+             options.fresh ? { transferCache: false } : {},
+           )
           .pipe(takeUntil(destroyed$))
           .subscribe({
             next: (response) => {

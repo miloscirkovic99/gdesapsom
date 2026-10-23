@@ -13,6 +13,8 @@
         "outputPath": "dist/apps/gde-sa-psom-portal",
         "index": "apps/gde-sa-psom-portal/src/index.html",
         "browser": "apps/gde-sa-psom-portal/src/main.ts",
+        "server": "apps/gde-sa-psom-portal/src/main.server.ts",
+        "outputMode": "static",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/gde-sa-psom-portal/tsconfig.app.json",
         "inlineStyleLanguage": "scss",

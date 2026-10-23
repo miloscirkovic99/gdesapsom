@@ -333,6 +333,14 @@
   dependencies:
     tslib "^2.3.0"
 
+"@angular/platform-server@20.3.9":
+  version "20.3.9"
+  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-20.3.9.tgz#91d6dd18fb4124022c86c542c54d705d11293858"
+  integrity sha512-rLE3hFxEs2D0wmKcrNiVLUajEyHBZvHN/YDt7ujaZNR0gVSj45CJOWn2/V2+AnP/73RjmvZgukh15sqFR2j6LQ==
+  dependencies:
+    tslib "^2.3.0"
+    xhr2 "^0.2.0"
+
 "@angular/pwa@20.3.9":
   version "20.3.9"
   resolved "https://registry.yarnpkg.com/@angular/pwa/-/pwa-20.3.9.tgz#a1b9ec4697a599f6702cd50ce92fddf5f0a97d79"
@@ -353,6 +361,13 @@
   version "20.3.9"
   resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-20.3.9.tgz#617a23c964c036e5e942b3335bc24767186f600b"
   integrity sha512-NdDoweeswYPoiWmqUsgcdpj+iHIdgI6XXM4ujJs0tFoO2kbs9OLu1mupuYdd0slzMQr6ni7bq+A17964PY1ipA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/ssr@20.3.9":
+  version "20.3.9"
+  resolved "https://registry.yarnpkg.com/@angular/ssr/-/ssr-20.3.9.tgz#4322098667e5c21dc6c01946037217db5a577e95"
+  integrity sha512-X6m+CRbqwOP0oHkAGNHdySfZUUC0pm+QZ91B742k2pLc07wLlpZzt1hgaaAQHMOd3Ruso67ChuTi8UfvjJC3Pg==
   dependencies:
     tslib "^2.3.0"
 
@@ -17000,6 +17015,11 @@ xcode@^3.0.1:
   dependencies:
     simple-plist "^1.1.0"
     uuid "^7.0.3"
+
+xhr2@^0.2.0:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.2.1.tgz#4e73adc4f9cfec9cbd2157f73efdce3a5f108a93"
+  integrity sha512-sID0rrVCqkVNUn8t6xuv9+6FViXjUVXq8H5rWOH2rz9fDNQEd4g0EA2XlcEdJXRz5BMEn4O1pJFdT+z4YHhoWw==
 
 xml-js@^1.6.11:
   version "1.6.11"

@@ -85,9 +85,18 @@ export function spotStructuredData(
 }
 
 /**
+ * The person a post is credited to, or null for posts written from the admin
+ * account: "Admin" is not a person's name, so those are the site's own.
+ */
+export function postAuthorName(autor: string | null | undefined): string | null {
+  const name = cleanApiText(autor);
+  return name && name.toLowerCase() !== 'admin' ? name : null;
+}
+
+/**
  * schema.org BlogPosting for a blog post page. Posts written from the admin
- * account are credited to the site, since "Admin" is not a person's name.
- * Null when the post has no title.
+ * account are credited to the site (`postAuthorName`). Null when the post has
+ * no title.
  */
 export function blogPostingStructuredData(
   post: Post,
@@ -96,11 +105,8 @@ export function blogPostingStructuredData(
   const headline = cleanApiText(post.naslov);
   if (!headline) return null;
 
-  const authorName = cleanApiText(post.autor);
-  const author =
-    authorName && authorName.toLowerCase() !== 'admin'
-      ? { '@type': 'Person', name: authorName }
-      : PUBLISHER;
+  const authorName = postAuthorName(post.autor);
+  const author = authorName ? { '@type': 'Person', name: authorName } : PUBLISHER;
 
   return {
     '@context': 'https://schema.org',

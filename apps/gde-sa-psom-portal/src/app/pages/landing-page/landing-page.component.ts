@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  makeStateKey,
+  OnDestroy,
+  PLATFORM_ID,
+  TransferState,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,6 +28,7 @@ import {
   LocalNamePipe,
 } from '@gde/shared/util';
 import { cityHubLink, nationalHubLink, STAYS_HUB_PATH } from '../../features/pet-friendly/pet-friendly-pages';
+import { ClientImagePipe } from '../../shared/utils/client-image.pipe';
 
 type CategoryIcon = 'restaurant' | 'cafe' | 'hotel' | 'park' | 'vet' | 'food' | 'shop';
 
@@ -35,6 +47,19 @@ interface HomeHub {
 }
 
 const HOME_STRUCTURED_DATA_ID = 'home';
+
+interface HomeCounts {
+  spots: number;
+  parks: number;
+  vets: number;
+}
+
+/**
+ * The counts the page was prerendered with. The browser loads the lists again,
+ * and until they arrive the trust line keeps these numbers instead of
+ * switching to the "free, no sign-up" note and back.
+ */
+const COUNTS_KEY = makeStateKey<HomeCounts>('home-counts');
 
 /**
  * The list pages the homepage's CollectionPage schema points to. Real pages
@@ -57,12 +82,13 @@ const HOME_SECTIONS = [
 const HOME_HUBS: readonly HomeHub[] = [
   { ...cityHubLink('beograd'), descriptionKey: 'lp_hub_beograd' },
   { ...cityHubLink('novi-sad'), descriptionKey: 'lp_hub_novi_sad' },
+  { ...cityHubLink('nis'), descriptionKey: 'lp_hub_nis' },
   { ...nationalHubLink('smestaj'), descriptionKey: 'lp_hub_smestaj' },
 ];
 
 @Component({
   selector: 'app-landing-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent, LocalNamePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent, LocalNamePipe, ClientImagePipe],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,6 +103,9 @@ export class LandingPageComponent implements OnDestroy {
   readonly #transloco = inject(TranslocoService);
   readonly lang = injectActiveLang();
   readonly hubs = HOME_HUBS;
+  readonly #state = inject(TransferState);
+  readonly #isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  readonly #prerenderedCounts = this.#isBrowser ? this.#state.get(COUNTS_KEY, null) : null;
 
   /** Section names in the active language, once translations have loaded. */
   readonly #sectionNames = toSignal(
@@ -102,11 +131,14 @@ export class LandingPageComponent implements OnDestroy {
   });
   readonly isLoadingRandom = computed(() => this.spotsStore.random().length === 0);
 
-  readonly counts = computed(() => ({
-    spots: this.spotsStore.totalResult(),
-    parks: this.parksStore.parks().length,
-    vets: this.vetClinicsStore.totalCount(),
-  }));
+  readonly counts = computed<HomeCounts>(() => {
+    const live = {
+      spots: this.spotsStore.totalResult(),
+      parks: this.parksStore.parks().length,
+      vets: this.vetClinicsStore.totalCount(),
+    };
+    return live.spots > 0 ? live : (this.#prerenderedCounts ?? live);
+  });
 
   // Restaurants, cafés and stays open their hub pages: the old `/all-spots?spotType=`
   // links canonicalised to the unfiltered list, so the category had no page of its own.
@@ -135,6 +167,8 @@ export class LandingPageComponent implements OnDestroy {
   ];
 
   constructor() {
+    if (!this.#isBrowser) effect(() => this.#state.set(COUNTS_KEY, this.counts()));
+
     // The CollectionPage block lives here, not in index.html, so it exists on
     // "/" only; it used to ship on every spot and blog page as well.
     effect(() => {

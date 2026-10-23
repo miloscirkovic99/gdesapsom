@@ -1,7 +1,11 @@
 <a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] btn btn-primary btn-sm" href="#main-content">
   {{ 'skip_to_content' | transloco }}
 </a>
-<app-navbar></app-navbar>
+<!--
+  Redrawn in the browser instead of hydrated: the theme, language and admin
+  links come from the visitor's localStorage, which the prerendered HTML cannot know.
+-->
+<app-navbar ngSkipHydration></app-navbar>
 <main id="main-content" class="min-h-screen">
   @if (!isAdminMode()) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,7 +20,8 @@
   <app-footer></app-footer>
 }
 <app-pwa-install-dialog></app-pwa-install-dialog>
-<app-cookie-banner />
+<!-- The prerendered HTML has no banner; the visitor's stored choice decides. -->
+<app-cookie-banner ngSkipHydration />
 
 <!-- Bottom Navigation (Mobile Only) -->
 <div class="block md:hidden">

@@ -6,7 +6,7 @@ import taxonomy from './pet-friendly-taxonomy.json';
  * The pet-friendly hub pages: one URL per search intent.
  *
  *   /smestaj, /kafici, ...       national category hub ("pet friendly smeštaj srbija")
- *   /beograd, /novi-sad          city hub ("pet friendly novi sad")
+ *   /beograd, /novi-sad, /nis    city hub ("pet friendly novi sad")
  *   /novi-sad/kafici, ...        city × category ("pet friendly kafići novi sad")
  *
  * Before these existed every such query could only land on /all-spots, whose
@@ -79,7 +79,7 @@ const CATEGORY_INFO: Readonly<Record<string, CategoryInfo>> = {
     hubLabel: { nameSr: 'Pet friendly kafići', nameEn: 'Pet-friendly cafés' },
     nationalTitle: 'Pet Friendly Kafići u Srbiji – Kafići u Koje Možete sa Psom',
     nationalDescription:
-      'Pet friendly kafići u Beogradu, Novom Sadu i širom Srbije: kafići u koje možete sa psom, sa podacima o bašti i veličini pasa, adresom i kontaktom.',
+      'Pet friendly kafići u Beogradu, Novom Sadu, Nišu i širom Srbije: kafići u koje možete sa psom, sa podacima o bašti i veličini pasa, adresom i kontaktom.',
     cityTitle: (city) => `Pet Friendly Kafići ${city.name.nameSr} – Kafići u Koje Možete sa Psom`,
     cityDescription: (city) =>
       `Pet friendly kafići ${city.locative.nameSr}: lista kafića koji primaju pse, sa podacima o bašti i veličini pasa, adresom, kontaktom i lokacijom na mapi.`,
@@ -87,10 +87,10 @@ const CATEGORY_INFO: Readonly<Record<string, CategoryInfo>> = {
   restorani: {
     label: { nameSr: 'Restorani', nameEn: 'Restaurants' },
     hubLabel: { nameSr: 'Pet friendly restorani', nameEn: 'Pet-friendly restaurants' },
-    nationalTitle: 'Pet Friendly Restorani u Srbiji – Restorani u Koje Možete sa Psom',
+    nationalTitle: 'Pet Friendly Restorani u Srbiji – Restorani Koji Primaju Pse',
     nationalDescription:
-      'Pet friendly restorani i splavovi u Beogradu, Novom Sadu i širom Srbije: gde na ručak sa psom, koje veličine pasa su dobrodošle i da li postoji bašta.',
-    cityTitle: (city) => `Pet Friendly Restorani ${city.name.nameSr} – Restorani u Koje Možete sa Psom`,
+      'Pet friendly restorani i splavovi u Beogradu, Novom Sadu, Nišu i širom Srbije: gde na ručak sa psom, koje veličine pasa su dobrodošle i da li postoji bašta.',
+    cityTitle: (city) => `Pet Friendly Restorani ${city.name.nameSr} – Restorani Koji Primaju Pse`,
     cityDescription: (city) =>
       `Pet friendly restorani ${city.locative.nameSr}: restorani i splavovi koji primaju pse, sa podacima o bašti i veličini pasa, adresom i kontaktom.`,
   },
@@ -99,7 +99,7 @@ const CATEGORY_INFO: Readonly<Record<string, CategoryInfo>> = {
     hubLabel: { nameSr: 'Pet friendly barovi i pabovi', nameEn: 'Pet-friendly bars and pubs' },
     nationalTitle: 'Pet Friendly Barovi i Pabovi u Srbiji – Na Piće sa Psom',
     nationalDescription:
-      'Pet friendly barovi i pabovi u Beogradu, Novom Sadu i širom Srbije: gde na piće sa psom, koje veličine pasa su dobrodošle i da li postoji bašta.',
+      'Pet friendly barovi i pabovi u Beogradu, Novom Sadu, Nišu i širom Srbije: gde na piće sa psom, koje veličine pasa su dobrodošle i da li postoji bašta.',
     cityTitle: (city) => `Pet Friendly Barovi ${city.name.nameSr} – Barovi i Pabovi sa Psom`,
     cityDescription: (city) =>
       `Pet friendly barovi i pabovi ${city.locative.nameSr}: gde na piće sa psom, koje veličine pasa su dobrodošle i da li postoji bašta, uz adresu i kontakt.`,
@@ -137,6 +137,13 @@ const CITY_INFO: Readonly<Record<string, CityInfo>> = {
     title: 'Pet Friendly Novi Sad – Kafići, Restorani i Smeštaj sa Psom',
     description:
       'Gde sa psom u Novom Sadu? Pet friendly kafići, restorani, barovi i smeštaj koji primaju pse, uz parkove za pse i veterinare na jednom mestu.',
+  },
+  nis: {
+    name: { nameSr: 'Niš', nameEn: 'Niš' },
+    locative: { nameSr: 'u Nišu', nameEn: 'in Niš' },
+    title: 'Pet Friendly Niš – Kafići, Restorani i Smeštaj sa Psom',
+    description:
+      'Gde sa psom u Nišu? Pet friendly kafići, restorani, barovi i smeštaj koji primaju pse, uz parkove za pse i veterinare na jednom mestu.',
   },
 };
 

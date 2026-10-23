@@ -38,7 +38,7 @@
         <figure class="aspect-square rounded-2xl bg-base-200 overflow-hidden border border-base-300/50">
           @if (currentImage(); as image) {
             <img
-              [src]="image.image"
+              [src]="image.image | clientImage"
               [alt]="image.altText || p.brand.name + ' ' + p.name"
               class="w-full h-full object-cover"
             />
@@ -64,7 +64,7 @@
                 [attr.aria-label]="'image_n' | transloco: { n: i + 1 }"
                 (click)="selectImage(i)"
               >
-                <img [src]="image.thumbnail || image.image" alt="" class="w-full h-full object-cover" loading="lazy" />
+                <img [src]="(image.thumbnail || image.image) | clientImage" alt="" class="w-full h-full object-cover" loading="lazy" />
               </button>
             }
           </div>
@@ -189,7 +189,7 @@
               >
                 <figure class="aspect-square bg-base-200 overflow-hidden">
                   @if (item.thumbnail; as thumbnail) {
-                    <img [src]="thumbnail" [alt]="item.brandName + ' ' + item.name" class="w-full h-full object-cover" loading="lazy" />
+                    <img [src]="thumbnail | clientImage" [alt]="item.brandName + ' ' + item.name" class="w-full h-full object-cover" loading="lazy" />
                   } @else {
                     <div class="w-full h-full flex items-center justify-center text-base-content/20">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-10 h-10" aria-hidden="true">

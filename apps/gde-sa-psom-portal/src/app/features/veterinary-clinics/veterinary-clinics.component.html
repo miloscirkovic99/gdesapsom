@@ -96,7 +96,7 @@
       >
         <figure class="h-48 overflow-hidden">
           <img
-            [src]="item?.vetc_logo ?? 'assets/vet_clinic.jpg'"
+            [src]="(item?.vetc_logo ?? 'assets/vet_clinic.jpg') | clientImage"
             [alt]="item?.vetc_naziv"
             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
             loading="lazy"
