@@ -55,7 +55,7 @@ import { RouteConstants } from '@gde/shared/util';
 export class PrivacyPolicyPageComponent {
   readonly routes = RouteConstants;
   /** `privacy_<item>_label` / `privacy_<item>_text` pairs, in page order. */
-  readonly collected = ['suggest', 'contact', 'location', 'web_analytics', 'app_analytics', 'device'] as const;
+  readonly collected = ['suggest', 'contact', 'location', 'trip', 'web_analytics', 'app_analytics', 'device'] as const;
   /** `privacy_<section>_title` / `privacy_<section>_text` pairs after the list. */
   readonly sections = ['share', 'retention', 'rights', 'changes'] as const;
 }

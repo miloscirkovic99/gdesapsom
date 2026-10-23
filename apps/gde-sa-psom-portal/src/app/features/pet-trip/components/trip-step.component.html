@@ -1,0 +1,138 @@
+<form [formGroup]="form" class="pt-card" (submit)="$event.preventDefault()">
+  <fieldset class="pt-fieldset">
+    <legend class="pt-legend">{{ copy().trip.legend }}</legend>
+
+    <div class="pt-grid">
+      <div class="pt-field">
+        <label class="pt-label" for="pt-destination">{{ copy().trip.destination }}</label>
+        <select id="pt-destination" class="select select-bordered w-full" formControlName="destination">
+          <optgroup [label]="copy().trip.destinationsEu">
+            @for (option of euDestinations(); track option.code) {
+              <option [value]="option.code">{{ option.name }}</option>
+            }
+          </optgroup>
+          <optgroup [label]="copy().trip.destinationsOther">
+            @for (option of otherDestinations(); track option.code) {
+              <option [value]="option.code">{{ option.name }}</option>
+            }
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="pt-field">
+        <label class="pt-label" for="pt-destination-city">{{ copy().trip.destinationCity }} <span class="pt-optional">({{ copy().optional }})</span></label>
+        <input id="pt-destination-city" class="input input-bordered w-full" formControlName="destinationCity" autocomplete="off" maxlength="80" [placeholder]="copy().trip.destinationCityPlaceholder" />
+      </div>
+    </div>
+
+    <div class="pt-field" role="radiogroup" aria-labelledby="pt-transport-label">
+      <span id="pt-transport-label" class="pt-label">{{ copy().trip.transport }}</span>
+      <div class="pt-choices">
+        @for (mode of transports; track mode) {
+          <label class="pt-choice">
+            <input type="radio" class="pt-choice__input" formControlName="transport" name="transport" [value]="mode" />
+            <span class="pt-choice__label">{{ copy().transport[mode] }}</span>
+          </label>
+        }
+      </div>
+    </div>
+
+    @if (needsTransit()) {
+      <div class="pt-field">
+        <span class="pt-label" id="pt-transit-label">{{ copy().trip.transit }}</span>
+        <p class="pt-hint">{{ copy().trip.transitHint }}</p>
+        <app-pet-trip-transit
+          selectId="pt-transit-add"
+          [value]="trip().transitCountries"
+          [destination]="trip().destination"
+          (changed)="setTransit($event)"
+        />
+      </div>
+    }
+
+    <div class="pt-grid">
+      <div class="pt-field">
+        <label class="pt-label" for="pt-departure-date">{{ copy().trip.departureDate }}</label>
+        <input
+          id="pt-departure-date"
+          type="date"
+          class="input input-bordered w-full"
+          formControlName="departureDate"
+          [min]="planner.today()"
+          [class.input-error]="invalid('departureDate')"
+          [attr.aria-invalid]="invalid('departureDate')"
+          aria-describedby="pt-departure-date-error"
+        />
+        @if (invalid('departureDate')) {
+          <p id="pt-departure-date-error" class="pt-error" role="alert">
+            {{ form.controls.departureDate.hasError('pastDeparture') ? copy().trip.errors.pastDeparture : copy().trip.errors.departureDate }}
+          </p>
+        }
+      </div>
+
+      @if (!form.controls.oneWay.value) {
+        <div class="pt-field">
+          <label class="pt-label" for="pt-return-date">{{ copy().trip.returnDate }}</label>
+          <input
+            id="pt-return-date"
+            type="date"
+            class="input input-bordered w-full"
+            formControlName="returnDate"
+            [min]="form.controls.departureDate.value || planner.today()"
+            [class.input-error]="returnInvalid"
+            [attr.aria-invalid]="returnInvalid"
+            aria-describedby="pt-return-date-error"
+          />
+          @if (returnInvalid) {
+            <p id="pt-return-date-error" class="pt-error" role="alert">{{ copy().trip.errors.returnBeforeDeparture }}</p>
+          }
+        </div>
+      }
+    </div>
+
+    <label class="pt-check">
+      <input type="checkbox" class="checkbox checkbox-sm" formControlName="oneWay" />
+      <span>{{ copy().trip.oneWay }}</span>
+    </label>
+
+    <div class="pt-grid">
+      <div class="pt-field">
+        <label class="pt-label" for="pt-travelers">{{ copy().trip.travelers }}</label>
+        <input
+          id="pt-travelers"
+          type="number"
+          inputmode="numeric"
+          min="1"
+          [max]="maxTravelers"
+          step="1"
+          class="input input-bordered w-full"
+          formControlName="travelers"
+          [class.input-error]="invalid('travelers')"
+          [attr.aria-invalid]="invalid('travelers')"
+          aria-describedby="pt-travelers-error"
+        />
+        @if (invalid('travelers')) {
+          <p id="pt-travelers-error" class="pt-error" role="alert">{{ copy().trip.errors.travelers }}</p>
+        }
+      </div>
+
+      <div class="pt-field">
+        <label class="pt-label" for="pt-departure-city">{{ copy().trip.departureCity }} <span class="pt-optional">({{ copy().optional }})</span></label>
+        <input id="pt-departure-city" class="input input-bordered w-full" formControlName="departureCity" autocomplete="address-level2" maxlength="80" [placeholder]="copy().trip.departureCityPlaceholder" aria-describedby="pt-departure-city-hint" />
+        <p id="pt-departure-city-hint" class="pt-hint">{{ copy().trip.departureCityHint }}</p>
+      </div>
+    </div>
+
+    <div class="pt-field" role="radiogroup" aria-labelledby="pt-purpose-label">
+      <span id="pt-purpose-label" class="pt-label">{{ copy().trip.purpose }}</span>
+      <div class="pt-choices pt-choices--stack">
+        @for (purpose of purposes; track purpose) {
+          <label class="pt-choice">
+            <input type="radio" class="pt-choice__input" formControlName="purpose" name="purpose" [value]="purpose" />
+            <span class="pt-choice__label">{{ copy().trip.purposes[purpose] }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  </fieldset>
+</form>

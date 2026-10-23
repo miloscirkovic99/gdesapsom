@@ -1,0 +1,300 @@
+@let s = scenario();
+@let b = breakdown();
+@let p = prefix();
+
+<article class="pt-card pt-scenario" [attr.aria-labelledby]="p + '-title'">
+  <header class="pt-scenario__head">
+    <h3 [id]="p + '-title'" class="pt-h3">{{ s.label }}</h3>
+    <span class="pt-badge" [class]="'pt-badge pt-verdict-badge--' + report().overall">
+      {{ copy().compare.readiness }}: {{ copy().overall[report().overall].title }}
+    </span>
+  </header>
+
+  <form [formGroup]="form" (submit)="$event.preventDefault()">
+    @if (isBase()) {
+      <p class="pt-hint">
+        {{ nameOf(s.destination) }} · {{ copy().transport[s.transport] }} · {{ copy().costs.days(b.days) }} ({{ b.nights }} {{ copy().compare.nights.toLowerCase() }}).
+        {{ copy().costs.scenarioAHint }}
+      </p>
+    } @else {
+      <div class="pt-grid">
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-label'">{{ copy().costs.scenarioLabel }}</label>
+          <input [id]="p + '-label'" class="input input-bordered w-full" formControlName="label" maxlength="40" [placeholder]="defaultLabel()" />
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-destination'">{{ copy().costs.destination }}</label>
+          <select [id]="p + '-destination'" class="select select-bordered w-full" formControlName="destination">
+            @for (option of destinations(); track option.code) {
+              <option [value]="option.code">{{ option.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-city'">{{ copy().trip.destinationCity }} <span class="pt-optional">({{ copy().optional }})</span></label>
+          <input [id]="p + '-city'" class="input input-bordered w-full" formControlName="destinationCity" maxlength="80" />
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-nights'">{{ copy().costs.nights }}</label>
+          <input [id]="p + '-nights'" type="number" inputmode="numeric" min="0" max="365" step="1" class="input input-bordered w-full" formControlName="nights" />
+        </div>
+      </div>
+      <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="p + '-transport'">
+        <span class="pt-label" [id]="p + '-transport'">{{ copy().trip.transport }}</span>
+        <div class="pt-choices">
+          @for (mode of transports; track mode) {
+            <label class="pt-choice">
+              <input type="radio" class="pt-choice__input" formControlName="transport" name="transport" [value]="mode" />
+              <span class="pt-choice__label">{{ copy().transport[mode] }}</span>
+            </label>
+          }
+        </div>
+      </div>
+      @if (s.transport !== 'plane') {
+        <div class="pt-field">
+          <span class="pt-label">{{ copy().costs.transit }}</span>
+          <app-pet-trip-transit [selectId]="p + '-transit'" [value]="s.transitCountries" [destination]="s.destination" (changed)="setTransit($event)" />
+        </div>
+      }
+    }
+
+    @if (s.transport === 'car') {
+      <fieldset class="pt-fieldset pt-fieldset--inner">
+        <legend class="pt-legend pt-legend--small">{{ copy().costs.car }}</legend>
+        <div class="pt-grid">
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-distance'">{{ copy().costs.distance }}</label>
+            <input [id]="p + '-distance'" type="number" inputmode="numeric" min="0" step="1" class="input input-bordered w-full" formControlName="distanceKm" [attr.aria-describedby]="p + '-distance-hint'" />
+            <div [id]="p + '-distance-hint'" class="pt-hint">
+              {{ copy().costs.distanceHint }}
+              @if (s.distanceEstimateKm && s.distanceKm === null) {
+                <span class="block">{{ copy().costs.estimateResult(km(s.distanceEstimateKm.min), km(s.distanceEstimateKm.max)) }}</span>
+              }
+            </div>
+            <div class="pt-inline">
+              <button type="button" class="btn btn-ghost btn-xs" (click)="planner.estimateDistance(s.id)" [disabled]="planner.estimating() === s.id">
+                @if (planner.estimating() === s.id) {
+                  <span class="loading loading-spinner loading-xs" aria-hidden="true"></span> {{ copy().costs.estimating }}
+                } @else {
+                  {{ copy().costs.estimateDistance }}
+                }
+              </button>
+              @if (s.distanceEstimateKm) {
+                <button type="button" class="btn btn-ghost btn-xs" (click)="clearEstimate()">{{ copy().costs.clearEstimate }}</button>
+              }
+            </div>
+            @if (estimateError(); as error) {
+              <p class="pt-error" role="status">{{ error }}</p>
+            }
+          </div>
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-extra'">{{ copy().costs.extraKm }} <span class="pt-optional">({{ copy().optional }})</span></label>
+            <input [id]="p + '-extra'" type="number" inputmode="numeric" min="0" step="1" class="input input-bordered w-full" formControlName="extraKm" />
+          </div>
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-tolls'">{{ copy().costs.tolls }} ({{ currency() }})</label>
+            <input [id]="p + '-tolls'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="tolls" />
+            @if (tollSources().length) {
+              <div class="pt-hint">
+                {{ copy().costs.tollsHint }}
+                <app-pet-trip-sources [sources]="tollSources()" />
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (vignetteCountries().length) {
+          <div class="pt-field">
+            <span class="pt-label">{{ copy().costs.vignettes }}</span>
+            <div class="pt-grid">
+              @for (entry of vignetteCountries(); track entry.code) {
+                <div class="pt-field">
+                  <label class="pt-label pt-label--small" [for]="p + '-vignette-' + entry.code">{{ entry.name }}</label>
+                  <select [id]="p + '-vignette-' + entry.code" class="select select-bordered select-sm w-full" (change)="setVignette(entry.code, $event)">
+                    <option value="auto" [selected]="entry.choice === 'auto'">{{ copy().costs.vignetteAuto }}</option>
+                    <option value="none" [selected]="entry.choice === 'none'">{{ copy().costs.vignetteNone }}</option>
+                    @for (product of entry.products; track product.id) {
+                      <option [value]="product.id" [selected]="entry.choice === product.id">{{ product.label }}</option>
+                    }
+                  </select>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </fieldset>
+    } @else {
+      <fieldset class="pt-fieldset pt-fieldset--inner">
+        <legend class="pt-legend pt-legend--small">{{ copy().transport[s.transport] }}</legend>
+        <div class="pt-grid">
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-ticket'">{{ copy().costs.ticket }} ({{ currency() }})</label>
+            <input [id]="p + '-ticket'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="ticketPricePerPerson" />
+            <label class="pt-check">
+              <input type="checkbox" class="checkbox checkbox-sm" formControlName="ticketIsReturn" />
+              <span>{{ copy().costs.ticketIsReturn }}</span>
+            </label>
+          </div>
+
+          @if (s.transport === 'plane') {
+            <div class="pt-field">
+              <label class="pt-label" [for]="p + '-carrier'">{{ copy().costs.petCarrier }}</label>
+              <select [id]="p + '-carrier'" class="select select-bordered w-full" formControlName="petTransportCarrier">
+                @for (carrier of carriers; track carrier) {
+                  <option [value]="carrier">{{ copy().costs.petCarrierOptions[carrier] }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          @if (s.transport === 'plane' && s.petTransportCarrier === 'air-serbia') {
+            <div class="pt-field">
+              <label class="pt-label" [for]="p + '-flights'">{{ copy().costs.flightsPerDirection }}</label>
+              <input [id]="p + '-flights'" type="number" inputmode="numeric" min="1" max="4" step="1" class="input input-bordered w-full" formControlName="flightsPerDirection" />
+            </div>
+          } @else {
+            <div class="pt-field">
+              <label class="pt-label" [for]="p + '-petfee'">{{ copy().costs.petFee }} ({{ currency() }})</label>
+              <input [id]="p + '-petfee'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="petTransportFee" />
+            </div>
+            <div class="pt-field">
+              <label class="pt-label" [for]="p + '-petfee-unit'">{{ copy().costs.petFeeUnit }}</label>
+              <select [id]="p + '-petfee-unit'" class="select select-bordered w-full" formControlName="petTransportFeeUnit">
+                @for (unit of petFeeUnits; track unit) {
+                  <option [value]="unit">{{ copy().costs.petFeeUnits[unit] }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
+      </fieldset>
+    }
+
+    @if (b.nights > 0) {
+      <fieldset class="pt-fieldset pt-fieldset--inner">
+        <legend class="pt-legend pt-legend--small">{{ copy().costs.accommodation }}</legend>
+        <div class="pt-grid">
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-stay'">{{ copy().costs.accommodation }} ({{ currency() }})</label>
+            <input [id]="p + '-stay'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="accommodationPerNight" />
+          </div>
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-stay-fee'">{{ copy().costs.stayPetFee }} ({{ currency() }})</label>
+            <input [id]="p + '-stay-fee'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="stayPetFee" />
+          </div>
+          <div class="pt-field">
+            <label class="pt-label" [for]="p + '-stay-unit'">{{ copy().costs.stayPetFeeUnit }}</label>
+            <select [id]="p + '-stay-unit'" class="select select-bordered w-full" formControlName="stayPetFeeUnit">
+              @for (unit of stayFeeUnits; track unit) {
+                <option [value]="unit">{{ copy().costs.stayPetFeeUnits[unit] }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </fieldset>
+    }
+
+    <fieldset class="pt-fieldset pt-fieldset--inner">
+      <legend class="pt-legend pt-legend--small">{{ copy().costs.foodAndOther }}</legend>
+      <div class="pt-grid">
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-food'">{{ copy().costs.foodPerson }} ({{ currency() }}) <span class="pt-optional">({{ copy().optional }})</span></label>
+          <input [id]="p + '-food'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="foodPerPersonPerDay" />
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-dogfood'">{{ copy().costs.foodDog }} ({{ currency() }}) <span class="pt-optional">({{ copy().optional }})</span></label>
+          <input [id]="p + '-dogfood'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="dogFoodPerDogPerDay" />
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-activities'">{{ copy().costs.activities }} ({{ currency() }}) <span class="pt-optional">({{ copy().optional }})</span></label>
+          <input [id]="p + '-activities'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="activities" />
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" [for]="p + '-other'">{{ copy().costs.other }} ({{ currency() }}) <span class="pt-optional">({{ copy().optional }})</span></label>
+          <input [id]="p + '-other'" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="other" />
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+  <section class="pt-breakdown" [attr.aria-labelledby]="p + '-breakdown'">
+    <h4 [id]="p + '-breakdown'" class="pt-h4">{{ copy().costs.breakdown }}</h4>
+    <ul class="pt-lines">
+      @for (line of shownLines(); track line.category) {
+        <li class="pt-line">
+          <div class="pt-line__head">
+            <span class="pt-line__label">{{ line.label }}</span>
+            <span class="pt-amount">{{ money(line.amount) }}</span>
+          </div>
+          <div class="pt-line__meta">
+            <span class="pt-basis" [class]="'pt-basis pt-basis--' + (line.partial ? 'unknown' : line.basis)">
+              {{ line.partial ? copy().basisPartial : copy().basis[line.basis] }}
+            </span>
+            <span class="pt-detail">{{ line.detail }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+    @if (notEntered().length) {
+      <p class="pt-hint">{{ copy().basis['not-included'] }}: {{ notEntered().join(', ').toLowerCase() }}.</p>
+    }
+
+    <dl class="pt-totals">
+      <div>
+        <dt>{{ copy().costs.subtotal }}</dt>
+        <dd class="pt-amount">{{ money(b.subtotal) }}</dd>
+      </div>
+      @if (b.contingencyPercent > 0) {
+        <div>
+          <dt>{{ copy().costs.contingencyLine(b.contingencyPercent) }}</dt>
+          <dd class="pt-amount">{{ money(b.contingency) }}</dd>
+        </div>
+      }
+      <div class="pt-totals__total">
+        <dt>{{ copy().costs.total }}</dt>
+        <dd class="pt-amount">
+          @if (!b.complete) {
+            <span class="pt-hint">{{ copy().costs.totalLowerBound }}</span>
+          }
+          {{ money(b.total) }}
+        </dd>
+      </div>
+      @if (b.perPerson) {
+        <div>
+          <dt>{{ copy().costs.perPerson }}</dt>
+          <dd class="pt-amount">{{ money(b.perPerson) }}</dd>
+        </div>
+      }
+      <div>
+        <dt>{{ copy().costs.perDay }} ({{ copy().costs.days(b.days) }})</dt>
+        <dd class="pt-amount">{{ money(b.perDay) }}</dd>
+      </div>
+    </dl>
+
+    @if (missing().length) {
+      <p class="pt-notice pt-notice--soft"><strong>{{ copy().costs.missing }}:</strong> {{ missing().join(', ') }}.</p>
+    } @else {
+      <p class="pt-hint">{{ copy().costs.complete }}</p>
+    }
+    @if (b.warnings.length) {
+      <ul class="pt-list pt-list--warn" [attr.aria-label]="copy().costs.warnings">
+        @for (warning of b.warnings; track warning) {
+          <li>{{ warning }}</li>
+        }
+      </ul>
+    }
+    @if (b.assumptions.length) {
+      <p class="pt-hint"><strong>{{ copy().costs.assumptions }}:</strong> {{ b.assumptions.join(' ') }}</p>
+    }
+    @if (verifiedSources().length) {
+      <details class="pt-item__more">
+        <summary>{{ copy().costs.sources }}</summary>
+        <app-pet-trip-sources [sources]="verifiedSources()" />
+      </details>
+    }
+  </section>
+
+  @if (!isBase()) {
+    <button type="button" class="btn btn-ghost btn-sm text-error" (click)="planner.removeScenario(s.id)">{{ copy().costs.removeScenario }}</button>
+  }
+</article>

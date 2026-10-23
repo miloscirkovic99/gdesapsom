@@ -9,6 +9,8 @@ browser DB manager, pa su ovo fajlovi koje lepiš i pokrećeš **ručno, redom**
 03_indexes.sql       indeksi
 04_seed_pet_shops.sql  prve prodavnice (opciono; radi i kroz admin)
 05_seed_dog_food_pseca_kasika.sql  katalog Pseće Kašike + cene
+06_seed_pet_friendly_hotels.sql    16 hotela/apartmana u info_ug_obj (nezavisno od 01–05)
+07_pet_trip_ai.sql                 limiti i keš AI objašnjenja za /putovanje-sa-psom (nezavisno; docs/pet-trip)
 ```
 
 **Napravi backup pre pokretanja.** Nema `down` skripte.

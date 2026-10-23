@@ -1,0 +1,104 @@
+@let r = report();
+
+<section class="pt-section" aria-labelledby="pt-readiness-title">
+  <h2 id="pt-readiness-title" class="pt-h2">{{ copy().readiness.heading }}: {{ destination() }}</h2>
+  <p class="pt-sub">{{ copy().readiness.subheading }}</p>
+
+  <div class="pt-verdict" [class]="'pt-verdict pt-verdict--' + r.overall" role="status">
+    <p class="pt-verdict__title">{{ verdict().title }}</p>
+    <p class="pt-verdict__text">{{ verdict().text }}</p>
+    <ul class="pt-counts">
+      @for (group of groups(); track group.status) {
+        <li class="pt-badge" [class]="'pt-badge pt-badge--' + group.status">{{ group.label }}: {{ group.items.length }}</li>
+      }
+    </ul>
+    @if (r.earliestDeparture) {
+      <p class="pt-verdict__date">{{ copy().readiness.earliestDeparture(dateOf(r.earliestDeparture)) }}</p>
+    }
+  </div>
+
+  @if (r.coverage !== 'full') {
+    <div class="pt-notice" role="note">
+      <p class="pt-notice__title">{{ copy().coverageLevel[r.coverage] }}</p>
+      <p>{{ r.coverageNote }}</p>
+    </div>
+  } @else {
+    <p class="pt-hint">{{ copy().coverageLevel.full }} {{ r.coverageNote }}</p>
+  }
+
+  <section class="pt-subsection" aria-labelledby="pt-timeline-title">
+    <h3 id="pt-timeline-title" class="pt-h3">{{ copy().readiness.timeline }}</h3>
+    @if (r.timeline.length) {
+      <ol class="pt-timeline">
+        @for (entry of r.timeline; track entry.itemKey + entry.kind) {
+          <li class="pt-timeline__item">
+            <span class="pt-timeline__date">
+              {{ entry.kind === 'until' ? copy().readiness.timelineUntil : copy().readiness.timelineFrom }} {{ dateOf(entry.date) }}
+            </span>
+            <span>{{ entry.text }}</span>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="pt-hint">{{ copy().readiness.timelineEmpty }}</p>
+    }
+  </section>
+
+  @for (group of groups(); track group.status) {
+    <section class="pt-subsection" [attr.aria-label]="group.label">
+      <h3 class="pt-h3">{{ group.label }} <span class="pt-count">{{ group.items.length }}</span></h3>
+      <ul class="pt-items">
+        @for (item of group.items; track item.key) {
+          <li class="pt-item" [class.pt-item--blocked]="item.late || item.blocked">
+            <div class="pt-item__head">
+              <span class="pt-badge" [class]="'pt-badge pt-badge--' + item.status">{{ copy().status[item.status] }}</span>
+              <h4 class="pt-item__title">{{ itemTitle(item) }}</h4>
+            </div>
+            <p class="pt-item__detail">{{ item.detail }}</p>
+            @if (item.dated) {
+              <p class="pt-item__flag"><strong>{{ copy().readiness.dated }}:</strong> {{ item.dated }}</p>
+            }
+            @if (item.conditional && item.earliestDeparture) {
+              <p class="pt-item__flag">{{ copy().readiness.conditional }}: {{ copy().readiness.earliestDeparture(dateOf(item.earliestDeparture)) }}</p>
+            }
+            <details class="pt-item__more">
+              <summary>{{ copy().readiness.rule }}, {{ copy().readiness.sources.toLowerCase() }}</summary>
+              <p>{{ item.summary }}</p>
+              @if (item.howTo) {
+                <p><strong>{{ copy().readiness.howTo }}:</strong> {{ item.howTo }}</p>
+              }
+              @if (item.caveat) {
+                <p><strong>{{ copy().readiness.caveat }}:</strong> {{ item.caveat }}</p>
+              }
+              @if (item.sources.length) {
+                <p class="pt-label pt-label--small">{{ copy().readiness.sources }}</p>
+                <app-pet-trip-sources [sources]="item.sources" />
+              }
+              <p class="pt-item__meta">
+                @if (item.verifiedAt) {
+                  {{ copy().readiness.verified(dateOf(item.verifiedAt)) }}
+                  @if (item.stale) {
+                    · {{ copy().readiness.stale }}
+                  }
+                } @else {
+                  {{ copy().readiness.unverified }}
+                }
+              </p>
+            </details>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section class="pt-subsection" aria-labelledby="pt-assumptions-title">
+    <h3 id="pt-assumptions-title" class="pt-h3">{{ copy().readiness.assumptions }}</h3>
+    <ul class="pt-list">
+      @for (assumption of r.assumptions; track $index) {
+        <li>{{ assumption }}</li>
+      }
+      <li>{{ copy().disclaimer }}</li>
+    </ul>
+    <p class="pt-hint">{{ copy().readiness.rulesetVersion(r.rulesetVersion) }}</p>
+  </section>
+</section>

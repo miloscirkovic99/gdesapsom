@@ -1,0 +1,128 @@
+@let b = base();
+@let ai = planner.insights();
+
+<section class="pt-section" aria-labelledby="pt-summary-title">
+  <h2 id="pt-summary-title" class="pt-h2">{{ copy().summary.heading }}</h2>
+
+  <dl class="pt-facts">
+    <div>
+      <dt>{{ copy().summary.trip }}</dt>
+      <dd>{{ tripLine() }}</dd>
+    </div>
+  </dl>
+
+  <div class="pt-split">
+    <section class="pt-card" aria-labelledby="pt-summary-readiness">
+      <h3 id="pt-summary-readiness" class="pt-h3">{{ copy().summary.readiness }}</h3>
+      <p class="pt-verdict-inline" [class]="'pt-verdict-inline pt-verdict-badge--' + report().overall">{{ verdict().title }}</p>
+      <p class="pt-hint">{{ verdict().text }}</p>
+      @if (report().earliestDeparture; as earliest) {
+        <p><strong>{{ copy().readiness.earliestDeparture(dateOf(earliest)) }}</strong></p>
+      }
+      @if (report().coverage !== 'full') {
+        <p class="pt-hint">{{ report().coverageNote }}</p>
+      }
+    </section>
+
+    <section class="pt-card" aria-labelledby="pt-summary-costs">
+      <h3 id="pt-summary-costs" class="pt-h3">{{ copy().summary.costs }}</h3>
+      <p class="pt-total">
+        @if (!b.complete) {
+          <span class="pt-hint">{{ copy().costs.totalLowerBound }}</span>
+        }
+        {{ money(b.total) }}
+      </p>
+      <p class="pt-hint">
+        @if (b.perPerson) {
+          {{ copy().costs.perPerson }}: {{ money(b.perPerson) }} ·
+        }
+        {{ copy().costs.perDay }}: {{ money(b.perDay) }}
+      </p>
+      @if (b.unknown.length) {
+        <p class="pt-hint">{{ copy().costs.missing }}: {{ b.unknown.map(categoryOf).join(', ') }}.</p>
+      }
+    </section>
+  </div>
+
+  <p class="pt-notice pt-notice--soft">{{ copy().summary.separation }}</p>
+
+  <section class="pt-subsection" aria-labelledby="pt-next-title">
+    <h3 id="pt-next-title" class="pt-h3">{{ copy().summary.nextSteps }}</h3>
+    @if (nextSteps().length) {
+      <ol class="pt-timeline">
+        @for (entry of nextSteps(); track entry.itemKey + entry.kind) {
+          <li class="pt-timeline__item">
+            <span class="pt-timeline__date">
+              {{ entry.kind === 'until' ? copy().readiness.timelineUntil : copy().readiness.timelineFrom }} {{ dateOf(entry.date) }}
+            </span>
+            <span>{{ entry.text }}</span>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="pt-hint">{{ copy().summary.noSteps }}</p>
+    }
+  </section>
+
+  @if (planner.aiEnabled) {
+    <section class="pt-ai pt-noprint" aria-labelledby="pt-ai-title">
+      <h3 id="pt-ai-title" class="pt-h3">{{ copy().ai.heading }}</h3>
+      <p>{{ copy().ai.intro }}</p>
+      <p class="pt-hint">{{ copy().ai.privacy }}</p>
+
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="planner.explain()"
+        [disabled]="ai.status === 'loading' || planner.insightsUsedUp()"
+        [attr.aria-busy]="ai.status === 'loading'"
+        aria-describedby="pt-ai-allowance"
+      >
+        @if (ai.status === 'loading') {
+          <span class="loading loading-spinner loading-xs" aria-hidden="true"></span> {{ copy().ai.loading }}
+        } @else {
+          {{ ai.insights ? copy().ai.again : copy().ai.button }}
+        }
+      </button>
+
+      <p id="pt-ai-allowance" class="pt-hint">{{ aiAllowance() }}</p>
+
+      <div aria-live="polite">
+        @if (aiMessage()) {
+          <p class="pt-notice pt-notice--soft">{{ aiMessage() }}</p>
+        }
+        @if (ai.insights; as insights) {
+          <article class="pt-ai__result" data-ai-generated="true">
+            <p class="pt-ai__label">{{ copy().ai.label }}</p>
+            @if (planner.insightsStale()) {
+              <p class="pt-hint">{{ copy().ai.stale }}</p>
+            }
+            <p>{{ insights.summary }}</p>
+            @if (insights.steps.length) {
+              <h4 class="pt-h4">{{ copy().ai.steps }}</h4>
+              <ol class="pt-list">
+                @for (step of insights.steps; track step.requirementId) {
+                  <li><strong>{{ itemTitles().get(step.requirementId) }}:</strong> {{ step.text }}</li>
+                }
+              </ol>
+            }
+            @if (insights.savings.length) {
+              <h4 class="pt-h4">{{ copy().ai.savings }}</h4>
+              <ul class="pt-list">
+                @for (tip of insights.savings; track $index) {
+                  <li><strong>{{ categoryOf(tip.category) }}:</strong> {{ tip.text }}</li>
+                }
+              </ul>
+            }
+            @if (insights.comparison) {
+              <h4 class="pt-h4">{{ copy().ai.comparison }}</h4>
+              <p>{{ insights.comparison }}</p>
+            }
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  <button type="button" class="btn btn-ghost btn-sm pt-noprint" (click)="print()">{{ copy().summary.print }}</button>
+</section>

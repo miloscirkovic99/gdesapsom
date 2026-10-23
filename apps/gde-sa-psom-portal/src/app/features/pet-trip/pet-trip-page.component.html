@@ -1,0 +1,110 @@
+@let view = planner.view();
+@let c = copy();
+
+<article class="pt">
+  <header class="pt-hero">
+    <app-breadcrumb [items]="breadcrumbs()" />
+    <h1 class="pt-h1">{{ c.h1 }}</h1>
+    <p class="pt-lead">{{ c.lead }}</p>
+    <ul class="pt-points">
+      @for (point of c.points; track point.title) {
+        <li class="pt-point">
+          <span class="pt-point__title">{{ point.title }}</span>
+          <span class="pt-point__text">{{ point.text }}</span>
+        </li>
+      }
+    </ul>
+    <details class="pt-coverage">
+      <summary>{{ c.coverageTitle }}</summary>
+      <p>{{ c.coverage }}</p>
+      <p>{{ c.disclaimer }} {{ rulesCheckedAt() }}</p>
+    </details>
+  </header>
+
+  <nav class="pt-steps pt-noprint" [attr.aria-label]="c.stepsAria">
+    <ol class="pt-steps__list">
+      @for (step of steps; track step; let index = $index) {
+        <li>
+          <button
+            type="button"
+            class="pt-step"
+            [class.pt-step--done]="stepIndex(view) > index"
+            [attr.aria-current]="view === step ? 'step' : null"
+            (click)="go(step)"
+          >
+            <span class="pt-step__number" aria-hidden="true">{{ index + 1 }}</span>
+            {{ c.steps[step] }}
+          </button>
+        </li>
+      }
+    </ol>
+  </nav>
+
+  <div id="pt-main" class="pt-main" tabindex="-1">
+    @switch (view) {
+      @case ('trip') {
+        <app-pet-trip-trip-step />
+        <div class="pt-actions">
+          <span></span>
+          <button type="button" class="btn btn-secondary" (click)="go('dogs')">{{ c.next }}</button>
+        </div>
+      }
+      @case ('dogs') {
+        <app-pet-trip-dogs-step />
+        <div class="pt-actions">
+          <button type="button" class="btn btn-ghost" (click)="go('trip')">{{ c.back }}</button>
+          <button type="button" class="btn btn-secondary" (click)="go('results')">{{ c.check }}</button>
+        </div>
+      }
+      @case ('results') {
+        <section [attr.aria-label]="c.resultsAria">
+          <div class="pt-tripline">
+            <p>{{ tripLine() }}</p>
+            <button type="button" class="btn btn-ghost btn-sm pt-noprint" (click)="go('trip')">{{ c.edit }}</button>
+          </div>
+
+          <div class="pt-tabs pt-noprint" role="tablist" [attr.aria-label]="c.resultsAria" (keydown)="onTabKey($event)">
+            @for (tab of tabs; track tab) {
+              <button
+                type="button"
+                role="tab"
+                class="pt-tab"
+                [id]="'pt-tab-' + tab"
+                [attr.aria-selected]="planner.tab() === tab"
+                [attr.aria-controls]="'pt-panel-' + tab"
+                [tabIndex]="planner.tab() === tab ? 0 : -1"
+                (click)="selectTab(tab)"
+              >
+                {{ c.tabs[tab] }}
+                @if (tabCounts()[tab]) {
+                  <span class="pt-tab__count">{{ tabCounts()[tab] }}</span>
+                }
+              </button>
+            }
+          </div>
+
+          @for (tab of tabs; track tab) {
+            <div class="pt-panel" role="tabpanel" [id]="'pt-panel-' + tab" [attr.aria-labelledby]="'pt-tab-' + tab" [hidden]="planner.tab() !== tab">
+              @switch (tab) {
+                @case ('readiness') {
+                  <app-pet-trip-readiness [report]="planner.report()" />
+                }
+                @case ('costs') {
+                  <app-pet-trip-costs />
+                }
+                @case ('summary') {
+                  <app-pet-trip-summary />
+                }
+              }
+            </div>
+          }
+        </section>
+      }
+    }
+  </div>
+
+  <footer class="pt-foot pt-noprint">
+    <p class="pt-hint">{{ c.storageNote }}</p>
+    <button type="button" class="btn btn-ghost btn-xs" (click)="reset()">{{ c.reset }}</button>
+  </footer>
+</article>
