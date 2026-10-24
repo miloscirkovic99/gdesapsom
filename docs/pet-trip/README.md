@@ -205,7 +205,7 @@ i `remaining`/`limit` (koliko objašnjenja uređaj još ima) i `reason` uz `quot
 2. Mars Settings → Software settings:
    - `ANTHROPIC_API_KEY`: ključ iz Claude Console (preporuka: poseban workspace sa limitom potrošnje);
    - `PET_TRIP_AI_SALT`: nasumičan niz od 32+ znaka;
-   - opciono `PET_TRIP_AI_MODEL` (podrazumevano `claude-opus-5-5`), `PET_TRIP_AI_PER_DEVICE_LIMIT` (5), `PET_TRIP_AI_DEVICE_WINDOW` (`total`), `PET_TRIP_AI_PER_IP_DAILY` (20), `PET_TRIP_AI_GLOBAL_DAILY` (50), `PET_TRIP_AI_UNLIMITED_HOSTS` (`dev.gdesapsom.com`), `PET_TRIP_AI_IP_HEADER`;
+   - opciono `PET_TRIP_AI_MODEL` (podrazumevano `claude-sonnet-5-5`), `PET_TRIP_AI_PER_DEVICE_LIMIT` (5), `PET_TRIP_AI_DEVICE_WINDOW` (`total`), `PET_TRIP_AI_PER_IP_DAILY` (20), `PET_TRIP_AI_GLOBAL_DAILY` (50), `PET_TRIP_AI_UNLIMITED_HOSTS` (`dev.gdesapsom.com`), `PET_TRIP_AI_IP_HEADER`;
    - na kraju `PET_TRIP_AI_ENABLED=true`.
    Dev, test i live dele podešavanja: uključeno na jednom je uključeno svuda.
 3. Nalepi `apps/api/v2/pet-trip/insights.POST.js` u Mars editor (ceo fajl, ruta `pet-trip/insights`, POST).
@@ -223,13 +223,18 @@ pregledač odustaje posle 30 s, a skripta završi i upiše keš.
 **Cena:** izmereno na tipičnom izveštaju (jedan pas, dve varijante): sistemski
 prompt, šema i podaci imaju oko 7.500 znakova, približno 2.000–3.000 ulaznih
 tokena; izlaz je kratak JSON (uz razmišljanje niskog napora), `max_tokens` je
-4.096. Sa `claude-opus-5-5` ($4/$20 po MTok) to je obično oko 2–4 centa po
-pozivu, najviše oko 11 centi; sa `claude-haiku-5-5` ($0,10/$0,50) manje od
-desetog dela centa. Podrazumevani limit je 50 poziva dnevno, pa je najgori dan
-na Opusu oko $6, a tipičan oko $1–2. Za budžet ispod $10 mesečno postavi
-`PET_TRIP_AI_MODEL=claude-haiku-5-5` ili niži `PET_TRIP_AI_GLOBAL_DAILY`, i
-limit potrošnje na workspace-u u Claude Console. Keš (7 dana) odgovara na isti
-izveštaj bez novog poziva. Proveri cene na platform.claude.com pre uključivanja.
+4.096. Podrazumevani model je `claude-sonnet-5-5` ($2/$10 po MTok): dobar
+srpski za pola cene Opusa, obično oko 1–2 centa po pozivu, najviše oko 6
+centi. Podrazumevani limit je 50 poziva dnevno, pa je najgori dan oko $3, a
+tipičan oko $0,50–1. Sa `claude-opus-5-5` ($4/$20) sve je duplo skuplje, a za
+prepričavanje gotovih podataka ne treba. `claude-haiku-5-5` ($0,10/$0,50) je
+manje od desetog dela centa po pozivu, ali njegov srpski nije proveren: pre
+prelaska uporedi ista putovanja na dev.gdesapsom.com (keš se vodi po modelu,
+pa svaki model odgovara iznova). Na workspace-u ključa u Claude Console
+postavi mesečni limit potrošnje (uz Sonnet: $20, mejl na $10); Default
+Workspace ga ne dozvoljava, pa ključ mora biti u posebnom workspace-u. Keš
+(7 dana) odgovara na isti izveštaj bez novog poziva. Proveri cene na
+platform.claude.com pre uključivanja.
 
 **Privatnost:** opisano u `/privacy-policy` (stavka „Planer putovanja sa psom“).
 U bazi nema IP adrese, id-a uređaja ni sadržaja forme: samo heševi sa tajnom

@@ -40,7 +40,7 @@
 // Mars Settings -> Software settings (config()):
 //   PET_TRIP_AI_ENABLED            "true" da bi radilo (podrazumevano ugašeno)
 //   ANTHROPIC_API_KEY              ključ iz Claude Console; samo na serveru
-//   PET_TRIP_AI_MODEL              podrazumevano claude-opus-5-5
+//   PET_TRIP_AI_MODEL              podrazumevano claude-sonnet-5-5
 //   PET_TRIP_AI_PER_DEVICE_LIMIT   po uređaju, podr. 5
 //   PET_TRIP_AI_DEVICE_WINDOW      total (podr.) ili day
 //   PET_TRIP_AI_PER_IP_DAILY       po IP adresi dnevno (UTC), podr. 20
@@ -74,7 +74,8 @@
 // write i čitaj šta je upisano (ili zovi funkcije iz konteksta).
 // =============================================================================
 
-const DEFAULT_MODEL = 'claude-opus-5-5';
+// Prepričavanje gotovih podataka ne traži Opus: Sonnet piše dobar srpski za pola cene.
+const DEFAULT_MODEL = 'claude-sonnet-5-5';
 // Modeli koji primaju fallbacks: "default" (server-side fallback, beta).
 // Haiku 5.5 ga nema: tamo bi odbijen zahtev ostao odbijen.
 const FALLBACK_MODELS = ['claude-opus-5-5', 'claude-opus-5', 'claude-fable-5-1', 'claude-sonnet-5-5'];

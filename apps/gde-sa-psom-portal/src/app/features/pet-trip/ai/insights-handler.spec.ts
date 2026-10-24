@@ -54,7 +54,7 @@ interface HandlerCore {
 function anthropicReply(output: unknown, overrides: Record<string, unknown> = {}): string {
   return JSON.stringify({
     id: 'msg_test',
-    model: 'claude-opus-5-5',
+    model: 'claude-sonnet-5-5',
     stop_reason: 'end_turn',
     content: [
       { type: 'thinking', thinking: '' },
@@ -187,13 +187,13 @@ describe('pet-trip/insights handler: request checks', () => {
 describe('pet-trip/insights handler: model call', () => {
   const request = sampleInsightsRequest();
 
-  it('asks for structured JSON at low effort, with the default refusal fallback on Opus', () => {
-    const call = core.anthropicRequest(request, 'claude-opus-5-5');
+  it('asks for structured JSON at low effort, with the default refusal fallback on Sonnet', () => {
+    const call = core.anthropicRequest(request, 'claude-sonnet-5-5');
     expect(call.url).toBe('https://api.anthropic.com/v1/messages');
     expect(call.headers['anthropic-version']).toBe('2023-06-01');
     expect(call.headers['anthropic-beta']).toBe('server-side-fallback-2026-07-01');
     expect(call.body).toMatchObject({
-      model: 'claude-opus-5-5',
+      model: 'claude-sonnet-5-5',
       fallbacks: 'default',
       output_config: { effort: 'low', format: { type: 'json_schema' } },
     });
@@ -208,7 +208,7 @@ describe('pet-trip/insights handler: model call', () => {
   });
 
   it('puts the facts in the user turn and keeps the rules in the system prompt', () => {
-    const call = core.anthropicRequest(request, 'claude-opus-5-5');
+    const call = core.anthropicRequest(request, 'claude-sonnet-5-5');
     const messages = call.body['messages'] as { role: string; content: string }[];
     expect(messages).toHaveLength(1);
     expect(messages[0].content.startsWith('PODACI (JSON):')).toBe(true);
@@ -217,8 +217,8 @@ describe('pet-trip/insights handler: model call', () => {
   });
 
   it('asks for the explanation in the language of the page', () => {
-    const serbian = String(core.anthropicRequest(request, 'claude-opus-5-5').body['system']);
-    const english = String(core.anthropicRequest(sampleInsightsRequest('en'), 'claude-opus-5-5').body['system']);
+    const serbian = String(core.anthropicRequest(request, 'claude-sonnet-5-5').body['system']);
+    const english = String(core.anthropicRequest(sampleInsightsRequest('en'), 'claude-sonnet-5-5').body['system']);
     expect(serbian).toContain('jednostavnim srpskim jezikom');
     expect(english).toContain('jednostavnim engleskim jezikom');
     expect(english).not.toContain('srpskim jezikom');
@@ -267,7 +267,7 @@ describe('pet-trip/insights handler: flow through the MARS globals', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0]).toMatchObject({ method: 'POST', contentType: 'application/json' });
     expect(calls[0].headers['x-api-key']).toBe('sk-test');
-    expect(calls[0].body?.['model']).toBe('claude-opus-5-5');
+    expect(calls[0].body?.['model']).toBe('claude-sonnet-5-5');
     expect(JSON.stringify(written)).not.toContain('sk-test');
     expect(cache.size).toBe(1);
   });
