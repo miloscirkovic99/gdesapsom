@@ -18,6 +18,7 @@ import { PwaInstallDialogComponent } from './shared/dialogs/pwa-install-dialog/p
 import { BottomNavigationComponent } from './shared/components/bottom-navigation/bottom-navigation.component';
 import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AssistantWidgetComponent } from './features/assistant/assistant-widget.component';
 @Component({
   imports: [
     RouterModule,
@@ -29,6 +30,8 @@ import { TranslocoModule } from '@ngneat/transloco';
     BottomNavigationComponent,
     CookieBannerComponent,
     TranslocoModule,
+    // Used only inside @defer: the compiler moves it into a lazy chunk.
+    AssistantWidgetComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

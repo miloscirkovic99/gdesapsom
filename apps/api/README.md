@@ -109,6 +109,23 @@ proveriti na Marsu: `docs/pet-trip/README.md`. Testovi pokreću ovaj fajl u Node
 `vm` kontekstu sa lažnim Mars globalima
 (`features/pet-trip/ai/insights-handler.spec.ts` u portalu).
 
+### `assistant`
+
+| Metod | Putanja | Vraća |
+|---|---|---|
+| POST | `assistant/parse` | uvek `200 { status, intent?, model?, remaining?, limit?, reason? }`; statusi kao `pet-trip/insights` |
+
+AI tumačenje poruka pomoćnika za pretragu (bubble chat na portalu). Telo je
+`{ payload: "<JSON string>", device: "<id>" }`, `payload = { v: 1, lang,
+today, message }`. Claude vraća samo filtere (vrsta mesta, grad i opština
+kao nazivi, blizu mene, veličina psa, bašta, naziv objekta, ili put u
+inostranstvo), nikad mesta. Pretragu pregledač radi preko postojećih
+endpointa (`pet-friendly-spots/search-query`, parkovi, veterinari,
+`pet-shops/search-query`). Ugašeno dok se ne postavi
+`ASSISTANT_AI_ENABLED` i ne pokrene `db/10_assistant_ai.sql`; ključ i so
+deli sa `pet-trip/insights`. Limiti, podešavanja i cena:
+`docs/assistant/README.md`. Testovi: `features/assistant/ai/parse-handler.spec.ts`.
+
 ---
 
 ## Admin panel

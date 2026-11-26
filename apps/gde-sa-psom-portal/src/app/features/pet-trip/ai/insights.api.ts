@@ -4,6 +4,7 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../../env/env.dev';
 import type { InsightsRequest, InsightsResult, InsightsStatus, QuotaReason } from './insights.models';
 import { validateInsights } from './insights-validate';
+import { DEVICE_ID_KEY, deviceId } from '../../../shared/utils/device-id';
 
 /**
  * Whether the page offers the AI explanation. Optional env key `petTripAi`
@@ -21,34 +22,11 @@ const STATUSES: readonly InsightsStatus[] = ['ok', 'cached', 'disabled', 'quota'
 const REASONS: readonly QuotaReason[] = ['device', 'network', 'global'];
 
 /**
- * A random id for this browser, the key of the server's per-device limit. It
- * is created on the first click on "Objasni uz AI", never on page load, and
- * the server stores only a salted hash of it. "Počni ispočetka" leaves it:
- * clearing the draft must not reset the limit. Without storage (private
- * mode) every request gets a new id, and the per-network limit applies.
+ * The browser's random id (shared/utils/device-id.ts), created on the first
+ * click on "Objasni uz AI". "Počni ispočetka" leaves it: clearing the draft
+ * must not reset the limit.
  */
-export const DEVICE_ID_KEY = 'gsp_pet_trip_device';
-const DEVICE_ID = /^[A-Za-z0-9_-]{16,64}$/;
-
-function newDeviceId(): string {
-  const random = globalThis.crypto;
-  if (typeof random?.randomUUID === 'function') return random.randomUUID();
-  const bytes = new Uint8Array(16);
-  random.getRandomValues(bytes);
-  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
-}
-
-export function deviceId(): string {
-  try {
-    const saved = localStorage.getItem(DEVICE_ID_KEY);
-    if (saved && DEVICE_ID.test(saved)) return saved;
-    const created = newDeviceId();
-    localStorage.setItem(DEVICE_ID_KEY, created);
-    return created;
-  } catch {
-    return newDeviceId();
-  }
-}
+export { DEVICE_ID_KEY, deviceId };
 
 const count = (value: unknown): number | null =>
   typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;

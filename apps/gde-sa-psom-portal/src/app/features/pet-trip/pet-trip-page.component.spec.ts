@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { TranslocoService, TranslocoTestingModule } from '@ngneat/transloco';
 import { of } from 'rxjs';
 import { PET_TRIP_AI_ENABLED, PetTripInsightsApi } from './ai/insights.api';
@@ -18,7 +18,7 @@ describe('PetTripPageComponent', () => {
   const button = (label: string) =>
     Array.from(element().querySelectorAll('button')).find((entry) => entry.textContent?.trim().startsWith(label)) as HTMLButtonElement;
 
-  async function render(options: { ai?: boolean; result?: InsightsResult; lang?: 'rs' | 'en' } = {}): Promise<void> {
+  async function render(options: { ai?: boolean; result?: InsightsResult; lang?: 'rs' | 'en'; url?: string } = {}): Promise<void> {
     const result: InsightsResult = options.result ?? { status: 'unavailable', insights: null, remaining: null, limit: null, reason: null };
     explain = jest.fn().mockReturnValue(of(result));
     await TestBed.configureTestingModule({
@@ -36,6 +36,7 @@ describe('PetTripPageComponent', () => {
         { provide: PET_TRIP_AI_ENABLED, useValue: options.ai ?? false },
       ],
     }).compileComponents();
+    if (options.url) await TestBed.inject(Router).navigateByUrl(options.url);
     fixture = TestBed.createComponent(PetTripPageComponent);
     planner = fixture.debugElement.injector.get(PetTripPlanner);
     fixture.detectChanges();
@@ -206,6 +207,29 @@ describe('PetTripPageComponent', () => {
     expect(button('Objasni uz AI').disabled).toBe(true);
     planner.explain();
     expect(explain).toHaveBeenCalledTimes(1);
+  });
+
+  it('takes the trip from the assistant’s link over the saved draft, then clears it from the address bar', async () => {
+    const departure = addDays(todayIso(), 30);
+    localStorage.setItem(
+      'gsp_pet_trip_v1',
+      JSON.stringify({ v: 1, trip: { destination: 'HR', transport: 'plane', travelers: 3 }, dogs: [{ microchip: 'iso' }], view: 'trip' }),
+    );
+    await render({ url: `/?destination=GR&transport=car&transit=MK&departure=${departure}&dogs=2&utm_source=chat` });
+    await update();
+
+    expect(planner.trip()).toMatchObject({ destination: 'GR', transport: 'car', transitCountries: ['MK'], departureDate: departure, travelers: 3 });
+    expect(planner.dogsForm.length).toBe(2);
+    expect(planner.dogsForm.at(0).getRawValue().microchip).toBe('iso');
+    expect(planner.view()).toBe('dogs');
+    expect(TestBed.inject(Router).url).toBe('/?utm_source=chat');
+  });
+
+  it('stays on the trip step when the link has no departure date', async () => {
+    await render({ url: '/?destination=ME' });
+    await update();
+    expect(planner.trip().destination).toBe('ME');
+    expect(planner.view()).toBe('trip');
   });
 
   it('keeps the device allowance when the draft is reset', async () => {

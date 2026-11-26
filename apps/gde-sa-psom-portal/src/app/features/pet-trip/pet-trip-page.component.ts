@@ -7,6 +7,7 @@ import {
   inject,
   ViewEncapsulation,
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BreadcrumbComponent, type BreadcrumbItem } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { CostPlannerComponent } from './components/cost-planner.component';
 import { DogsStepComponent } from './components/dogs-step.component';
@@ -18,6 +19,7 @@ import { formatDate } from './domain/dates';
 import { RULESET } from './domain/rules/ruleset';
 import { COPY } from './pet-trip-copy';
 import { PetTripPlanner, type PlannerView, type ResultsTab } from './pet-trip.planner';
+import { PREFILL_PARAMS, readPrefill } from './trip-prefill';
 
 const TABS: readonly ResultsTab[] = ['readiness', 'costs', 'summary'];
 const STEPS: readonly PlannerView[] = ['trip', 'dogs', 'results'];
@@ -55,6 +57,8 @@ const RULES_CHECKED_AT = RULESET.rules.reduce(
 export class PetTripPageComponent {
   readonly planner = inject(PetTripPlanner);
   readonly #document = inject(DOCUMENT);
+  readonly #route = inject(ActivatedRoute);
+  readonly #router = inject(Router);
 
   readonly lang = this.planner.lang;
   readonly copy = computed(() => COPY[this.lang()]);
@@ -79,7 +83,27 @@ export class PetTripPageComponent {
   });
 
   constructor() {
-    afterNextRender(() => this.planner.restore());
+    afterNextRender(() => {
+      this.planner.restore();
+      this.#applyPrefill();
+    });
+  }
+
+  /**
+   * Trip facts in the URL (the assistant's link) go over the restored draft
+   * once, then leave the address bar, so a reload keeps the visitor's later
+   * edits instead of applying the link again.
+   */
+  #applyPrefill(): void {
+    const params = this.#route.snapshot.queryParamMap;
+    const prefill = readPrefill((name) => params.get(name), this.planner.today());
+    if (!prefill) return;
+    this.planner.prefill(prefill);
+    const kept = Object.fromEntries(params.keys.filter((key) => !(PREFILL_PARAMS as readonly string[]).includes(key)).map((key) => [key, params.get(key)]));
+    // The router scrolls to the top after this navigation; the step gets focus (and the view) after it.
+    void this.#router
+      .navigate([], { relativeTo: this.#route, queryParams: kept, replaceUrl: true })
+      .finally(() => this.#focus('pt-main'));
   }
 
   stepIndex(step: PlannerView): number {

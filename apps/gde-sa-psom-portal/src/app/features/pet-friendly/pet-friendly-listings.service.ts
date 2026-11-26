@@ -17,6 +17,23 @@ export interface SpotQuery {
   typeId: number | null;
   offset: number;
   limit: number;
+  /** Around a point, nearest first; `radius` in metres. */
+  near?: { lat: number; lon: number; radius: number } | null;
+}
+
+export interface VetQuery {
+  /** `grad.grd_id`; null with townships, or for the whole country. */
+  cityId: number | null;
+  /** Township ids; null for the whole city. */
+  townshipIds: readonly number[] | null;
+  offset: number;
+  limit: number;
+}
+
+/** The place lookups: every city and township, for reading place names in free text. */
+export interface PlaceLookups {
+  cities: City[];
+  townships: Township[];
 }
 
 export interface CityArea {
@@ -90,6 +107,17 @@ export class PetFriendlyListingsService {
     );
   }
 
+  /**
+   * Every city and township, for the assistant's place names. A failed
+   * lookup is an empty list: names are then simply not recognised.
+   */
+  places(): Observable<PlaceLookups> {
+    return forkJoin([
+      this.#cities$.pipe(catchError(() => of<City[]>([]))),
+      this.#townships$.pipe(catchError(() => of<Township[]>([]))),
+    ]).pipe(map(([cities, townships]) => ({ cities, townships })));
+  }
+
   /** One page of venues from `pet-friendly-spots/search-query`. */
   searchSpots(query: SpotQuery): Observable<SpotPage> {
     // An unknown city must not turn into "no location filter", i.e. all of Serbia.
@@ -101,9 +129,9 @@ export class PetFriendlyListingsService {
         ugo_id: query.typeId,
         sta_id: null,
         word: null,
-        lat: null,
-        lon: null,
-        radius: null,
+        lat: query.near?.lat ?? null,
+        lon: query.near?.lon ?? null,
+        radius: query.near?.radius ?? null,
         offset: query.offset,
         limit: query.limit,
       })
@@ -120,6 +148,28 @@ export class PetFriendlyListingsService {
       map((parks) => parks.filter((park) => wanted.has(foldPlaceName(park.grd_ime)))),
       catchError(() => of<Park[]>([])),
     );
+  }
+
+  /**
+   * A page of vet clinics by city or townships, by name. "No results" (the
+   * API's 404) is an empty page; other failures are errors, so a search can
+   * say it failed instead of claiming there are none.
+   */
+  searchVets(query: VetQuery): Observable<{ clinics: VetClinic[]; total: number }> {
+    if (query.townshipIds && query.townshipIds.length === 0) return of({ clinics: [], total: 0 });
+
+    return this.#http
+      .post<{ vetClinics?: VetClinic[]; totalResults?: number | string }>('veterinary-clinics/list', {
+        grd_id: query.cityId,
+        ops_id: query.townshipIds ? query.townshipIds.join(',') : null,
+        word: null,
+        offset: query.offset,
+        limit: query.limit,
+      })
+      .pipe(
+        map((response) => ({ clinics: response.vetClinics ?? [], total: Number(response.totalResults) || 0 })),
+        catchError((error) => (isNotFound(error) ? of({ clinics: [] as VetClinic[], total: 0 }) : throwError(() => error))),
+      );
   }
 
   /** The first `limit` vet clinics of the city, by name. A failure is an empty list. */

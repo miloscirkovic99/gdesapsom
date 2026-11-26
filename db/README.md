@@ -13,6 +13,7 @@ browser DB manager, pa su ovo fajlovi koje lepiš i pokrećeš **ručno, redom**
 07_pet_trip_ai.sql                 limiti i keš AI objašnjenja za /putovanje-sa-psom (nezavisno; docs/pet-trip)
 08_seed_pet_friendly_lodging.sql   pet-friendly smeštaj u postojećim mestima (nezavisno od 01–07)
 09_seed_lodging_new_places.sql     nova mesta u grad/opstina + smeštaj u njima (posle 08)
+10_assistant_ai.sql                limiti i keš AI tumačenja za pomoćnika (bubble chat; nezavisno; docs/assistant)
 ```
 
 **Napravi backup pre pokretanja.** Nema `down` skripte.

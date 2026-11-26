@@ -30,6 +30,7 @@ import {
   type YesNoUnknown,
 } from './domain/trip.models';
 import { COPY, injectTripLang } from './pet-trip-copy';
+import type { TripPrefill } from './trip-prefill';
 
 export type PlannerView = 'trip' | 'dogs' | 'results';
 export type ResultsTab = 'readiness' | 'costs' | 'summary';
@@ -253,6 +254,39 @@ export class PetTripPlanner {
       // A broken draft is dropped, not repaired.
     }
     this.#restored.set(true);
+  }
+
+  /**
+   * Trip facts from the URL (the assistant's "open in the planner" link),
+   * over the restored draft: what the link names replaces the draft's value,
+   * the rest of the draft (the dogs' details, costs) stays. Opens the dogs
+   * step when the trip is complete, else the trip step to finish it.
+   */
+  prefill(prefill: TripPrefill): void {
+    const patch: Partial<TripFormValue> = {};
+    if (prefill.destination) {
+      patch.destination = prefill.destination;
+      // The old route led somewhere else.
+      if (!prefill.transit) patch.transitCountries = [];
+    }
+    if (prefill.transport) patch.transport = prefill.transport;
+    if (prefill.transit) patch.transitCountries = prefill.transit.filter((code) => code !== prefill.destination);
+    if (prefill.departureDate) patch.departureDate = prefill.departureDate;
+    if (prefill.returnDate) {
+      patch.returnDate = prefill.returnDate;
+      patch.oneWay = false;
+    } else if (prefill.departureDate) {
+      patch.returnDate = '';
+    }
+    this.tripForm.patchValue(patch);
+    if (prefill.transport === 'plane') this.setTransit([]);
+
+    if (prefill.dogs) {
+      while (this.dogsForm.length < prefill.dogs) this.dogsForm.push(this.#dogGroup());
+      while (this.dogsForm.length > prefill.dogs) this.dogsForm.removeAt(this.dogsForm.length - 1);
+    }
+    this.view.set(this.tripForm.valid ? 'dogs' : 'trip');
+    if (this.tripForm.invalid) this.tripForm.markAllAsTouched();
   }
 
   reset(): void {

@@ -1,0 +1,307 @@
+@let c = copy();
+
+<button
+  #launcher
+  type="button"
+  class="asst-launcher btn btn-secondary shadow-lg"
+  [class.asst-launcher--open]="open()"
+  [class.asst-launcher--hidden]="open() && mobile()"
+  (click)="toggle()"
+  [attr.aria-expanded]="open()"
+  aria-controls="assistant-panel"
+  [attr.aria-label]="open() ? c.close : c.launcher"
+>
+  @if (open()) {
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  } @else {
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-6 w-6" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+    </svg>
+    <span class="asst-launcher__label">{{ c.launcher }}</span>
+  }
+</button>
+
+@if (open()) {
+  <section
+    id="assistant-panel"
+    class="asst-panel"
+    role="dialog"
+    [attr.aria-modal]="mobile()"
+    aria-labelledby="assistant-title"
+    (keydown.escape)="close()"
+  >
+    <header class="asst-header">
+      <span class="asst-header__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+          <path d="M8.35 3c1.18-.17 2.43 1.12 2.79 2.9.36 1.77-.29 3.35-1.47 3.53-1.17.18-2.43-1.11-2.8-2.89C6.5 4.77 7.17 3.2 8.35 3m7.15 0c1.19.17 1.85 1.74 1.5 3.53-.38 1.78-1.63 3.07-2.81 2.89-1.19-.18-1.84-1.76-1.47-3.53.36-1.78 1.61-3.07 2.78-2.89M3 7.6c1.14-.49 2.69.4 3.5 1.95.76 1.58.5 3.24-.63 3.73-1.13.49-2.67-.39-3.46-1.96C1.62 9.75 1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72-.79 1.57-2.33 2.45-3.46 1.96-1.13-.49-1.39-2.15-.63-3.73.81-1.55 2.36-2.44 3.5-1.95m-1.67 10.78c.04.94-.68 1.98-1.54 2.37-1.79.82-3.91-.88-5.9-.88-1.99 0-4.13 1.77-5.89.88-1-.49-1.69-1.79-1.56-2.87.18-1.49 1.97-2.29 3.03-3.38 1.41-1.41 2.41-4.06 4.42-4.06 2 0 3.06 2.61 4.41 4.06 1.11 1.22 2.96 2.25 3.03 3.88" />
+        </svg>
+      </span>
+      <div class="min-w-0 flex-1">
+        <h2 id="assistant-title" class="font-display text-base font-bold leading-tight">{{ c.title }}</h2>
+        <p class="text-xs text-base-content/60 truncate">{{ c.subtitle }}</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-xs" (click)="session.reset()" [disabled]="session.busy()">{{ c.newChat }}</button>
+      <button type="button" class="btn btn-ghost btn-sm btn-circle" (click)="close()" [attr.aria-label]="c.close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+
+    <div #log class="asst-log" role="log" aria-live="polite" aria-relevant="additions">
+      @for (message of session.messages(); track message.id) {
+        @if (message.role === 'user') {
+          <div data-message class="asst-msg asst-msg--user">
+            <p class="asst-bubble asst-bubble--user">{{ message.text }}</p>
+          </div>
+        } @else {
+          <div data-message class="asst-msg">
+            @switch (message.kind) {
+              @case ('pending') {
+                <p class="asst-bubble asst-typing" role="status">
+                  <span class="loading loading-dots loading-xs" aria-hidden="true"></span>
+                  <span>{{ c.thinking }}</span>
+                </p>
+              }
+              @case ('text') {
+                <div class="asst-bubble">
+                  <p>{{ sayText(message.say) }}</p>
+                  @if (noteText(message.note); as note) {
+                    <p class="asst-note">{{ note }}</p>
+                  }
+                </div>
+                @let chips = chipsOf(message.chips);
+                @if (chips.length) {
+                  <div class="asst-chips">
+                    @for (chip of chips; track chip.label) {
+                      <button type="button" class="asst-chip" (click)="sendChip(chip)" [disabled]="session.busy()">{{ chip.label }}</button>
+                    }
+                  </div>
+                }
+              }
+              @case ('error') {
+                <div class="asst-bubble asst-bubble--error">
+                  <p>{{ c.error }}</p>
+                  @if (message.retry) {
+                    <button type="button" class="btn btn-xs btn-outline mt-2" (click)="session.retry(message.id)" [disabled]="session.busy()">{{ c.retry }}</button>
+                  }
+                </div>
+              }
+              @case ('trip') {
+                @let check = message.check;
+                <article class="asst-card-block">
+                  <p class="asst-eyebrow">{{ c.tripTitle }}</p>
+                  <h3 class="font-display text-base font-bold leading-snug">{{ check.headline }}</h3>
+                  <p class="asst-verdict" [attr.data-overall]="check.overall">{{ check.verdict.title }}</p>
+                  <p class="asst-hint">{{ check.verdict.text }}</p>
+                  @if (check.route) {
+                    <p class="asst-hint">{{ c.tripRoute(check.route) }}</p>
+                  }
+                  @if (check.earliestDeparture) {
+                    <p class="text-sm font-semibold">{{ c.tripEarliest(check.earliestDeparture) }}</p>
+                  }
+                  @if (check.items.length) {
+                    <ul class="asst-steps">
+                      @for (item of check.items; track item.key) {
+                        <li class="asst-step">
+                          <span class="asst-status" [attr.data-status]="item.status">{{ item.statusLabel }}</span>
+                          <span class="text-sm font-medium">{{ item.title }}@if (item.dogLabel) { · {{ item.dogLabel }} }</span>
+                          @if (item.dates) {
+                            <span class="asst-hint">{{ item.dates }}</span>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                  @if (check.more > 0) {
+                    <p class="asst-hint">{{ c.tripMore(check.more) }}</p>
+                  }
+                  @if (check.missingDate) {
+                    <p class="asst-hint">{{ c.tripMissingDate }}</p>
+                  }
+                  <p class="asst-hint">{{ c.tripDogData }}</p>
+                  @if (check.coverageNote) {
+                    <p class="asst-hint">{{ check.coverageNote }}</p>
+                  }
+                  <a class="btn btn-secondary btn-sm mt-1 w-full" routerLink="/putovanje-sa-psom" [queryParams]="check.plannerParams" (click)="followed()">
+                    {{ c.tripOpen }}
+                  </a>
+                  <p class="asst-fine">{{ check.disclaimer }}</p>
+                  @if (noteText(message.note); as note) {
+                    <p class="asst-note">{{ note }}</p>
+                  }
+                </article>
+              }
+              @case ('results') {
+                @let results = resultsOf(message);
+                @if (results) {
+                  <div class="asst-results">
+                    @if (noteText(results.note); as note) {
+                      <p class="asst-note">{{ note }}</p>
+                    }
+                    @if (filters(results.query); as active) {
+                      @if (active.length) {
+                        <div class="asst-chips">
+                          @for (filter of active; track filter.key) {
+                            <button
+                              type="button"
+                              class="asst-chip asst-chip--active"
+                              (click)="session.removeFilter(results.id, filter.key)"
+                              [disabled]="session.busy()"
+                              [attr.aria-label]="c.filters.remove(filter.label)"
+                            >
+                              {{ filter.label }} <span aria-hidden="true">✕</span>
+                            </button>
+                          }
+                        </div>
+                      }
+                    }
+
+                    @for (group of results.groups; track $index; let groupIndex = $index) {
+                      <section class="asst-group" [attr.aria-label]="groupTitle(group)">
+                        <h3 class="asst-group__title">
+                          {{ groupTitle(group) }}
+                          @if (group.items.length) {
+                            <span class="asst-count">{{ c.shown(group.items.length) }}</span>
+                          }
+                        </h3>
+                        @if (widenedText(group); as widened) {
+                          <p class="asst-hint">{{ widened }}</p>
+                        }
+
+                        @if (group.items.length) {
+                          <ul class="asst-places">
+                            @for (item of group.items; track item.key) {
+                              <li class="asst-place">
+                                <div class="asst-place__thumb" aria-hidden="true">
+                                  @if (item.image) {
+                                    <img [src]="item.image | clientImage" alt="" loading="lazy" decoding="async" />
+                                  } @else {
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                  }
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                  <p class="asst-place__name">
+                                    @if (item.link) {
+                                      <a [routerLink]="item.link" class="link link-hover" (click)="followed(item)">{{ item.name }}</a>
+                                    } @else {
+                                      {{ item.name }}
+                                    }
+                                  </p>
+                                  <p class="asst-place__meta">
+                                    @if (item.typeKey) {
+                                      <span>{{ item.typeKey | transloco }}</span>
+                                    }
+                                    @if (item.area) {
+                                      <span>{{ item.area }}</span>
+                                    }
+                                    @if (item.distanceM !== null) {
+                                      <span>{{ c.distance(item.distanceM) }}</span>
+                                    }
+                                  </p>
+                                  @if (item.address && item.kind !== 'spot') {
+                                    <p class="asst-place__meta">{{ item.address }}</p>
+                                  }
+                                  @if (item.dogs || item.garden !== null) {
+                                    <p class="asst-place__tags">
+                                      @if (item.dogs) {
+                                        <span class="asst-tag">{{ c.dogs[item.dogs] }}</span>
+                                      }
+                                      @if (item.garden !== null) {
+                                        <span class="asst-tag">{{ item.garden ? c.gardenYes : c.gardenNo }}</span>
+                                      }
+                                    </p>
+                                  }
+                                  <p class="asst-place__actions">
+                                    @if (item.link) {
+                                      <a [routerLink]="item.link" class="asst-action" (click)="followed(item)">{{ c.details }}</a>
+                                    }
+                                    @if (item.mapsUrl) {
+                                      <a
+                                        [href]="item.mapsUrl"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="asst-action"
+                                        data-link-type="venue_maps"
+                                        [attr.data-venue-slug]="item.slug"
+                                      >{{ c.directions }}</a>
+                                    }
+                                    @if (item.phone) {
+                                      <a [href]="'tel:' + item.phone" class="asst-action" data-link-type="venue_phone" [attr.data-venue-slug]="item.slug">{{ c.call }}</a>
+                                    }
+                                  </p>
+                                </div>
+                              </li>
+                            }
+                          </ul>
+                          <div class="asst-group__footer">
+                            @if (group.cursor) {
+                              <button
+                                type="button"
+                                class="btn btn-xs btn-outline"
+                                (click)="session.more(results.id, groupIndex)"
+                                [disabled]="results.loadingMore !== null"
+                              >
+                                @if (results.loadingMore === groupIndex) {
+                                  <span class="loading loading-spinner loading-xs" aria-hidden="true"></span> {{ c.loadingMore }}
+                                } @else {
+                                  {{ c.more }}
+                                }
+                              </button>
+                            }
+                            @if (group.link) {
+                              <a [routerLink]="group.link.path" [queryParams]="group.link.queryParams ?? null" class="asst-action" (click)="followed()">{{ c.openList }} →</a>
+                            }
+                          </div>
+                        } @else {
+                          <p class="asst-hint">
+                            {{ c.empty(group.category) }}
+                            @if (hasFilters(results.query)) {
+                              {{ c.emptyFiltered }}
+                            }
+                          </p>
+                          @if (group.link) {
+                            <div class="asst-group__footer">
+                              <a [routerLink]="group.link.path" [queryParams]="group.link.queryParams ?? null" class="asst-action" (click)="followed()">{{ c.openList }} →</a>
+                            </div>
+                          }
+                        }
+                      </section>
+                    }
+                  </div>
+                }
+              }
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <form class="asst-form" (submit)="submit($event)">
+      <label for="assistant-input" class="sr-only">{{ c.inputLabel }}</label>
+      <input
+        #input
+        id="assistant-input"
+        type="text"
+        class="input input-bordered input-sm flex-1 min-w-0"
+        [value]="draft()"
+        (input)="onInput($event)"
+        [attr.maxlength]="maxLength"
+        [placeholder]="c.placeholder"
+        autocomplete="off"
+        enterkeyhint="send"
+      />
+      <button type="submit" class="btn btn-secondary btn-sm btn-square" [disabled]="!canSend()" [attr.aria-label]="c.send">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+        </svg>
+      </button>
+    </form>
+    <p class="asst-footer">{{ c.footer }}</p>
+  </section>
+}
