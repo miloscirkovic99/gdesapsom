@@ -91,6 +91,24 @@ koji URL bez `assets` sa `${environment.apiUrl}api/v2/` i dodaje `sid` iz
 - Upis u `posts` i `post_tags` je u jednoj transakciji — onoj koju Mars otvara
   za svaki skript (vidi dole, tačka 3).
 
+### `pet-trip`
+
+| Metod | Putanja | Vraća |
+|---|---|---|
+| POST | `pet-trip/insights` | uvek `200 { status, insights?, model?, generatedAt?, remaining?, limit?, reason? }`; `status`: `ok \| cached \| disabled \| quota \| busy \| unavailable \| invalid` |
+
+AI objašnjenje za `/putovanje-sa-psom` (Claude preko Anthropic Messages API-ja,
+`net.client`). Telo je `{ payload: "<JSON string>", device: "<id>" }`: samo
+statusi, ključevi pravila, rokovi i iznosi koje je portal već izračunao, i
+nasumičan id uređaja. Na produkciji najviše 5 objašnjenja po uređaju (ukupno),
+20 dnevno po IP adresi i 50 dnevno ukupno; na dev.gdesapsom.com samo ukupni
+limit (server to zna po headeru `Host`). Ugašeno dok se ne
+postave `PET_TRIP_AI_ENABLED`, `ANTHROPIC_API_KEY` i `PET_TRIP_AI_SALT` i ne
+pokrene `db/07_pet_trip_ai.sql`. Podešavanja, limiti, cena i šta još treba
+proveriti na Marsu: `docs/pet-trip/README.md`. Testovi pokreću ovaj fajl u Node
+`vm` kontekstu sa lažnim Mars globalima
+(`features/pet-trip/ai/insights-handler.spec.ts` u portalu).
+
 ---
 
 ## Admin panel
@@ -187,6 +205,15 @@ with (MARSModules) {
 }
 }
 ```
+
+Omotač `module.exports = (MARSModules) => { with (MARSModules) { … } }` dodaje
+tek Mars export. U Mars editoru kod stoji na vrhu fajla i Mars globale
+(`param`, `write`, `db`, …) zove direktno. Fajlovi izvezeni sa Marsa ostaju
+sa omotačem, a pri lepljenju u Mars ide samo ono između `with (MARSModules) {`
+i zatvarajućih zagrada. Novi fajlovi pisani u repou (`pet-trip/insights.POST.js`)
+su već u obliku iz editora i lepe se celi. Na vrhu takvog fajla koristi
+`const`/`let`, ne `var`: unutar `with (MARSModules)` bi `var x = …` upisao u
+istoimeno Mars svojstvo.
 
 Auth je `sid` iz `localStorage`, koji interceptor kači na svaki zahtev;
 `session('user')` ga razrešava server-side. `sessionUser.kor_admin` razlikuje

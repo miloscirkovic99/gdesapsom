@@ -1,0 +1,227 @@
+<section class="pt-section" aria-labelledby="pt-costs-title">
+  <h2 id="pt-costs-title" class="pt-h2">{{ copy().costs.heading }}</h2>
+  <p class="pt-sub">{{ copy().costs.subheading }}</p>
+
+  <form [formGroup]="form" class="pt-card" (submit)="$event.preventDefault()">
+    <fieldset class="pt-fieldset">
+      <legend class="pt-legend">{{ copy().costs.shared }}</legend>
+      <div class="pt-grid">
+        <div class="pt-field">
+          <label class="pt-label" for="pt-currency">{{ copy().costs.currency }}</label>
+          <select id="pt-currency" class="select select-bordered w-full" (change)="setCurrency($event)" aria-describedby="pt-currency-hint">
+            @for (code of currencies; track code) {
+              <option [value]="code" [selected]="code === currency()">{{ copy().costs.currencyNames[code] }}</option>
+            }
+          </select>
+          <p id="pt-currency-hint" class="pt-hint">{{ copy().costs.currencyHint }}</p>
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" for="pt-rate">{{ copy().costs.rate }}</label>
+          <input id="pt-rate" type="number" inputmode="decimal" min="1" step="0.0001" class="input input-bordered w-full" formControlName="rsdPerEur" aria-describedby="pt-rate-hint" />
+          <p id="pt-rate-hint" class="pt-hint">{{ copy().costs.rateSource(rateDate()) }}</p>
+        </div>
+        <div class="pt-field">
+          <label class="pt-label" for="pt-contingency">{{ copy().costs.contingency }}</label>
+          <input id="pt-contingency" type="number" inputmode="numeric" min="0" max="50" step="1" class="input input-bordered w-full" formControlName="contingencyPercent" aria-describedby="pt-contingency-hint" />
+          <p id="pt-contingency-hint" class="pt-hint">{{ copy().costs.contingencyHint }}</p>
+        </div>
+      </div>
+
+      @if (anyCar()) {
+        <div class="pt-grid">
+          <div class="pt-field">
+            <label class="pt-label" for="pt-consumption">{{ copy().costs.consumption }}</label>
+            <input id="pt-consumption" type="number" inputmode="decimal" min="1" max="40" step="0.1" class="input input-bordered w-full" formControlName="fuelConsumption" [placeholder]="copy().costs.consumptionPlaceholder" />
+          </div>
+          <div class="pt-field">
+            <label class="pt-label" for="pt-fuel-price">{{ copy().costs.fuelPrice }} ({{ currency() }})</label>
+            <input id="pt-fuel-price" type="number" inputmode="decimal" min="0" step="0.01" class="input input-bordered w-full" formControlName="fuelPrice" />
+          </div>
+          @if (romaniaByCar()) {
+            <div class="pt-field">
+              <label class="pt-label" for="pt-emission">{{ copy().costs.emission }}</label>
+              <select id="pt-emission" class="select select-bordered w-full" formControlName="emissionClass" aria-describedby="pt-emission-hint">
+                <option value="">{{ copy().costs.emissionUnknown }}</option>
+                @for (option of emissionClasses; track option) {
+                  <option [value]="option">{{ copy().costs.emissionOptions[option] }}</option>
+                }
+              </select>
+              <p id="pt-emission-hint" class="pt-hint">{{ copy().costs.emissionHint }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (prepFields().length) {
+        <div class="pt-field">
+          <span class="pt-label">{{ copy().costs.vetPrep }}</span>
+          <p class="pt-hint">{{ copy().costs.vetPrepHint }}</p>
+          <div class="pt-grid">
+            @for (field of prepFields(); track field.item) {
+              <div class="pt-field">
+                <label class="pt-label pt-label--small" [for]="'pt-prep-' + field.item">{{ field.label }} ({{ currency() }})</label>
+                <input
+                  [id]="'pt-prep-' + field.item"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="0.01"
+                  class="input input-bordered input-sm w-full"
+                  [value]="field.value ?? ''"
+                  (input)="setPrep(field.item, $event)"
+                />
+                @if (field.estimate && field.value === null) {
+                  <p class="pt-hint">{{ copy().costs.vetPrepEstimate(field.estimate) }}</p>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </fieldset>
+  </form>
+
+  @for (column of columns(); track column.scenario.id + ':' + planner.currencyVersion()) {
+    <app-pet-trip-scenario [scenario]="column.scenario" [breakdown]="column.breakdown" [report]="column.report" />
+  }
+
+  @if (planner.canAddScenario()) {
+    <button type="button" class="btn btn-outline btn-secondary btn-sm" (click)="planner.addScenario()">{{ copy().costs.addScenario }}</button>
+  }
+
+  @if (columns().length > 1) {
+    <section class="pt-subsection" aria-labelledby="pt-compare-title">
+      <h3 id="pt-compare-title" class="pt-h3">{{ copy().compare.heading }}</h3>
+
+      <!-- Phones: one card per scenario; the table below takes over from sm up. -->
+      <ul class="pt-compare-cards sm:hidden">
+        @for (column of columns(); track column.scenario.id) {
+          <li class="pt-compare-card" [class.pt-col--best]="column.cheapest">
+            <p class="pt-compare-card__title">
+              {{ column.scenario.label }}
+              @if (column.cheapest) {
+                <span class="pt-badge pt-badge--confirmed">{{ copy().compare.cheapest }}</span>
+              }
+            </p>
+            <p class="pt-hint">
+              {{ nameOf(column.scenario.destination) }} · {{ copy().transport[column.scenario.transport] }} · {{ column.breakdown.nights }} {{ copy().compare.nights.toLowerCase() }}
+            </p>
+            <dl class="pt-totals">
+              <div class="pt-totals__total">
+                <dt>{{ copy().compare.total }}</dt>
+                <dd class="pt-amount">
+                  @if (!column.breakdown.complete) {
+                    <span class="pt-hint">{{ copy().costs.totalLowerBound }}</span>
+                  }
+                  {{ money(column.breakdown.total) }}
+                </dd>
+              </div>
+              <div>
+                <dt>{{ copy().compare.perPerson }}</dt>
+                <dd class="pt-amount">{{ money(column.breakdown.perPerson) }}</dd>
+              </div>
+              <div>
+                <dt>{{ copy().compare.perDay }}</dt>
+                <dd class="pt-amount">{{ money(column.breakdown.perDay) }}</dd>
+              </div>
+            </dl>
+            <span class="pt-badge" [class]="'pt-badge pt-verdict-badge--' + column.report.overall">
+              {{ copy().compare.readiness }}: {{ copy().overall[column.report.overall].title }}
+            </span>
+          </li>
+        }
+      </ul>
+
+      <div class="pt-scroll hidden sm:block">
+        <table class="pt-table pt-table--compare">
+          <caption class="sr-only">{{ copy().compare.heading }}</caption>
+          <thead>
+            <tr>
+              <td></td>
+              @for (column of columns(); track column.scenario.id) {
+                <th scope="col" [class.pt-col--best]="column.cheapest">
+                  {{ column.scenario.label }}
+                  @if (column.cheapest) {
+                    <span class="pt-badge pt-badge--confirmed">{{ copy().compare.cheapest }}</span>
+                  }
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ copy().compare.destination }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td>{{ nameOf(column.scenario.destination) }}</td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.transport }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td>{{ copy().transport[column.scenario.transport] }}</td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.nights }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td>{{ column.breakdown.nights }}</td>
+              }
+            </tr>
+            <tr class="pt-row--total">
+              <th scope="row">{{ copy().compare.total }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td class="pt-amount">
+                  @if (!column.breakdown.complete) {
+                    <span class="pt-hint">{{ copy().costs.totalLowerBound }}</span>
+                  }
+                  {{ money(column.breakdown.total) }}
+                </td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.perPerson }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td class="pt-amount">{{ money(column.breakdown.perPerson) }}</td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.perDay }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td class="pt-amount">{{ money(column.breakdown.perDay) }}</td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.complete }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td>{{ column.breakdown.complete ? copy().compare.completeYes : copy().compare.completeNo }}</td>
+              }
+            </tr>
+            <tr>
+              <th scope="row">{{ copy().compare.readiness }}</th>
+              @for (column of columns(); track column.scenario.id) {
+                <td>
+                  <span class="pt-badge" [class]="'pt-badge pt-verdict-badge--' + column.report.overall">{{ copy().overall[column.report.overall].title }}</span>
+                </td>
+              }
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pt-notice" role="status">
+        <p>{{ verdictText() }}</p>
+        @if (planner.comparison().blockers.length) {
+          <ul class="pt-list">
+            @for (blocker of planner.comparison().blockers; track blocker) {
+              <li>{{ blocker }}</li>
+            }
+          </ul>
+        }
+        @for (note of planner.comparison().notes; track note) {
+          <p class="pt-hint">{{ note }}</p>
+        }
+        <p class="pt-hint">{{ copy().compare.readinessNote }}</p>
+      </div>
+    </section>
+  }
+</section>

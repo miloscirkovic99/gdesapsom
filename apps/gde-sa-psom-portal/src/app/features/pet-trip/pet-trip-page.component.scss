@@ -1,0 +1,681 @@
+/*
+ * /putovanje-sa-psom. Global on purpose (ViewEncapsulation.None): the step and
+ * result components render inside `.pt` and share these rules. Colours come
+ * from the daisyUI theme, so light and dark both work; the type scale follows
+ * the hub pages. Status colours are tints behind dark text, never the only
+ * signal: every badge also says its status in words.
+ */
+app-pet-trip-page {
+  display: block;
+}
+
+.pt {
+  @apply mx-auto max-w-5xl pb-12 pt-6 sm:pt-10;
+}
+
+/* ── Type ── */
+.pt-h1 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.pt-h2 {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.15;
+}
+
+.pt-h3 {
+  @apply font-display text-xl font-bold text-base-content;
+  line-height: 1.2;
+}
+
+.pt-h4 {
+  @apply mt-4 text-base font-semibold text-base-content;
+}
+
+.pt-lead {
+  @apply text-base-content/75 leading-relaxed;
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+  max-width: 62ch;
+}
+
+.pt-sub,
+.pt-hint {
+  @apply text-sm text-base-content/70;
+}
+
+.pt-optional {
+  @apply font-normal text-base-content/60;
+}
+
+/* ── Hero ── */
+.pt-hero {
+  @apply space-y-4;
+}
+
+.pt-points {
+  @apply grid gap-3 pt-2 sm:grid-cols-3;
+}
+
+.pt-point {
+  @apply flex flex-col gap-1 rounded-2xl border border-base-300 bg-base-100 p-4;
+}
+
+.pt-point__title {
+  @apply font-semibold text-base-content;
+}
+
+.pt-point__text {
+  @apply text-sm text-base-content/75;
+}
+
+.pt-coverage {
+  @apply rounded-2xl border border-base-300 bg-base-200 px-4 py-3 text-sm text-base-content/80;
+
+  summary {
+    @apply cursor-pointer font-semibold text-base-content;
+  }
+
+  p {
+    @apply mt-2 leading-relaxed;
+  }
+}
+
+/* ── Steps and tabs ── */
+.pt-steps {
+  @apply pt-8;
+}
+
+.pt-steps__list {
+  @apply flex flex-wrap gap-2;
+}
+
+.pt-step {
+  @apply inline-flex min-h-11 items-center gap-2 rounded-full border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content;
+
+  &:hover {
+    @apply border-secondary;
+  }
+
+  &[aria-current='step'] {
+    @apply border-secondary bg-secondary text-secondary-content;
+  }
+}
+
+.pt-step__number {
+  @apply inline-flex h-6 w-6 items-center justify-center rounded-full bg-base-200 text-xs font-bold text-base-content;
+
+  .pt-step--done & {
+    @apply bg-success/20;
+  }
+}
+
+.pt-main {
+  @apply mt-6 space-y-6 outline-none;
+}
+
+.pt-actions {
+  @apply flex items-center justify-between gap-3;
+}
+
+.pt-tripline {
+  @apply flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-base-200 px-4 py-3 text-sm font-medium text-base-content/80;
+}
+
+.pt-tabs {
+  @apply mt-4 flex gap-1 overflow-x-auto border-b border-base-300;
+}
+
+.pt-tab {
+  @apply -mb-px inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-base-content/70;
+
+  &:hover {
+    @apply text-base-content;
+  }
+
+  &[aria-selected='true'] {
+    @apply border-secondary text-base-content;
+  }
+}
+
+.pt-tab__count {
+  @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-warning/25 px-1.5 text-xs text-base-content;
+}
+
+.pt-panel {
+  @apply pt-6 outline-none;
+}
+
+/* ── Cards and forms ── */
+.pt-card {
+  @apply rounded-2xl border border-base-300 bg-base-100 p-4 sm:p-6;
+
+  // The global `.card` hover lift is for listings, not forms.
+  &:hover {
+    transform: none;
+  }
+}
+
+.pt-dogs {
+  @apply space-y-4;
+}
+
+.pt-fieldset {
+  @apply min-w-0 space-y-5;
+}
+
+.pt-fieldset--inner {
+  @apply mt-5 border-t border-base-300 pt-4;
+}
+
+.pt-legend {
+  @apply mb-2 font-display text-xl font-bold text-base-content;
+}
+
+.pt-legend--small {
+  @apply text-base;
+}
+
+.pt-grid {
+  @apply grid gap-4 sm:grid-cols-2;
+}
+
+.pt-field {
+  @apply flex min-w-0 flex-col gap-1.5;
+}
+
+.pt-label {
+  @apply text-sm font-semibold text-base-content;
+}
+
+.pt-label--small {
+  @apply font-medium;
+}
+
+.pt-error {
+  @apply text-sm font-medium text-error;
+}
+
+.pt-check {
+  @apply inline-flex cursor-pointer items-center gap-2 text-sm text-base-content;
+}
+
+.pt-inline {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+/* Radio pills: the real radio stays focusable and announced; the pill is its label. */
+.pt-choices {
+  @apply flex flex-wrap gap-2;
+}
+
+.pt-choices--stack {
+  @apply flex-col items-stretch sm:flex-row sm:items-center;
+}
+
+.pt-choice {
+  @apply relative inline-flex cursor-pointer;
+}
+
+.pt-choice__input {
+  @apply absolute h-px w-px opacity-0;
+}
+
+.pt-choice__label {
+  @apply inline-flex min-h-11 items-center rounded-xl border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content transition-colors;
+
+  .pt-choice:hover & {
+    @apply border-secondary;
+  }
+
+  .pt-choice__input:checked + & {
+    @apply border-secondary bg-secondary/15 font-semibold;
+  }
+
+  .pt-choice__input:focus-visible + & {
+    @apply outline outline-2 outline-offset-2 outline-secondary;
+  }
+}
+
+/* ── Transit chips ── */
+.pt-transit {
+  @apply space-y-2;
+}
+
+.pt-transit__add {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.pt-chips {
+  @apply flex flex-wrap gap-2;
+}
+
+.pt-chip {
+  @apply inline-flex items-center gap-1 rounded-full border border-secondary/50 bg-secondary/10 py-1 pl-3 pr-1 text-sm text-base-content;
+}
+
+.pt-chip__remove {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-full text-base-content/70;
+
+  &:hover {
+    @apply bg-base-300 text-base-content;
+  }
+}
+
+.pt-suggest {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/70;
+}
+
+.pt-link-btn {
+  @apply min-h-8 text-sm font-medium text-base-content underline decoration-secondary decoration-2 underline-offset-4;
+
+  &:hover {
+    @apply text-secondary;
+  }
+}
+
+/* ── Statuses ── */
+.pt-badge {
+  @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold text-base-content;
+  border-color: oklch(var(--bc) / 0.2);
+
+  &::before {
+    content: '';
+    @apply h-2 w-2 shrink-0 rounded-full;
+  }
+}
+
+.pt-badge--confirmed {
+  @apply border-success/50 bg-success/15;
+
+  &::before {
+    @apply bg-success;
+  }
+}
+
+.pt-badge--action-required {
+  @apply border-warning/60 bg-warning/20;
+
+  &::before {
+    @apply bg-warning;
+  }
+}
+
+.pt-badge--needs-verification {
+  @apply border-info/60 bg-info/15;
+
+  &::before {
+    @apply bg-info;
+  }
+}
+
+.pt-badge--insufficient-info {
+  @apply border-base-300 bg-base-200;
+
+  &::before {
+    @apply bg-base-content/40;
+  }
+}
+
+.pt-verdict {
+  @apply space-y-2 rounded-2xl border-l-4 bg-base-200 p-4 sm:p-5;
+}
+
+.pt-verdict__title {
+  @apply font-display text-lg font-bold text-base-content sm:text-xl;
+}
+
+.pt-verdict__text {
+  @apply text-sm leading-relaxed text-base-content/80;
+}
+
+.pt-verdict__date {
+  @apply font-semibold text-base-content;
+}
+
+.pt-verdict--ready,
+.pt-verdict-badge--ready {
+  @apply border-success bg-success/10;
+}
+
+.pt-verdict--blocked,
+.pt-verdict-badge--blocked {
+  @apply border-error bg-error/10;
+}
+
+.pt-verdict--action-required,
+.pt-verdict-badge--action-required {
+  @apply border-warning bg-warning/15;
+}
+
+.pt-verdict--incomplete,
+.pt-verdict-badge--incomplete,
+.pt-verdict--unsupported,
+.pt-verdict-badge--unsupported {
+  @apply border-base-content/30 bg-base-200;
+}
+
+.pt-verdict--verify,
+.pt-verdict-badge--verify {
+  @apply border-info bg-info/10;
+}
+
+.pt-verdict-inline {
+  @apply rounded-xl border-l-4 px-3 py-2 font-semibold text-base-content;
+}
+
+.pt-counts {
+  @apply flex flex-wrap gap-2 pt-1;
+}
+
+.pt-notice {
+  @apply space-y-2 rounded-2xl border border-base-300 bg-base-200 p-4 text-sm leading-relaxed text-base-content/85;
+}
+
+.pt-notice--soft {
+  @apply bg-base-100;
+}
+
+.pt-notice__title {
+  @apply font-semibold text-base-content;
+}
+
+/* ── Report items ── */
+.pt-section {
+  @apply space-y-5;
+}
+
+.pt-subsection {
+  @apply space-y-3 pt-4;
+}
+
+.pt-count {
+  @apply ml-1 text-base font-normal text-base-content/60;
+}
+
+.pt-items {
+  @apply space-y-3;
+}
+
+.pt-item {
+  @apply space-y-2 rounded-2xl border border-base-300 bg-base-100 p-4;
+}
+
+.pt-item--blocked {
+  @apply border-error/60;
+}
+
+.pt-item__head {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.pt-item__title {
+  @apply text-base font-semibold text-base-content;
+}
+
+.pt-item__detail {
+  @apply text-sm leading-relaxed text-base-content/85;
+}
+
+.pt-item__flag {
+  @apply rounded-xl bg-info/10 px-3 py-2 text-sm text-base-content/85;
+}
+
+.pt-item__more {
+  @apply text-sm text-base-content/80;
+
+  summary {
+    @apply inline-flex min-h-9 cursor-pointer items-center font-medium text-base-content underline decoration-base-300 underline-offset-4;
+  }
+
+  > :not(summary) {
+    @apply mt-2;
+  }
+}
+
+.pt-item__meta {
+  @apply text-xs text-base-content/60;
+}
+
+.pt-sources {
+  @apply space-y-1.5;
+
+  li {
+    @apply flex flex-col;
+  }
+}
+
+.pt-source__link {
+  @apply font-medium text-base-content underline decoration-secondary/60 underline-offset-2;
+  overflow-wrap: anywhere;
+
+  &:hover {
+    @apply text-secondary;
+  }
+}
+
+.pt-source__meta {
+  @apply text-xs text-base-content/60;
+}
+
+.pt-timeline {
+  @apply space-y-2 border-l-2 border-secondary/40 pl-4;
+}
+
+.pt-timeline__item {
+  @apply flex flex-col text-sm text-base-content sm:flex-row sm:gap-3;
+}
+
+.pt-timeline__date {
+  @apply font-semibold sm:w-60 sm:shrink-0;
+}
+
+.pt-list {
+  @apply list-disc space-y-1 pl-5 text-sm text-base-content/85;
+}
+
+.pt-list--warn {
+  @apply text-base-content;
+
+  li::marker {
+    @apply text-warning;
+  }
+}
+
+/* ── Costs ── */
+.pt-scenario {
+  @apply space-y-4;
+}
+
+.pt-scenario__head {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+.pt-breakdown {
+  @apply space-y-3 border-t border-base-300 pt-4;
+}
+
+.pt-scroll {
+  @apply -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0;
+}
+
+.pt-table {
+  @apply w-full min-w-[34rem] border-collapse text-sm;
+
+  th,
+  td {
+    @apply border-b border-base-300 px-2 py-2 text-left align-top;
+  }
+
+  th[scope='row'] {
+    @apply font-medium text-base-content;
+  }
+
+  tfoot th,
+  tfoot td {
+    @apply border-b-0;
+  }
+}
+
+.pt-table--compare {
+  @apply min-w-[28rem];
+
+  thead th {
+    @apply font-semibold;
+  }
+}
+
+.pt-col--best {
+  @apply bg-success/10;
+}
+
+.pt-amount {
+  @apply whitespace-nowrap font-semibold tabular-nums text-base-content;
+}
+
+.pt-detail {
+  @apply text-base-content/70;
+}
+
+.pt-row--muted {
+  @apply text-base-content/60;
+}
+
+.pt-row--total th,
+.pt-row--total td {
+  @apply text-base;
+}
+
+/* Breakdown as a list: amount next to its label, source and formula underneath. */
+.pt-lines {
+  @apply divide-y divide-base-300;
+}
+
+.pt-line {
+  @apply space-y-1 py-2.5;
+}
+
+.pt-line__head {
+  @apply flex items-baseline justify-between gap-3;
+}
+
+.pt-line__label {
+  @apply text-sm font-medium text-base-content;
+}
+
+.pt-line__meta {
+  @apply flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm;
+}
+
+.pt-totals {
+  @apply space-y-1 rounded-xl bg-base-200 p-3 text-sm;
+
+  > div {
+    @apply flex items-baseline justify-between gap-3;
+  }
+
+  dt {
+    @apply text-base-content/80;
+  }
+}
+
+.pt-totals__total {
+  @apply border-t border-base-300 pt-1.5 text-base;
+
+  &:first-child {
+    @apply border-t-0 pt-0;
+  }
+
+  dt {
+    @apply font-semibold text-base-content;
+  }
+}
+
+.pt-compare-cards {
+  @apply space-y-3;
+}
+
+.pt-compare-card {
+  @apply space-y-2 rounded-2xl border border-base-300 bg-base-100 p-4;
+}
+
+.pt-compare-card__title {
+  @apply flex flex-wrap items-center gap-2 font-semibold text-base-content;
+}
+
+.pt-basis {
+  @apply inline-flex whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium text-base-content;
+}
+
+.pt-basis--user {
+  @apply border-base-300 bg-base-200;
+}
+
+.pt-basis--verified {
+  @apply border-success/50 bg-success/15;
+}
+
+.pt-basis--estimate {
+  @apply border-info/60 border-dashed bg-info/10;
+}
+
+.pt-basis--unknown {
+  @apply border-warning/60 bg-warning/20;
+}
+
+.pt-basis--not-included {
+  @apply border-base-300 bg-base-100 text-base-content/60;
+}
+
+/* ── Summary ── */
+.pt-facts {
+  @apply rounded-2xl bg-base-200 px-4 py-3 text-sm;
+
+  dt {
+    @apply font-semibold text-base-content;
+  }
+
+  dd {
+    @apply text-base-content/80;
+  }
+}
+
+.pt-split {
+  @apply grid gap-4 md:grid-cols-2;
+}
+
+.pt-total {
+  @apply font-display text-2xl font-bold tabular-nums text-base-content;
+}
+
+.pt-ai {
+  @apply space-y-3 rounded-2xl border-2 border-dashed border-base-300 p-4 sm:p-6;
+}
+
+.pt-ai__result {
+  @apply space-y-2 rounded-xl bg-base-200 p-4 text-sm leading-relaxed text-base-content;
+}
+
+.pt-ai__label {
+  @apply inline-flex rounded-full bg-base-300 px-2.5 py-0.5 text-xs font-semibold text-base-content;
+}
+
+.pt-foot {
+  @apply mt-10 flex flex-wrap items-center justify-between gap-2 border-t border-base-300 pt-4;
+}
+
+@media print {
+  .pt-noprint,
+  app-navbar,
+  app-footer {
+    display: none !important;
+  }
+
+  .pt-panel[hidden] {
+    display: block !important;
+  }
+}

@@ -1,9 +1,10 @@
 /**
- * Address -> coordinates for the admin shop form, via OpenStreetMap Nominatim.
+ * Address -> coordinates via OpenStreetMap Nominatim: the admin shop form, and
+ * the trip planner's distance estimate (two lookups per click, on request only).
  *
  * Uses `fetch` on purpose: every HttpClient request goes through
  * ApiPrefixInterceptor, which would rewrite the URL onto our own API host.
- * Admin-only, low volume, which is within Nominatim's usage policy.
+ * Low volume and user-triggered, which is within Nominatim's usage policy.
  */
 export interface GeocodeHit {
   lat: number;
@@ -13,12 +14,13 @@ export interface GeocodeHit {
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
 
-export async function geocodeAddress(query: string, limit = 5): Promise<GeocodeHit[]> {
+/** `countryCode` limits the search to one country (ISO 3166-1 alpha-2, lower case). */
+export async function geocodeAddress(query: string, limit = 5, countryCode = 'rs'): Promise<GeocodeHit[]> {
   const params = new URLSearchParams({
     q: query,
     format: 'jsonv2',
     limit: String(limit),
-    countrycodes: 'rs',
+    countrycodes: countryCode,
     'accept-language': 'sr-Latn,sr,en',
   });
 

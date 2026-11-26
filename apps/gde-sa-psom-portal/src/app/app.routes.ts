@@ -217,6 +217,18 @@ export const appRoutes: Route[] = [
     }
   },
   {
+    path: RouteConstants.petTrip,
+    loadComponent: () => {
+      return import('./features/pet-trip/pet-trip-page.component').then(
+        (m) => m.PetTripPageComponent
+      );
+    },
+    title: 'Putovanje sa psom u inostranstvo: uslovi i troškovi | Gde sa psom',
+    data:{
+      description:'Proveri šta psu treba za put iz Srbije u Hrvatsku, Grčku, Mađarsku i druge zemlje: rokovi, zvanični izvori i troškovi puta na jednom mestu.'
+    }
+  },
+  {
    path:RouteConstants.admin,
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)

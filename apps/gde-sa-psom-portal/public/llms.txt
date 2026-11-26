@@ -21,6 +21,7 @@ The site is in Serbian (Latin script); an English version switches in place on t
 
 ## Guides
 
+- [Putovanje sa psom u inostranstvo](https://www.gdesapsom.com/putovanje-sa-psom): what a dog from Serbia needs for a trip abroad (EU and neighbouring countries, each rule with its official source and the date it was checked, deadlines worked out from the travel dates) and a trip cost planner with comparison of options; in Serbian and English
 - [Blog](https://www.gdesapsom.com/blog): advice on dog care, feeding and training, and travelling with a dog
 - [Nova EU pravila za putovanje sa psom](https://www.gdesapsom.com/blog/nova-eu-pravila-putovanje-pas-april-2026): EU entry rules for dogs travelling from Serbia
 - [How to travel to Serbia with a dog](https://www.gdesapsom.com/blog/how-to-travel-to-serbia-with-a-dog): entry requirements and documents, in English

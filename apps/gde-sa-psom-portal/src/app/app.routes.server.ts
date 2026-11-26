@@ -66,6 +66,8 @@ export const serverRoutes: ServerRoute[] = [
   prerender(RouteConstants.business),
   prerender(RouteConstants.cookiesPolicy),
   prerender(RouteConstants.privacyPolicy),
+  // The introduction and the empty first step; the visitor's draft comes back in the browser.
+  prerender(RouteConstants.petTrip),
   // All hubs, also the ones below their listing threshold: those render noindex.
   ...PET_FRIENDLY_PAGES.map((page) => prerender(page.path.slice(1))),
 

@@ -1,0 +1,179 @@
+<div class="pt-dogs">
+  @for (dog of dogs.controls; track dog; let i = $index) {
+    @let id = 'pt-dog-' + i;
+    <form [formGroup]="dog" class="pt-card" (submit)="$event.preventDefault()">
+      <fieldset class="pt-fieldset">
+        <legend class="pt-legend">{{ dogs.length > 1 ? copy().dogs.dogTitle(i) : copy().dogs.legend }}</legend>
+
+        <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-chip'">
+          <span class="pt-label" [id]="id + '-chip'">{{ copy().dogs.microchip }}</span>
+          <div class="pt-choices">
+            @for (option of microchipOptions; track option) {
+              <label class="pt-choice">
+                <input type="radio" class="pt-choice__input" formControlName="microchip" name="microchip" [value]="option" />
+                <span class="pt-choice__label">{{ copy().dogs.microchipOptions[option] }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-rabies'">
+          <span class="pt-label" [id]="id + '-rabies'">{{ copy().dogs.rabiesVaccinated }}</span>
+          <div class="pt-choices">
+            @for (option of yesNo; track option) {
+              <label class="pt-choice">
+                <input type="radio" class="pt-choice__input" formControlName="rabiesVaccinated" name="rabiesVaccinated" [value]="option" />
+                <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        @if (dog.controls.rabiesVaccinated.value === 'yes') {
+          <div class="pt-grid">
+            <div class="pt-field">
+              <label class="pt-label" [for]="id + '-vaccinated'">{{ copy().dogs.rabiesVaccinationDate }}</label>
+              <input [id]="id + '-vaccinated'" type="date" class="input input-bordered w-full" formControlName="rabiesVaccinationDate" />
+            </div>
+            <div class="pt-field">
+              <label class="pt-label" [for]="id + '-valid'">{{ copy().dogs.rabiesValidUntil }}</label>
+              <input
+                [id]="id + '-valid'"
+                type="date"
+                class="input input-bordered w-full"
+                formControlName="rabiesValidUntil"
+                [class.input-error]="datesInvalid(i)"
+                [attr.aria-invalid]="datesInvalid(i)"
+                [attr.aria-describedby]="id + '-valid-hint'"
+              />
+              <p [id]="id + '-valid-hint'" class="pt-hint">{{ copy().dogs.rabiesValidUntilHint }}</p>
+              @if (datesInvalid(i)) {
+                <p class="pt-error" role="alert">{{ copy().dogs.errors.validUntil }}</p>
+              }
+            </div>
+          </div>
+
+          <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-primary'">
+            <span class="pt-label" [id]="id + '-primary'">{{ copy().dogs.rabiesPrimary }}</span>
+            <div class="pt-choices">
+              @for (option of yesNo; track option) {
+                <label class="pt-choice">
+                  <input type="radio" class="pt-choice__input" formControlName="rabiesPrimary" name="rabiesPrimary" [value]="option" />
+                  <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          @if (dog.controls.microchip.value !== 'none') {
+            <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-order'">
+              <span class="pt-label" [id]="id + '-order'">{{ copy().dogs.chipBeforeVaccination }}</span>
+              <div class="pt-choices">
+                @for (option of yesNo; track option) {
+                  <label class="pt-choice">
+                    <input type="radio" class="pt-choice__input" formControlName="chipBeforeVaccination" name="chipBeforeVaccination" [value]="option" />
+                    <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        <div class="pt-grid">
+          <div class="pt-field">
+            <label class="pt-label" [for]="id + '-birth'">{{ copy().dogs.birthDate }}</label>
+            <input
+              [id]="id + '-birth'"
+              type="date"
+              class="input input-bordered w-full"
+              formControlName="birthDate"
+              [max]="planner.today()"
+              [class.input-error]="invalid(i, 'birthDate')"
+              [attr.aria-invalid]="invalid(i, 'birthDate')"
+              [attr.aria-describedby]="id + '-birth-hint'"
+            />
+            <p [id]="id + '-birth-hint'" class="pt-hint">{{ copy().dogs.birthDateHint }}</p>
+            @if (invalid(i, 'birthDate')) {
+              <p class="pt-error" role="alert">{{ copy().dogs.errors.futureBirth }}</p>
+            }
+          </div>
+
+          @if (flying()) {
+            <div class="pt-field">
+              <label class="pt-label" [for]="id + '-weight'">{{ copy().dogs.weightKg }}</label>
+              <input
+                [id]="id + '-weight'"
+                type="number"
+                inputmode="decimal"
+                min="0.5"
+                max="100"
+                step="0.1"
+                class="input input-bordered w-full"
+                formControlName="weightKg"
+                [class.input-error]="invalid(i, 'weightKg')"
+                [attr.aria-invalid]="invalid(i, 'weightKg')"
+                [attr.aria-describedby]="id + '-weight-hint'"
+              />
+              <p [id]="id + '-weight-hint'" class="pt-hint">{{ copy().dogs.weightHint }}</p>
+              @if (invalid(i, 'weightKg')) {
+                <p class="pt-error" role="alert">{{ copy().dogs.errors.weight }}</p>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-passport'">
+          <span class="pt-label" [id]="id + '-passport'">{{ copy().dogs.passport }}</span>
+          <div class="pt-choices">
+            @for (option of yesNo; track option) {
+              <label class="pt-choice">
+                <input type="radio" class="pt-choice__input" formControlName="passport" name="passport" [value]="option" />
+                <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        @if (breedMatters()) {
+          <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-breed'" [attr.aria-describedby]="id + '-breed-hint'">
+            <span class="pt-label" [id]="id + '-breed'">{{ copy().dogs.restrictedBreed }}</span>
+            <p class="pt-hint" [id]="id + '-breed-hint'">{{ copy().dogs.restrictedBreedHint }}</p>
+            <div class="pt-choices">
+              @for (option of yesNo; track option) {
+                <label class="pt-choice">
+                  <input type="radio" class="pt-choice__input" formControlName="restrictedBreed" name="restrictedBreed" [value]="option" />
+                  <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          @if (croatiaOnRoute() && dog.controls.restrictedBreed.value === 'yes') {
+            <div class="pt-field" role="radiogroup" [attr.aria-labelledby]="id + '-fci'">
+              <span class="pt-label" [id]="id + '-fci'">{{ copy().dogs.fciRegistered }}</span>
+              <div class="pt-choices">
+                @for (option of yesNo; track option) {
+                  <label class="pt-choice">
+                    <input type="radio" class="pt-choice__input" formControlName="fciRegistered" name="fciRegistered" [value]="option" />
+                    <span class="pt-choice__label">{{ copy().yesNo[option] }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @if (dogs.length > 1) {
+          <button type="button" class="btn btn-ghost btn-sm text-error" (click)="planner.removeDog(i)">{{ copy().dogs.remove }}</button>
+        }
+      </fieldset>
+    </form>
+  }
+
+  @if (dogs.length < maxDogs) {
+    <button type="button" class="btn btn-outline btn-sm" (click)="planner.addDog()">{{ copy().dogs.add }}</button>
+  } @else {
+    <p class="pt-hint">{{ copy().dogs.maxNote }}</p>
+  }
+</div>
