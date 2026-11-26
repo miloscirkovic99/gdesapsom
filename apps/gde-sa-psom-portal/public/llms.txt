@@ -30,4 +30,5 @@ The site is in Serbian (Latin script); an English version switches in place on t
 
 - [O nama](https://www.gdesapsom.com/about-us): who runs the directory and how places are added and checked
 - [Za biznise](https://www.gdesapsom.com/for-business): how a café, restaurant or stay gets listed (free)
+- [Partneri](https://www.gdesapsom.com/partneri): partner services for dog owners; Pawko (pawko.me) connects owners with vetted pet sitters for walks, sitting and visits, for the days a dog cannot come along
 - [Politika privatnosti](https://www.gdesapsom.com/privacy-policy): what the site and the Android app collect

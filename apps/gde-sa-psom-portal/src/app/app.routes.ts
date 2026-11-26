@@ -229,6 +229,19 @@ export const appRoutes: Route[] = [
     }
   },
   {
+    // The URL partners get: keep it stable.
+    path: RouteConstants.partners,
+    loadComponent: () => {
+      return import('./pages/partners-page/partners-page.component').then(
+        (m) => m.PartnersPageComponent
+      );
+    },
+    title: 'Partneri - Gde sa psom',
+    data:{
+      description:'Partneri platforme Gde sa psom. Kad pas ne može sa tobom, Pawko te povezuje sa proverenim pet siterom iz tvog kraja za šetnju, čuvanje i posete.'
+    }
+  },
+  {
    path:RouteConstants.admin,
    loadComponent:()=>{
     return import('./features/admin-page/admin-page.component').then((m)=>m.AdminPageComponent)

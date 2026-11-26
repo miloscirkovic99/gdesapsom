@@ -52,6 +52,7 @@ const STATIC_ROUTES = [
   { loc: '/cookies-policy', src: 'src/app/pages/cookies-page', seed: '2026-04-06' },
   { loc: '/privacy-policy', src: 'src/app/pages/privacy-policy-page', seed: '2026-09-26' },
   { loc: '/putovanje-sa-psom', src: 'src/app/features/pet-trip', seed: '2026-10-23' },
+  { loc: '/partneri', src: 'src/app/shared/components/partners-section', seed: '2026-11-26' },
 ];
 
 const APP_DIR = 'apps/gde-sa-psom-portal';

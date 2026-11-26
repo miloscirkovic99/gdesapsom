@@ -1,0 +1,214 @@
+/*
+ * Partners section.
+ * The heading sits on the page and follows the theme (base-*, secondary), with
+ * the landing page's type scale. The Pawko card keeps one palette in both
+ * themes: Pawko's logo is cream, so the main panel stays dark (the dark
+ * theme's base-200), and the aside uses Pawko's own cream, navy and gold.
+ */
+:host {
+  display: block;
+
+  --pp-night: #162032;
+  --pp-night-text: #e2e8f0;
+  --pp-night-muted: #94a3b8;
+  --pp-gold: #f2b036;
+  --pp-gold-hover: #f6c260;
+  --pp-navy: #13365e;
+  /* Secondary text on white and cream: 6.3:1 and 5.8:1. */
+  --pp-navy-soft: #4a6280;
+  --pp-cream: #fbf6ef;
+  --pp-chip-line: #e8dfd2;
+  --pp-icon-bg: #fbe9c6;
+}
+
+/* ── Heading ── */
+.pp-head {
+  max-width: 52rem;
+}
+
+.pp-eyebrow {
+  @apply mb-4 flex items-center gap-2 font-body text-sm font-semibold uppercase text-secondary;
+  letter-spacing: 0.14em;
+}
+
+.pp-eyebrow__icon {
+  @apply h-4 w-4 shrink-0;
+}
+
+.pp-title {
+  @apply font-display font-bold text-base-content;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.pp-lead {
+  @apply mt-4 leading-relaxed text-base-content/70;
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+}
+
+/* ── Card: stacked on phones and tablets, two panels from lg ── */
+.pp-card {
+  @apply mt-10 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-3xl border border-base-300 md:mt-12 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,1fr)];
+  box-shadow: 0 32px 64px -32px rgb(2 6 23 / 0.35);
+}
+
+.pp-main {
+  @apply flex flex-col items-start p-6 sm:p-10 lg:p-12;
+  background: var(--pp-night);
+  color: var(--pp-night-text);
+}
+
+/* Logo and badge share a line down to 360px-wide phones. */
+.pp-brand {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-3 sm:gap-x-4;
+}
+
+.pp-logo {
+  @apply h-8 w-auto sm:h-10;
+}
+
+.pp-badge {
+  @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold leading-5 sm:gap-2 sm:px-3 sm:text-[13px];
+  border-color: rgb(242 176 54 / 0.45);
+  background: rgb(242 176 54 / 0.08);
+  color: var(--pp-gold);
+}
+
+.pp-badge__dot {
+  @apply h-1.5 w-1.5 shrink-0 rounded-full;
+  background: var(--pp-gold);
+}
+
+.pp-card-title {
+  @apply mt-7 font-display font-bold;
+  color: #f8fafc;
+  font-size: clamp(1.4rem, 2.3vw, 1.95rem);
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+
+.pp-features {
+  @apply mt-6 flex flex-col gap-4;
+}
+
+.pp-feature {
+  @apply flex items-center gap-4 text-[15px] leading-snug sm:text-base;
+}
+
+.pp-feature__icon {
+  @apply grid h-10 w-10 shrink-0 place-items-center rounded-[10px];
+  background: rgb(242 176 54 / 0.12);
+  color: var(--pp-gold);
+
+  svg {
+    @apply h-5 w-5;
+  }
+}
+
+.pp-actions {
+  @apply mt-8 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row sm:gap-7;
+}
+
+.pp-cta {
+  @apply inline-flex h-[3.25rem] w-full items-center justify-center gap-2.5 rounded-full px-7 text-base font-semibold sm:h-12 sm:w-auto;
+  background: var(--pp-gold);
+  color: var(--pp-navy);
+
+  svg {
+    @apply h-5 w-5 transition-transform duration-200;
+  }
+
+  &:hover {
+    background: var(--pp-gold-hover);
+
+    svg {
+      transform: translateX(3px);
+    }
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline-color: var(--pp-gold);
+  }
+}
+
+.pp-more {
+  @apply inline-flex items-center gap-1.5 text-[15px] font-semibold underline decoration-1 underline-offset-4;
+  color: #f8fafc;
+
+  svg {
+    @apply h-4 w-4;
+  }
+
+  &:hover {
+    color: var(--pp-gold);
+  }
+
+  &:focus-visible {
+    outline-color: var(--pp-gold);
+  }
+}
+
+.pp-note {
+  @apply mt-6 hidden text-[13px] leading-relaxed sm:block;
+  color: var(--pp-night-muted);
+}
+
+/* ── Aside: services and what the owner gets during a booking ── */
+.pp-aside {
+  @apply p-6 sm:p-10;
+  background: var(--pp-cream);
+  color: var(--pp-navy);
+}
+
+.pp-aside__title {
+  @apply font-display text-lg font-bold sm:text-xl;
+}
+
+.pp-services {
+  @apply mt-4 flex flex-wrap gap-2;
+}
+
+/* Two chips per row on a 360px-wide phone. */
+.pp-service {
+  @apply rounded-full border bg-white px-3 py-1.5 text-[13px] font-medium sm:px-3.5 sm:text-sm;
+  border-color: var(--pp-chip-line);
+}
+
+.pp-updates {
+  @apply mt-6 flex flex-col gap-3 sm:mt-8;
+}
+
+.pp-update {
+  @apply flex items-center gap-4 rounded-2xl bg-white p-4;
+  box-shadow:
+    0 1px 2px rgb(19 54 94 / 0.06),
+    0 12px 28px -16px rgb(19 54 94 / 0.35);
+}
+
+.pp-update--wide-only {
+  @apply hidden sm:flex;
+}
+
+.pp-update__icon {
+  @apply grid h-10 w-10 shrink-0 place-items-center rounded-full;
+  background: var(--pp-icon-bg);
+
+  svg {
+    @apply h-5 w-5;
+  }
+}
+
+.pp-update__title {
+  @apply block text-[15px] font-semibold leading-snug;
+}
+
+.pp-update__text {
+  @apply mt-0.5 block text-[13px] leading-snug;
+  color: var(--pp-navy-soft);
+}

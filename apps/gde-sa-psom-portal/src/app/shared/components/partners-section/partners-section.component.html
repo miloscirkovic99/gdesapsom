@@ -1,0 +1,104 @@
+<section aria-labelledby="pp-title">
+  <div class="pp-head">
+    <!-- On /partneri the label is the page's h1; on the homepage the hero has it. -->
+    @if (asPage()) {
+      <h1 class="pp-eyebrow">
+        <ng-container *ngTemplateOutlet="paw" />
+        {{ 'partners_title' | transloco }}
+      </h1>
+    } @else {
+      <p class="pp-eyebrow">
+        <ng-container *ngTemplateOutlet="paw" />
+        {{ 'partners_title' | transloco }}
+      </p>
+    }
+    <h2 id="pp-title" class="pp-title">{{ 'partners_heading' | transloco }}</h2>
+    <p class="pp-lead">{{ 'partners_lead' | transloco }}</p>
+  </div>
+
+  <article class="pp-card" aria-labelledby="pp-pawko-title">
+    <div class="pp-main">
+      <div class="pp-brand">
+        <img src="assets/pawko.png" alt="Pawko" class="pp-logo" width="346" height="80" loading="lazy" decoding="async" />
+        <span class="pp-badge">
+          <span class="pp-badge__dot" aria-hidden="true"></span>
+          {{ 'partners_pawko_badge' | transloco }}
+        </span>
+      </div>
+
+      <h3 id="pp-pawko-title" class="pp-card-title">{{ 'partners_pawko_title' | transloco }}</h3>
+
+      <ul class="pp-features">
+        @for (feature of features; track feature.icon) {
+          <li class="pp-feature">
+            <span class="pp-feature__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                @switch (feature.icon) {
+                  @case ('verified') { <path d="M12 3 5 6v5c0 4.4 3 8.3 7 9.5 4-1.2 7-5.1 7-9.5V6l-7-3Z" /><path d="m9 12 2 2 4-4" /> }
+                  @case ('photos') { <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-9Z" /><circle cx="12" cy="13" r="3.2" /> }
+                  @case ('reviews') { <path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /> }
+                }
+              </svg>
+            </span>
+            <span>{{ feature.text | transloco }}</span>
+          </li>
+        }
+      </ul>
+
+      <div class="pp-actions">
+        <a class="pp-cta" [href]="pawkoUrl()" target="_blank" rel="noopener" data-link-type="partner" aria-describedby="pp-new-tab">
+          {{ 'partners_pawko_cta' | transloco }}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
+        <a class="pp-more" [href]="pawkoUrl()" target="_blank" rel="noopener" data-link-type="partner" aria-describedby="pp-new-tab">
+          {{ 'partners_pawko_more' | transloco }}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4" />
+          </svg>
+        </a>
+        <!-- Read out after the link text; kept out of the links so analytics gets their plain text. -->
+        <span id="pp-new-tab" hidden>{{ 'opens_new_tab' | transloco }}</span>
+      </div>
+
+      <p class="pp-note">{{ 'partners_pawko_price_note' | transloco }}</p>
+    </div>
+
+    <div class="pp-aside">
+      <h4 class="pp-aside__title">{{ 'partners_pawko_services_title' | transloco }}</h4>
+      <ul class="pp-services">
+        @for (service of services; track service) {
+          <li class="pp-service">{{ service | transloco }}</li>
+        }
+      </ul>
+
+      <ul class="pp-updates">
+        @for (update of updates; track update.icon) {
+          <li class="pp-update" [class.pp-update--wide-only]="update.wideOnly">
+            <span class="pp-update__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                @switch (update.icon) {
+                  @case ('video') { <rect x="3" y="7" width="12" height="10" rx="2" /><path d="m15 10.5 5-3v9l-5-3" /> }
+                  @case ('photo') { <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-9Z" /><circle cx="12" cy="13" r="3.2" /> }
+                  @case ('done') { <circle cx="12" cy="12" r="8.5" /><path d="m8.5 12.2 2.3 2.3 4.7-4.7" /> }
+                }
+              </svg>
+            </span>
+            <span>
+              <span class="pp-update__title">{{ update.title | transloco }}</span>
+              <span class="pp-update__text">{{ update.text | transloco }}</span>
+            </span>
+          </li>
+        }
+      </ul>
+    </div>
+  </article>
+</section>
+
+<ng-template #paw>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="pp-eyebrow__icon" aria-hidden="true">
+    <circle cx="8.5" cy="7" r="1.7" /><circle cx="15.5" cy="7" r="1.7" /><circle cx="5" cy="11.5" r="1.6" /><circle cx="19" cy="11.5" r="1.6" />
+    <path d="M12 11.5c-3 0-5.5 2.6-5.5 5.2a2.8 2.8 0 0 0 2.8 2.8c1 0 1.8-.5 2.7-.5s1.7.5 2.7.5a2.8 2.8 0 0 0 2.8-2.8c0-2.6-2.5-5.2-5.5-5.2Z" />
+  </svg>
+</ng-template>

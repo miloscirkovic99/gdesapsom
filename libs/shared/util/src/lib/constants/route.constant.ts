@@ -22,6 +22,8 @@ export class RouteConstants {
     static readonly petShopDetail = 'pet-shops/:slug';
     /** Readiness check and cost planner for travelling abroad with a dog (portal only). */
     static readonly petTrip = 'putovanje-sa-psom';
+    /** Partner services (Pawko). The URL is sent to partners, so keep it stable. */
+    static readonly partners = 'partneri';
     /** Admin children: /admin/pet-shops, /admin/dog-food, /admin/posts/new */
     static readonly adminPetShops = 'pet-shops';
     static readonly adminDogFood = 'dog-food';

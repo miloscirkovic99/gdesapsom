@@ -15,6 +15,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CardComponent } from '../../shared/components/card/card.component';
+import { PartnersSectionComponent } from '../../shared/components/partners-section/partners-section.component';
 import { SeoService } from '../../core/services/seo.service';
 import { homeCollectionStructuredData } from '../../shared/utils/structured-data';
 import { SpotsStore, ParksStore, VetClinicsStore } from '@gde/shared/data-access';
@@ -88,7 +89,15 @@ const HOME_HUBS: readonly HomeHub[] = [
 
 @Component({
   selector: 'app-landing-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslocoModule, CardComponent, LocalNamePipe, ClientImagePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    TranslocoModule,
+    CardComponent,
+    PartnersSectionComponent,
+    LocalNamePipe,
+    ClientImagePipe,
+  ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

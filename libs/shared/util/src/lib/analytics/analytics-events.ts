@@ -11,6 +11,8 @@ export type LinkType =
   | 'venue_maps'
   | 'venue_phone'
   | 'affiliate_booking'
+  /** A partner's site (Pawko), so the clicks sent to each partner can be counted. */
+  | 'partner'
   | 'social'
   | 'other';
 
